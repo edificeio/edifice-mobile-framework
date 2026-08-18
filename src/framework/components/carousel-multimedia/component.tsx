@@ -32,11 +32,15 @@ const CarouselItem = ({
   const media = info!.item;
   const isCurrentItem = info!.index === currentIndex;
 
-  if (!info || isImageError || isPdfError || isPlayerError) {
-    setHasMediaError(true);
+  if (!info || !media.src) {
+    setHasMediaError(info!.index);
     return <UnknownItem />;
   }
-  if (!media.mime && media.src) return <UnviewableItem media={media} />;
+
+  if (isImageError || isPdfError || isPlayerError || isPlayerLoadTimeout || isPdfLoadTimeout || !media.mime)
+    return <UnviewableItem media={media} />;
+
+  if (!media.mime && media.src) return <UnviewableItem file={media} />;
 
   if (isImageContent(media)) {
     return (
@@ -55,9 +59,6 @@ const CarouselItem = ({
   }
 
   if (isAudioContent(media) || isVideoContent(media)) {
-    if (isPlayerLoadTimeout) {
-      return <UnviewableItem media={media} />;
-    }
     return (
       <PlayerItem
         hideNavBar={hideNavBar}
@@ -75,9 +76,6 @@ const CarouselItem = ({
   }
 
   if (isPdfContent(media)) {
-    if (isPdfLoadTimeout) {
-      return <UnviewableItem media={media} />;
-    }
     return (
       <PdfItem
         hideNavBar={hideNavBar}

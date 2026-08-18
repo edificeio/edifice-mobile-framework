@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Platform } from 'react-native';
 
 import moduleConfig from '~/framework/modules/communities/module-config';
 import CommunitiesDocumentsScreen, { computeNavBar as documentsNavBar } from '~/framework/modules/communities/screens/documents';
@@ -9,6 +8,9 @@ import CommunitiesJoinConfirmScreen, {
 } from '~/framework/modules/communities/screens/join-confirm';
 import CommunitiesListScreen, { computeNavBar as listNavBar } from '~/framework/modules/communities/screens/list';
 import CommunitiesMembersScreen, { computeNavBar as membersNavBar } from '~/framework/modules/communities/screens/members';
+import CommunitiesSpotlightedCourseScreen, {
+  SpotlightedCourseScreenOptions as spotlightedCourseNavBar,
+} from '~/framework/modules/communities/screens/spotlighted-course';
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 
@@ -29,6 +31,12 @@ export default () =>
         name={communitiesRouteNames.members}
         component={CommunitiesMembersScreen}
         options={membersNavBar}
+        initialParams={{}}
+      />
+      <Stack.Screen
+        name={communitiesRouteNames.spotlightedCourse}
+        component={CommunitiesSpotlightedCourseScreen}
+        options={spotlightedCourseNavBar}
         initialParams={{}}
       />
       <Stack.Group

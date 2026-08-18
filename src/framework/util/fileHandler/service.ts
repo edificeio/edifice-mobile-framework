@@ -88,11 +88,22 @@ const fileTransferService = {
       ...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]
     ) => SyncedFileType;
     const downloadUrl = sessionURISource(toURISource(file.url)).uri!;
-    const filePath = new URL(downloadUrl).pathname;
+    const urlParsed = new URL(downloadUrl);
+    let filePath = urlParsed.pathname;
+    // When the path ends with a trailing slash and no filename is provided, build a unique
+    // sub-path from query params so the cache folder and filename are never empty.
+    // Part numbers can be dotted (e.g. "2.2") — replace dots with underscores so the filename
+    // has no dot, which ensures the extension-inference branch below will run.
+    if (!file.filename && filePath.endsWith('/')) {
+      const id = urlParsed.searchParams.get('id') ?? '';
+      const part = (urlParsed.searchParams.get('part') ?? '').replace(/\./g, '_');
+      if (id) filePath = `${filePath}${id}${part ? `/${part}` : ''}`;
+    }
     file.filename = getSafeFileName(file.filename || filePath.split('/').pop());
     const folderDest = `${RNFS.DocumentDirectoryPath}${filePath}`;
     const downloadDest = `${folderDest}/${file.filename}`;
-    const headers = sessionURISource<ImageURISource>({ uri: '/' }).headers;
+    // Only send auth headers to the platform's own server — not to third-party servers like Zimbra.
+    const headers = sessionURISource<ImageURISource>({ uri: downloadUrl }).headers;
     const localFile = new LocalFile(
       {
         filename: file.filename!,

@@ -24,6 +24,7 @@ import moduleConfig from '~/framework/modules/auth/module-config';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/thunks';
 import { trackingWayfEvents } from '~/framework/modules/auth/tracking';
 import { Error } from '~/framework/util/error';
+import { openUrl } from '~/framework/util/linking';
 import { toURISource } from '~/framework/util/media';
 import { API, OAuth2ErrorCode, OAuth2SamlMultipleVectorError } from '~/framework/util/oauth2';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
@@ -353,7 +354,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       console.debug('WAYFScreen::onMessage => ', message);
       Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Message'), message.toString());
       // Execute right action depending on message type
-      const { token, type } = message;
+      const { token, type, url } = message;
       switch (type) {
         // Login with SAML token if received
         case 'SAML':
@@ -366,6 +367,9 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         // Redirect to login page
         case 'ENT':
           this.props.navigation.dispatch(this.props.loginCredentialsNavAction);
+          break;
+        case 'REDIRECT':
+          if (url) openUrl(url);
           break;
         default:
           console.error('WAYFScreen::onMessage => Wrong type received - ', type);

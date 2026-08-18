@@ -19,6 +19,7 @@ export const baseStyles = StyleSheet.create({
     alignItems: 'flex-start',
     borderRadius: UI_SIZES.radius.newCard,
     flex: 1,
+    gap: UI_SIZES.spacing.minor,
     padding: UI_SIZES.spacing.small,
   },
   tileCaption: {
@@ -36,7 +37,6 @@ export const baseStyles = StyleSheet.create({
   },
   tileUnavailable: {
     backgroundColor: theme.palette.grey.pearl,
-    gap: UI_SIZES.spacing.minor,
   },
   tileUnavailableLoader: {
     borderRadius: UI_SIZES.radius.newCard,

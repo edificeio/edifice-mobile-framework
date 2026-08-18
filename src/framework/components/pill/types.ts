@@ -1,7 +1,9 @@
 import { ColorValue } from 'react-native';
 
 export interface PillProps {
-  text: string;
   color: ColorValue;
+  italic?: boolean;
   size?: 'small' | 'normal' | 'large';
+  text: string;
+  textColor?: ColorValue;
 }

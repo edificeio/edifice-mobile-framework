@@ -79,9 +79,11 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
     (toAdd: UploadFile[], idx: number) => {
       if (idx < toAdd.length) {
         const file = toAdd[idx];
-        const fileUrl = props.uploadParams.public
-          ? `/workspace/pub/document/${file.workspaceID}`
-          : `/workspace/document/${file.workspaceID}`;
+        const fileUrl =
+          file.fileUrl ??
+          (props.uploadParams.public
+            ? `/workspace/pub/document/${file.workspaceID}`
+            : `/workspace/document/${file.workspaceID}`);
         richText.current?.insertHTML(
           `<img class="${ui.image.class}" src="${fileUrl}" width="${ui.image.width}" height="${ui.image.height}">`,
         );
@@ -192,6 +194,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
         name: ModalsRouteNames.FileImport,
         params: {
           onImportResult: handleAddFiles,
+          onUploadFile: props.onInlineImageUpload,
           source: 'gallery',
           uploadParams: props.uploadParams,
         },
@@ -206,6 +209,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
         name: ModalsRouteNames.FileImport,
         params: {
           onImportResult: handleAddFiles,
+          onUploadFile: props.onInlineImageUpload,
           source: 'camera',
           uploadParams: props.uploadParams,
         },

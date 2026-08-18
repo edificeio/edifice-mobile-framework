@@ -1,10 +1,10 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
 
-import { SignedMediaSource } from './util';
-
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { FileMedia } from '~/framework/util/media';
+
+import { SignedMediaSource } from './util';
 
 export interface CarouselItemProps {
   containerHeight: number;
@@ -15,7 +15,7 @@ export interface CarouselItemProps {
   isNavBarVisible: boolean;
   itemSource: SignedMediaSource;
   onInitialAVMediaLoad?: () => void;
-  setHasMediaError: (hasError: boolean) => void;
+  setHasMediaError: (index: number) => void;
   setIsCarouselSwipeEnabled: (isEnabled: boolean) => void;
   showNavBar: () => void;
   startIndex?: number;

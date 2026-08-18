@@ -1,7 +1,15 @@
 import { Platform } from 'react-native';
 
 import DeviceInfo from 'react-native-device-info';
-import { check, checkMultiple, Permission, PERMISSIONS, PermissionStatus, request, RESULTS } from 'react-native-permissions';
+import {
+  check,
+  checkMultiple,
+  Permission,
+  PERMISSIONS,
+  PermissionStatus,
+  requestMultiple,
+  RESULTS,
+} from 'react-native-permissions';
 
 import { I18n } from '~/app/i18n';
 import toast from '~/framework/components/toast';
@@ -10,6 +18,7 @@ export type SinglePermissionRequirement = true | Permission;
 export type PermissionRequirement = SinglePermissionRequirement | Permission[];
 
 export const ANDROID_10 = 29;
+export const ANDROID_12L = 32;
 export const ANDROID_13 = 33;
 export const ANDROID_14 = 34;
 export const ANDROID_15 = 35;
@@ -71,11 +80,11 @@ const permissionScenarios = {
     ios: true,
   })!,
   'gallery.read': Platform.select<PermissionRequirement>({
-    android: api >= ANDROID_13 ? true : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+    android: api <= ANDROID_12L ? [PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE] : true,
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
   })!,
   'gallery.write': Platform.select<PermissionRequirement>({
-    android: api < ANDROID_10 ? PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE : true,
+    android: api <= ANDROID_12L ? [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE] : true,
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
   })!,
 };
@@ -139,20 +148,25 @@ export const assertPermissions = async (scenario: PermissionScenario, options: {
   let res = await checkPerm(needed);
 
   // Request denied permissions
-  res = await Promise.all(
-    res.map(async ([perm, status]): Promise<[Permission, PermissionStatus]> => {
-      if (status !== RESULTS.DENIED) return [perm, status];
+  const denied = res.filter(([, status]) => status === RESULTS.DENIED).map(([perm]) => perm);
 
-      try {
-        const newStatus = await request(perm);
-        return [perm, newStatus];
-      } catch {
-        return [perm, RESULTS.BLOCKED];
-      }
-    }),
-  );
+  if (denied.length) {
+    try {
+      const requested = await requestMultiple(denied);
+      res = res.map(([perm, status]): [Permission, PermissionStatus] => [perm, requested[perm] ?? status]);
+    } catch {
+      res = res.map(([perm, status]): [Permission, PermissionStatus] =>
+        denied.includes(perm) ? [perm, RESULTS.BLOCKED] : [perm, status],
+      );
+    }
+  }
 
   if (scenario === 'gallery.read' && isAndroid && api >= ANDROID_13) {
+    const ok = res.some(([, status]) => status === RESULTS.GRANTED || status === RESULTS.LIMITED);
+    if (!ok) {
+      if (!options.silent) showDeniedUI(scenario);
+      throw new PermissionError(scenario, 'unknown', 'denied');
+    }
     return res;
   }
 

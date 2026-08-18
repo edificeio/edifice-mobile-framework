@@ -5,6 +5,7 @@ import {
   AnnouncementClient,
   CommunityClient,
   CommunitySection,
+  InvitationClient,
   InvitationResponseDto,
   MembershipClient,
   SearchAnnouncementDto,
@@ -91,6 +92,7 @@ export const CommunitiesHomeScreenLoaded = function ({
     params: { communityId, invitationId, showWelcome = false },
   },
   session,
+  spotlightedCourseId,
   title,
   totalMembers,
   welcomeNote,
@@ -107,6 +109,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   const { role, sentBy } = invitation || {};
   const { displayName: senderName, entId: senderId } = sentBy || {};
   const canShowInfoModal = role && senderId && senderName;
+  const platformUrl = session.platform.url;
 
   const infoModalRef = React.useRef<BottomSheetModalMethods>(null);
 
@@ -159,7 +162,13 @@ export const CommunitiesHomeScreenLoaded = function ({
               <DocumentsTile communityId={communityId} navigation={navigation} />
             </View>
             <View style={styles.tilesCol}>
-              <CoursesTile />
+              <CoursesTile
+                communityId={communityId}
+                navigation={navigation}
+                platformUrl={platformUrl}
+                spotlightedCourseId={spotlightedCourseId}
+                userRole={role}
+              />
               <ConversationTile />
             </View>
           </View>
@@ -167,7 +176,7 @@ export const CommunitiesHomeScreenLoaded = function ({
         <HeadingXSText style={styles.announcementTitle}>{I18n.get('communities-announcements-title')}</HeadingXSText>
       </View>,
     ],
-    [communityId, membersId, navigation, scrollElements, title, totalMembers],
+    [scrollElements, title, communityId, navigation, membersId, totalMembers, platformUrl, spotlightedCourseId, role],
   );
 
   const audienceReferer = React.useMemo(
@@ -312,17 +321,21 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
       dispatch(communitiesActions.loadCommunityDetails(communityId, newData)),
     [dispatch, communityId],
   );
+  const [invitationId, setInvitationId] = React.useState<number | undefined>(undefined);
 
   const loadContent = React.useCallback(async () => {
-    const [community, invitations] = await Promise.all([
+    const [community, invitations, userInvitation] = await Promise.all([
       accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
-      accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { page: 1, size: 20 }),
+      accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { includePending: true, page: 1, size: 20 }),
+      accountApi(session, moduleConfig, InvitationClient).getUserInvitations({ communityId }),
     ]);
+
     setData({
       ...community,
       membersId: invitations.items.map(item => item.user.entId),
       totalMembers: invitations.meta.totalItems,
     });
+    setInvitationId(userInvitation.items.at(0)?.id);
   }, [communityId, session, setData]);
 
   const image = React.useMemo(
@@ -335,21 +348,26 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
     [data],
   );
 
+  const spotlightedCourseId = React.useMemo(() => (data ? data.courseEntId : undefined), [data]);
+
+  const realRoute = React.useMemo(() => ({ ...route, params: { ...route.params, invitationId } }), [invitationId, route]);
+
   const renderContent: NonNullable<ContentLoaderProps['renderContent']> = React.useCallback(
     refreshControl =>
       data ? (
         <CommunitiesHomeScreenLoaded
           navigation={navigation}
-          route={route}
+          route={realRoute}
           refreshControl={refreshControl}
           {...data}
           image={image!}
           session={session}
+          spotlightedCourseId={spotlightedCourseId}
         />
       ) : (
         <EmptyContentScreen />
       ),
-    [data, navigation, route, session, image],
+    [data, navigation, realRoute, image, session, spotlightedCourseId],
   );
 
   return <ContentLoader loadContent={loadContent} renderLoading={CommunitiesHomeScreenPlaceholder} renderContent={renderContent} />;

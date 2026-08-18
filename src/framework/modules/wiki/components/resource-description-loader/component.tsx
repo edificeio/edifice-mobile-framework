@@ -3,9 +3,9 @@ import { View } from 'react-native';
 
 import { Placeholder, PlaceholderLine } from 'rn-placeholder';
 
-import { styles } from './styles';
-
 import { getScaleWidth } from '~/framework/components/constants';
+
+import { styles } from './styles';
 
 const ResourceDescriptionLoader: React.FC = () => {
   return (

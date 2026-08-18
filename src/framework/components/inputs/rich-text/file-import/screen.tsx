@@ -56,6 +56,7 @@ export const computeNavBar = modalScreenOptions('modal', () => ({
 const formatFileForUpload = (lf: LocalFile) =>
   ({
     error: undefined,
+    fileUrl: undefined as string | undefined,
     localFile: lf,
     status: UploadStatus.IDLE,
     workspaceID: undefined as string | undefined,
@@ -134,20 +135,37 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
       }
       uploadingTasksRef.current.add(file);
       updateFileStatusAndID({ file, status: UploadStatus.PENDING });
-      workspaceService.file
-        .uploadFile(session, file.localFile, route.params.uploadParams)
-        .then(resp => {
-          updateFileStatusAndID({ file, id: resp.df.id, status: UploadStatus.OK });
-        })
-        .catch(error => {
-          console.error(`Import File Upload Failed: ${error}`);
-          updateFileStatusAndID({ error: textErrorUploadFile(error), file, status: UploadStatus.KO });
-        })
-        .finally(() => {
-          uploadingTasksRef.current.delete(file);
-        });
+
+      const customUpload = route.params.onUploadFile;
+      if (customUpload) {
+        customUpload(file.localFile)
+          .then(url => {
+            file.fileUrl = url;
+            updateFileStatusAndID({ file, status: UploadStatus.OK });
+          })
+          .catch(error => {
+            console.error(`Import File Upload Failed: ${error}`);
+            updateFileStatusAndID({ error: textErrorUploadFile(error), file, status: UploadStatus.KO });
+          })
+          .finally(() => {
+            uploadingTasksRef.current.delete(file);
+          });
+      } else {
+        workspaceService.file
+          .uploadFile(session, file.localFile, route.params.uploadParams)
+          .then(resp => {
+            updateFileStatusAndID({ file, id: resp.df.id, status: UploadStatus.OK });
+          })
+          .catch(error => {
+            console.error(`Import File Upload Failed: ${error}`);
+            updateFileStatusAndID({ error: textErrorUploadFile(error), file, status: UploadStatus.KO });
+          })
+          .finally(() => {
+            uploadingTasksRef.current.delete(file);
+          });
+      }
     },
-    [route.params.uploadParams, session, updateFileStatusAndID],
+    [route.params.onUploadFile, route.params.uploadParams, session, updateFileStatusAndID],
   );
 
   const uploadFiles = React.useCallback(() => {
@@ -173,10 +191,10 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
   );
 
   const removeAllFiles = React.useCallback(() => {
-    workspaceService.files.trash(
-      session!,
-      filesRef.current.map(f => f.workspaceID!),
-    );
+    const wsIds = filesRef.current.map(f => f.workspaceID).filter(Boolean) as string[];
+    if (wsIds.length) {
+      workspaceService.files.trash(session!, wsIds);
+    }
   }, [session]);
 
   usePreventBack({
@@ -218,6 +236,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
   React.useEffect(() => {
     if (validateImport) {
       const importResult = filesRef.current.map(f => ({
+        fileUrl: f.fileUrl,
         status: f.status,
         workspaceID: f.workspaceID,
       }));
@@ -269,7 +288,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         {
           onPress: () => {
             const file = filesRef.current[index];
-            if (file.workspaceID === undefined) {
+            if (!file.workspaceID) {
               setFiles(filesRef.current.filter((_, i) => i !== index));
             } else {
               workspaceService.files

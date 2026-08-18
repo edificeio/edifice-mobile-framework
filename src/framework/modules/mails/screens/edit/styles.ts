@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_VALUES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   bottomForm: {
@@ -19,5 +19,11 @@ export default StyleSheet.create({
   },
   page: {
     backgroundColor: theme.palette.grey.white,
+  },
+  sendingOverlay: {
+    alignItems: 'center',
+    backgroundColor: `rgba(0, 0, 0, ${UI_VALUES.opacity.modal})`,
+    flex: 1,
+    justifyContent: 'center',
   },
 });

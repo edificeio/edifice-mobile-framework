@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, Modal, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -18,9 +19,10 @@ import { InactiveUserModalContentContainer } from '~/framework/modules/mails/com
 import MailsPlaceholderEdit from '~/framework/modules/mails/components/placeholder/edit';
 import { MailsRecipientsType } from '~/framework/modules/mails/model';
 import { MailsNavigationParams, mailsRouteNames } from '~/framework/modules/mails/navigation';
-import { getNoReplyRight } from '~/framework/modules/mails/rights';
+import { getMailCarbonioRight, getNoReplyRight } from '~/framework/modules/mails/rights';
 import { mailsService } from '~/framework/modules/mails/service';
 import { isServiceMethodAvailable } from '~/framework/modules/mails/util';
+import { LocalFile } from '~/framework/util/fileHandler/models';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
@@ -73,6 +75,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
       initialContentHTML,
       inputFocused,
       isHistoryOpen,
+      isSending,
       isStartScroll,
       mailSubjectType,
       moreRecipientsFields,
@@ -83,19 +86,23 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
   } = useMailsEditController({ navigation, route });
   const hasRecipients = to.length > 0 || cc.length > 0 || cci.length > 0;
   const hasContentToSend = subject.trim().length > 0 || bodyContent?.trim().length > 0;
+  // The blocking "sending" overlay only applies to Carbonio: slow sends there are typically
+  // caused by server-side group/distribution-list expansion, which Classic doesn't have the
+  // same way — showing it for Classic's normally-instant sends was reported as a regression.
+  const isCarbonioSending = isSending && !!(session && getMailCarbonioRight(session));
 
   React.useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <NavBarActionsGroup
           elements={[
-            <NavBarAction icon="ui-send" disabled={!hasRecipients || !hasContentToSend} onPress={onCheckSend} />,
+            <NavBarAction icon="ui-send" disabled={isCarbonioSending || !hasRecipients || !hasContentToSend} onPress={onCheckSend} />,
             <PopupMenu
-              disabled={!shouldSaveDraft && !getNoReplyRight(props.session!)}
+              disabled={isCarbonioSending || (!shouldSaveDraft && !(props.session && getNoReplyRight(props.session)))}
               actions={
                 draftIdSaved
-                  ? [...(getNoReplyRight(props.session!) ? noReplyMenu : []), ...popupActionsMenu]
-                  : [...(getNoReplyRight(props.session!) ? noReplyMenu : []), ...popupActionsMenu.slice(0, -1)]
+                  ? [...(props.session && getNoReplyRight(props.session) ? noReplyMenu : []), ...popupActionsMenu]
+                  : [...(props.session && getNoReplyRight(props.session) ? noReplyMenu : []), ...popupActionsMenu.slice(0, -1)]
               }>
               <NavBarAction icon="ui-options" />
             </PopupMenu>,
@@ -108,6 +115,7 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     draftIdSaved,
     hasContentToSend,
     hasRecipients,
+    isCarbonioSending,
     navigation,
     noReplyMenu,
     onCheckSend,
@@ -198,6 +206,17 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     ],
   );
 
+  const carbonioInlineUpload = mailsService.attachments.uploadInlineImage;
+  const onInlineImageUpload = React.useMemo(() => {
+    if (!carbonioInlineUpload || !draftIdSaved) return undefined;
+    return (file: LocalFile) => carbonioInlineUpload({ draftId: draftIdSaved }, file);
+  }, [carbonioInlineUpload, draftIdSaved]);
+  // For Carbonio, disable the image picker until the draft is created so the upload
+  // has a valid draftId. For Entcore, the upload goes through workspace independently.
+  const allowMultimediaUpload = carbonioInlineUpload
+    ? !!draftIdSaved
+    : (mailsService.attachments.allowMultimediaUpload ?? true);
+
   const renderContent = React.useCallback(() => {
     return (
       <>
@@ -216,13 +235,22 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
           }}
           placeholder={I18n.get('mails-edit-contentplaceholder')}
           onScrollBeginDrag={onScrollBeginDrag}
-          allowMultimediaUpload={mailsService.attachments.allowMultimediaUpload ?? true}
+          onInlineImageUpload={onInlineImageUpload}
+          allowMultimediaUpload={allowMultimediaUpload}
         />
         <InactiveUserModalContentContainer
           isVisible={inactiveUserModalVisible}
           inactiveUsers={inactiveUsersList}
           action={onCloseInactiveUserModal}
         />
+        {/* Full-screen blocking overlay while sending (Carbonio only): a slow send (e.g. to a
+            large group) must disable every action on the screen, including typing, not just the
+            header buttons (see INTEG-2132). */}
+        <Modal visible={isCarbonioSending} transparent animationType="fade" statusBarTranslucent>
+          <View style={styles.sendingOverlay}>
+            <ActivityIndicator size="large" color={theme.palette.grey.white} />
+          </View>
+        </Modal>
       </>
     );
   }, [
@@ -234,9 +262,11 @@ const MailsEditScreen = (props: MailsEditScreenPrivateProps) => {
     onChangeText,
     scrollEnabled,
     onScrollBeginDrag,
+    onInlineImageUpload,
     inactiveUserModalVisible,
     inactiveUsersList,
     onCloseInactiveUserModal,
+    isCarbonioSending,
   ]);
 
   return (

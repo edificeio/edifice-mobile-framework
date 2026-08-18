@@ -1,9 +1,10 @@
 import * as React from 'react';
 
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
-import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
+import theme from '~/app/theme';
+import TouchableSelectorPictureCard from '~/framework/components/card/picture';
 import { UI_SIZES } from '~/framework/components/constants';
 import GridList from '~/framework/components/GridList';
 import { HeadingSText, SmallText } from '~/framework/components/text';
@@ -15,7 +16,12 @@ import type { AuthPlatformsScreenProps } from './types';
 
 export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
   const { getNextRoute, navigation } = props;
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const onOpenItem = React.useCallback((item: Platform) => navigation.navigate(getNextRoute(item)), [getNextRoute, navigation]);
+  const contentContainerStyle = React.useMemo(
+    () => ({ backgroundColor: theme.ui.background.page, paddingBottom: bottomInset }),
+    [bottomInset],
+  );
   return (
     <GridList
       data={appConf.platforms}
@@ -24,6 +30,8 @@ export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
           picture={item.logoType === 'Image' ? { source: item.logo, type: 'Image' } : { name: item.logo, type: item.logoType }}
           pictureStyle={styles.picture}
           text={item.displayName}
+          textStyle={styles.cardLabelText}
+          style={styles.cardStyle}
           onPress={() => onOpenItem(item)}
           testID={`network-${item.name}`}
         />
@@ -40,9 +48,10 @@ export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
         </SafeAreaView>
       }
       alwaysBounceVertical={false}
+      contentContainerStyle={contentContainerStyle}
       overScrollMode="never"
       ListFooterComponent={<DebugOptions />}
-      gap={UI_SIZES.spacing.big}
+      gap={[UI_SIZES.spacing.big, UI_SIZES.spacing.small]}
       gapOutside={UI_SIZES.spacing.big}
     />
   );

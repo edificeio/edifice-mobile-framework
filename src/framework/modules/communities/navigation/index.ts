@@ -6,6 +6,7 @@ import type { CommunitiesHomeScreen } from '~/framework/modules/communities/scre
 import type { CommunitiesJoinConfirmScreen } from '~/framework/modules/communities/screens/join-confirm';
 import { CommunitiesListScreen } from '~/framework/modules/communities/screens/list';
 import { CommunitiesMembersScreen } from '~/framework/modules/communities/screens/members';
+import { CommunitiesSpotlightedCourseScreen } from '~/framework/modules/communities/screens/spotlighted-course';
 
 export const communitiesRouteNames = {
   documents: `${moduleConfig.routeName}/documents` as 'documents',
@@ -13,6 +14,7 @@ export const communitiesRouteNames = {
   joinConfirm: `${moduleConfig.routeName}/join-confirm` as 'joinConfirm',
   list: `${moduleConfig.routeName}` as 'list',
   members: `${moduleConfig.routeName}/members` as 'members',
+  spotlightedCourse: `${moduleConfig.routeName}/spotlighted-course` as 'spotlightedCourse',
 };
 export interface CommunitiesNavigationParams extends ParamListBase {
   list: CommunitiesListScreen.NavParams;
@@ -20,4 +22,5 @@ export interface CommunitiesNavigationParams extends ParamListBase {
   documents: CommunitiesDocumentsScreen.NavParams;
   members: CommunitiesMembersScreen.NavParams;
   joinConfirm: CommunitiesJoinConfirmScreen.NavParams;
+  spotlightedCourse: CommunitiesSpotlightedCourseScreen.NavParams;
 }

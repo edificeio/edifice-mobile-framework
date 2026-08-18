@@ -64,7 +64,15 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
   const media = React.useMemo<FileMedia[]>(() => route.params.media ?? [], [route.params.media]);
   const startIndex = route.params.startIndex ?? 0;
   const [currentIndex, setCurrentIndex] = React.useState(startIndex);
-  const [hasMediaError, setHasMediaError] = React.useState(false);
+  const [erroredIndexes, setErroredIndexes] = React.useState<Set<number>>(() => new Set());
+  const setHasMediaError = React.useCallback((index: number) => {
+    setErroredIndexes(prev => {
+      if (prev.has(index)) return prev;
+      const next = new Set(prev);
+      next.add(index);
+      return next;
+    });
+  }, []);
   const [isCarouselSwipeEnabled, setIsCarouselSwipeEnabled] = React.useState(true);
   const [isInitialAVMediaLoaded, setIsInitialAVMediaLoaded] = React.useState(false);
   const [isNavBarVisible, setIsNavBarVisible] = React.useState(true);
@@ -163,7 +171,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
     if (isNavBarVisible) {
       navigation.setOptions({
         ...MultimediaCarouselScreenOptions({ navigation, route }),
-        ...getNavActions({ isError: hasMediaError, media: media[currentIndex], navigation, onShare, route }),
+        ...getNavActions({ isError: erroredIndexes.has(currentIndex), media: media[currentIndex], navigation, onShare, route }),
         headerShown: isAndroid ? true : undefined,
         statusBarHidden: isLandscape,
         title:
@@ -184,7 +192,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
         unstable_headerRightItems: undefined,
       });
     }
-  }, [isNavBarVisible, media.length, currentIndex, hasMediaError, orientation, navigation, media, onShare, route]);
+  }, [isNavBarVisible, media.length, currentIndex, erroredIndexes, orientation, navigation, media, onShare, route]);
 
   React.useEffect(() => {
     mediaLengthShared.value = media.length;

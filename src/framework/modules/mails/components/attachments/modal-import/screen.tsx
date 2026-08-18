@@ -24,6 +24,7 @@ import { CaptionBoldText, SmallText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import Thumbnail from '~/framework/modules/mails/components/attachments/thumbnail';
+import { IMailsMailAttachment } from '~/framework/modules/mails/model';
 import moduleConfig from '~/framework/modules/mails/module-config';
 import { mailsService } from '~/framework/modules/mails/service';
 import { LocalFile } from '~/framework/util/fileHandler/models';
@@ -110,6 +111,12 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
   // The bucket of allowed simultaneous uploading processes.
   const uploadingTasksRef = React.useRef<Set<UploadAttachment>>(new Set());
   const MAX_PARALLEL_UPLOADS_TASKS = 6;
+  const inlinePartMappingRef = React.useRef<Record<string, string>>({});
+  // Latest authoritative attachment snapshot from Carbonio (see INTEG-2133): each add() call may
+  // renumber attachments already present in the draft, so we keep only the most recent snapshot
+  // rather than merge across calls — thanks to per-draft serialization, resolution order matches
+  // true chronological order, so the last one received is always the freshest.
+  const attachmentsSnapshotRef = React.useRef<IMailsMailAttachment[] | undefined>(undefined);
 
   const updateFileStatusAndID = React.useCallback(
     ({
@@ -152,7 +159,14 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
           session,
         )
         .then(resp => {
-          updateFileStatusAndID({ file, id: resp.df.id, status: UploadAttachmentStatus.OK, url: resp.df.url });
+          if (resp.inlinePartMapping) {
+            Object.assign(inlinePartMappingRef.current, resp.inlinePartMapping);
+          }
+          const respAttachments = (resp as { attachments?: IMailsMailAttachment[] }).attachments;
+          if (respAttachments) {
+            attachmentsSnapshotRef.current = respAttachments;
+          }
+          updateFileStatusAndID({ file, id: resp.attachment.df.id, status: UploadAttachmentStatus.OK, url: resp.attachment.df.url });
         })
         .catch(error => {
           console.error(`Import Attachment Upload Failed: ${error}`);
@@ -246,7 +260,7 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
           url: f.url,
         }));
 
-      route.params.onImportAttachmentsResult?.(result);
+      route.params.onImportAttachmentsResult?.(result, inlinePartMappingRef.current, attachmentsSnapshotRef.current);
 
       navigation.goBack();
     }

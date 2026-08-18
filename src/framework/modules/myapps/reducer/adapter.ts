@@ -50,6 +50,7 @@ const ICON_NAME_MAP: Record<string, string> = {
 };
 
 const NOTIF_TYPE_BADGE_OVERRIDES: BadgeOverridesType = {
+  'ELEA.EXTERNAL_NOTIFICATION': { color: 'indigo', icon: 'elea' },
   'TIMELINE.NOTIFY-REPORT': { color: 'yellow', icon: 'report' },
 };
 

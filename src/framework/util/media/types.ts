@@ -96,6 +96,7 @@ export const isLinkMedia = (media: Media): media is LinkMedia => media.type === 
 
 export interface EmbeddedMedia extends Media {
   type: MediaType.EMBEDDED;
+  mime?: string;
 }
 
 export const isEmbeddedMedia = (media: Media): media is EmbeddedMedia => media.type === MediaType.EMBEDDED;

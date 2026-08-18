@@ -1,11 +1,19 @@
 import React from 'react';
 import { PixelRatio, StyleSheet, TextProps, View, ViewStyle } from 'react-native';
 
-import { PillProps } from './types';
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { BodyBoldText, CaptionBoldText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
+import {
+  BodyBoldText,
+  BodyItalicText,
+  CaptionBoldText,
+  CaptionItalicText,
+  SmallBoldText,
+  SmallItalicText,
+  TextSizeStyle,
+} from '~/framework/components/text';
+
+import { PillProps } from './types';
 
 const styles = StyleSheet.create({
   text: {
@@ -18,6 +26,12 @@ const TextComponents: Record<NonNullable<PillProps['size']>, React.ComponentType
   large: BodyBoldText,
   normal: SmallBoldText,
   small: CaptionBoldText,
+};
+
+const ItalicTextComponents: Record<NonNullable<PillProps['size']>, React.ComponentType<TextProps>> = {
+  large: BodyItalicText,
+  normal: SmallItalicText,
+  small: CaptionItalicText,
 };
 
 const stylesBySize: Record<NonNullable<PillProps['size']>, ViewStyle> = {
@@ -38,11 +52,13 @@ const stylesBySize: Record<NonNullable<PillProps['size']>, ViewStyle> = {
   },
 };
 
-export function Pill({ color, size = 'small', text }: Readonly<PillProps>) {
-  const TextComponent = TextComponents[size];
+export function Pill({ color, italic, size = 'small', text, textColor }: Readonly<PillProps>) {
+  const TextComponent = italic ? ItalicTextComponents[size] : TextComponents[size];
+  const textStyle = React.useMemo(() => [styles.text, { color: textColor ?? theme.ui.text.inverse }], [textColor]);
+
   return (
     <View style={React.useMemo(() => [{ backgroundColor: color }, stylesBySize[size]], [color, size])}>
-      <TextComponent style={styles.text}>{text}</TextComponent>
+      <TextComponent style={textStyle}>{text}</TextComponent>
     </View>
   );
 }

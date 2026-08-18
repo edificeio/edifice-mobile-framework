@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, View } from 'react-native';
 
-import { MyAppsOnboardingSlide } from './my-apps-onboarding-slide';
-import { styles } from './styles';
-import { MyAppsOnboardingModalProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText } from '~/framework/components/text';
+
+import { MyAppsOnboardingSlide } from './my-apps-onboarding-slide';
+import { styles } from './styles';
+import { MyAppsOnboardingModalProps } from './types';
+
+const TEST_ID_PREFIX = 'myapps-onboarding-modal';
 
 export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnboardingModalProps>(
   ({ onComplete, onDismiss, slides }, ref) => {
@@ -22,8 +24,6 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
 
     const isLast = index === slides.length - 1;
     const isFirst = index === 0;
-
-    const leftLabel = isFirst ? getLang('myapp-onboarding-skip') : getLang('myapp-onboarding-previous');
 
     const reset = React.useCallback(() => {
       setIndex(0);
@@ -84,6 +84,7 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
 
     return (
       <ModalBox
+        testID={TEST_ID_PREFIX}
         translucentStatusBar
         ref={modalBoxRef}
         useNativeDriver
@@ -134,17 +135,23 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
 
             <View style={styles.bottom}>
               <View style={styles.navSide}>
-                <Pressable style={!isFirst && styles.navButton} onPress={leftAction}>
+                <Pressable
+                  testID={isFirst ? `${TEST_ID_PREFIX}-later` : `${TEST_ID_PREFIX}-previous`}
+                  style={!isFirst && styles.navButton}
+                  onPress={leftAction}>
                   {!isFirst && <Svg name="ui-chevron-left" width={14} height={14} fill={theme.palette.grey.graphite} />}
 
                   <BodyBoldText numberOfLines={1} ellipsizeMode="tail" style={styles.navButtonPrimary}>
-                    {leftLabel}
+                    {isFirst ? getLang('myapp-onboarding-skip') : getLang('myapp-onboarding-previous')}
                   </BodyBoldText>
                 </Pressable>
               </View>
 
               <View style={styles.navSide}>
-                <Pressable style={styles.navButton} onPress={handleNext}>
+                <Pressable
+                  testID={isLast ? `${TEST_ID_PREFIX}-complete` : `${TEST_ID_PREFIX}-next`}
+                  style={styles.navButton}
+                  onPress={handleNext}>
                   <BodyBoldText numberOfLines={1} ellipsizeMode="tail" style={styles.navButtonText}>
                     {isLast ? getLang('myapp-onboarding-complete') : getLang('myapp-onboarding-next')}
                   </BodyBoldText>

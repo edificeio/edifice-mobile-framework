@@ -134,10 +134,13 @@ export interface MailsVisible {
 }
 
 export interface MailsConversationPayload {
+  attachmentIds?: string[];
   body: string;
-  to: string[];
-  cc: string[];
-  cci: string[];
+  to?: string[];
+  cc?: string[];
+  cci?: string[];
   subject: string;
   noReply?: boolean;
+  subject: string;
+  to: string[];
 }

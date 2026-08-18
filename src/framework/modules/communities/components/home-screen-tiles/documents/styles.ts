@@ -25,7 +25,6 @@ export default StyleSheet.create({
   tileDocuments: {
     ...baseStyles.tileBase,
     ...baseStyles.tileAvailable,
-    justifyContent: 'space-between',
   },
   tileLoader: {
     borderRadius: UI_SIZES.radius.newCard,

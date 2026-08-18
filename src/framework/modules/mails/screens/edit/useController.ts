@@ -8,13 +8,19 @@ import { RichEditor } from '~/framework/components/inputs/rich-text';
 import { deleteAction } from '~/framework/components/menus/actions';
 import toast from '~/framework/components/toast';
 import { AccountType } from '~/framework/modules/auth/model';
-import { MailsDefaultFolders, MailsRecipients, MailsRecipientsType, MailsVisible } from '~/framework/modules/mails/model';
+import {
+  IMailsMailAttachment,
+  MailsDefaultFolders,
+  MailsRecipients,
+  MailsRecipientsType,
+  MailsVisible,
+} from '~/framework/modules/mails/model';
 import { mailsRouteNames } from '~/framework/modules/mails/navigation';
 import { mailsService } from '~/framework/modules/mails/service';
+import { patchInlinePartUrls } from '~/framework/modules/mails/service/carbonio-helpers';
 import {
   addHtmlForward,
   addHtmlReply,
-  convertAttachmentToDistantFile,
   convertRecipientGroupInfoToVisible,
   convertRecipientUserInfoToVisible,
   hasContent,
@@ -99,6 +105,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
    * because useLatest assigns synchronously during render, this is always current.
    */
   const latestStateRef = useLatest({
+    attachments,
     bodyContent,
     cc,
     cci,
@@ -152,8 +159,15 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
     async (attachment: IDistantFileWithId) => {
       if (!isServiceMethodAvailable(mailsService.attachments.remove)) return;
       try {
-        await mailsService.attachments.remove({ attachmentId: attachment.id, draftId: draftIdSaved! });
-        setAttachments(prevAttachments => prevAttachments.filter(att => att.id !== attachment.id));
+        const result = await mailsService.attachments.remove({ attachmentId: attachment.id, draftId: draftIdSaved! });
+        // Carbonio may renumber the surviving attachments' MIME parts when removing one, making
+        // their local ids stale (see INTEG-2133) — resync fully from the authoritative list when
+        // the backend provides one, instead of trusting previously known ids.
+        if (result?.attachments) {
+          setAttachments(result.attachments.map(a => mailsService.attachments.getDistantFile(a, draftIdSaved!)));
+        } else {
+          setAttachments(prevAttachments => prevAttachments.filter(att => att.id !== attachment.id));
+        }
       } catch (e) {
         console.error(e);
         toast.showError();
@@ -180,7 +194,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   }, []);
 
   const fetchAttachments = React.useCallback(
-    draft => draft.attachments.map(att => convertAttachmentToDistantFile(att, draft.id)),
+    draft => draft.attachments.map(att => mailsService.attachments.getDistantFile(att, draft.id)),
     [],
   );
 
@@ -236,6 +250,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
   const onSendDraft = React.useCallback(async () => {
     const {
+      attachments: currentAttachments,
       bodyContent: currentBody,
       cc: currentCc,
       cci: currentCci,
@@ -255,12 +270,21 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       const ccIds = currentCc.map(r => r.id);
       const cciIds = currentCci.map(r => r.id);
       const bodyToSave = currentIsHistoryOpen ? currentBody : `${currentBody}${currentHistory}`;
+      const attachmentIds = currentAttachments.map(a => a.id);
 
       // create or update draft
       if (draftIdRef.current) {
         await mailsService.mail.updateDraft(
           { draftId: draftIdRef.current },
-          { body: bodyToSave, cc: ccIds, cci: cciIds, noReply: currentNoReply, subject: currentSubject, to: toIds },
+          {
+            attachmentIds,
+            body: bodyToSave,
+            cc: ccIds,
+            cci: cciIds,
+            noReply: currentNoReply,
+            subject: currentSubject,
+            to: toIds,
+          },
         );
       } else {
         // Create draft only when we bout to quit the page
@@ -283,15 +307,22 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
 
   const onSend = React.useCallback(async () => {
     const {
+      attachments: currentAttachments,
       bodyContent: currentBody,
       cc: currentCc,
       cci: currentCci,
       history: currentHistory,
       isHistoryOpen: currentIsHistoryOpen,
+      isSending: currentIsSending,
       noReply: currentNoReply,
       subject: currentSubject,
       to: currentTo,
     } = latestStateRef.current;
+
+    // Guard against duplicate sends: a double-tap before the disabled state re-renders, or the
+    // "Envoyer" button of the missing-content Alert firing while a previous send is still in
+    // flight (see INTEG-2132).
+    if (currentIsSending) return;
 
     try {
       setIsSending(true);
@@ -299,10 +330,19 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       const ccIds = currentCc.map(recipient => recipient.id);
       const cciIds = currentCci.map(recipient => recipient.id);
       const bodyToSave = currentIsHistoryOpen ? currentBody : `${currentBody}${currentHistory}`;
+      const attachmentIds = currentAttachments.map(a => a.id);
 
       const response = (await mailsService.mail.send(
         { draftId: draftIdSaved, inReplyTo: initialMailInfo?.id ?? undefined },
-        { body: bodyToSave, cc: ccIds, cci: cciIds, noReply: currentNoReply, subject: currentSubject, to: toIds },
+        {
+          attachmentIds,
+          body: bodyToSave,
+          cc: ccIds,
+          cci: cciIds,
+          noReply: currentNoReply,
+          subject: currentSubject,
+          to: toIds,
+        },
       )) as SendMailResponse;
 
       let shouldNavigate = true;
@@ -498,13 +538,30 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
   );
 
   const onImportAttachmentsResult = React.useCallback(
-    (result: Array<{ filename: string; id: string | undefined; url: string | undefined }>) => {
-      const newAttachments: IDistantFileWithId[] = result
-        .filter(f => f.id)
-        .map(f => ({ filename: f.filename, id: f.id!, url: f.url ?? '' }));
-      setAttachments(prev => [...prev, ...newAttachments]);
+    (
+      result: Array<{ filename: string; id: string | undefined; url: string | undefined }>,
+      inlinePartMapping?: Record<string, string>,
+      attachments?: IMailsMailAttachment[],
+    ) => {
+      // Carbonio may renumber attachments already present in the draft (added in a previous
+      // batch) when adding new ones, making their local ids stale (see INTEG-2133) — resync
+      // fully from the authoritative list when the backend provides one.
+      if (attachments) {
+        setAttachments(attachments.map(a => mailsService.attachments.getDistantFile(a, draftIdSaved!)));
+      } else {
+        const newAttachments: IDistantFileWithId[] = result
+          .filter(f => f.id)
+          .map(f => ({ filename: f.filename, id: f.id!, url: f.url ?? '' }));
+        setAttachments(prev => [...prev, ...newAttachments]);
+      }
+
+      if (inlinePartMapping && Object.keys(inlinePartMapping).length > 0) {
+        const patched = patchInlinePartUrls(latestStateRef.current.bodyContent, inlinePartMapping);
+        setBodyContent(patched);
+        editorRef.current?.setContentHTML(patched);
+      }
     },
-    [],
+    [draftIdSaved],
   );
 
   React.useEffect(() => {
@@ -615,6 +672,7 @@ export const useMailsEditController = ({ navigation, route }: UseMailsEditContro
       initialContentHTML,
       inputFocused,
       isHistoryOpen,
+      isSending,
       isStartScroll,
       mailSubjectType: type,
       moreRecipientsFields,

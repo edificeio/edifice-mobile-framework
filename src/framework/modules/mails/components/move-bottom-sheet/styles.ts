@@ -4,8 +4,8 @@ import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   contentBottomSheet: {
+    flexGrow: 1,
     minHeight: 200,
-    paddingBottom: getScaleWidth(60),
   },
   nofolders: {
     alignItems: 'center',

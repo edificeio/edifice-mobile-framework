@@ -97,7 +97,7 @@ try {
     .padStart(2, '0')}`;
   versionNumber = `${major}.${minor}.${rev}`;
   fullVersion = `${versionNumber}${type}(${buildNumber})`;
-  console.info(`==> Version will be ${fullVersion})`);
+  console.info(`==> Version will be ${fullVersion}`);
 } catch (error) {
   console.error('!!! Unable to compute build number !!!');
   console.error(error);
@@ -146,6 +146,7 @@ try {
       .replaceAll("\\\"", "")
       .replaceAll("\"", "");
     lastContent.last = moment().format('YYYY-MM-DD HH:mm:ss');
+    lastContent.order = fullBuildType;
     lastContent.track = versionNumber;
     lastContent.version = fullVersion;
     console.info('=> Release Notes :');

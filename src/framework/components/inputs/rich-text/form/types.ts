@@ -23,6 +23,12 @@ export interface RichEditorFormProps extends ScrollViewProps {
   editorRef?: React.Ref<RichEditor>;
   /** When true (default), the toolbar shows the button to add photos. Set to false to disable. */
   allowMultimediaUpload?: boolean;
+  /**
+   * Optional override for inline image upload. When provided, files selected from the
+   * photo picker are uploaded via this function instead of the default workspace service.
+   * Must return the URL to embed in the <img> tag.
+   */
+  onInlineImageUpload?: (file: LocalFile) => Promise<string>;
 }
 
 export interface RichEditorFormReduxProps {
@@ -37,7 +43,7 @@ export interface RichEditorFormAllProps
   extends
     RichEditorFormProps,
     RichEditorFormReduxProps,
-    NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.RichTextEditor> {}
+    Partial<NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.RichTextEditor>> {}
 
 export enum UploadStatus {
   IDLE,
@@ -50,10 +56,14 @@ export interface UploadFile {
   localFile: LocalFile;
   status: UploadStatus;
   workspaceID?: string;
+  /** Set when using a custom uploader (e.g. Carbonio) instead of workspace. */
+  fileUrl?: string;
   error?: string;
 }
 
 export interface UploadedFile {
   status: UploadStatus;
   workspaceID?: string;
+  /** Set when using a custom uploader (e.g. Carbonio) instead of workspace. */
+  fileUrl?: string;
 }

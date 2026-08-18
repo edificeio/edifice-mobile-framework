@@ -14,16 +14,6 @@ import {
 import styled from '@emotion/native';
 import { Moment } from 'moment';
 
-import {
-  cardPadding,
-  cardPaddingEqual,
-  cardPaddingMerging,
-  cardPaddingSmall,
-  CardWithoutPadding,
-  TouchCardWithoutPadding,
-} from './base';
-import { OverviewCardProps } from './pictureCard';
-
 import theme from '~/app/theme';
 import { Badge } from '~/framework/components/badge';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
@@ -33,6 +23,16 @@ import { displayPastDate } from '~/framework/util/date';
 import { Image } from '~/framework/util/media-deprecated';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import HtmlContentView from '~/ui/HtmlContentView';
+
+import {
+  cardPadding,
+  cardPaddingEqual,
+  cardPaddingMerging,
+  cardPaddingSmall,
+  CardWithoutPadding,
+  TouchCardWithoutPadding,
+} from './base';
+import { OverviewCardProps } from './picture';
 
 export interface IContentCardProps extends ViewProps {
   header?: React.ReactElement;
