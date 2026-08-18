@@ -3,11 +3,11 @@ import { LayoutChangeEvent, StyleSheet, TouchableOpacity, View } from 'react-nat
 
 import { SvgIconName } from '~/framework/components/picture';
 import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { Image } from '~/framework/modules/media/components/image';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import newsModuleConfig from '~/framework/modules/news/module-config';
 import type { NewsThreadItemReduce } from '~/framework/modules/news/screens/home/types';
 import { extractMediaFromHtml, extractTextFromHtml } from '~/framework/util/htmlParser/content';
-import { Image } from '~/framework/util/media/components/image';
 import type { INotificationMedia } from '~/framework/util/notifications';
 import { sessionImageSource } from '~/framework/util/transport';
 
