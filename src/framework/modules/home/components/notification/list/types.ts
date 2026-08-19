@@ -6,4 +6,6 @@ export interface NotificationListProps {
   onEndReached: () => void;
   onPressItem: (notification: ITimelineNotification) => void;
   loadingMore: boolean;
+  refreshing: boolean;
+  onRefresh: () => void;
 }
