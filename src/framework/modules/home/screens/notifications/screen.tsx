@@ -54,5 +54,13 @@ export function HomeNotificationsScreen() {
     [dispatch, navigation],
   );
 
-  return <NotificationList notifications={notifications.data} onEndReached={onEndReached} onPressItem={onPressItem} />;
+  return (
+    <NotificationList
+      notifications={notifications.data}
+      loading={notifications.isPristine}
+      loadingMore={notifications.isFetching && !notifications.isPristine}
+      onEndReached={onEndReached}
+      onPressItem={onPressItem}
+    />
+  );
 }
