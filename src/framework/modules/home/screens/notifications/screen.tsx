@@ -1,27 +1,58 @@
 import * as React from 'react';
 
 import { MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
-import { Badge } from '~/framework/components/badge';
-import ScrollView from '~/framework/components/scrollView';
-import { CaptionText } from '~/framework/components/text';
+import { NotificationList } from '~/framework/modules/home/components';
+import { getUserbookAuthor } from '~/framework/modules/home/components/notification/util';
+import { loadNotificationsPageAction } from '~/framework/modules/timeline/actions';
+import timelineConfig from '~/framework/modules/timeline/module-config';
+import { userRouteNames } from '~/framework/modules/user/navigation';
+import type { ITimelineNotification } from '~/framework/util/notifications';
+import { defaultNotificationActionStack, handleNotificationAction } from '~/framework/util/notifications/routing';
 
-import styles from './styles';
-
+// ToDo: bring back the badge of the unread count once the back exposes it (lot 2).
 export const HomeNotificationsScreenOptions = (): MaterialTopTabNavigationOptions => ({
-  // ToDo: get the unread count of the notifications from the store.
-  tabBarBadge: () => <Badge content={2} color={theme.palette.status.failure.regular} />,
   tabBarButtonTestID: 'home-tab-notifications',
   title: I18n.get('home-notifications-title'),
 });
 
-// ToDo: replace by the real tab content.
 export function HomeNotificationsScreen() {
-  return (
-    <ScrollView contentContainerStyle={styles.content}>
-      <CaptionText>{I18n.get('home-notifications-title')}</CaptionText>
-    </ScrollView>
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+
+  const notifications = useSelector(state => timelineConfig.getState(state).notifications);
+
+  // get first page only.
+  React.useEffect(() => {
+    dispatch(loadNotificationsPageAction(0));
+  }, [dispatch]);
+
+  const onEndReached = React.useCallback(() => {
+    if (!notifications.endReached) dispatch(loadNotificationsPageAction());
+  }, [dispatch, notifications.endReached]);
+
+  const onPressItem = React.useCallback(
+    (notification: ITimelineNotification) => {
+      const author = getUserbookAuthor(notification);
+      if (author) return navigation.navigate(userRouteNames.profile, { userId: author });
+
+      dispatch(
+        handleNotificationAction(
+          notification,
+          defaultNotificationActionStack,
+          navigation,
+          navigation.dispatch,
+          'Home Notification',
+          false,
+        ),
+      );
+    },
+    [dispatch, navigation],
   );
+
+  return <NotificationList notifications={notifications.data} onEndReached={onEndReached} onPressItem={onPressItem} />;
 }
