@@ -3,9 +3,10 @@ import { StyleSheet } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PLACEHOLDER_LINE_HEIGHT } from '~/framework/modules/home/components/constants';
+import { MEDIA_GAP, MEDIA_HEIGHT } from '~/framework/modules/home/components/media-preview/constants';
 
 import { CAROUSEL_EDGE_INSET, CAROUSEL_GAP } from '../carousel/constants';
-import { CARD_HEIGHT, CARD_WIDTH, IMAGE_HEIGHT, THUMBNAIL_SIZE } from '../constants';
+import { CARD_HEIGHT, CARD_WIDTH, THUMBNAIL_SIZE } from '../constants';
 
 export default StyleSheet.create({
   body: {
@@ -34,12 +35,12 @@ export default StyleSheet.create({
   image: {
     borderRadius: UI_SIZES.radius.medium,
     flex: 1,
-    height: IMAGE_HEIGHT,
+    height: MEDIA_HEIGHT,
     marginBottom: 0,
   },
   images: {
     flexDirection: 'row',
-    gap: UI_SIZES.spacing.minor,
+    gap: MEDIA_GAP,
   },
   line: {
     height: PLACEHOLDER_LINE_HEIGHT,
