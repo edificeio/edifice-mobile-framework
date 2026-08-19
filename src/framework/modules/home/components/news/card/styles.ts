@@ -14,16 +14,6 @@ export default StyleSheet.create({
     height: CARD_HEIGHT,
     width: CARD_WIDTH,
   },
-  textArea: {
-    // Takes what the title leaves and what the images need, which fixes how many lines fit.
-    flex: 1,
-    overflow: 'hidden',
-  },
-  textAreaMeasured: {
-    // Once the count is known the area hugs its text, so the images follow it instead of hanging
-    // at the bottom of the card when the text is short or missing.
-    flex: 0,
-  },
   threadTitle: {
     flexShrink: 1,
   },
