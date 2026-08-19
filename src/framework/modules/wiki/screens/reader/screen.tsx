@@ -259,8 +259,6 @@ export function WikiReaderScreenLoaded({
   const wiki = useSelector(selectors.wiki(resourceId));
   const page = useSelector(selectors.page(pageId));
 
-  console.info('PAGE COMMENTS', page.comments);
-
   const switchToPage = React.useCallback(
     (id: WikiPage['id'], reverse?: boolean) => {
       navigation.replace(wikiRouteNames.reader, { pageId: id, resourceId, reverseAnimation: reverse });
@@ -284,7 +282,7 @@ export function WikiReaderScreenLoaded({
       <SocialResourceViewer
         navigation={navigation}
         canAddComment={true} // ToDo: use resource rights here
-        comments={DEBUG_LIST_DATA}>
+        comments={page.comments}>
         <WikiReaderContent onGoToPage={switchToPage} pageId={pageId} resourceId={resourceId} onLoad={onLoad} />
       </SocialResourceViewer>
       {!loaded && <View style={styles.webViewPlaceholder}>{renderPlaceholder()}</View>}

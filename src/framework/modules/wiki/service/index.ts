@@ -159,8 +159,8 @@ const hydratePageComments = (data: API.Wiki.GetPageResponse['comments'] = []): S
   }
 
   // 2. Sort data
-  parsedComments.sort((a, b) => Temporal.Instant.compare(a[1][0].date, b[1][0].date));
-  parsedResponses.sort((a, b) => Temporal.Instant.compare(a[1].date, b[1].date));
+  parsedComments.sort((a, b) => Temporal.Instant.compare(b[1][0].date, a[1][0].date)); // comments are in reverse-ordrer
+  parsedResponses.sort((a, b) => Temporal.Instant.compare(a[1].date, b[1].date)); // responses are not
   const comments = Object.fromEntries(parsedComments);
   for (const [commentId, response] of parsedResponses) {
     if (commentId in comments) comments[commentId].push(response);
