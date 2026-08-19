@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { LayoutChangeEvent, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { LayoutChangeEvent, TouchableOpacity, View } from 'react-native';
 
 import { SvgIconName } from '~/framework/components/picture';
-import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { HeadingXSText, SmallText } from '~/framework/components/text';
+import { MediaPreview } from '~/framework/modules/home/components/media-preview';
 import { Image } from '~/framework/modules/media/components/image';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import newsModuleConfig from '~/framework/modules/news/module-config';
 import type { NewsThreadItemReduce } from '~/framework/modules/news/screens/home/types';
 import { extractMediaFromHtml, extractTextFromHtml } from '~/framework/util/htmlParser/content';
-import type { INotificationMedia } from '~/framework/util/notifications';
 import { sessionImageSource } from '~/framework/util/transport';
 
-import { NEWS_BACKGROUNDS, PREVIEW_IMAGES, TEXT_LINE_HEIGHT, THUMBNAIL_ICON_SIZE, TITLE_LINES } from '../constants';
+import { NEWS_BACKGROUNDS, TEXT_LINE_HEIGHT, THUMBNAIL_ICON_SIZE, TITLE_LINES } from '../constants';
 import styles from './styles';
 import { NewsCardProps } from './types';
 
@@ -26,32 +26,6 @@ const ThreadThumbnail = React.memo(({ icon }: { icon: NewsThreadItemReduce['icon
   return (
     <View style={styles.thumbnail}>
       <Image source={source} fallback={fallback} iconSize={THUMBNAIL_ICON_SIZE} style={styles.thumbnailImage} />
-    </View>
-  );
-});
-
-const NewsImages = React.memo(({ images }: { images: INotificationMedia[] }) => {
-  const remaining = images.length - PREVIEW_IMAGES;
-  const shown = images.slice(0, remaining > 0 ? PREVIEW_IMAGES + 1 : PREVIEW_IMAGES);
-
-  return (
-    <View style={styles.images}>
-      {shown.map((image, index) => {
-        const source = sessionImageSource({ uri: image.src as string });
-        const isLast = remaining > 0 && index === PREVIEW_IMAGES;
-
-        return isLast ? (
-          <View key={index} style={styles.moreImage}>
-            <Image source={source} style={StyleSheet.absoluteFill} />
-            <View style={[StyleSheet.absoluteFill, styles.moreOverlay]} />
-            <SmallBoldText style={styles.moreCount}>+{remaining}</SmallBoldText>
-          </View>
-        ) : (
-          <View key={index} style={[styles.image, shown.length === 1 && styles.imageAlone]}>
-            <Image source={source} style={styles.imageContent} />
-          </View>
-        );
-      })}
     </View>
   );
 });
@@ -94,7 +68,7 @@ export const NewsCard = React.memo(({ item, onPress }: NewsCardProps) => {
         <View style={[styles.textArea, textLines ? styles.textAreaMeasured : null]} onLayout={onTextAreaLayout}>
           {text && textLines ? <SmallText numberOfLines={textLines}>{text}</SmallText> : null}
         </View>
-        {images.length ? <NewsImages images={images} /> : null}
+        {images.length ? <MediaPreview media={images} /> : null}
       </View>
     </TouchableOpacity>
   );
