@@ -2,7 +2,14 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { buildAppLookupMap, resolveAppTheme, selectAggregatedApps } from '~/framework/modules/myapps/reducer';
+import {
+  buildAppLookupMap,
+  buildNotifTypeLookupMap,
+  resolveAppShades,
+  resolveAppTheme,
+  selectAggregatedApps,
+} from '~/framework/modules/myapps/reducer';
+import { registeredNotificationTypesData } from '~/framework/modules/timeline/reducer/notif-definitions/selectors';
 import { IAppThemeInfo } from '~/framework/util/moduleTool';
 
 /**
@@ -33,4 +40,29 @@ export function getDefaultAppTheme(): IAppThemeInfo {
     colors: theme.palette.grey,
     icon: 'ui-infoCircle',
   };
+}
+
+/**
+ * Returns the theme of the app a notification comes from.
+ *
+ * The notification type names its app, whose shades and icon are then resolved, the same way
+ * `useNotificationBadge` resolves its badge.
+ *
+ * @param notifType Notification type
+ * @param eventType Notification event type
+ * @returns IAppThemeInfo or undefined when the app is unknown
+ */
+export function useNotificationAppTheme(notifType: string, eventType: string): IAppThemeInfo | undefined {
+  const aggregatedApps = useSelector(selectAggregatedApps);
+  const notifTypes = useSelector(registeredNotificationTypesData);
+
+  const notifTypeMap = React.useMemo(() => buildNotifTypeLookupMap(notifTypes ?? []), [notifTypes]);
+
+  return React.useMemo(() => {
+    const appName = notifTypeMap.get(`${notifType}.${eventType}`)?.['app-name'];
+    if (!appName) return undefined;
+
+    const app = aggregatedApps?.[appName];
+    return app ? { colors: resolveAppShades(app.color), icon: app.icon } : undefined;
+  }, [aggregatedApps, notifTypeMap, notifType, eventType]);
 }
