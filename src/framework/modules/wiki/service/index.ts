@@ -101,8 +101,8 @@ const hydrateWikiData = (data: API.Wiki.ListPagesResponse, session: AuthActiveAc
   };
 };
 
-const hydrateWikiPageData = (data: API.Wiki.GetPageResponse): WikiPage => ({
-  comments: hydratePageComments(data.comments),
+const hydrateWikiPageData = async (data: API.Wiki.GetPageResponse): Promise<WikiPage> => ({
+  comments: await hydratePageComments(data.comments),
   content: data.content,
   contentVersion: data.contentVersion,
   createdAt: Temporal.Instant.from((data.created ?? data.modified).$date),
@@ -119,12 +119,40 @@ const hydrateWikiPageData = (data: API.Wiki.GetPageResponse): WikiPage => ({
 type ParsingCommentOrResponse = Partial<ArrayElement<SocialResourceViewer.Props['comments']>> &
   Pick<ArrayElement<SocialResourceViewer.Props['comments']>, 'id' | 'date' | 'type'>;
 
-const hydratePageComments = (data: API.Wiki.GetPageResponse['comments'] = []): SocialResourceViewer.Props['comments'] => {
+const parseAccountTypesMap = {
+  External: AccountType.External,
+  Guest: AccountType.Guest,
+  Personnel: AccountType.Personnel,
+  Relative: AccountType.Relative,
+  Student: AccountType.Student,
+  Teacher: AccountType.Teacher,
+} as const;
+
+const hydratePageComments = async (
+  data: API.Wiki.GetPageResponse['comments'] = [],
+): Promise<SocialResourceViewer.Props['comments']> => {
   const parsedComments: [
     (CommentItem | CommentItemDeleted | ResponseItem | ResponseItemDeleted)['id'],
     (CommentItem | CommentItemDeleted | ResponseItem | ResponseItemDeleted)[],
   ][] = [];
   const parsedResponses: [(ResponseItem | ResponseItemDeleted)['id'], ResponseItem | ResponseItemDeleted][] = [];
+
+  // 0. Fetch fucking account type for each author because backend does not provide them by itself.
+  const authors = new Set<(CommentItem | ResponseItem)['authorId']>();
+  for (const item of data) {
+    if ('author' in item) authors.add(item.author);
+  }
+  const userTypes = Object.fromEntries(
+    await Promise.all(
+      [...authors].map(async authorId => {
+        const userData = await sessionFetch.json<{
+          status: 'ok';
+          result: Record<string, { type: (keyof typeof parseAccountTypesMap)[] }>;
+        }>(`/userbook/api/person?id=${authorId}`);
+        return [authorId, parseAccountTypesMap[userData.result[0].type[0]] ?? undefined] as const;
+      }),
+    ),
+  );
 
   // 1. Parse data
   for (const item of data) {
@@ -148,7 +176,7 @@ const hydratePageComments = (data: API.Wiki.GetPageResponse['comments'] = []): S
       ret.value = (item as API.Wiki.GetPageCommentResponse | API.Wiki.GetPageComment).comment;
       ret.authorId = (item as API.Wiki.GetPageCommentResponse | API.Wiki.GetPageComment).author;
       ret.authorName = (item as API.Wiki.GetPageCommentResponse | API.Wiki.GetPageComment).authorName;
-      ret.authorAccountType = AccountType.Relative; // ToDo get actuel account type
+      ret.authorAccountType = userTypes[ret.authorId] ?? AccountType.Guest; // use guest if user is not found... Don't known what to do .
     }
 
     if ('inReplyTo' in ret && ret.inReplyTo) {
