@@ -17,12 +17,17 @@ export default StyleSheet.create({
     paddingTop: UI_SIZES.spacing.small - UI_SIZES.border.thin,
   },
   itemCommentContentWrapper: { flex: 1, gap: UI_SIZES.spacing.tiny, paddingBottom: UI_SIZES.spacing.minor },
+  itemCommentContentWrapperDeletedComment: { paddingBottom: 0 },
   itemCommon: {
     flexDirection: 'row',
     gap: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.big,
   },
   itemContentButtons: { flexDirection: 'row', gap: UI_SIZES.spacing.minor },
+  itemContentDeletedText: {
+    borderColor: theme.palette.grey.pearl,
+    borderWidth: UI_SIZES.border.small,
+  },
   itemContentText: {
     backgroundColor: theme.palette.grey.fog,
     borderRadius: UI_SIZES.radius.medium,
@@ -37,25 +42,48 @@ export default StyleSheet.create({
   itemResponse: {},
   itemResponseAvatar: { paddingTop: UI_SIZES.spacing.small },
   itemResponseContentWrapper: { flex: 1, gap: UI_SIZES.spacing.tiny, paddingVertical: UI_SIZES.spacing.small },
+  itemResponseDeleted: {
+    gap: 0, // reset gap for deleted responses
+  },
   itemTreeComment: { gap: UI_SIZES.spacing.minor - UI_SIZES.border.small },
-  itemTreeCommon: { alignItems: 'center', flex: 0, flexBasis: AvatarSizes.xsm },
-  itemTreeDecoCurve: {
+  itemTreeCommon: { alignItems: 'center', flex: 0, flexBasis: AvatarSizes.xsm, flexDirection: 'column' },
+  itemTreeDecoCurveCenter: {
+    marginBottom: AvatarSizes.xsm / 4 + UI_SIZES.border.small * 2,
+  },
+  itemTreeDecoCurveCommon: {
     alignSelf: 'stretch',
     borderBottomLeftRadius: UI_SIZES.radius.newCard,
     borderBottomWidth: UI_SIZES.border.small,
     borderColor: theme.palette.grey.cloudy,
     borderLeftWidth: UI_SIZES.border.small,
-    height: AvatarSizes.xsm / 2 + UI_SIZES.spacing.small + UI_SIZES.border.small / 2,
-    marginBottom: -(AvatarSizes.xsm / 2 + UI_SIZES.spacing.small),
+
+    height: AvatarSizes.xsm / 2 + UI_SIZES.border.small / 2,
     marginLeft: AvatarSizes.xsm / 2 - UI_SIZES.border.small / 2,
     marginRight: -UI_SIZES.spacing.tiny,
-    right: 0,
-    top: 0,
   },
-  itemTreeDecoStraight: { backgroundColor: theme.palette.grey.cloudy, flex: 1, width: UI_SIZES.border.small },
+  itemTreeDecoCurveTop: {
+    height: UI_SIZES.spacing.small + UI_SIZES.border.small / 2 + AvatarSizes.xsm / 2 + UI_SIZES.border.small / 2,
+  },
+  itemTreeDecoStraight: {
+    backgroundColor: theme.palette.grey.cloudy,
+    bottom: 0,
+    flex: 1,
+    position: 'absolute',
+    top: 0,
+    width: UI_SIZES.border.small,
+  },
+  itemTreeDecoStraightComment: {
+    top: AvatarSizes.xsm + UI_SIZES.spacing.minor - UI_SIZES.border.small,
+  },
+  itemTreeDecoStraightTop: {
+    bottom: '50%',
+    marginBottom: UI_SIZES.spacing.small - UI_SIZES.border.small / 2,
+  },
   itemTreeResponse: {
-    flexBasis: AvatarSizes.xsm + UI_SIZES.spacing.tiny,
-    paddingRight: UI_SIZES.spacing.tiny,
+    marginRight: UI_SIZES.spacing.tiny,
+  },
+  itemTreeResponseDeleted: {
+    justifyContent: 'center',
   },
   itemUserHeader: {
     alignItems: 'baseline',
