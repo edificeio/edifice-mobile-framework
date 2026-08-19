@@ -4,6 +4,7 @@ import { LayoutChangeEvent, TouchableOpacity, View } from 'react-native';
 import { SvgIconName } from '~/framework/components/picture';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import { MediaPreview } from '~/framework/modules/home/components/media-preview';
+import blockStyles from '~/framework/modules/home/components/styles';
 import { Image } from '~/framework/modules/media/components/image';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import newsModuleConfig from '~/framework/modules/news/module-config';
@@ -53,17 +54,17 @@ export const NewsCard = React.memo(({ item, onPress }: NewsCardProps) => {
     setTextLines(Math.floor(nativeEvent.layout.height / TEXT_LINE_HEIGHT));
   }, []);
 
-  const cardStyle = React.useMemo(() => [styles.card, { backgroundColor }], [backgroundColor]);
+  const cardStyle = React.useMemo(() => [blockStyles.block, styles.card, { backgroundColor }], [backgroundColor]);
 
   return (
     <TouchableOpacity style={cardStyle} onPress={onCardPress} activeOpacity={0.7}>
-      <View style={styles.header}>
+      <View style={blockStyles.blockHeader}>
         <ThreadThumbnail icon={thread.icon} />
         <SmallText style={styles.threadTitle} numberOfLines={1}>
           {thread.title}
         </SmallText>
       </View>
-      <View style={styles.body}>
+      <View style={[blockStyles.blockBody, styles.body]}>
         <HeadingXSText numberOfLines={TITLE_LINES}>{news.title}</HeadingXSText>
         <View style={[styles.textArea, textLines ? styles.textAreaMeasured : null]} onLayout={onTextAreaLayout}>
           {text && textLines ? <SmallText numberOfLines={textLines}>{text}</SmallText> : null}
