@@ -1,33 +1,18 @@
 import { StyleSheet } from 'react-native';
 
-import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 import { CARD_HEIGHT, CARD_WIDTH, THUMBNAIL_SIZE } from '../constants';
 
 export default StyleSheet.create({
   body: {
-    backgroundColor: theme.palette.grey.white,
-    borderRadius: UI_SIZES.radius.large,
     flex: 1,
-    gap: UI_SIZES.spacing.tiny,
     // The card has a fixed height, so anything too long is cut instead of overflowing.
     overflow: 'hidden',
-    padding: UI_SIZES.spacing.small,
   },
   card: {
-    borderRadius: UI_SIZES.radius.extraLarge,
-    gap: UI_SIZES.spacing.tiny,
     height: CARD_HEIGHT,
-    padding: UI_SIZES.spacing.tiny,
     width: CARD_WIDTH,
-  },
-  header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.minor,
-    paddingVertical: UI_SIZES.spacing.tiny,
   },
   textArea: {
     // Takes what the title leaves and what the images need, which fixes how many lines fit.
