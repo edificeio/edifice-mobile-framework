@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ListRenderItemInfo } from 'react-native';
+import { ListRenderItemInfo, RefreshControl } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
@@ -26,7 +26,12 @@ const renderEmpty = () => (
 );
 
 export const NotificationList = React.memo(
-  ({ loading, loadingMore, notifications, onEndReached, onPressItem }: NotificationListProps) => {
+  ({ loading, loadingMore, notifications, onEndReached, onPressItem, onRefresh, refreshing }: NotificationListProps) => {
+    const refreshControl = React.useMemo(
+      () => <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
+      [onRefresh, refreshing],
+    );
+
     const renderItem = React.useCallback(
       ({ item }: ListRenderItemInfo<ITimelineNotification>) => (
         // A mood or a motto has no resource, but opens the profile of its author.
@@ -38,14 +43,17 @@ export const NotificationList = React.memo(
       [onPressItem],
     );
 
+    const busy = loading || refreshing;
+
     return (
       <FlatList
-        data={loading ? undefined : notifications}
+        data={busy ? undefined : notifications}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        contentContainerStyle={loading || notifications.length ? undefined : styles.empty}
-        ListEmptyComponent={loading ? <NotificationsPlaceholder preview /> : renderEmpty}
+        contentContainerStyle={busy || notifications.length ? undefined : styles.empty}
+        ListEmptyComponent={busy ? <NotificationsPlaceholder preview /> : renderEmpty}
         ListFooterComponent={loadingMore ? <NotificationsPlaceholder count={PLACEHOLDER_NEXT_PAGE_CARDS} /> : null}
+        refreshControl={refreshControl}
         onEndReached={onEndReached}
         onEndReachedThreshold={1}
       />
