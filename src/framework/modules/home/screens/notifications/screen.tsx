@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { NotificationList } from '~/framework/modules/home/components';
 import { getUserbookAuthor } from '~/framework/modules/home/components/notification/util';
+import { useRefresh } from '~/framework/modules/home/hooks';
 import { loadNotificationsPageAction } from '~/framework/modules/timeline/actions';
 import timelineConfig from '~/framework/modules/timeline/module-config';
 import { userRouteNames } from '~/framework/modules/user/navigation';
@@ -35,6 +36,12 @@ export function HomeNotificationsScreen() {
     if (!notifications.endReached) dispatch(loadNotificationsPageAction());
   }, [dispatch, notifications.endReached]);
 
+  // Fetches the first page over the one in place. The pages below are refreshed as the user
+  // scrolls back down to them.
+  const reload = React.useCallback(() => dispatch(loadNotificationsPageAction(0)), [dispatch]);
+
+  const { onRefresh, refreshing } = useRefresh(reload);
+
   const onPressItem = React.useCallback(
     (notification: ITimelineNotification) => {
       const author = getUserbookAuthor(notification);
@@ -58,7 +65,9 @@ export function HomeNotificationsScreen() {
     <NotificationList
       notifications={notifications.data}
       loading={notifications.isPristine}
-      loadingMore={notifications.isFetching && !notifications.isPristine}
+      loadingMore={notifications.isFetching && !notifications.isPristine && !refreshing}
+      refreshing={refreshing}
+      onRefresh={onRefresh}
       onEndReached={onEndReached}
       onPressItem={onPressItem}
     />
