@@ -18,13 +18,8 @@ export const CARD_WIDTH = UI_SIZES.screen.width - 2 * CAROUSEL_EDGE_INSET - CARO
 
 export const CARD_HEIGHT = getScaleWidth(223);
 
-export const PREVIEW_IMAGES = 2;
-
-export const IMAGE_HEIGHT = getScaleWidth(75);
-
-// width a lone image keeps, so it never spans the whole card.
-export const SINGLE_IMAGE_WIDTH = getScaleWidth(102);
-export const MORE_IMAGES_WIDTH = getScaleWidth(52);
+/** Drawing of the empty screen. */
+export const EMPTY_IMAGE_SIZE = getScaleWidth(75);
 
 export const NEWS_BACKGROUNDS = {
   headline: theme.palette.complementary.yellow.pale,
