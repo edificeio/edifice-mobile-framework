@@ -10,27 +10,14 @@ import { CARD_HEIGHT, CARD_WIDTH, THUMBNAIL_SIZE } from '../constants';
 
 export default StyleSheet.create({
   body: {
-    backgroundColor: theme.palette.grey.white,
-    borderRadius: UI_SIZES.radius.large,
     flex: 1,
-    padding: UI_SIZES.spacing.small,
   },
   card: {
     backgroundColor: theme.palette.grey.fog,
-    borderRadius: UI_SIZES.radius.extraLarge,
     flexGrow: 0,
     flexShrink: 0,
-    gap: UI_SIZES.spacing.tiny,
     height: CARD_HEIGHT,
-    padding: UI_SIZES.spacing.tiny,
     width: CARD_WIDTH,
-  },
-  header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.minor,
-    paddingVertical: UI_SIZES.spacing.tiny,
   },
   image: {
     borderRadius: UI_SIZES.radius.medium,
@@ -49,7 +36,7 @@ export default StyleSheet.create({
   row: {
     flexDirection: 'row',
     gap: CAROUSEL_GAP,
-    // Runs to the edge of the screen like the row it stands for, so the second card is cut there.
+    // Reaches the edge of the screen like the real row, so the second card is cut there.
     marginRight: -CAROUSEL_EDGE_INSET,
     overflow: 'hidden',
   },
