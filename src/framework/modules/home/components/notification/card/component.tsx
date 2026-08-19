@@ -80,7 +80,7 @@ export const NotificationCard = React.memo(({ notification, onPress }: Notificat
 
   const appName = I18n.get(`timeline-apptype-${notification.type}`.toLowerCase().replaceAll('_', '-'));
 
-  const showChip = !media?.length && !!sender?.id;
+  const showChip = !media?.length && !!sender?.id && !mood;
 
   const Container = onPress ? TouchableOpacity : View;
 
