@@ -11,6 +11,7 @@ import ScrollView from '~/framework/components/scrollView';
 import { FlashMessageList, FlashMessagePlaceholder, NewsSection } from '~/framework/modules/home/components';
 import { NEWS_COUNT } from '~/framework/modules/home/components/news/constants';
 import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
+import { useRefresh } from '~/framework/modules/home/hooks';
 import { getNewsItemsAction, getNewsThreadsAction } from '~/framework/modules/news/actions';
 import type { NewsItem, NewsThreadItem } from '~/framework/modules/news/model';
 import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/news/navigation';
@@ -28,13 +29,12 @@ export const HomeOverviewScreenOptions = (): MaterialTopTabNavigationOptions => 
 export function HomeOverviewScreen() {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const navigation = useNavigation<NavigationProp<NewsNavigationParams>>();
-  // Flash messages still belongs to the timeline module, which owns their service and their store.
+  // Flash messages belong to the timeline module, which owns their service and their store.
   const flashMessages = useSelector(state => timelineConfig.getState(state).flashMessages.data);
 
-  const flashMessagesLoading = useSelector(state => {
-    const { isFetching, isPristine } = timelineConfig.getState(state).flashMessages;
-    return isPristine || isFetching;
-  });
+  // Only the first load and a pull show the placeholder. A fetch started elsewhere, by a push for
+  // instance, leaves the block in place.
+  const flashMessagesPristine = useSelector(state => timelineConfig.getState(state).flashMessages.isPristine);
 
   const loadFlashMessages = React.useCallback(() => dispatch(loadFlashMessagesAction()), [dispatch]);
 
@@ -50,7 +50,7 @@ export function HomeOverviewScreen() {
   const [newsLoading, setNewsLoading] = React.useState(true);
 
   const loadNews = React.useCallback(async () => {
-    // The list gives a `threadId` only, so the threads are needed to show the icon and its name.
+    // The list only gives a `threadId`, the threads carry the icon and the name to show.
     const [threads, items] = await Promise.all([
       dispatch(getNewsThreadsAction()) as unknown as Promise<NewsThreadItem[]>,
       dispatch(getNewsItemsAction(0)) as unknown as Promise<NewsItem[]>,
@@ -74,18 +74,16 @@ export function HomeOverviewScreen() {
     loadNews().finally(() => setNewsLoading(false));
   }, [loadNews]);
 
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const onRefresh = React.useCallback(async () => {
-    setRefreshing(true);
+  const reload = React.useCallback(async () => {
     setNewsLoading(true);
     try {
       await Promise.all([loadFlashMessages(), loadNews()]);
     } finally {
-      setRefreshing(false);
       setNewsLoading(false);
     }
   }, [loadFlashMessages, loadNews]);
+
+  const { onRefresh, refreshing } = useRefresh(reload);
 
   const refreshControl = React.useMemo(
     () => <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
@@ -101,7 +99,7 @@ export function HomeOverviewScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.content} refreshControl={refreshControl}>
-      {flashMessagesLoading ? (
+      {flashMessagesPristine || refreshing ? (
         <FlashMessagePlaceholder />
       ) : (
         <FlashMessageList flashMessages={visibleFlashMessages} onDismiss={onDismiss} />
