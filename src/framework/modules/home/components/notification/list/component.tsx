@@ -5,6 +5,10 @@ import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { NotificationCard } from '~/framework/modules/home/components/notification/card';
+import {
+  NotificationsPlaceholder,
+  PLACEHOLDER_NEXT_PAGE_CARDS,
+} from '~/framework/modules/home/components/notification/placeholder';
 import { isResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 
 import { getUserbookAuthor } from '../util';
@@ -21,27 +25,30 @@ const renderEmpty = () => (
   />
 );
 
-export const NotificationList = React.memo(({ notifications, onEndReached, onPressItem }: NotificationListProps) => {
-  const renderItem = React.useCallback(
-    ({ item }: ListRenderItemInfo<ITimelineNotification>) => (
-      // A mood or a motto has no resource, but opens the profile of its author.
-      <NotificationCard
-        notification={item}
-        onPress={isResourceUriNotification(item) || getUserbookAuthor(item) ? () => onPressItem(item) : undefined}
-      />
-    ),
-    [onPressItem],
-  );
+export const NotificationList = React.memo(
+  ({ loading, loadingMore, notifications, onEndReached, onPressItem }: NotificationListProps) => {
+    const renderItem = React.useCallback(
+      ({ item }: ListRenderItemInfo<ITimelineNotification>) => (
+        // A mood or a motto has no resource, but opens the profile of its author.
+        <NotificationCard
+          notification={item}
+          onPress={isResourceUriNotification(item) || getUserbookAuthor(item) ? () => onPressItem(item) : undefined}
+        />
+      ),
+      [onPressItem],
+    );
 
-  return (
-    <FlatList
-      data={notifications}
-      keyExtractor={keyExtractor}
-      renderItem={renderItem}
-      contentContainerStyle={notifications.length ? undefined : styles.empty}
-      ListEmptyComponent={renderEmpty}
-      onEndReached={onEndReached}
-      onEndReachedThreshold={1}
-    />
-  );
-});
+    return (
+      <FlatList
+        data={loading ? undefined : notifications}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        contentContainerStyle={loading || notifications.length ? undefined : styles.empty}
+        ListEmptyComponent={loading ? <NotificationsPlaceholder preview /> : renderEmpty}
+        ListFooterComponent={loadingMore ? <NotificationsPlaceholder count={PLACEHOLDER_NEXT_PAGE_CARDS} /> : null}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={1}
+      />
+    );
+  },
+);
