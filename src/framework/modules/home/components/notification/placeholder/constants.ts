@@ -1,0 +1,3 @@
+export const PLACEHOLDER_CARDS = 4;
+
+export const PLACEHOLDER_NEXT_PAGE_CARDS = 1;
