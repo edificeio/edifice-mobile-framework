@@ -149,7 +149,7 @@ const hydratePageComments = async (
           status: 'ok';
           result: Record<string, { type: (keyof typeof parseAccountTypesMap)[] }>;
         }>(`/userbook/api/person?id=${authorId}`);
-        return [authorId, parseAccountTypesMap[userData.result[0].type[0]] ?? undefined] as const;
+        return [authorId, parseAccountTypesMap[userData.result[0]?.type[0]] ?? undefined] as const;
       }),
     ),
   );
