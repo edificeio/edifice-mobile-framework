@@ -138,6 +138,6 @@ export const SocialResourceViewerItem = (info: ListRenderItemInfo<SocialResource
   } else if (info.item.type === ITEM_RESPONSE_DELETED) {
     return <SocialResourceViewerResponseDeletedItem {...(info as ListRenderItemInfo<ResponseItem>)} />;
   } else {
-    return <BodyBoldText>ITEM INCONNU</BodyBoldText>;
+    return <BodyBoldText>${info.item.toString()}</BodyBoldText>;
   }
 };

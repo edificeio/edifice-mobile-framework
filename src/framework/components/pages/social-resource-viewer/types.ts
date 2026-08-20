@@ -19,6 +19,7 @@ export namespace SocialResourceViewer {
 }
 
 export const ITEM_ADD_RESPONSE = Symbol('ITEM_ADD_RESPONSE');
+export const ITEM_SHOW_MORE_RESPONSES = Symbol('ITEM_SHOW_MORE_RESPONSES');
 export const ITEM_COMMENT = Symbol('ITEM_COMMENT');
 export const ITEM_RESPONSE = Symbol('ITEM_RESPONSE');
 export const ITEM_COMMENT_DELETED = Symbol('ITEM_COMMENT_DELETED');
@@ -54,6 +55,11 @@ export interface ResponseItemDeleted extends Pick<ResponseItem, 'id' | 'date' | 
 export interface AddResponseItem {
   type: typeof ITEM_ADD_RESPONSE;
   value: CommentData['value'];
+  inReplyTo: CommentItem['id'];
+}
+
+export interface ShowMoreResponsesItem {
+  type: typeof ITEM_SHOW_MORE_RESPONSES;
   inReplyTo: CommentItem['id'];
 }
 
