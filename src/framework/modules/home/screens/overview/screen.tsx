@@ -11,7 +11,7 @@ import ScrollView from '~/framework/components/scrollView';
 import { FlashMessageList, FlashMessagePlaceholder, NewsSection } from '~/framework/modules/home/components';
 import { NEWS_COUNT } from '~/framework/modules/home/components/news/constants';
 import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
-import { useRefresh } from '~/framework/modules/home/hooks';
+import { useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
 import { getNewsItemsAction, getNewsThreadsAction } from '~/framework/modules/news/actions';
 import type { NewsItem, NewsThreadItem } from '~/framework/modules/news/model';
 import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/news/navigation';
@@ -29,18 +29,11 @@ export const HomeOverviewScreenOptions = (): MaterialTopTabNavigationOptions => 
 export function HomeOverviewScreen() {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const navigation = useNavigation<NavigationProp<NewsNavigationParams>>();
-  // Flash messages belong to the timeline module, which owns their service and their store.
   const flashMessages = useSelector(state => timelineConfig.getState(state).flashMessages.data);
 
-  // Only the first load and a pull show the placeholder. A fetch started elsewhere, by a push for
-  // instance, leaves the block in place.
   const flashMessagesPristine = useSelector(state => timelineConfig.getState(state).flashMessages.isPristine);
 
   const loadFlashMessages = React.useCallback(() => dispatch(loadFlashMessagesAction()), [dispatch]);
-
-  React.useEffect(() => {
-    loadFlashMessages();
-  }, [loadFlashMessages]);
 
   const onDismiss = React.useCallback((id: number) => dispatch(dismissFlashMessageAction(id)), [dispatch]);
 
@@ -70,10 +63,6 @@ export function HomeOverviewScreen() {
     );
   }, [dispatch]);
 
-  React.useEffect(() => {
-    loadNews().finally(() => setNewsLoading(false));
-  }, [loadNews]);
-
   const reload = React.useCallback(async () => {
     setNewsLoading(true);
     try {
@@ -82,6 +71,10 @@ export function HomeOverviewScreen() {
       setNewsLoading(false);
     }
   }, [loadFlashMessages, loadNews]);
+
+  // everything is fetched again
+  // every time the tab is opened
+  const reloading = useHomeReload(reload);
 
   const { onRefresh, refreshing } = useRefresh(reload);
 
@@ -99,7 +92,7 @@ export function HomeOverviewScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.content} refreshControl={refreshControl}>
-      {flashMessagesPristine || refreshing ? (
+      {flashMessagesPristine || refreshing || reloading ? (
         <FlashMessagePlaceholder />
       ) : (
         <FlashMessageList flashMessages={visibleFlashMessages} onDismiss={onDismiss} />

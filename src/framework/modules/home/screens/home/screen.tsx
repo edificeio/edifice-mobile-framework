@@ -11,6 +11,7 @@ import { BodyBoldText, CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { withSession } from '~/framework/modules/auth/util';
 import { TopTabBar, TopTabBarProps } from '~/framework/modules/home/components';
+import { HomeReloadProvider, useHomeReloadKey } from '~/framework/modules/home/hooks';
 import { HomeNotificationsScreen, HomeNotificationsScreenOptions } from '~/framework/modules/home/screens/notifications';
 import { HomeOverviewScreen, HomeOverviewScreenOptions } from '~/framework/modules/home/screens/overview';
 import { accountTypeInfos } from '~/framework/util/accountType';
@@ -54,10 +55,14 @@ const renderTabBar = (props: TopTabBarProps) => <TopTabBar {...props} />;
 const HomeTabs = createMaterialTopTabNavigator<HomeTabsParamList>();
 
 export const HomeScreen = withSession(function ({}: HomeScreenProps) {
+  const reloadKey = useHomeReloadKey();
+
   return (
-    <HomeTabs.Navigator style={styles.page} tabBar={renderTabBar}>
-      <HomeTabs.Screen name="home/overview" component={HomeOverviewScreen} options={HomeOverviewScreenOptions} />
-      <HomeTabs.Screen name="home/notifications" component={HomeNotificationsScreen} options={HomeNotificationsScreenOptions} />
-    </HomeTabs.Navigator>
+    <HomeReloadProvider value={reloadKey}>
+      <HomeTabs.Navigator style={styles.page} tabBar={renderTabBar}>
+        <HomeTabs.Screen name="home/overview" component={HomeOverviewScreen} options={HomeOverviewScreenOptions} />
+        <HomeTabs.Screen name="home/notifications" component={HomeNotificationsScreen} options={HomeNotificationsScreenOptions} />
+      </HomeTabs.Navigator>
+    </HomeReloadProvider>
   );
 });
