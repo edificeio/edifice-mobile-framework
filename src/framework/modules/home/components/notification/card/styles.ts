@@ -41,6 +41,11 @@ export default StyleSheet.create({
   mood: {
     alignSelf: 'center',
     height: MOOD_SIZE,
+    overflow: 'hidden',
     width: MOOD_SIZE,
+  },
+  moodImage: {
+    height: '100%',
+    width: '100%',
   },
 });
