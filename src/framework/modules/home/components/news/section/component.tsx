@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { HeadingSText } from '~/framework/components/text';
 import { NewsCard } from '~/framework/modules/home/components/news/card';
-import { Carousel, useTabSwipeLock } from '~/framework/modules/home/components/news/carousel';
+import { Carousel } from '~/framework/modules/home/components/news/carousel';
 import { NewsEmpty } from '~/framework/modules/home/components/news/empty';
 import { NewsPlaceholder } from '~/framework/modules/home/components/news/placeholder';
 import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
@@ -17,8 +17,6 @@ import { NewsSectionProps } from './types';
 const keyExtractor = (item: HomeNewsItem) => String(item.news.id);
 
 export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore }: NewsSectionProps) => {
-  const tabSwipeLock = useTabSwipeLock();
-
   const renderItem = React.useCallback(
     ({ item }: ListRenderItemInfo<HomeNewsItem>) => <NewsCard item={item} onPress={onPressItem} />,
     [onPressItem],
@@ -38,7 +36,9 @@ export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore }
       {loading ? (
         <NewsPlaceholder />
       ) : news.length ? (
-        <Carousel {...tabSwipeLock} data={news} keyExtractor={keyExtractor} renderItem={renderItem} />
+        // ToDo: the tabs may steal the horizontal drag. Turning their swipe off during the gesture
+        // froze the row on Android, so if it shows up again, handle it natively.
+        <Carousel data={news} keyExtractor={keyExtractor} renderItem={renderItem} />
       ) : (
         <NewsEmpty />
       )}
