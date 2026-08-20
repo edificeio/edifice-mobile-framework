@@ -21,7 +21,20 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 
 import { SocialResourceViewerItem } from './item';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
-import { type SocialResourceViewer, type SocialResourceViewerItemType } from './types';
+import {
+  CommentItem,
+  CommentItemDeleted,
+  ITEM_COMMENT,
+  ITEM_COMMENT_DELETED,
+  ITEM_RESPONSE,
+  ITEM_RESPONSE_DELETED,
+  ITEM_SHOW_MORE_RESPONSES,
+  ResponseItem,
+  ResponseItemDeleted,
+  ShowMoreResponsesItem,
+  type SocialResourceViewer,
+  type SocialResourceViewerItemType,
+} from './types';
 
 const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<SocialResourceViewerItemType>);
 
@@ -30,15 +43,42 @@ export const NewCommentInputDispatchContext = React.createContext<
   React.Dispatch<React.SetStateAction<{ height: number; value: string }>>
 >(_ => _);
 
+const START_RESPONSES_SHOW_NUMBER = 2;
+
 export function SocialResourceViewer({
   alwaysShowCommentField = false,
   canAddComment: _canAddComment,
   children,
-  comments,
+  comments: _allComments,
 }: SocialResourceViewer.Props) {
   // User data
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
+
+  // Responses pagination
+  const [comments, setComments] = React.useState(() => {
+    const ret: (CommentItem | ResponseItem | CommentItemDeleted | ResponseItemDeleted | ShowMoreResponsesItem)[] = [];
+    let keep = START_RESPONSES_SHOW_NUMBER;
+    let lastComment: (CommentItem | CommentItemDeleted)['id'] | null = null;
+    for (let i = 0; i < _allComments.length; ++i) {
+      if (_allComments[i].type !== ITEM_RESPONSE && _allComments[i].type !== ITEM_RESPONSE_DELETED) {
+        ret.push(_allComments[i]);
+        keep = START_RESPONSES_SHOW_NUMBER;
+        if (_allComments[i].type === ITEM_COMMENT || _allComments[i].type === ITEM_COMMENT_DELETED) {
+          lastComment = _allComments[i].id;
+        }
+      } else if (keep > 0) {
+        ret.push(_allComments[i]);
+        --keep;
+      } else if (keep === 0 && (_allComments[i].type === ITEM_RESPONSE || _allComments[i].type === ITEM_RESPONSE_DELETED)) {
+        ret.push({ inReplyTo: lastComment!, type: ITEM_SHOW_MORE_RESPONSES });
+        --keep;
+      } else {
+        // Do not insert anything
+      }
+    }
+    return ret;
+  });
 
   // Screen layout
   const navBarHeight = useHeaderHeight();
