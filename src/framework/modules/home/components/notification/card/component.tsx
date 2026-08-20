@@ -107,7 +107,11 @@ export const NotificationCard = React.memo(({ notification, onPress }: Notificat
           ) : null}
           {media?.length ? null : date}
         </View>
-        {moodPicture ? <Image source={moodPicture} style={styles.mood} /> : null}
+        {moodPicture ? (
+          <View style={styles.mood}>
+            <Image source={moodPicture} style={styles.moodImage} />
+          </View>
+        ) : null}
       </View>
       {media?.length ? (
         <NotificationPreview
