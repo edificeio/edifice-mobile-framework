@@ -25,6 +25,9 @@ import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IAppThemeInfo, IEntcoreAp
 
 type BadgeOverridesType = Record<string, { color?: string; icon?: string }>;
 
+const asPaletteColorName = (appColor?: string): AppsInfoAggregated['color'] =>
+  appColor && appColor in theme.palette.complementary ? (appColor as AppsInfoAggregated['color']) : undefined;
+
 export const resolveAppColor = (appColor?: string) =>
   appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor].regular : undefined;
 
@@ -136,7 +139,7 @@ export const aggregateApps = (
       return {
         ...app,
         category: config?.category,
-        color: override?.color ?? config?.color,
+        color: asPaletteColorName(override?.color ?? config?.color),
         displayName: getAppName(app),
         help: config?.help,
         icon: override?.icon ?? ICON_NAME_MAP[normalizedIcon] ?? normalizedIcon,
