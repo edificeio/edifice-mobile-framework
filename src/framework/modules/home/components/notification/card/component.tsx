@@ -14,7 +14,7 @@ import {
   TITLE_PARAMS,
 } from '~/framework/modules/home/components/notification/constants';
 import { NotificationPreview } from '~/framework/modules/home/components/notification/preview';
-import { useNotificationAppTheme, useNotificationBadge } from '~/framework/modules/myapps/hooks';
+import { useNotificationApp } from '~/framework/modules/myapps/hooks';
 import { displayPastDate } from '~/framework/util/date';
 import { getAsEnrichedNotification, getAsSenderNotification } from '~/framework/util/notifications';
 import HtmlContentView from '~/ui/HtmlContentView';
@@ -44,8 +44,7 @@ const NotificationChip = React.memo(
 );
 
 export const NotificationCard = React.memo(({ notification, onPress }: NotificationCardProps) => {
-  const badge = useNotificationBadge(notification.type, notification['event-type']);
-  const appTheme = useNotificationAppTheme(notification.type, notification['event-type']);
+  const { badge, theme: appTheme } = useNotificationApp(notification);
   const sender = getAsSenderNotification(notification)?.sender;
   const preview = getAsEnrichedNotification(notification)?.preview;
 
