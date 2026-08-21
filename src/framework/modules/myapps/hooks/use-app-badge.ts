@@ -2,14 +2,9 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
-import {
-  buildAppLookupMap,
-  buildNotifTypeLookupMap,
-  resolveAppBadge,
-  resolveNotifBadge,
-  selectAggregatedApps,
-} from '~/framework/modules/myapps/reducer';
-import { registeredNotificationTypesData } from '~/framework/modules/timeline/reducer/notif-definitions/selectors';
+import { getAppLookupMap } from '~/framework/modules/myapps/hooks/lookup';
+import { NotificationOfApp, useNotificationApp } from '~/framework/modules/myapps/hooks/use-notification-app';
+import { resolveAppBadge, selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { IAppBadgeInfo } from '~/framework/util/moduleTool';
 
 /**
@@ -24,29 +19,14 @@ import { IAppBadgeInfo } from '~/framework/util/moduleTool';
 export function useAppBadge(appName: string): IAppBadgeInfo {
   const aggregatedApps = useSelector(selectAggregatedApps);
 
-  return React.useMemo(() => {
-    const lookupMap = buildAppLookupMap(aggregatedApps ?? {});
-    return resolveAppBadge(appName, lookupMap);
-  }, [aggregatedApps, appName]);
+  return React.useMemo(() => resolveAppBadge(appName, getAppLookupMap(aggregatedApps)), [aggregatedApps, appName]);
 }
 
 /**
- * Returns the badge for a notification type.
+ * Returns the badge of the app a notification comes from.
  *
- * The notification type is linked to an app,
- * then the app badge is resolved from aggregated apps.
- *
- * @param notifType Notification type
  * @returns IAppBadgeInfo or undefined
  */
-export function useNotificationBadge(notifType: string, eventType: string): IAppBadgeInfo | undefined {
-  const aggregatedApps = useSelector(selectAggregatedApps);
-  const notifTypes = useSelector(registeredNotificationTypesData);
-
-  const notifTypeMap = React.useMemo(() => buildNotifTypeLookupMap(notifTypes ?? []), [notifTypes]);
-
-  return React.useMemo(
-    () => resolveNotifBadge(`${notifType}.${eventType}`, notifTypeMap, aggregatedApps ?? {}),
-    [aggregatedApps, notifTypeMap, notifType, eventType],
-  );
+export function useNotificationBadge(notification: NotificationOfApp): IAppBadgeInfo | undefined {
+  return useNotificationApp(notification).badge;
 }
