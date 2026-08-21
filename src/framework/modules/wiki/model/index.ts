@@ -32,5 +32,5 @@ export interface WikiPageMetaData {
 export interface WikiPage extends Pick<WikiPageMetaData, 'id' | 'isVisible' | 'title' | 'createdAt'>, ResourceHistory {
   content: string;
   contentVersion: number;
-  comments: SocialResourceViewer.Props['comments'];
+  comments: SocialResourceViewer.Props['data'];
 }

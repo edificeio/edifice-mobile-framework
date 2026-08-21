@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text as RNText } from 'react-native';
+import { TextProps } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -15,7 +15,13 @@ const profilesI18n: Record<AccountType, string> = {
   [AccountType.External]: 'user-profiletypes-external',
 };
 
-export const AccountTypeText = ({ TextComponent = NestedText, type }: { type: AccountType; TextComponent?: typeof RNText }) => {
+export const AccountTypeText = ({
+  TextComponent = NestedText,
+  type,
+}: {
+  type: AccountType;
+  TextComponent?: React.ComponentType<TextProps>;
+}) => {
   const profileStyle = React.useMemo(() => ({ color: theme.color.profileTypes[type] }), [type]);
   return <TextComponent style={profileStyle}>{I18n.get(profilesI18n[type])}</TextComponent>;
 };
