@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
-import { selectors } from '~/framework/modules/auth/redux/reducer';
+import { withSession } from '~/framework/modules/auth/util';
 import { NotificationList } from '~/framework/modules/home/components';
 import { isUserbookNotification } from '~/framework/modules/home/components/notification/util';
 import { useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
@@ -28,14 +28,13 @@ export const HomeNotificationsScreenOptions = (): MaterialTopTabNavigationOption
   title: I18n.get('home-notifications-title'),
 });
 
-export function HomeNotificationsScreen({ navigation }: HomeNotificationsScreenProps) {
+export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>(function ({ navigation, session }) {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const navParent = navigation.getParent<NavigationProp<ParamListBase>>();
 
-  const session = useSelector(selectors.session);
   const notifications = useSelector(state => timelineConfig.getState(state).notifications);
-  const canReport = !!session && getTimelineWorkflowInformation(session).notification.report;
+  const canReport = getTimelineWorkflowInformation(session).notification.report;
 
   const onEndReached = React.useCallback(() => {
     if (!notifications.endReached) dispatch(loadNotificationsPageAction());
@@ -67,7 +66,6 @@ export function HomeNotificationsScreen({ navigation }: HomeNotificationsScreenP
     [dispatch, navParent],
   );
 
-  // Lock the top-tab pager only while a row swipe gesture is in progress.
   const pagerLocked = React.useRef<boolean>(false);
   const onRowSwipeActiveChange = React.useCallback(
     (active: boolean) => {
@@ -83,8 +81,6 @@ export function HomeNotificationsScreen({ navigation }: HomeNotificationsScreenP
   const onReportItem = React.useCallback(
     (notification: ITimelineNotification) =>
       new Promise<boolean>((resolve, reject) => {
-        if (!session) return reject(new Error('[HomeNotificationsScreen] missing session'));
-
         Alert.alert(I18n.get('timeline-reportaction-title'), I18n.get('timeline-reportaction-description'), [
           {
             onPress: async () => {
@@ -120,4 +116,4 @@ export function HomeNotificationsScreen({ navigation }: HomeNotificationsScreenP
       canReport={canReport}
     />
   );
-}
+});
