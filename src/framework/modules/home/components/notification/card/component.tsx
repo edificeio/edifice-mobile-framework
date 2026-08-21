@@ -2,31 +2,26 @@ import * as React from 'react';
 import { ColorValue, TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { Svg, SvgIconName } from '~/framework/components/picture';
-import { CaptionItalicText, SmallBoldText, SmallItalicText } from '~/framework/components/text';
+import { CaptionItalicText, SmallBoldText } from '~/framework/components/text';
+import { getShownMedia } from '~/framework/modules/home/components/media-preview';
 import {
   AVATAR_SIZE,
   CHIP_ICON_SIZE,
   MESSAGE_HTML_OPTIONS,
   RESOURCE_NAME_PARAMS,
-  THEME_DEGREE,
   TITLE_PARAMS,
 } from '~/framework/modules/home/components/notification/constants';
 import { NotificationPreview } from '~/framework/modules/home/components/notification/preview';
-import { Image } from '~/framework/modules/media/components/image';
 import { useNotificationAppTheme, useNotificationBadge } from '~/framework/modules/myapps/hooks';
-import { renderMoodPicture } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import { displayPastDate } from '~/framework/util/date';
 import { getAsEnrichedNotification, getAsSenderNotification } from '~/framework/util/notifications';
 import HtmlContentView from '~/ui/HtmlContentView';
 
-import { cutMessageAtNames } from '../util';
+import { cutMessageBeforeResource } from '../util';
 import styles from './styles';
 import { NotificationCardProps } from './types';
-
-type MoodName = keyof (typeof renderMoodPicture)['2d'];
 
 // First of those params the notification carries. Each app names its content its own way.
 const firstParam = (params: Record<string, string | undefined>, keys: string[]) =>
@@ -53,34 +48,24 @@ export const NotificationCard = React.memo(({ notification, onPress }: Notificat
   const appTheme = useNotificationAppTheme(notification.type, notification['event-type']);
   const sender = getAsSenderNotification(notification)?.sender;
   const preview = getAsEnrichedNotification(notification)?.preview;
-  const media = preview?.media;
+
+  const media = React.useMemo(() => getShownMedia(preview?.media ?? [], true), [preview?.media]);
 
   const params = notification.backupData?.params ?? {};
   const resourceName = firstParam(params, RESOURCE_NAME_PARAMS);
   const title = firstParam(params, TITLE_PARAMS);
 
-  const degree = THEME_DEGREE[theme.level];
-
-  const mood = notification.type === 'USERBOOK_MOOD' ? (params.moodImg as MoodName) : undefined;
-  const motto = notification.type === 'USERBOOK_MOTTO' ? params.motto : undefined;
-
-  // One set of pictures per degree, one picture per mood, as on the timeline.
-  const moodPicture = mood ? renderMoodPicture[degree][mood] : undefined;
-
   const previewName = resourceName ?? title;
   const previewTitle = resourceName ? title : undefined;
 
-  const message = React.useMemo(() => {
-    // A mood is worded differently in each degree, so the sentence is built here, not on the back.
-    if (mood) return `<a>${params.username}</a> ${I18n.get(`timeline-notiftype-mood-${mood}-${degree}`)}`;
-    if (motto) return `<a>${params.username}</a> ${I18n.get('timeline-notiftype-motto')}`;
-    // The preview already shows those names, the message must not repeat them.
-    return media?.length ? cutMessageAtNames(notification.message ?? '', [resourceName, title]) : notification.message;
-  }, [degree, media?.length, mood, motto, notification.message, params.username, resourceName, title]);
+  const message = React.useMemo(
+    () => (media.length ? cutMessageBeforeResource(notification.message ?? '') : notification.message),
+    [media.length, notification.message],
+  );
 
   const appName = I18n.get(`timeline-apptype-${notification.type}`.toLowerCase().replaceAll('_', '-'));
 
-  const showChip = !media?.length && !!sender?.id && !mood;
+  const showChip = !media.length && !!sender?.id;
 
   const Container = onPress ? TouchableOpacity : View;
 
@@ -96,7 +81,6 @@ export const NotificationCard = React.memo(({ notification, onPress }: Notificat
         )}
         <View style={styles.message}>
           <HtmlContentView html={message} opts={MESSAGE_HTML_OPTIONS} />
-          {motto ? <SmallItalicText>{`"${motto}"`}</SmallItalicText> : null}
           {showChip ? (
             <NotificationChip
               background={appTheme?.colors.pale}
@@ -105,15 +89,10 @@ export const NotificationCard = React.memo(({ notification, onPress }: Notificat
               name={appName}
             />
           ) : null}
-          {media?.length ? null : date}
+          {media.length ? null : date}
         </View>
-        {moodPicture ? (
-          <View style={styles.mood}>
-            <Image source={moodPicture} style={styles.moodImage} />
-          </View>
-        ) : null}
       </View>
-      {media?.length ? (
+      {media.length ? (
         <NotificationPreview
           badge={badge}
           colors={appTheme?.colors}
@@ -123,7 +102,7 @@ export const NotificationCard = React.memo(({ notification, onPress }: Notificat
           title={previewTitle}
         />
       ) : null}
-      {media?.length ? date : null}
+      {media.length ? date : null}
     </Container>
   );
 });
