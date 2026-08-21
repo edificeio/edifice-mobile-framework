@@ -15,7 +15,7 @@ export interface NotificationRowProps {
   opened: boolean;
   someRowOpen: boolean;
   onClose: (id: string) => void;
-  onPress: (notification: ITimelineNotification, opens: boolean) => void;
+  onPress: (notification: ITimelineNotification) => void;
   onRef: (id: string, row: SwipeableMethods | null) => void;
   onReport: (notification: ITimelineNotification) => void;
   onSwipeActive: (active: boolean) => void;
