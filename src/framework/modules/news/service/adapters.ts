@@ -54,7 +54,7 @@ export const newsItemDetailsAdapter = (n: BackendNewsItemDetails) => {
       threadId: n.thread.id,
     },
     thread: {
-      icon: n.thread.icon,
+      icon: n.thread.icon ? { uri: n.thread.icon } : null,
       ownerId: n.thread.owner.id,
       sharedRights: n.thread.sharedRights as NewsThreadItemRights[],
       title: n.thread.title,
