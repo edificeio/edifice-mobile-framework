@@ -13,6 +13,7 @@ import {
 } from '~/framework/modules/home/components/notification/placeholder';
 import { ITimelineNotification } from '~/framework/util/notifications';
 
+import { canOpenNotification } from '../util';
 import { NotificationRow } from './row';
 import styles from './styles';
 import { NotificationListProps } from './types';
@@ -83,10 +84,10 @@ export const NotificationList = React.memo(
 
     // A tap first puts back the row left open, wherever it lands, and opens nothing.
     const onCardPress = React.useCallback(
-      (item: ITimelineNotification, opens: boolean) => {
-        const open = openRowKey.current;
-        if (open) return closeRow(open);
-        if (opens) onPressItem(item);
+      (notification: ITimelineNotification) => {
+        const openedRowId = openRowKey.current;
+        if (openedRowId) return closeRow(openedRowId);
+        if (canOpenNotification(notification)) onPressItem(notification);
       },
       [closeRow, onPressItem],
     );
@@ -129,16 +130,16 @@ export const NotificationList = React.memo(
       [canReport, onCardPress, onReport, onRowClose, onRowWillOpen, onSwipeActive, openRowId, setRowRef],
     );
 
-    const busy = loading || refreshing;
+    const loadingOrRefreshing = loading || refreshing;
 
     return (
       <FlatList
-        data={busy ? undefined : notifications}
+        data={loadingOrRefreshing ? undefined : notifications}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        ItemSeparatorComponent={busy ? undefined : renderSeparator}
-        contentContainerStyle={busy || notifications.length ? undefined : styles.empty}
-        ListEmptyComponent={busy ? <NotificationsPlaceholder preview /> : renderEmpty}
+        ItemSeparatorComponent={loadingOrRefreshing ? undefined : renderSeparator}
+        contentContainerStyle={loadingOrRefreshing || notifications.length ? undefined : styles.empty}
+        ListEmptyComponent={loadingOrRefreshing ? <NotificationsPlaceholder preview /> : renderEmpty}
         ListFooterComponent={loadingMore ? <NotificationsPlaceholder count={PLACEHOLDER_NEXT_PAGE_CARDS} /> : null}
         refreshControl={refreshControl}
         onEndReached={onEndReached}
