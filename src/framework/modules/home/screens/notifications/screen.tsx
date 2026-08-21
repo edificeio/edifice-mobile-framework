@@ -1,16 +1,21 @@
 import * as React from 'react';
+import { Alert } from 'react-native';
 
 import { MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
-import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+import { NavigationProp, ParamListBase, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import Toast from '~/framework/components/toast';
+import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { NotificationList } from '~/framework/modules/home/components';
 import { getUserbookAuthor } from '~/framework/modules/home/components/notification/util';
 import { useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
 import { loadNotificationsPageAction, startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import timelineConfig from '~/framework/modules/timeline/module-config';
+import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
+import { notificationsService } from '~/framework/modules/timeline/service';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import type { ITimelineNotification } from '~/framework/util/notifications';
 import { defaultNotificationActionStack, handleNotificationAction } from '~/framework/util/notifications/routing';
@@ -25,7 +30,9 @@ export function HomeNotificationsScreen() {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
+  const session = useSelector(selectors.session);
   const notifications = useSelector(state => timelineConfig.getState(state).notifications);
+  const canReport = !!session && getTimelineWorkflowInformation(session).notification.report;
 
   const onEndReached = React.useCallback(() => {
     if (!notifications.endReached) dispatch(loadNotificationsPageAction());
@@ -56,6 +63,45 @@ export function HomeNotificationsScreen() {
     [dispatch, navigation],
   );
 
+  // Lock the top-tab pager only while a row swipe gesture is in progress.
+  const pagerLocked = React.useRef<boolean>(false);
+  const onRowSwipeActiveChange = React.useCallback(
+    (active: boolean) => {
+      if (pagerLocked.current === active) return;
+      pagerLocked.current = active;
+      navigation.setOptions({ swipeEnabled: !active } as MaterialTopTabNavigationOptions);
+    },
+    [navigation],
+  );
+
+  useFocusEffect(React.useCallback(() => () => onRowSwipeActiveChange(false), [onRowSwipeActiveChange]));
+
+  const onReportItem = React.useCallback(
+    (notification: ITimelineNotification) =>
+      new Promise<boolean>((resolve, reject) => {
+        if (!session) return reject(new Error('[HomeNotificationsScreen] missing session'));
+
+        Alert.alert(I18n.get('timeline-reportaction-title'), I18n.get('timeline-reportaction-description'), [
+          {
+            onPress: async () => {
+              try {
+                await notificationsService.report(session, notification.id);
+                Toast.showSuccess(I18n.get('timeline-reportaction-success'));
+                resolve(true);
+              } catch (e) {
+                Alert.alert(I18n.get('timeline-error-text'));
+                reject(e);
+              }
+            },
+            style: 'destructive',
+            text: I18n.get('timeline-reportaction-submit'),
+          },
+          { onPress: () => resolve(false), style: 'cancel', text: I18n.get('common-cancel') },
+        ]);
+      }),
+    [session],
+  );
+
   return (
     <NotificationList
       notifications={notifications.data}
@@ -65,6 +111,9 @@ export function HomeNotificationsScreen() {
       onRefresh={onRefresh}
       onEndReached={onEndReached}
       onPressItem={onPressItem}
+      onReportItem={onReportItem}
+      onSwipeActiveChange={onRowSwipeActiveChange}
+      canReport={canReport}
     />
   );
 }
