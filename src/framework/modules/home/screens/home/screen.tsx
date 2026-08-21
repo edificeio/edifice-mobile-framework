@@ -23,7 +23,6 @@ export const HomeScreenOptions = screenOptions(({ navigation }) => {
   const profileButton = <NavBarProfileButton onPress={() => navigation.navigate('user')} />;
 
   return {
-    // background has to be painted here. colors still come from `theme.ui.navigation.navBar`.
     headerBackground: () => <BarLine bar="navBar" background={theme.ui.navigation.navBar.background} />,
     headerLeft: () => profileButton,
     headerShadowVisible: false,
