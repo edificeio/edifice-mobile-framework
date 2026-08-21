@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert } from 'react-native';
 
 import { MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
-import { NavigationProp, ParamListBase, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { NavigationProp, ParamListBase, useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -10,7 +10,7 @@ import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { NotificationList } from '~/framework/modules/home/components';
-import { getUserbookAuthor } from '~/framework/modules/home/components/notification/util';
+import { isUserbookNotification } from '~/framework/modules/home/components/notification/util';
 import { useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
 import { loadNotificationsPageAction, startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import timelineConfig from '~/framework/modules/timeline/module-config';
@@ -20,15 +20,18 @@ import { userRouteNames } from '~/framework/modules/user/navigation';
 import type { ITimelineNotification } from '~/framework/util/notifications';
 import { defaultNotificationActionStack, handleNotificationAction } from '~/framework/util/notifications/routing';
 
+import { HomeNotificationsScreenProps } from './types';
+
 // ToDo: bring back the badge of the unread count once the back exposes.
 export const HomeNotificationsScreenOptions = (): MaterialTopTabNavigationOptions => ({
   tabBarButtonTestID: 'home-tab-notifications',
   title: I18n.get('home-notifications-title'),
 });
 
-export function HomeNotificationsScreen() {
+export function HomeNotificationsScreen({ navigation }: HomeNotificationsScreenProps) {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+
+  const navParent = navigation.getParent<NavigationProp<ParamListBase>>();
 
   const session = useSelector(selectors.session);
   const notifications = useSelector(state => timelineConfig.getState(state).notifications);
@@ -46,21 +49,22 @@ export function HomeNotificationsScreen() {
 
   const onPressItem = React.useCallback(
     (notification: ITimelineNotification) => {
-      const author = getUserbookAuthor(notification);
-      if (author) return navigation.navigate(userRouteNames.profile, { userId: author });
+      if (isUserbookNotification(notification)) {
+        return navParent.navigate(userRouteNames.profile, { userId: notification.backupData?.sender });
+      }
 
       dispatch(
         handleNotificationAction(
           notification,
           defaultNotificationActionStack,
-          navigation,
-          navigation.dispatch,
+          navParent,
+          navParent.dispatch,
           'Home Notification',
           false,
         ),
       );
     },
-    [dispatch, navigation],
+    [dispatch, navParent],
   );
 
   // Lock the top-tab pager only while a row swipe gesture is in progress.
