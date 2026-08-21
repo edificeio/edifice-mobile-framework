@@ -1,3 +1,5 @@
+import type { ImageProps, ImageSourcePropType } from 'react-native';
+
 import type { INotificationMedia } from '~/framework/util/notifications';
 
 export interface MediaPreviewProps {
@@ -5,6 +7,10 @@ export interface MediaPreviewProps {
   media: INotificationMedia[];
   /** Shows the videos too. The news zone leaves it out: its spec only asks for images. */
   withVideos?: boolean;
+}
+
+export interface PreviewImageProps extends Pick<ImageProps, 'style'> {
+  source?: ImageSourcePropType;
 }
 
 /** A video gives the id and the size of its file, which its still is computed from. */
