@@ -20,20 +20,14 @@ export const CARD_WIDTH = UI_SIZES.screen.width - 2 * CAROUSEL_EDGE_INSET - CARO
 
 export const CARD_HEIGHT = getScaleWidth(223);
 
-/** Drawing of the empty screen. */
+export const CARD_SNAP_INTERVAL = CARD_WIDTH + CAROUSEL_GAP;
+
 export const EMPTY_IMAGE_SIZE = getScaleWidth(75);
 
 const HEADER_HEIGHT = THUMBNAIL_SIZE + 2 * UI_SIZES.spacing.tiny;
 
 const BODY_HEIGHT = CARD_HEIGHT - 3 * UI_SIZES.spacing.tiny - HEADER_HEIGHT - 2 * UI_SIZES.spacing.small;
 
-/**
- * Lines of text a card holds. Every card has the same height, so the text takes what the title and
- * the media leave.
- *
- * Computed and not measured: a measure is only known once the card is drawn, and the card would
- * move as the text lands in it. The title counts for two lines, its maximum.
- */
 export const getTextLines = (withMedia: boolean) => {
   // A gap between the title, the text and the media.
   const gaps = UI_SIZES.spacing.tiny * (withMedia ? 2 : 1);
