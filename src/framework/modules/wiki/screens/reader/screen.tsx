@@ -282,7 +282,7 @@ export function WikiReaderScreenLoaded({
       <SocialResourceViewer
         navigation={navigation}
         canAddComment={true} // ToDo: use resource rights here
-        comments={page.comments}>
+        data={page.comments}>
         <WikiReaderContent onGoToPage={switchToPage} pageId={pageId} resourceId={resourceId} onLoad={onLoad} />
       </SocialResourceViewer>
       {!loaded && <View style={styles.webViewPlaceholder}>{renderPlaceholder()}</View>}

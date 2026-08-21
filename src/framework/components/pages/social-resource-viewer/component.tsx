@@ -21,71 +21,80 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 
 import { SocialResourceViewerItem } from './item';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
-import {
-  CommentItem,
-  CommentItemDeleted,
-  ITEM_COMMENT,
-  ITEM_COMMENT_DELETED,
-  ITEM_RESPONSE,
-  ITEM_RESPONSE_DELETED,
-  ITEM_SHOW_MORE_RESPONSES,
-  ResponseItem,
-  ResponseItemDeleted,
-  ShowMoreResponsesItem,
-  type SocialResourceViewer,
-  type SocialResourceViewerItemType,
-} from './types';
+import { type SocialResourceViewer, SocialResourceViewerInternals } from './types';
 
-const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<SocialResourceViewerItemType>);
+const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<SocialResourceViewerInternals.Item>);
 
 export const NewCommentInputContext = React.createContext<{ height: number; value: string }>({ height: 0, value: '' });
 export const NewCommentInputDispatchContext = React.createContext<
   React.Dispatch<React.SetStateAction<{ height: number; value: string }>>
 >(_ => _);
 
-const START_RESPONSES_SHOW_NUMBER = 2;
-
 export function SocialResourceViewer({
   alwaysShowCommentField = false,
   canAddComment: _canAddComment,
   children,
-  comments: _allComments,
+  data,
 }: SocialResourceViewer.Props) {
   // User data
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
 
-  // Responses pagination
-  const [comments, setComments] = React.useState(() => {
-    const ret: (CommentItem | ResponseItem | CommentItemDeleted | ResponseItemDeleted | ShowMoreResponsesItem)[] = [];
-    let keep = START_RESPONSES_SHOW_NUMBER;
-    let lastComment: (CommentItem | CommentItemDeleted)['id'] | null = null;
-    for (let i = 0; i < _allComments.length; ++i) {
-      if (_allComments[i].type !== ITEM_RESPONSE && _allComments[i].type !== ITEM_RESPONSE_DELETED) {
-        ret.push(_allComments[i]);
-        keep = START_RESPONSES_SHOW_NUMBER;
-        if (_allComments[i].type === ITEM_COMMENT || _allComments[i].type === ITEM_COMMENT_DELETED) {
-          lastComment = _allComments[i].id;
-        }
-      } else if (keep > 0) {
-        ret.push(_allComments[i]);
-        --keep;
-      } else if (keep === 0 && (_allComments[i].type === ITEM_RESPONSE || _allComments[i].type === ITEM_RESPONSE_DELETED)) {
-        ret.push({ inReplyTo: lastComment!, type: ITEM_SHOW_MORE_RESPONSES });
-        --keep;
+  // Flatten & consolidate data
+  const flatData = React.useMemo<SocialResourceViewerInternals.Item[]>(() => {
+    const ret: SocialResourceViewerInternals.Item[] = [];
+    for (let commentIndex = 0; commentIndex < data.length; ++commentIndex) {
+      const { responses, ...commentItem } = data[commentIndex];
+      if ('deleted' in commentItem) {
+        ret.push({
+          ...commentItem,
+          hasResponses: responses.length > 0,
+          type: SocialResourceViewerInternals.ITEM_COMMENT_DELETED,
+        });
       } else {
-        // Do not insert anything
+        ret.push({
+          ...commentItem,
+          hasResponses: responses.length > 0,
+          type: SocialResourceViewerInternals.ITEM_COMMENT,
+        });
+      }
+      for (let responseIndex = 0; responseIndex < responses.length; ++responseIndex) {
+        const responseItem = responses[responseIndex];
+        const responseData = {
+          hasResponses: responseIndex < responses.length - 1,
+          inReplyTo: commentItem.id,
+          inReplyToIndex: commentIndex,
+        };
+        if ('count' in responseItem) {
+          ret.push({
+            ...responseItem,
+            ...responseData,
+            type: SocialResourceViewerInternals.ITEM_RESPONSE_ELLIPSIS,
+          });
+        } else if ('deleted' in responseItem) {
+          ret.push({
+            ...responseItem,
+            ...responseData,
+            type: SocialResourceViewerInternals.ITEM_RESPONSE_DELETED,
+          });
+        } else {
+          ret.push({
+            ...responseItem,
+            ...responseData,
+            type: SocialResourceViewerInternals.ITEM_RESPONSE,
+          });
+        }
       }
     }
     return ret;
-  });
+  }, [data]);
 
   // Screen layout
   const navBarHeight = useHeaderHeight();
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   // Component layout
-  const listRef = React.useRef<FlashListRef<SocialResourceViewerItemType>>(null);
+  const listRef = React.useRef<FlashListRef<SocialResourceViewerInternals.Item>>(null);
   const [measuredResourceHeight, setMeasuredResourceHeight] = React.useState(0);
   const [measuredListHeight, setMeasuredListHeight] = React.useState(0);
 
@@ -124,7 +133,7 @@ export function SocialResourceViewer({
   }, [measuredListHeight, measuredResourceHeight, newCommentFormState.height, alwaysShowNewCommentForm, bottomInset]);
 
   const renderScrollComponent = React.useCallback<
-    NonNullable<FlatListProps<SocialResourceViewerItemType>['renderScrollComponent']>
+    NonNullable<FlatListProps<SocialResourceViewerInternals.Item>['renderScrollComponent']>
   >(
     props => (
       <KeyboardChatScrollView
@@ -192,7 +201,7 @@ export function SocialResourceViewer({
           keyboardDismissMode="interactive"
           onScroll={scrollHandler}
           renderScrollComponent={renderScrollComponent}
-          data={comments}
+          data={flatData}
           renderItem={SocialResourceViewerItem}
           ListHeaderComponent={renderResource}
           ListFooterComponent={<View style={listFooterStyle} />}

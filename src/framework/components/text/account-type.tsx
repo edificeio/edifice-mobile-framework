@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { TextProps } from 'react-native';
 
-import { SmallBoldText } from '.';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { AccountType } from '~/framework/modules/auth/model';
+
+import { SmallBoldText } from '.';
 
 export const i18nAccountTypes = {
   [AccountType.Guest]: 'user-profiletypes-guest',
@@ -13,6 +13,7 @@ export const i18nAccountTypes = {
   [AccountType.Relative]: 'user-profiletypes-relative',
   [AccountType.Student]: 'user-profiletypes-student',
   [AccountType.Teacher]: 'user-profiletypes-teacher',
+  [AccountType.External]: 'user-profiletypes-external',
 };
 
 export const getProfileColorStyle = (type: AccountType) => ({

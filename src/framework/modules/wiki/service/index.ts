@@ -1,17 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import isDisjointFrom from 'set.prototype.isdisjointfrom';
 
-import {
-  CommentItem,
-  CommentItemDeleted,
-  ITEM_COMMENT,
-  ITEM_COMMENT_DELETED,
-  ITEM_RESPONSE,
-  ITEM_RESPONSE_DELETED,
-  ResponseItem,
-  ResponseItemDeleted,
-  SocialResourceViewer,
-} from '~/framework/components/pages/social-resource-viewer/types';
+import { SocialResourceViewer } from '~/framework/components/pages/social-resource-viewer/types';
 import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { Wiki, WikiPage, WikiResourceMetadata } from '~/framework/modules/wiki/model';
@@ -116,9 +106,6 @@ const hydrateWikiPageData = async (data: API.Wiki.GetPageResponse): Promise<Wiki
   updaterName: data.lastContributerName,
 });
 
-type ParsingCommentOrResponse = Partial<ArrayElement<SocialResourceViewer.Props['comments']>> &
-  Pick<ArrayElement<SocialResourceViewer.Props['comments']>, 'id' | 'date' | 'type'>;
-
 const parseAccountTypesMap = {
   External: AccountType.External,
   Guest: AccountType.Guest,
@@ -130,15 +117,16 @@ const parseAccountTypesMap = {
 
 const hydratePageComments = async (
   data: API.Wiki.GetPageResponse['comments'] = [],
-): Promise<SocialResourceViewer.Props['comments']> => {
-  const parsedComments: [
-    (CommentItem | CommentItemDeleted | ResponseItem | ResponseItemDeleted)['id'],
-    (CommentItem | CommentItemDeleted | ResponseItem | ResponseItemDeleted)[],
-  ][] = [];
-  const parsedResponses: [(ResponseItem | ResponseItemDeleted)['id'], ResponseItem | ResponseItemDeleted][] = [];
-
-  // 0. Fetch fucking account type for each author because backend does not provide them by itself.
-  const authors = new Set<(CommentItem | ResponseItem)['authorId']>();
+): Promise<SocialResourceViewer.Props['data']> => {
+  // 1. Fetch fucking account type for each author because backend does not provide them by itself.
+  const authors = new Set<
+    (
+      | SocialResourceViewer.CommentItem
+      | SocialResourceViewer.ResponseItem
+      | SocialResourceViewer.CommentItemDeleted
+      | SocialResourceViewer.ResponseItemDeleted
+    )['authorId']
+  >();
   for (const item of data) {
     if ('author' in item) authors.add(item.author);
   }
@@ -154,54 +142,61 @@ const hydratePageComments = async (
     ),
   );
 
-  // 1. Parse data
+  // 2. Prepare parsed data arrays.
+  const parsedComments: Record<
+    (SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted)['id'],
+    Omit<SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted, 'responses'>
+  > = {};
+  const parsedResponses: Record<
+    (SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted)['id'],
+    (SocialResourceViewer.ResponseItem | SocialResourceViewer.ResponseItemDeleted)[]
+  > = {};
+
+  // 3. Parse data
   for (const item of data) {
-    const ret: ParsingCommentOrResponse = {
+    const ret: Pick<
+      | SocialResourceViewer.CommentItem
+      | SocialResourceViewer.CommentItemDeleted
+      | SocialResourceViewer.ResponseItem
+      | SocialResourceViewer.ResponseItemDeleted,
+      'id' | 'date'
+    > &
+      Partial<
+        Pick<
+          SocialResourceViewer.CommentItem | SocialResourceViewer.ResponseItem,
+          'authorAccountType' | 'authorId' | 'authorName' | 'content' | 'isRichContent'
+        >
+      > &
+      Partial<Pick<SocialResourceViewer.CommentItemDeleted | SocialResourceViewer.ResponseItemDeleted, 'deleted'>> = {
       date: Temporal.Instant.from(item.created.$date),
-      hasResponses: false,
       id: item._id,
-      type:
-        'deleted' in item
-          ? 'replyTo' in item
-            ? ITEM_RESPONSE_DELETED
-            : ITEM_COMMENT_DELETED
-          : 'replyTo' in item
-            ? ITEM_RESPONSE
-            : ITEM_COMMENT,
     };
-    if (ret.type === ITEM_RESPONSE_DELETED || ret.type === ITEM_RESPONSE) {
-      ret.inReplyTo = (item as API.Wiki.GetPageCommentResponse | API.Wiki.GetPageCommentResponseDeleted).replyTo;
-    }
-    if (ret.type === ITEM_COMMENT || ret.type === ITEM_RESPONSE) {
-      ret.value = (item as API.Wiki.GetPageCommentResponse | API.Wiki.GetPageComment).comment;
-      ret.authorId = (item as API.Wiki.GetPageCommentResponse | API.Wiki.GetPageComment).author;
-      ret.authorName = (item as API.Wiki.GetPageCommentResponse | API.Wiki.GetPageComment).authorName;
-      ret.authorAccountType = userTypes[ret.authorId] ?? AccountType.Guest; // use guest if user is not found... Don't known what to do .
-    }
-
-    if ('inReplyTo' in ret && ret.inReplyTo) {
-      parsedResponses.push([ret.inReplyTo, ret as ResponseItem | ResponseItemDeleted]);
+    if (!('deleted' in item)) {
+      ret.authorId = item.author;
+      ret.authorName = item.authorName;
+      ret.authorAccountType = userTypes[item.author] ?? AccountType.Guest; // use guest if user is not found... Don't known what to do.
+      ret.content = item.comment;
+      ret.isRichContent = false;
     } else {
-      parsedComments.push([ret.id, [ret as CommentItem | CommentItemDeleted]]);
+      ret.deleted = true;
+    }
+
+    if ('replyTo' in item) {
+      if (!(item.replyTo in parsedResponses)) parsedResponses[item.replyTo] = [];
+      parsedResponses[item.replyTo].push(ret as SocialResourceViewer.ResponseItem | SocialResourceViewer.ResponseItemDeleted);
+    } else {
+      parsedComments[ret.id] = ret as SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted;
     }
   }
 
-  // 2. Sort data
-  parsedComments.sort((a, b) => Temporal.Instant.compare(b[1][0].date, a[1][0].date)); // comments are in reverse-ordrer
-  parsedResponses.sort((a, b) => Temporal.Instant.compare(a[1].date, b[1].date)); // responses are not
-  const comments = Object.fromEntries(parsedComments);
-  for (const [commentId, response] of parsedResponses) {
-    if (commentId in comments) comments[commentId].push(response);
+  // 4. Compose & sort data
+  const sortedComments = Object.values(parsedComments).sort((a, b) => Temporal.Instant.compare(b.date, a.date)); // comments are in reverse-ordrer
+  for (const comment of sortedComments) {
+    (comment as SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted).responses =
+      comment.id in parsedResponses ? parsedResponses[comment.id].sort((a, b) => Temporal.Instant.compare(a.date, b.date)) : [];
   }
 
-  // 3. Set 'hasResponses' flags
-  for (const commentId in comments) {
-    comments[commentId].forEach((item, index, all) => {
-      item.hasResponses = index < all.length - 1;
-    });
-  }
-
-  return Object.values(comments).flat();
+  return sortedComments as (SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted)[];
 };
 
 export default {

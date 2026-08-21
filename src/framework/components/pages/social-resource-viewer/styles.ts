@@ -45,6 +45,11 @@ export default StyleSheet.create({
   itemResponseDeleted: {
     gap: 0, // reset gap for deleted responses
   },
+  itemResponsesShowMoreButtonWrapper: {
+    alignItems: 'flex-start',
+    marginLeft: -UI_SIZES.spacing.medium, // Compensate Ghost Button padding to align inner text
+    paddingVertical: UI_SIZES.spacing.tiny,
+  },
   itemTreeComment: { gap: UI_SIZES.spacing.minor - UI_SIZES.border.small },
   itemTreeCommon: { alignItems: 'center', flex: 0, flexBasis: AvatarSizes.xsm, flexDirection: 'column' },
   itemTreeDecoCurveCenter: {
