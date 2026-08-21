@@ -4,15 +4,13 @@ import { View } from 'react-native';
 import ReanimatedSwipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { SharedValue } from 'react-native-reanimated';
 
-import { NotificationCard } from '~/framework/modules/home/components/notification/card';
-import { isResourceUriNotification } from '~/framework/util/notifications';
+import { NotificationCard, UserbookNotificationCard } from '~/framework/modules/home/components/notification/card';
 
-import { getUserbookAuthor } from '../util';
+import { canOpenNotification, isUserbookNotification } from '../util';
 import { ReportAction } from './report-action';
 import styles, { REPORT_ACTION_WIDTH } from './styles';
 import { NotificationRowProps } from './types';
 
-// Lighter than the RNGH default (mass 2, damping 1000), just short of bouncing.
 const SWIPE_ANIMATION_OPTIONS = { damping: 20, mass: 0.4, stiffness: 200 };
 
 const CLOSE_DRAG_OFFSET = 10;
@@ -31,10 +29,10 @@ export const NotificationRow = React.memo(
     opened,
     someRowOpen,
   }: NotificationRowProps) => {
-    const opens = !!(isResourceUriNotification(item) || getUserbookAuthor(item));
+    const isOpenable = canOpenNotification(item);
 
     const setRef = React.useCallback((ref: SwipeableMethods | null) => onRef(item.id, ref), [item.id, onRef]);
-    const press = React.useCallback(() => onPress(item, opens), [item, onPress, opens]);
+    const press = React.useCallback(() => onPress(item), [item, onPress]);
     const report = React.useCallback(() => onReport(item), [item, onReport]);
     const willOpen = React.useCallback(() => onWillOpen(item.id), [item.id, onWillOpen]);
     const close = React.useCallback(() => onClose(item.id), [item.id, onClose]);
@@ -46,8 +44,12 @@ export const NotificationRow = React.memo(
       [report],
     );
 
-    // While a row is open, a tap anywhere serves to close it, even on a card that opens nothing.
-    const card = <NotificationCard notification={item} onPress={opens || someRowOpen ? press : undefined} />;
+    const onCardPress = isOpenable || someRowOpen ? press : undefined;
+    const card = isUserbookNotification(item) ? (
+      <UserbookNotificationCard notification={item} onPress={onCardPress} />
+    ) : (
+      <NotificationCard notification={item} onPress={onCardPress} />
+    );
 
     if (!canReport) return card;
 
