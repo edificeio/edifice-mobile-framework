@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ListRenderItemInfo, View } from 'react-native';
+import { FlatList, ListRenderItemInfo, NativeScrollEvent, NativeSyntheticEvent, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -11,15 +11,33 @@ import { NewsEmpty } from '~/framework/modules/home/components/news/empty';
 import { NewsPlaceholder } from '~/framework/modules/home/components/news/placeholder';
 import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
 
+import { CARD_SNAP_INTERVAL } from '../constants';
 import styles from './styles';
 import { NewsSectionProps } from './types';
 
 const keyExtractor = (item: HomeNewsItem) => String(item.news.id);
 
 export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore }: NewsSectionProps) => {
+  const listRef = React.useRef<FlatList<HomeNewsItem>>(null);
+  const scrolled = React.useRef<number>(0);
+
+  const onScroll = React.useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    scrolled.current = event.nativeEvent.contentOffset.x;
+  }, []);
+
+  const onCardPress = React.useCallback(
+    (item: HomeNewsItem) => {
+      const index = news.indexOf(item);
+      if (index === Math.round(scrolled.current / CARD_SNAP_INTERVAL)) return onPressItem(item);
+
+      listRef.current?.scrollToOffset({ animated: true, offset: index * CARD_SNAP_INTERVAL });
+    },
+    [news, onPressItem],
+  );
+
   const renderItem = React.useCallback(
-    ({ item }: ListRenderItemInfo<HomeNewsItem>) => <NewsCard item={item} onPress={onPressItem} />,
-    [onPressItem],
+    ({ item }: ListRenderItemInfo<HomeNewsItem>) => <NewsCard item={item} onPress={onCardPress} />,
+    [onCardPress],
   );
 
   return (
@@ -36,9 +54,19 @@ export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore }
       {loading ? (
         <NewsPlaceholder />
       ) : news.length ? (
-        // ToDo: the tabs may steal the horizontal drag. Turning their swipe off during the gesture
-        // froze the row on Android, so if it shows up again, handle it natively.
-        <Carousel data={news} keyExtractor={keyExtractor} renderItem={renderItem} />
+        <Carousel
+          listRef={listRef}
+          data={news}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          // The row stops on a card, one per drag, instead of wherever the finger left it.
+          snapToInterval={CARD_SNAP_INTERVAL}
+          snapToAlignment="start"
+          decelerationRate="fast"
+          disableIntervalMomentum
+        />
       ) : (
         <NewsEmpty />
       )}
