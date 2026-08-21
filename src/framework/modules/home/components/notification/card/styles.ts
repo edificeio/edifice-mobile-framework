@@ -7,8 +7,6 @@ import { MOOD_SIZE } from '../constants';
 
 export default StyleSheet.create({
   card: {
-    borderBottomColor: theme.palette.grey.cloudy.toString(),
-    borderBottomWidth: UI_SIZES.border.thin,
     gap: UI_SIZES.spacing.minor,
     padding: UI_SIZES.spacing.medium,
   },
