@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RefreshControl } from 'react-native';
 
 import { MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -19,6 +19,7 @@ import { dismissFlashMessageAction, loadFlashMessagesAction } from '~/framework/
 import timelineConfig from '~/framework/modules/timeline/module-config';
 
 import styles from './styles';
+import { HomeOverviewScreenProps } from './types';
 
 // Options must stay a function: `I18n.init()` is async, so a key read at module scope would be raw.
 export const HomeOverviewScreenOptions = (): MaterialTopTabNavigationOptions => ({
@@ -26,9 +27,11 @@ export const HomeOverviewScreenOptions = (): MaterialTopTabNavigationOptions => 
   title: I18n.get('home-overview-title'),
 });
 
-export function HomeOverviewScreen() {
+export function HomeOverviewScreen({ navigation }: HomeOverviewScreenProps) {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-  const navigation = useNavigation<NavigationProp<NewsNavigationParams>>();
+
+  // The news screens live in the navparent above the tabs, not among them.
+  const navparent = navigation.getParent<NavigationProp<NewsNavigationParams>>();
   const flashMessages = useSelector(state => timelineConfig.getState(state).flashMessages.data);
 
   const flashMessagesPristine = useSelector(state => timelineConfig.getState(state).flashMessages.isPristine);
@@ -83,11 +86,11 @@ export function HomeOverviewScreen() {
     [onRefresh, refreshing],
   );
 
-  const onSeeMorePress = React.useCallback(() => navigation.navigate(newsRouteNames.home, {}), [navigation]);
+  const onSeeMorePress = React.useCallback(() => navparent.navigate(newsRouteNames.home, {}), [navparent]);
 
   const onOpenNews = React.useCallback(
-    (item: HomeNewsItem) => navigation.navigate(newsRouteNames.details, { news: item.news, thread: item.thread }),
-    [navigation],
+    (item: HomeNewsItem) => navparent.navigate(newsRouteNames.details, { news: item.news, thread: item.thread }),
+    [navparent],
   );
 
   return (
