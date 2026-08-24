@@ -19,6 +19,7 @@ const NO_DRAG_OFFSET = 9999;
 export const NotificationRow = React.memo(
   ({
     canReport,
+    isRowOpened,
     item,
     onClose,
     onOpen,
@@ -27,7 +28,6 @@ export const NotificationRow = React.memo(
     onReport,
     onSwipeActive,
     onWillOpen,
-    opened,
     someRowOpen,
   }: NotificationRowProps) => {
     const isOpenable = canOpenNotification(item);
@@ -67,7 +67,7 @@ export const NotificationRow = React.memo(
         overshootRight={false}
         overshootFriction={8}
         animationOptions={SWIPE_ANIMATION_OPTIONS}
-        dragOffsetFromLeftEdge={opened ? CLOSE_DRAG_OFFSET : NO_DRAG_OFFSET}
+        dragOffsetFromLeftEdge={isRowOpened ? CLOSE_DRAG_OFFSET : NO_DRAG_OFFSET}
         onSwipeableOpenStartDrag={lockPager}
         onSwipeableCloseStartDrag={lockPager}
         onSwipeableWillOpen={willOpen}
