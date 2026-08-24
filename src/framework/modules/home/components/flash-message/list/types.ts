@@ -2,5 +2,6 @@ import type { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/
 
 export interface FlashMessageListProps {
   flashMessages: IEntcoreFlashMessage[];
+  loading: boolean;
   onDismiss: (id: number) => void;
 }
