@@ -1,91 +1,48 @@
 import * as React from 'react';
 import { LayoutChangeEvent, View } from 'react-native';
 
-import { Temporal } from '@js-temporal/polyfill';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
+import { screenOptions } from '~/app/navigation/util';
 import { getStore, IGlobalState } from '~/app/store';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { AvatarSizes } from '~/framework/components/avatar/styles';
 import GhostButton from '~/framework/components/buttons/ghost';
-import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text/viewer';
 import { RichEditorViewerProps } from '~/framework/components/inputs/rich-text/viewer/types';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import SocialResourceViewer from '~/framework/components/pages/social-resource-viewer';
-import {
-  ITEM_COMMENT,
-  ITEM_RESPONSE,
-  type SocialResourceViewer as SocialResourceViewerTypes,
-} from '~/framework/components/pages/social-resource-viewer/types';
 import { BodyBoldText, HeadingMText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import { useAudience } from '~/framework/modules/audience';
-import { AccountType } from '~/framework/modules/auth/model';
 import PageHeader from '~/framework/modules/wiki/components/page-header';
 import { PageHeaderPlaceholder } from '~/framework/modules/wiki/components/page-header/component';
 import { HeaderStatus } from '~/framework/modules/wiki/components/page-header/types';
 import PageListBottomSheet from '~/framework/modules/wiki/components/page-list/page-list-bottom-sheet';
 import SelectButton from '~/framework/modules/wiki/components/select-button';
 import { Wiki, WikiPage } from '~/framework/modules/wiki/model';
+import { wikiAudienceConfig } from '~/framework/modules/wiki/module-config';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction, WikiPageAction } from '~/framework/modules/wiki/store';
-import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import type { WikiReaderScreen } from './types';
-import { wikiAudienceConfig } from '../../module-config';
 
-const DEBUG_LIST_DATA: SocialResourceViewerTypes.Props['comments'] = [];
-for (let i = 1; i <= 20; ++i) {
-  DEBUG_LIST_DATA.push({
-    authorAccountType: AccountType.Personnel,
-    authorId: '',
-    authorName: i % 2 === 0 ? 'Myster Mask le détective canard' : 'Petit Prince',
-    date: Temporal.Now.instant().subtract({ hours: (i - 1) * 8 }),
-    hasResponses: i % 3 !== 0,
-    id: i.toString(),
-    type: ITEM_COMMENT,
-    value: i.toString(),
-  });
-  for (let j = 1; j <= i % 3; ++j) {
-    DEBUG_LIST_DATA.push({
-      authorAccountType: AccountType.Relative,
-      authorId: '',
-      authorName: i % 2 === 0 ? 'Super connard' : 'Uvuvwevwevwe Onyetenyevwe Ugwemuhwem Osas',
-      date: Temporal.Now.instant()
-        .subtract({ hours: (i - 1) * 8 })
-        .subtract({ minutes: (i - 1) * 12 }),
-      hasResponses: j !== i % 3,
-      id: i.toString() + '-' + j.toString(),
-      inReplyTo: i.toString(),
-      type: ITEM_RESPONSE,
-      value: i.toString() + '-' + j.toString(),
-    });
-  }
-}
-
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<WikiNavigationParams, typeof wikiRouteNames.reader>): NativeStackNavigationOptions => {
-  const wikiPageData = selectors.page(route.params.pageId)(getStore().getState());
-  return {
-    ...navBarOptions({
-      backButtonTestID: 'page-back-button',
-      navigation,
-      route,
+export const computeNavBar = screenOptions<'wiki/reader'>(
+  ({ route }: NativeStackScreenProps<WikiNavigationParams, typeof wikiRouteNames.reader>) => {
+    const wikiPageData = selectors.page(route.params.pageId)(getStore().getState());
+    return {
+      animationTypeForReplace: route.params.reverseAnimation ? 'pop' : 'push',
       title: wikiPageData?.title ?? '',
-    }),
-    animationTypeForReplace: route.params.reverseAnimation ? 'pop' : 'push',
-  };
-};
+    };
+  },
+);
 
 /**
  * PLACEHOLDERS
