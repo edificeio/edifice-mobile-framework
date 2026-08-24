@@ -42,8 +42,6 @@ const CarouselItem = ({
 
   if (!media.mime && media.src) return <UnviewableItem media={media} />;
 
-  if (!media.mime && media.src) return <UnviewableItem file={media} />;
-
   if (isImageContent(media)) {
     return (
       <ImageItem
