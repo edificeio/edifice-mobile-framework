@@ -12,7 +12,7 @@ export interface ReportActionProps {
 export interface NotificationRowProps {
   item: ITimelineNotification;
   canReport: boolean;
-  opened: boolean;
+  isRowOpened: boolean;
   someRowOpen: boolean;
   onClose: (id: string) => void;
   onOpen: (id: string) => void;
