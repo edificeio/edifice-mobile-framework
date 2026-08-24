@@ -1,11 +1,13 @@
-import * as React from 'react';
+import React from 'react';
 import { View } from 'react-native';
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { NativeStackHeaderItem } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
-import { screenOptions } from '~/app/navigation/util';
+import { headerAction, screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
+import PopupMenu from '~/framework/components/menus/popup';
 import { BarLine, NavBarProfileButton } from '~/framework/components/navigation';
 import { BodyBoldText, CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
@@ -14,6 +16,7 @@ import { TopTabBar, TopTabBarProps } from '~/framework/modules/home/components';
 import { HomeReloadProvider, useHomeReloadKey } from '~/framework/modules/home/hooks';
 import { HomeNotificationsScreen, HomeNotificationsScreenOptions } from '~/framework/modules/home/screens/notifications';
 import { HomeOverviewScreen, HomeOverviewScreenOptions } from '~/framework/modules/home/screens/overview';
+import { getTimelineWorkflows } from '~/framework/modules/timeline/timeline-modules';
 import { accountTypeInfos } from '~/framework/util/accountType';
 
 import { styles } from './styles';
@@ -53,8 +56,31 @@ const renderTabBar = (props: TopTabBarProps) => <TopTabBar {...props} />;
 
 const HomeTabs = createMaterialTopTabNavigator<HomeTabsParamList>();
 
-export const HomeScreen = withSession(function ({}: HomeScreenProps) {
+export const HomeScreen = withSession<HomeScreenProps>(({ navigation, session }) => {
   const reloadKey = useHomeReloadKey();
+
+  const workflows = React.useMemo(
+    () => getTimelineWorkflows(session, navigation as unknown as Parameters<typeof getTimelineWorkflows>[1]),
+    [navigation, session],
+  );
+
+  React.useEffect(() => {
+    if (!workflows.length) return;
+
+    const createButton = (props: Parameters<typeof headerAction>[1]) =>
+      headerAction(
+        { icon: 'ui-plus', testID: 'home-add-button' },
+        { ...props, tintColor: theme.palette.secondary.dark.toString() },
+      );
+
+    navigation.setOptions({
+      headerRight: props => <PopupMenu actions={workflows}>{createButton(props).element}</PopupMenu>,
+      unstable_headerRightItems: props => {
+        const action = createButton(props);
+        return [{ ...action, element: <PopupMenu actions={workflows}>{action.element}</PopupMenu> }] as NativeStackHeaderItem[];
+      },
+    });
+  }, [navigation, workflows]);
 
   return (
     <HomeReloadProvider value={reloadKey}>
