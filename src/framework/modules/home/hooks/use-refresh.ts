@@ -1,6 +1,5 @@
-import * as React from 'react';
+import React from 'react';
 
-/** Pull to refresh. Keeps the spinner up until the load ends, even when it fails. */
 export function useRefresh(load: () => Promise<unknown>) {
   const [refreshing, setRefreshing] = React.useState(false);
 
