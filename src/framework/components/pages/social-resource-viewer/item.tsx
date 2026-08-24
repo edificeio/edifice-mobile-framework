@@ -143,7 +143,7 @@ export const SocialResourceViewerShowMoreResponsesItem = (
         <View style={itemTreeCurveStyle} />
       </View>
       <View style={styles.itemResponsesShowMoreButtonWrapper}>
-        <GhostButton testID="social-responses-show-more" text={`Lire plus de réponses (${item.count})`} />
+        <GhostButton testID="social-responses-show-more" text={I18n.get('comment-read-more-responses', { count: item.count })} />
       </View>
     </View>
   );
