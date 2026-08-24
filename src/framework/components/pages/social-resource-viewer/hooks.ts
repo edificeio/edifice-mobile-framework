@@ -46,9 +46,12 @@ export const useSocialCommentsData = (
       start: ArrayElement<(typeof displayedResponsesRangesByComment)[number]>[0],
       count: ArrayElement<(typeof displayedResponsesRangesByComment)[number]>[1],
     ) => {
-      setDisplayedResponsesRangesByComment(oldRanges => ({ ...oldRanges, [id]: _addRange(oldRanges[id] ?? [], start, count) }));
+      setDisplayedResponsesRangesByComment(oldRanges => ({
+        ...oldRanges,
+        [id]: _addRange(oldRanges[id] ?? [], start, Math.min(count, config.responsesPage)),
+      }));
     },
-    [],
+    [config.responsesPage],
   );
 
   const filteredData = React.useMemo(() => {
@@ -57,7 +60,7 @@ export const useSocialCommentsData = (
       responses: _buildResponses(
         comment.responses,
         displayedResponsesRangesByComment[comment.id],
-        nb => ({ count: nb }) as SocialResourceViewer.ResponseItemEllipsis,
+        (gapStart, gapSize) => ({ count: gapSize, start: gapStart }) as SocialResourceViewer.ResponseItemEllipsis,
       ),
     }));
   }, [data, displayedResponsesRangesByComment]);
@@ -148,7 +151,7 @@ const _addRange = (
 const _buildResponses = <ItemT, GapT>(
   responses: ItemT[],
   ranges: [number, number][],
-  generateGap: (nb: number) => GapT,
+  generateGap: (gapStart: number, gapSize: number) => GapT,
 ): (ItemT | GapT)[] => {
   const ret: (ItemT | GapT)[] = [];
   let currentEnd = 0;
@@ -157,7 +160,7 @@ const _buildResponses = <ItemT, GapT>(
     const start = range[0];
     const end = range[0] + range[1];
     if (currentEnd < start) {
-      ret.push(generateGap(start - currentEnd));
+      ret.push(generateGap(currentEnd, start - currentEnd));
     }
     for (let i = start; i < end; ++i) {
       i < total && ret.push(responses[i]);
@@ -165,7 +168,7 @@ const _buildResponses = <ItemT, GapT>(
     currentEnd = end;
   }
   if (currentEnd < responses.length) {
-    ret.push(generateGap(total - currentEnd));
+    ret.push(generateGap(currentEnd, total - currentEnd));
   }
   return ret;
 };

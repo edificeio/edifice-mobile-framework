@@ -29,6 +29,7 @@ export namespace SocialResourceViewer {
   export interface ResponseItem extends CommonContentItemData, CommentResponseItemData {}
   export interface ResponseItemDeleted extends CommonDeletedItemData, CommentResponseItemData {}
   export interface ResponseItemEllipsis {
+    start: number;
     count: number;
   }
   export interface CommentItem extends CommonContentItemData, CommentCommentItemData {}
