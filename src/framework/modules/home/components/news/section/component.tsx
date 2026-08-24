@@ -17,7 +17,7 @@ import { NewsSectionProps } from './types';
 
 const keyExtractor = (item: HomeNewsItem) => String(item.news.id);
 
-export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore }: NewsSectionProps) => {
+export const NewsSection = React.memo(({ canView, loading, news, onPressItem, onSeeMore }: NewsSectionProps) => {
   const listRef = React.useRef<FlatList<HomeNewsItem>>(null);
   const scrolled = React.useRef<number>(0);
 
@@ -39,6 +39,8 @@ export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore }
     ({ item }: ListRenderItemInfo<HomeNewsItem>) => <NewsCard item={item} onPress={onCardPress} />,
     [onCardPress],
   );
+
+  if (!canView) return null;
 
   return (
     <View style={styles.section}>
