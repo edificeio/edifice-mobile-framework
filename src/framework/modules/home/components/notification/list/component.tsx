@@ -66,10 +66,15 @@ export const NotificationList = React.memo(
         const previous = openRowKey.current;
         if (previous && previous !== id) closeRow(previous);
         openRowKey.current = id;
-        setOpenRowId(id);
       },
       [closeRow],
     );
+
+    const onRowOpen = React.useCallback((id: string) => setOpenRowId(id), []);
+
+    const onScrollBeginDrag = React.useCallback(() => {
+      if (openRowKey.current) closeRow(openRowKey.current);
+    }, [closeRow]);
 
     const onRowClose = React.useCallback(
       (id: string) => {
@@ -120,6 +125,7 @@ export const NotificationList = React.memo(
           opened={openRowId === item.id}
           someRowOpen={!!openRowId}
           onClose={onRowClose}
+          onOpen={onRowOpen}
           onPress={onCardPress}
           onRef={setRowRef}
           onReport={onReport}
@@ -127,13 +133,15 @@ export const NotificationList = React.memo(
           onWillOpen={onRowWillOpen}
         />
       ),
-      [canReport, onCardPress, onReport, onRowClose, onRowWillOpen, onSwipeActive, openRowId, setRowRef],
+      [canReport, onCardPress, onReport, onRowClose, onRowOpen, onRowWillOpen, onSwipeActive, openRowId, setRowRef],
     );
 
     const loadingOrRefreshing = loading || refreshing;
 
     return (
       <FlatList
+        showsVerticalScrollIndicator={false}
+        scrollEnabled={!loadingOrRefreshing}
         data={loadingOrRefreshing ? undefined : notifications}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
@@ -142,6 +150,7 @@ export const NotificationList = React.memo(
         ListEmptyComponent={loadingOrRefreshing ? <NotificationsPlaceholder preview /> : renderEmpty}
         ListFooterComponent={loadingMore ? <NotificationsPlaceholder count={PLACEHOLDER_NEXT_PAGE_CARDS} /> : null}
         refreshControl={refreshControl}
+        onScrollBeginDrag={onScrollBeginDrag}
         onEndReached={onEndReached}
         onEndReachedThreshold={1}
       />
