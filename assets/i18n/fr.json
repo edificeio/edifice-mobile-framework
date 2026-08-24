@@ -332,6 +332,7 @@
   "collaborativewall-tabname": "Mur collaboratif",
   "comment-add-comment": "Ajouter un commentaire...",
   "comment-add-response": "Ajouter une réponse...",
+  "comment-read-more-responses": "Lire plus de réponses ({{count}})",
   "comment-deleted": "Commentaire supprimé",
   "comment-preventback-alert-title": "Commentaire non-enregistré",
   "comment-preventback-alert-text": "Vos modifications ne seront pas prises en compte. Êtes-vous sûr de quitter ?",

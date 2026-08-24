@@ -265,7 +265,7 @@ export const SocialResourceViewerAddCommentForm = ({
             )}
             onFocus={onFocus}
             onBlur={onBlur}
-            placeholder="Ajouter un commentaire"
+            placeholder={I18n.get('comment-add-comment')}
           />
           <PrimaryButton disabled={!inputState.value.length} iconLeft="ui-send" round />
         </View>
