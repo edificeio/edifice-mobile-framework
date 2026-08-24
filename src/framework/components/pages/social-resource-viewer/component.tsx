@@ -151,6 +151,25 @@ export function SocialResourceViewer({
     [showResponses],
   );
 
+  const keyExtractor = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['keyExtractor']>>(item => {
+    switch (item.type) {
+      case SocialResourceViewerInternals.ITEM_COMMENT:
+      case SocialResourceViewerInternals.ITEM_COMMENT_DELETED:
+      case SocialResourceViewerInternals.ITEM_RESPONSE:
+      case SocialResourceViewerInternals.ITEM_RESPONSE_DELETED:
+        return item.id;
+      case SocialResourceViewerInternals.ITEM_RESPONSE_ELLIPSIS:
+        return `${SocialResourceViewerInternals.ITEM_RESPONSE_ELLIPSIS.toString()}|${item.inReplyTo}|${item.start}|${item.count}`;
+      case SocialResourceViewerInternals.ITEM_ADD_RESPONSE:
+        return `${SocialResourceViewerInternals.ITEM_ADD_RESPONSE.toString()}|${item.inReplyTo}`;
+    }
+  }, []);
+
+  const getItemType = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['getItemType']>>(
+    item => item.type.toString(),
+    [],
+  );
+
   return (
     <NewCommentInputContext value={newCommentFormState}>
       <NewCommentInputDispatchContext value={newCommentFormDispatch}>
@@ -162,9 +181,12 @@ export function SocialResourceViewer({
           renderScrollComponent={renderScrollComponent}
           data={flatData}
           renderItem={renderItem}
+          getItemType={getItemType}
+          keyExtractor={keyExtractor}
           ListHeaderComponent={renderResource}
           ListFooterComponent={<View style={listFooterStyle} />}
           scrollIndicatorInsets={scrollIndicatorInsets}
+          keyboardShouldPersistTaps="handled"
         />
         {canAddComment && (
           <SocialResourceViewerAddCommentForm session={session} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
