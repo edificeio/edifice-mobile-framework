@@ -21,6 +21,7 @@ export const NotificationRow = React.memo(
     canReport,
     item,
     onClose,
+    onOpen,
     onPress,
     onRef,
     onReport,
@@ -32,19 +33,24 @@ export const NotificationRow = React.memo(
     const isOpenable = canOpenNotification(item);
 
     const setRef = React.useCallback((ref: SwipeableMethods | null) => onRef(item.id, ref), [item.id, onRef]);
-    const press = React.useCallback(() => onPress(item), [item, onPress]);
+    const handleCardPress = React.useCallback(() => onPress(item), [item, onPress]);
     const report = React.useCallback(() => onReport(item), [item, onReport]);
     const willOpen = React.useCallback(() => onWillOpen(item.id), [item.id, onWillOpen]);
-    const close = React.useCallback(() => onClose(item.id), [item.id, onClose]);
+    const openSwipeable = React.useCallback(() => onOpen(item.id), [item.id, onOpen]);
+    const closeSwipeable = React.useCallback(() => onClose(item.id), [item.id, onClose]);
     const lockPager = React.useCallback(() => onSwipeActive(true), [onSwipeActive]);
-    const unlockPager = React.useCallback(() => onSwipeActive(false), [onSwipeActive]);
+
+    const onOpened = React.useCallback(() => {
+      onSwipeActive(false);
+      openSwipeable();
+    }, [onSwipeActive, openSwipeable]);
 
     const renderRightActions = React.useCallback(
       (progress: SharedValue<number>) => <ReportAction progress={progress} onPress={report} />,
       [report],
     );
 
-    const onCardPress = isOpenable || someRowOpen ? press : undefined;
+    const onCardPress = isOpenable || someRowOpen ? handleCardPress : undefined;
     const card = isUserbookNotification(item) ? (
       <UserbookNotificationCard notification={item} onPress={onCardPress} />
     ) : (
@@ -65,9 +71,8 @@ export const NotificationRow = React.memo(
         onSwipeableOpenStartDrag={lockPager}
         onSwipeableCloseStartDrag={lockPager}
         onSwipeableWillOpen={willOpen}
-        // The pager is given back once the row settles, so the tab can still be changed.
-        onSwipeableOpen={unlockPager}
-        onSwipeableClose={close}>
+        onSwipeableOpen={onOpened}
+        onSwipeableClose={closeSwipeable}>
         <View style={styles.row}>{card}</View>
       </ReanimatedSwipeable>
     );
