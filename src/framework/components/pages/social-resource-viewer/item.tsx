@@ -2,7 +2,6 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import { ListRenderItemInfo } from '@shopify/flash-list';
-import { Pressable } from 'react-native-gesture-handler';
 
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
@@ -151,7 +150,6 @@ export const SocialResourceViewerShowMoreResponsesItem = ({
       </View>
       <View style={styles.itemResponsesShowMoreButtonWrapper}>
         <GhostButton
-          PressableComponent={Pressable}
           onPress={showResponses}
           testID="social-responses-show-more"
           text={I18n.get('comment-read-more-responses', { count: item.count })}
