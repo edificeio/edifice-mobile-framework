@@ -14,5 +14,5 @@ export const cutMessageBeforeResource = (message: string) => {
   if (links.length < 2) return message;
 
   // Tags left open, spaces and punctuation hang at the cut.
-  return message.slice(0, links[1].index).replace(/(<[^>]*>|\s|[.,;:&nbsp;])+$/, '');
+  return message.slice(0, links[1].index).replace(/(?:&nbsp;|<[^>]*>|\s|[.,;:])+$/, '');
 };
