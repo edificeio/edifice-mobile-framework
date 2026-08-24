@@ -4,11 +4,15 @@
 import { ColorValue } from 'react-native';
 
 import deepmerge from 'deepmerge';
+import RNRestart from 'react-native-restart';
 
-import customTheme from '~/app/override/theme';
-import type { SvgProps } from '~/framework/components/picture';
+import themeOverrides from '~/app/override/theme';
+import type { SvgIconName, SvgProps } from '~/framework/components/picture';
 import { MediaType } from '~/framework/modules/media';
+import { preferences as userPreferences } from '~/framework/modules/user/storage';
 import type { ImageProps } from '~/framework/util/media-deprecated';
+import { Storage } from '~/framework/util/storage';
+import { DeepPartial, ValueOf } from '~/utils/types';
 
 //  8888888          888                      .d888
 //    888            888                     d88P"
@@ -20,7 +24,6 @@ import type { ImageProps } from '~/framework/util/media-deprecated';
 //  8888888 888  888  "Y888  "Y8888  888     888    "Y888888  "Y8888P  "Y8888
 
 export interface IShades {
-  evil: ColorValue;
   dark: ColorValue;
   regular: ColorValue;
   light: ColorValue;
@@ -37,7 +40,17 @@ export interface EntAppTheme {
   icon: IntentIcon;
 }
 
+export const THEME_LEVEL = {
+  FIRST_DEGREE: '1D',
+  SECOND_DEGREE: '2D',
+} as const;
+
+export type ThemeLevel = ValueOf<typeof THEME_LEVEL>;
+
 export interface ITheme {
+  // Theme identity, declared by the override
+  level: ThemeLevel;
+  displayName: string;
   // Color palette used globally
   palette: {
     primary: IShades;
@@ -91,6 +104,19 @@ export interface ITheme {
     border: {
       listItem: ColorValue;
       input: ColorValue;
+    };
+    navigation: {
+      line?: SvgIconName;
+      navBar: {
+        tint: ColorValue;
+        background: ColorValue;
+      };
+      tabBar: {
+        tintFocus: ColorValue;
+        tintBlur: ColorValue;
+        background: ColorValue;
+        highlight?: ColorValue;
+      };
     };
     text: {
       regular: ColorValue;
@@ -153,22 +179,12 @@ export interface ITheme {
   };
 }
 
-type ThemeInitializer = Pick<ITheme, 'palette' | 'legacy'> & {
+type ThemeInitializer = Omit<ITheme, 'ui' | 'color' | 'media'> & {
   init(): ITheme;
 };
 
 export const defaultTheme: ThemeInitializer = {
-  //  888     888
-  //  888     888
-  //  888     888
-  //  888     888 .d8888b   8888b.   .d88b.   .d88b.  .d8888b
-  //  888     888 88K          "88b d88P"88b d8P  Y8b 88K
-  //  888     888 "Y8888b. .d888888 888  888 88888888 "Y8888b.
-  //  Y88b. .d88P      X88 888  888 Y88b 888 Y8b.          X88
-  //   "Y88888P"   88888P' "Y888888  "Y88888  "Y8888   88888P'
-  //                                     888
-  //                                Y8b d88P
-  //                                 "Y88P"
+  displayName: 'user-theme-displayname-2d',
   init() {
     (this as Partial<ITheme>).media = {
       attachment: { name: 'ui-attachment', type: 'Svg' },
@@ -190,6 +206,17 @@ export const defaultTheme: ThemeInitializer = {
       border: {
         input: this.palette.grey.cloudy,
         listItem: this.palette.grey.cloudy,
+      },
+      navigation: {
+        navBar: {
+          background: this.palette.primary.regular,
+          tint: this.palette.grey.white,
+        },
+        tabBar: {
+          background: this.palette.grey.white,
+          tintBlur: this.palette.grey.graphite,
+          tintFocus: this.palette.primary.regular,
+        },
       },
       notificationBadge: this.palette.complementary.red.regular,
       overlay: {
@@ -280,34 +307,24 @@ export const defaultTheme: ThemeInitializer = {
     },
   },
 
-  //  888     888          888
-  //  888     888          888
-  //  888     888          888
-  //  Y88b   d88P  8888b.  888 888  888  .d88b.  .d8888b
-  //   Y88b d88P      "88b 888 888  888 d8P  Y8b 88K
-  //    Y88o88P   .d888888 888 888  888 88888888 "Y8888b.
-  //     Y888P    888  888 888 Y88b 888 Y8b.          X88
-  //      Y8P     "Y888888 888  "Y88888  "Y8888   88888P'
-  // Magenta color indicated non-defined values
+  level: THEME_LEVEL.SECOND_DEGREE,
+
   palette: {
     complementary: {
       'blue': {
         dark: '#1B84AC',
-        evil: 'magenta',
         light: '#AADAED',
         pale: '#E4F4FF',
         regular: '#2A9CC8',
       },
       'green': {
         dark: '#33A797',
-        evil: 'magenta',
         light: '#A2E0D8',
         pale: '#E7F5F4',
         regular: '#46BFAF',
       },
       'indigo': {
         dark: '#121982',
-        evil: 'magenta',
         light: '#9297E5',
         pale: '#DDE8FD',
         regular: '#1A22A2',
@@ -317,35 +334,30 @@ export const defaultTheme: ThemeInitializer = {
       },
       'orange': {
         dark: '#F17A17',
-        evil: 'magenta',
         light: '#FFC696',
         pale: '#FFEFE3',
         regular: '#FF8D2E',
       },
       'pink': {
         dark: '#9C2288',
-        evil: 'magenta',
         light: '#E39CD7',
         pale: '#FFE5FB',
         regular: '#B930A2',
       },
       'purple': {
         dark: '#5D1D79',
-        evil: 'magenta',
         light: '#B68ACA',
         pale: '#F4EAF9',
         regular: '#763294',
       },
       'red': {
         dark: '#C82222',
-        evil: 'magenta',
         light: '#F48A8A',
         pale: '#FFD9D9',
         regular: '#E13A3A',
       },
       'yellow': {
         dark: '#DAA910',
-        evil: 'magenta',
         light: '#F6DE94',
         pale: '#FFF4D1',
         regular: '#ECBE30',
@@ -371,23 +383,21 @@ export const defaultTheme: ThemeInitializer = {
     },
     primary: {
       dark: '#1B84AC',
-      evil: 'magenta',
       light: '#AADAED',
       pale: '#E4F4FF',
       regular: '#2A9CC8',
     },
     secondary: {
       dark: '#F17A17',
-      evil: 'magenta',
       light: '#FFC696',
       pale: '#FFEFE3',
       regular: '#FF8D2E',
     },
     status: {
-      failure: { dark: '#D12A2A', evil: 'magenta', light: '#F3A6A6', pale: '#FFE9E9', regular: '#e13a3a' },
-      info: { dark: '#3499BF', evil: 'magenta', light: '#ACD6E6', pale: '#D7E8EE', regular: '#4bafd5' },
-      success: { dark: '#70A977', evil: 'magenta', light: '#BBE1BF', pale: '#DAF1DD', regular: '#7dbf85' },
-      warning: { dark: '#E58D00', evil: 'magenta', light: '#F2C987', pale: '#FDECD2', regular: '#f59700' },
+      failure: { dark: '#D12A2A', light: '#F3A6A6', pale: '#FFE9E9', regular: '#e13a3a' },
+      info: { dark: '#3499BF', light: '#ACD6E6', pale: '#D7E8EE', regular: '#4bafd5' },
+      success: { dark: '#70A977', light: '#BBE1BF', pale: '#DAF1DD', regular: '#7dbf85' },
+      warning: { dark: '#E58D00', light: '#F2C987', pale: '#FDECD2', regular: '#f59700' },
     },
   },
 };
@@ -406,25 +416,70 @@ export const defaultTheme: ThemeInitializer = {
 
 // Compute once (Singleton)
 
-type CustomThemeOverride = {
-  palette?: Partial<ITheme['palette']>;
-  legacy?: Partial<ITheme['legacy']>;
-  color?: Partial<ITheme['color']>;
-  init?: () => ITheme;
-};
+type CustomThemeOverride = DeepPartial<Pick<ITheme, 'color' | 'palette' | 'ui' | 'legacy'>> & Pick<ITheme, 'displayName' | 'level'>;
+type AllThemesOverrides = { themes?: CustomThemeOverride[] };
 
-const { init, ...customThemeRest } = customTheme as CustomThemeOverride;
+// themes come from the build-time override.
+// an override declaring none gets a single
+// theme built from defaultTheme.
+type AllThemes = ITheme[];
+const themeList = (themeOverrides as AllThemesOverrides).themes ?? [];
+export const themes: AllThemes = themeList.length
+  ? themeList.map(override =>
+      deepmerge<ITheme, CustomThemeOverride>(
+        deepmerge<ThemeInitializer, CustomThemeOverride>(defaultTheme, override).init(),
+        override,
+      ),
+    )
+  : [deepmerge<ThemeInitializer, object>(defaultTheme, {}).init()];
 
-const totalTheme: ITheme = {
-  ...defaultTheme,
-  palette: deepmerge(defaultTheme.palette, customThemeRest.palette || {}),
-}.init();
+const THEME_STORAGE_KEY = 'theme';
 
-// applying override color after init
-if (customThemeRest.color) {
-  totalTheme.color = deepmerge(totalTheme.color, customThemeRest.color);
+const isValidThemeIndex = (index?: number): index is number => index !== undefined && index >= 0 && index < themes.length;
+
+function readInitialThemeIndex(): number {
+  try {
+    const stored = Storage.global.getNumber(THEME_STORAGE_KEY);
+    if (isValidThemeIndex(stored)) return stored;
+  } catch {
+    //fall back to the default theme
+  }
+  return 0;
 }
 
-if (init) init.call(totalTheme);
+/**
+ * All these values are constqnts because theme is changed by restarting the app after set new theme index in MMKV.
+ */
+const currentIndex = readInitialThemeIndex();
+const currentTheme = themes[currentIndex];
 
-export default totalTheme;
+export const getThemes = (): { displayName: string; level: ThemeLevel }[] =>
+  themes.map(t => ({ displayName: t.displayName, level: t.level }));
+
+export function setTheme(index: number): void {
+  if (!isValidThemeIndex(index) || index === currentIndex) return;
+  try {
+    Storage.global.set(THEME_STORAGE_KEY, index);
+    userPreferences.set(THEME_STORAGE_KEY, index);
+    RNRestart.restart();
+  } catch {
+    // ToDo : what here ?
+  }
+}
+
+const SECOND_DEGREE = 2;
+
+const resolveLevel = (structuresLevels?: number[]): ThemeLevel =>
+  Array.isArray(structuresLevels) && structuresLevels.length > 0 && !structuresLevels.some(level => Number(level) === SECOND_DEGREE)
+    ? THEME_LEVEL.FIRST_DEGREE
+    : THEME_LEVEL.SECOND_DEGREE;
+
+export function setThemeAfterLogin(structuresLevels?: number[]) {
+  const chosenIndex = userPreferences.getNumber(THEME_STORAGE_KEY);
+  if (isValidThemeIndex(chosenIndex)) return setTheme(chosenIndex);
+
+  const levelIndex = themes.findIndex(t => t.level === resolveLevel(structuresLevels));
+  setTheme(isValidThemeIndex(levelIndex) ? levelIndex : currentIndex);
+}
+
+export default currentTheme;

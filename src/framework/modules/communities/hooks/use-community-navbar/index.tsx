@@ -6,6 +6,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { transparentHeaderOptions } from '~/app/navigation/layout';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
@@ -160,5 +161,5 @@ export const communityNavBar = <NavigationParams extends ParamListBase, RouteNam
       />
     </View>
   ),
-  headerTransparent: true,
+  ...transparentHeaderOptions,
 });

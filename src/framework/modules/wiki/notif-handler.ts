@@ -1,8 +1,7 @@
 import { CommonActions } from '@react-navigation/native';
 
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { wikiRouteNames } from '~/framework/modules/wiki/navigation';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import {
   handleNotificationNavigationAction,
@@ -23,7 +22,7 @@ const handleWikiNotificationAction: NotifHandlerThunkAction = (notification, _, 
     if (!wikiId) return { managed: 0 };
 
     const navAction = CommonActions.navigate({
-      name: computeTabRouteName(timelineModuleConfig.routeName),
+      name: getHomeTabRouteName(),
       params: {
         initial: false,
         params: {
@@ -58,7 +57,7 @@ const handlePageNotificationAction: NotifHandlerThunkAction = (notification, _, 
     if (!pageId) return { managed: 0 };
 
     const navAction = CommonActions.navigate({
-      name: computeTabRouteName(timelineModuleConfig.routeName),
+      name: getHomeTabRouteName(),
       params: {
         initial: false,
         params: {

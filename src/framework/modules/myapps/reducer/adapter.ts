@@ -25,6 +25,9 @@ import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IAppThemeInfo, IEntcoreAp
 
 type BadgeOverridesType = Record<string, { color?: string; icon?: string }>;
 
+const asPaletteColorName = (appColor?: string): AppsInfoAggregated['color'] =>
+  appColor && appColor in theme.palette.complementary ? (appColor as AppsInfoAggregated['color']) : undefined;
+
 export const resolveAppColor = (appColor?: string) =>
   appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor].regular : undefined;
 
@@ -136,7 +139,7 @@ export const aggregateApps = (
       return {
         ...app,
         category: config?.category,
-        color: override?.color ?? config?.color,
+        color: asPaletteColorName(override?.color ?? config?.color),
         displayName: getAppName(app),
         help: config?.help,
         icon: override?.icon ?? ICON_NAME_MAP[normalizedIcon] ?? normalizedIcon,
@@ -220,20 +223,17 @@ export const getTabModuleDisplayName = (
 export const buildNotifTypeLookupMap = (notifTypes: IEntcoreNotificationType[]): Map<string, IEntcoreNotificationType> =>
   new Map(notifTypes.map(nt => [`${nt.type}.${nt['event-type']}`, nt]));
 
-/**
- * Resolve a notification badge from its type using the notification type
- * definitions which contains `app-name` and the aggregated apps as the single source of truth.
- */
-export const resolveNotifBadge = (
+/** The app a notification comes from, named by its type definition. */
+export const resolveNotifApp = (
   notifType: string,
   notifTypeMap: Map<string, IEntcoreNotificationType>,
   aggregatedApps: Record<string, AppsInfoAggregated>,
-): IAppBadgeInfo | undefined => {
+): AppsInfoAggregated | undefined => {
   const appName = notifTypeMap.get(notifType)?.['app-name'];
+  return appName ? aggregatedApps[appName] : undefined;
+};
 
-  if (!appName) return undefined;
-
-  const app = aggregatedApps[appName];
+export const resolveNotifBadgeFromApp = (notifType: string, app?: AppsInfoAggregated): IAppBadgeInfo | undefined => {
   if (!app) return undefined;
 
   const override = NOTIF_TYPE_BADGE_OVERRIDES[notifType];
@@ -242,6 +242,16 @@ export const resolveNotifBadge = (
     icon: override?.icon ?? app.icon,
   };
 };
+
+/**
+ * Resolve a notification badge from its type using the notification type
+ * definitions which contains `app-name` and the aggregated apps as the single source of truth.
+ */
+export const resolveNotifBadge = (
+  notifType: string,
+  notifTypeMap: Map<string, IEntcoreNotificationType>,
+  aggregatedApps: Record<string, AppsInfoAggregated>,
+): IAppBadgeInfo | undefined => resolveNotifBadgeFromApp(notifType, resolveNotifApp(notifType, notifTypeMap, aggregatedApps));
 
 export const buildFetchSuccessPayload = (appsInfo: AppsInfo[], appsConfig: ApplicationsConfig[], favorites: AppBookmarks) => {
   const aggregatedApps = aggregateApps(appsInfo, appsConfig, favorites);

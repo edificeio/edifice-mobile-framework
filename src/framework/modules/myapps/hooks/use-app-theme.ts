@@ -2,7 +2,9 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { buildAppLookupMap, resolveAppTheme, selectAggregatedApps } from '~/framework/modules/myapps/reducer';
+import { getAppLookupMap } from '~/framework/modules/myapps/hooks/lookup';
+import { NotificationOfApp, useNotificationApp } from '~/framework/modules/myapps/hooks/use-notification-app';
+import { resolveAppTheme, selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { IAppThemeInfo } from '~/framework/util/moduleTool';
 
 /**
@@ -17,10 +19,10 @@ import { IAppThemeInfo } from '~/framework/util/moduleTool';
 export function useAppTheme(appName: string): IAppThemeInfo {
   const aggregatedApps = useSelector(selectAggregatedApps);
 
-  return React.useMemo(() => {
-    const lookupMap = buildAppLookupMap(aggregatedApps ?? {});
-    return resolveAppTheme(appName, lookupMap) ?? getDefaultAppTheme();
-  }, [aggregatedApps, appName]);
+  return React.useMemo(
+    () => resolveAppTheme(appName, getAppLookupMap(aggregatedApps)) ?? getDefaultAppTheme(),
+    [aggregatedApps, appName],
+  );
 }
 
 /**
@@ -33,4 +35,13 @@ export function getDefaultAppTheme(): IAppThemeInfo {
     colors: theme.palette.grey,
     icon: 'ui-infoCircle',
   };
+}
+
+/**
+ * Returns the theme of the app a notification comes from.
+ *
+ * @returns IAppThemeInfo or undefined when the app is unknown
+ */
+export function useNotificationAppTheme(notification: NotificationOfApp): IAppThemeInfo | undefined {
+  return useNotificationApp(notification).theme;
 }

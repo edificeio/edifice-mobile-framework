@@ -4,6 +4,7 @@ import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import { setThemeAfterLogin } from '~/app/theme';
 import { audienceService } from '~/framework/modules/audience/service';
 import { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
 import { appInfoActions } from '~/framework/modules/myapps/reducer/actions';
@@ -44,6 +45,7 @@ import {
 import { actions, ERASE_ALL_ACCOUNTS } from './redux/actions';
 import { assertSession, getState as getAuthState, getSession } from './redux/reducer';
 import { AuthState } from './redux/types';
+import * as authService from './service';
 import {
   assertNotPredeleted,
   fetchUserInfo,
@@ -55,7 +57,6 @@ import {
   UserPersonDataBackend,
   UserPrivateData,
 } from './service';
-import * as authService from './service';
 import * as storage from './storage';
 
 type AuthDispatch = ThunkDispatch<AuthState, any, Action>;
@@ -430,6 +431,9 @@ const performLogin = async (
 
   // Refresh oneSessionId token
   await dispatch(refreshSessionIdForAccountAction(accountInfo));
+
+  // Apply the theme chosen by this user, or the one of its level on its first login
+  setThemeAfterLogin(accountInfo.user.structuresLevels);
 
   return accountInfo;
 };

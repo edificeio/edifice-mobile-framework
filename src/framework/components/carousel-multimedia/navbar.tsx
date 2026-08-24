@@ -5,6 +5,7 @@ import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/
 import { NativeStackHeaderBackProps, NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { I18n } from '~/app/i18n';
+import { transparentHeaderOptions } from '~/app/navigation/layout';
 import { headerAction, modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -111,7 +112,9 @@ export const MultimediaCarouselScreenOptions = modalScreenOptions<'media/carouse
     headerBlurEffect: 'dark',
     headerShadowVisible: false,
     headerStyle: { backgroundColor: isAndroid ? theme.ui.shadowColorTransparent.toString() : undefined },
-    headerTransparent: true,
+    //title  & actions should be white whatever the theme is
+    headerTintColor: theme.palette.grey.white.toString(),
+    ...transparentHeaderOptions,
     statusBarStyle: 'light',
     // Note: ENABLING-769 for some reason title declared here cannot be overriden in the screen itself with setOptions.
     // title:
