@@ -1,23 +1,15 @@
-import * as React from 'react';
+import React from 'react';
 import { RefreshControl } from 'react-native';
 
 import { MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
-import { useDispatch, useSelector } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import ScrollView from '~/framework/components/scrollView';
 import { withSession } from '~/framework/modules/auth/util';
-import { FlashMessageList, FlashMessagePlaceholder, NewsSection } from '~/framework/modules/home/components';
-import { NEWS_COUNT } from '~/framework/modules/home/components/news/constants';
+import { FlashMessageList, NewsSection } from '~/framework/modules/home/components';
 import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
-import { useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
-import { getNewsItemsAction, getNewsThreadsAction } from '~/framework/modules/news/actions';
-import type { NewsItem, NewsThreadItem } from '~/framework/modules/news/model';
+import { useFlashMessages, useHomeNews, useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
 import { newsRouteNames } from '~/framework/modules/news/navigation';
-import { getNewsRights } from '~/framework/modules/news/rights';
-import { dismissFlashMessageAction, loadFlashMessagesAction } from '~/framework/modules/timeline/actions';
-import timelineConfig from '~/framework/modules/timeline/module-config';
 
 import styles from './styles';
 import { HomeOverviewScreenProps } from './types';
@@ -28,52 +20,11 @@ export const HomeOverviewScreenOptions = (): MaterialTopTabNavigationOptions => 
 });
 
 export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ navigation, session }) => {
-  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-
-  const canViewNews = getNewsRights(session).view;
-
-  const flashMessages = useSelector(state => timelineConfig.getState(state).flashMessages.data);
-
-  const flashMessagesPristine = useSelector(state => timelineConfig.getState(state).flashMessages.isPristine);
-
-  const loadFlashMessages = React.useCallback(() => dispatch(loadFlashMessagesAction()), [dispatch]);
-
-  const onDismissFlashMessage = React.useCallback((id: number) => dispatch(dismissFlashMessageAction(id)), [dispatch]);
-
-  const visibleFlashMessages = React.useMemo(() => flashMessages.filter(flashMessage => !flashMessage.dismiss), [flashMessages]);
-
-  const [news, setNews] = React.useState<HomeNewsItem[]>([]);
-  const [newsLoading, setNewsLoading] = React.useState(true);
-
-  const loadNews = React.useCallback(async () => {
-    if (!canViewNews) return;
-
-    const [threads, items] = await Promise.all([
-      dispatch(getNewsThreadsAction()) as unknown as Promise<NewsThreadItem[]>,
-      dispatch(getNewsItemsAction(0)) as unknown as Promise<NewsItem[]>,
-    ]);
-    const threadsById = new Map(threads.map(thread => [thread.id, thread]));
-
-    setNews(
-      items.slice(0, NEWS_COUNT).reduce<HomeNewsItem[]>((acc, item) => {
-        const thread = threadsById.get(item.threadId);
-        if (thread)
-          acc.push({
-            news: item,
-            thread: { icon: thread.icon, ownerId: thread.owner.id, sharedRights: thread.sharedRights, title: thread.title },
-          });
-        return acc;
-      }, []),
-    );
-  }, [canViewNews, dispatch]);
+  const { dismiss: onDismissFlashMessage, load: loadFlashMessages, pristine, visible: flashMessages } = useFlashMessages();
+  const { canView: canViewNews, load: loadNews, loading: newsLoading, news } = useHomeNews(session);
 
   const reload = React.useCallback(async () => {
-    setNewsLoading(true);
-    try {
-      await Promise.all([loadFlashMessages(), loadNews()]);
-    } finally {
-      setNewsLoading(false);
-    }
+    await Promise.all([loadFlashMessages(), loadNews()]);
   }, [loadFlashMessages, loadNews]);
 
   // everything is fetched again
@@ -96,13 +47,13 @@ export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ naviga
 
   return (
     <ScrollView contentContainerStyle={styles.content} refreshControl={refreshControl} showsVerticalScrollIndicator={false}>
-      {flashMessagesPristine || refreshing || reloading ? (
-        <FlashMessagePlaceholder />
-      ) : (
-        <FlashMessageList flashMessages={visibleFlashMessages} onDismiss={onDismissFlashMessage} />
-      )}
+      <FlashMessageList
+        flashMessages={flashMessages}
+        loading={pristine || refreshing || reloading}
+        onDismiss={onDismissFlashMessage}
+      />
 
-      {canViewNews ? <NewsSection loading={newsLoading} news={news} onPressItem={onOpenNews} onSeeMore={onSeeMorePress} /> : null}
+      <NewsSection canView={canViewNews} loading={newsLoading} news={news} onPressItem={onOpenNews} onSeeMore={onSeeMorePress} />
     </ScrollView>
   );
 });
