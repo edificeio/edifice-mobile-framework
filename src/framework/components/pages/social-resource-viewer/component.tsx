@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Platform, View, ViewStyle } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
-import { FlashList, FlashListRef } from '@shopify/flash-list';
+import { FlashList, FlashListProps, FlashListRef } from '@shopify/flash-list';
 import { KeyboardChatScrollView, KeyboardStickyView, useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
 import Animated, { AnimatedStyle, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -146,6 +146,11 @@ export function SocialResourceViewer({
     [newCommentFormState.height],
   );
 
+  const renderItem = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['renderItem']>>(
+    info => <SocialResourceViewerItem {...info} onShowResponses={showResponses} />,
+    [showResponses],
+  );
+
   return (
     <NewCommentInputContext value={newCommentFormState}>
       <NewCommentInputDispatchContext value={newCommentFormDispatch}>
@@ -156,7 +161,7 @@ export function SocialResourceViewer({
           onScroll={scrollHandler}
           renderScrollComponent={renderScrollComponent}
           data={flatData}
-          renderItem={SocialResourceViewerItem}
+          renderItem={renderItem}
           ListHeaderComponent={renderResource}
           ListFooterComponent={<View style={listFooterStyle} />}
           scrollIndicatorInsets={scrollIndicatorInsets}

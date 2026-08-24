@@ -2,6 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import { ListRenderItemInfo } from '@shopify/flash-list';
+import { Pressable } from 'react-native-gesture-handler';
 
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
@@ -129,13 +130,19 @@ export const SocialResourceViewerContentDeletedItem = (
   return <SmallItalicText style={containerStye}>{I18n.get('comment-deleted')}</SmallItalicText>;
 };
 
-export const SocialResourceViewerShowMoreResponsesItem = (
-  info: ListRenderItemInfo<SocialResourceViewerInternals.ResponseItemEllipsis>,
-) => {
+export const SocialResourceViewerShowMoreResponsesItem = ({
+  onShowResponses,
+  ...info
+}: ListRenderItemInfo<SocialResourceViewerInternals.ResponseItemEllipsis> & {
+  onShowResponses?: (id: string, start: number, count: number) => void;
+}) => {
   const { item } = info;
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemResponse], []);
   const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeResponse], []);
   const itemTreeCurveStyle = React.useMemo(() => [styles.itemTreeDecoCurveCommon, styles.itemTreeDecoCurveTop], []);
+  const showResponses = React.useCallback(() => {
+    onShowResponses?.(item.inReplyTo, item.start, item.count);
+  }, [item.count, item.inReplyTo, item.start, onShowResponses]);
 
   return (
     <View style={itemStyle}>
@@ -143,13 +150,23 @@ export const SocialResourceViewerShowMoreResponsesItem = (
         <View style={itemTreeCurveStyle} />
       </View>
       <View style={styles.itemResponsesShowMoreButtonWrapper}>
-        <GhostButton testID="social-responses-show-more" text={I18n.get('comment-read-more-responses', { count: item.count })} />
+        <GhostButton
+          PressableComponent={Pressable}
+          onPress={showResponses}
+          testID="social-responses-show-more"
+          text={I18n.get('comment-read-more-responses', { count: item.count })}
+        />
       </View>
     </View>
   );
 };
 
-export const SocialResourceViewerItem = (info: ListRenderItemInfo<SocialResourceViewerInternals.Item>) => {
+export const SocialResourceViewerItem = ({
+  onShowResponses,
+  ...info
+}: ListRenderItemInfo<SocialResourceViewerInternals.Item> & {
+  onShowResponses?: (id: string, start: number, count: number) => void;
+}) => {
   if (info.item.type === SocialResourceViewerInternals.ITEM_COMMENT) {
     return <SocialResourceViewerCommentItem {...(info as ListRenderItemInfo<SocialResourceViewerInternals.CommentItem>)} />;
   } else if (info.item.type === SocialResourceViewerInternals.ITEM_RESPONSE) {
@@ -168,6 +185,7 @@ export const SocialResourceViewerItem = (info: ListRenderItemInfo<SocialResource
     return (
       <SocialResourceViewerShowMoreResponsesItem
         {...(info as ListRenderItemInfo<SocialResourceViewerInternals.ResponseItemEllipsis>)}
+        onShowResponses={onShowResponses}
       />
     );
   } else {
