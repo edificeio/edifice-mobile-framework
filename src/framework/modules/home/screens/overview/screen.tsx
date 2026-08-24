@@ -2,7 +2,6 @@ import * as React from 'react';
 import { RefreshControl } from 'react-native';
 
 import { MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
-import { NavigationProp } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -14,14 +13,13 @@ import type { HomeNewsItem } from '~/framework/modules/home/components/news/type
 import { useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
 import { getNewsItemsAction, getNewsThreadsAction } from '~/framework/modules/news/actions';
 import type { NewsItem, NewsThreadItem } from '~/framework/modules/news/model';
-import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/news/navigation';
+import { newsRouteNames } from '~/framework/modules/news/navigation';
 import { dismissFlashMessageAction, loadFlashMessagesAction } from '~/framework/modules/timeline/actions';
 import timelineConfig from '~/framework/modules/timeline/module-config';
 
 import styles from './styles';
 import { HomeOverviewScreenProps } from './types';
 
-// Options must stay a function: `I18n.init()` is async, so a key read at module scope would be raw.
 export const HomeOverviewScreenOptions = (): MaterialTopTabNavigationOptions => ({
   tabBarButtonTestID: 'home-tab-overview',
   title: I18n.get('home-overview-title'),
@@ -30,15 +28,13 @@ export const HomeOverviewScreenOptions = (): MaterialTopTabNavigationOptions => 
 export function HomeOverviewScreen({ navigation }: HomeOverviewScreenProps) {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
-  // The news screens live in the navparent above the tabs, not among them.
-  const navparent = navigation.getParent<NavigationProp<NewsNavigationParams>>();
   const flashMessages = useSelector(state => timelineConfig.getState(state).flashMessages.data);
 
   const flashMessagesPristine = useSelector(state => timelineConfig.getState(state).flashMessages.isPristine);
 
   const loadFlashMessages = React.useCallback(() => dispatch(loadFlashMessagesAction()), [dispatch]);
 
-  const onDismiss = React.useCallback((id: number) => dispatch(dismissFlashMessageAction(id)), [dispatch]);
+  const onDismissFlashMessage = React.useCallback((id: number) => dispatch(dismissFlashMessageAction(id)), [dispatch]);
 
   const visibleFlashMessages = React.useMemo(() => flashMessages.filter(flashMessage => !flashMessage.dismiss), [flashMessages]);
 
@@ -46,7 +42,6 @@ export function HomeOverviewScreen({ navigation }: HomeOverviewScreenProps) {
   const [newsLoading, setNewsLoading] = React.useState(true);
 
   const loadNews = React.useCallback(async () => {
-    // The list only gives a `threadId`, the threads carry the icon and the name to show.
     const [threads, items] = await Promise.all([
       dispatch(getNewsThreadsAction()) as unknown as Promise<NewsThreadItem[]>,
       dispatch(getNewsItemsAction(0)) as unknown as Promise<NewsItem[]>,
@@ -86,20 +81,21 @@ export function HomeOverviewScreen({ navigation }: HomeOverviewScreenProps) {
     [onRefresh, refreshing],
   );
 
-  const onSeeMorePress = React.useCallback(() => navparent.navigate(newsRouteNames.home, {}), [navparent]);
+  const onSeeMorePress = React.useCallback(() => navigation.navigate(newsRouteNames.home, {}), [navigation]);
 
   const onOpenNews = React.useCallback(
-    (item: HomeNewsItem) => navparent.navigate(newsRouteNames.details, { news: item.news, thread: item.thread }),
-    [navparent],
+    (item: HomeNewsItem) => navigation.navigate(newsRouteNames.details, { news: item.news, thread: item.thread }),
+    [navigation],
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.content} refreshControl={refreshControl}>
+    <ScrollView contentContainerStyle={styles.content} refreshControl={refreshControl} showsVerticalScrollIndicator={false}>
       {flashMessagesPristine || refreshing || reloading ? (
         <FlashMessagePlaceholder />
       ) : (
-        <FlashMessageList flashMessages={visibleFlashMessages} onDismiss={onDismiss} />
+        <FlashMessageList flashMessages={visibleFlashMessages} onDismiss={onDismissFlashMessage} />
       )}
+
       <NewsSection loading={newsLoading} news={news} onPressItem={onOpenNews} onSeeMore={onSeeMorePress} />
     </ScrollView>
   );
