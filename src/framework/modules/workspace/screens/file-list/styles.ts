@@ -9,7 +9,7 @@ export default StyleSheet.create({
     flexGrow: 1,
   },
   navBarCountText: {
-    color: theme.ui.text.inverse,
+    color: theme.ui.navigation.navBar.tint,
     textAlign: 'center',
     textAlignVertical: 'center',
   },

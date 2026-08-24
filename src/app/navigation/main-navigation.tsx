@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { View } from 'react-native';
 
 import { BottomTabNavigationOptions, BottomTabNavigatorProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
@@ -7,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { EntModule, EntTabModule } from '~/app/module';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
-import { CaptionText } from '~/framework/components/text';
+import { CaptionBoldText, CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { getTabModuleDisplayName, selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { ModuleScreens } from '~/framework/navigation/moduleScreens';
@@ -15,7 +16,7 @@ import { tabModules } from '~/framework/navigation/tabModules';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { defaultTabOptions, tabBarIconSize, TabScreenLayout } from './layout';
+import { defaultTabOptions, hasActiveTabHighlight, styles as layoutStyles, tabBarIconSize, TabScreenLayout } from './layout';
 import { createLeafStackNavigator } from './leaf-stack';
 import { renderCoreModulesScreens } from './root-navigation';
 import { AllModulesNavigationParams } from './types';
@@ -52,12 +53,15 @@ export const MainNavigation = React.memo(function MainNavigation() {
       availableTabModules.map<BottomTabNavigationOptions>(m => ({
         tabBarButtonTestID: m.tab.testId,
         tabBarIcon: ({ color, focused }) => <TabIcon module={m} focused={focused} size={tabBarIconSize} color={color} />,
-        tabBarLabel: ({ color }) => (
-          // negative marginHorizontal is necessary to prevent text wrapping
-          <CaptionText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
-            {getTabModuleDisplayName(m, aggregatedApps)}
-          </CaptionText>
-        ),
+        tabBarLabel: ({ color, focused }) => {
+          const LabelText = hasActiveTabHighlight && focused ? CaptionBoldText : CaptionText;
+          return (
+            // negative marginHorizontal is necessary to prevent text wrapping
+            <LabelText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
+              {getTabModuleDisplayName(m, aggregatedApps)}
+            </LabelText>
+          );
+        },
       })),
 
     [rightsMemoValue],
@@ -139,12 +143,15 @@ export const MainNavigation = React.memo(function MainNavigation() {
     return oldTabModules.map<BottomTabNavigationOptions>(m => ({
       tabBarButtonTestID: m.config.testID,
       tabBarIcon: props => createOldTabIcon(m.config, props),
-      tabBarLabel: ({ color }) => (
-        // negative marginHorizontal is necessary to prevent text wrapping
-        <CaptionText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
-          {getTabModuleDisplayName(m.config, aggregatedApps)}
-        </CaptionText>
-      ),
+      tabBarLabel: ({ color, focused }) => {
+        const LabelText = hasActiveTabHighlight && focused ? CaptionBoldText : CaptionText;
+        return (
+          // negative marginHorizontal is necessary to prevent text wrapping
+          <LabelText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
+            {getTabModuleDisplayName(m.config, aggregatedApps)}
+          </LabelText>
+        );
+      },
     }));
   }, [rightsMemoValue]);
 
@@ -197,6 +204,18 @@ export const MainNavigation = React.memo(function MainNavigation() {
 });
 export const MainNavigationOptions: NativeStackNavigationOptions = { headerShown: false };
 
+/**
+ * Wraps a tab icon to give the active one its rounded background.
+ * Themes that declare no highlight render the icon as it is,
+ * without the extra container.
+ */
+function TabIconWrapper({ children, focused }: React.PropsWithChildren<{ focused: boolean }>) {
+  const style = React.useMemo(() => [layoutStyles.tabIcon, focused && layoutStyles.activeTabIcon], [focused]);
+
+  if (!hasActiveTabHighlight) return <>{children}</>;
+  return <View style={style}>{children}</View>;
+}
+
 function TabIcon({
   color,
   focused,
@@ -208,7 +227,11 @@ function TabIcon({
   color: string;
   size: number;
 }) {
-  return <Svg width={size} height={size} name={focused ? module.tab.iconActive : module.tab.iconInactive} fill={color} />;
+  return (
+    <TabIconWrapper focused={focused}>
+      <Svg width={size} height={size} name={focused ? module.tab.iconActive : module.tab.iconInactive} fill={color} />
+    </TabIconWrapper>
+  );
 }
 
 /**
@@ -229,6 +252,7 @@ const createOldTabIcon = (
     dp.size = dp.size ?? props.size;
     dp.color = dp.color ?? props.color;
     dp.name = dp.name ?? 'more_vert';
+    dp.style = [dp.style, layoutStyles.tabIconFont];
   } else if (dp.type === 'Svg') {
     dp.name = dp.name ?? 'ui-options';
     dp.height = props.size;
@@ -238,5 +262,9 @@ const createOldTabIcon = (
   if (props.focused) {
     dp = { ...dp, ...moduleConfig.displayPictureFocus, fill: props.color } as Partial<PictureProps>;
   }
-  return <Picture {...dp} />;
+  return (
+    <TabIconWrapper focused={props.focused}>
+      <Picture {...dp} />
+    </TabIconWrapper>
+  );
 };
