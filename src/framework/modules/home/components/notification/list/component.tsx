@@ -122,7 +122,7 @@ export const NotificationList = React.memo(
         <NotificationRow
           item={item}
           canReport={canReport}
-          opened={openRowId === item.id}
+          isRowOpened={openRowId === item.id}
           someRowOpen={!!openRowId}
           onClose={onRowClose}
           onOpen={onRowOpen}
