@@ -19,6 +19,7 @@ import { FlatListProps } from '~/framework/components/list/flat-list';
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 
+import { useSocialCommentsData } from './hooks';
 import { SocialResourceViewerItem } from './item';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
 import { type SocialResourceViewer, SocialResourceViewerInternals } from './types';
@@ -40,54 +41,7 @@ export function SocialResourceViewer({
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
 
-  // Flatten & consolidate data
-  const flatData = React.useMemo<SocialResourceViewerInternals.Item[]>(() => {
-    const ret: SocialResourceViewerInternals.Item[] = [];
-    for (let commentIndex = 0; commentIndex < data.length; ++commentIndex) {
-      const { responses, ...commentItem } = data[commentIndex];
-      if ('deleted' in commentItem) {
-        ret.push({
-          ...commentItem,
-          hasResponses: responses.length > 0,
-          type: SocialResourceViewerInternals.ITEM_COMMENT_DELETED,
-        });
-      } else {
-        ret.push({
-          ...commentItem,
-          hasResponses: responses.length > 0,
-          type: SocialResourceViewerInternals.ITEM_COMMENT,
-        });
-      }
-      for (let responseIndex = 0; responseIndex < responses.length; ++responseIndex) {
-        const responseItem = responses[responseIndex];
-        const responseData = {
-          hasResponses: responseIndex < responses.length - 1,
-          inReplyTo: commentItem.id,
-          inReplyToIndex: commentIndex,
-        };
-        if ('count' in responseItem) {
-          ret.push({
-            ...responseItem,
-            ...responseData,
-            type: SocialResourceViewerInternals.ITEM_RESPONSE_ELLIPSIS,
-          });
-        } else if ('deleted' in responseItem) {
-          ret.push({
-            ...responseItem,
-            ...responseData,
-            type: SocialResourceViewerInternals.ITEM_RESPONSE_DELETED,
-          });
-        } else {
-          ret.push({
-            ...responseItem,
-            ...responseData,
-            type: SocialResourceViewerInternals.ITEM_RESPONSE,
-          });
-        }
-      }
-    }
-    return ret;
-  }, [data]);
+  const { flatData, showResponses } = useSocialCommentsData(data);
 
   // Screen layout
   const navBarHeight = useHeaderHeight();
