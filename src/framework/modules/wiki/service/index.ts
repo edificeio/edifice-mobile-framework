@@ -20,22 +20,22 @@ const hydrateWikiResourceInfo = (data: API.Wiki.ListPagesResponse): WikiResource
 });
 
 const computeRights = (data: Pick<API.Wiki.ListPagesResponse, 'rights'>, session: AuthActiveAccount) => {
-  const rights: string[] = [];
+  const rights: Set<string> = new Set();
   for (const rightStr of data.rights) {
     const right = rightStr.split(':'); // 0: target, 1: id, 2: right if not creator
     switch (right[0]) {
       case 'creator':
-        if (right[1] === session.user.id) rights.push(right[0]);
+        if (right[1] === session.user.id) rights.add(right[0]);
         break;
       case 'user':
-        if (right[1] === session.user.id) rights.push(right[2]);
+        if (right[1] === session.user.id) rights.add(right[2]);
         break;
       case 'group':
-        if (session.user.groups.includes(right[1])) rights.push(right[2]);
+        if (session.user.groups.includes(right[1])) rights.add(right[2]);
         break;
     }
   }
-  return rights;
+  return [...rights];
 };
 
 const rightsThatSeeHiddenPages = new Set(['creator', 'manager']); // Business rule here. Need to be implemented into the backend.
