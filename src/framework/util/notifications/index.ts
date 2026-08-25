@@ -52,6 +52,7 @@ export interface ITimelineNotification extends IAbstractNotification {
   id: string; // Notification unique ID
   date: Moment; // Date of emission
   message: string; // Non-enriched content
+  deleted?: boolean; // Deletion asked, waiting for the server to confirm
 }
 
 export interface ISenderNotification extends IAbstractNotification {
