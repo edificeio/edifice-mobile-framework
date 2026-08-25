@@ -106,7 +106,7 @@ export function SocialResourceViewer({
     [bottomInset, navBarHeight],
   );
 
-  const renderResource = React.useCallback(() => {
+  const resourceElement = React.useMemo(() => {
     return (
       <View
         onLayout={({
@@ -186,7 +186,7 @@ export function SocialResourceViewer({
           renderItem={renderItem}
           getItemType={getItemType}
           keyExtractor={keyExtractor}
-          ListHeaderComponent={renderResource}
+          ListHeaderComponent={resourceElement}
           ListFooterComponent={<View style={listFooterStyle} />}
           scrollIndicatorInsets={scrollIndicatorInsets}
           keyboardShouldPersistTaps="handled"
