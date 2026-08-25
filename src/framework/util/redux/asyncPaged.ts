@@ -110,8 +110,9 @@ function _createAsyncPagedReducer<DataType extends any[]>(
 
   return (state = asyncInitialState, action) => {
     const ret = asyncReducer(state, action);
-    ret.data = dataReducer(ret.data, action);
-    return ret;
+    const data = dataReducer(ret.data, action);
+
+    return data === ret.data ? ret : { ...ret, data };
   };
 }
 
