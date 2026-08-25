@@ -36,6 +36,7 @@ export const NotificationList = React.memo(
     loading,
     loadingMore,
     notifications,
+    onDeleteItem,
     onEndReached,
     onPressItem,
     onRefresh,
@@ -108,6 +109,14 @@ export const NotificationList = React.memo(
       [closeRow, onReportItem],
     );
 
+    const onDelete = React.useCallback(
+      (id: string) => {
+        closeRow(id);
+        onDeleteItem(id);
+      },
+      [closeRow, onDeleteItem],
+    );
+
     useFocusEffect(
       React.useCallback(
         () => () => {
@@ -117,6 +126,8 @@ export const NotificationList = React.memo(
       ),
     );
 
+    const shownNotifications = React.useMemo(() => notifications.filter(item => !item.deleted), [notifications]);
+
     const renderItem = React.useCallback(
       ({ item }: ListRenderItemInfo<ITimelineNotification>) => (
         <NotificationRow
@@ -125,6 +136,7 @@ export const NotificationList = React.memo(
           isRowOpened={openRowId === item.id}
           someRowOpen={!!openRowId}
           onClose={onRowClose}
+          onDelete={onDelete}
           onOpen={onRowOpen}
           onPress={onCardPress}
           onRef={setRowRef}
@@ -133,7 +145,7 @@ export const NotificationList = React.memo(
           onWillOpen={onRowWillOpen}
         />
       ),
-      [canReport, onCardPress, onReport, onRowClose, onRowOpen, onRowWillOpen, onSwipeActive, openRowId, setRowRef],
+      [canReport, onCardPress, onDelete, onReport, onRowClose, onRowOpen, onRowWillOpen, onSwipeActive, openRowId, setRowRef],
     );
 
     const loadingOrRefreshing = loading || refreshing;
@@ -142,11 +154,11 @@ export const NotificationList = React.memo(
       <FlatList
         showsVerticalScrollIndicator={false}
         scrollEnabled={!loadingOrRefreshing}
-        data={loadingOrRefreshing ? undefined : notifications}
+        data={loadingOrRefreshing ? undefined : shownNotifications}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         ItemSeparatorComponent={loadingOrRefreshing ? undefined : renderSeparator}
-        contentContainerStyle={loadingOrRefreshing || notifications.length ? undefined : styles.empty}
+        contentContainerStyle={loadingOrRefreshing || shownNotifications.length ? undefined : styles.empty}
         ListEmptyComponent={loadingOrRefreshing ? <NotificationsPlaceholder preview /> : renderEmpty}
         ListFooterComponent={loadingMore ? <NotificationsPlaceholder count={PLACEHOLDER_NEXT_PAGE_CARDS} /> : null}
         refreshControl={refreshControl}

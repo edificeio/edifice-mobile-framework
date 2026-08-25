@@ -3,39 +3,40 @@ import { StyleSheet } from 'react-native';
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
-export const REPORT_ACTION_WIDTH = getScaleWidth(100);
+export const ACTION_WIDTH = getScaleWidth(80);
 
-export const REPORT_ICON_SIZE = getScaleWidth(22);
+export const ACTION_ICON_SIZE = getScaleWidth(22);
 
-const REPORT_BUTTON_WIDTH = getScaleWidth(39);
-const REPORT_BUTTON_HEIGHT = getScaleWidth(38);
+const ACTION_BUTTON_WIDTH = getScaleWidth(39);
+const ACTION_BUTTON_HEIGHT = getScaleWidth(38);
 
 export default StyleSheet.create({
-  empty: {
-    flex: 1,
-  },
-  reportAction: {
+  action: {
     alignItems: 'center',
     backgroundColor: theme.palette.grey.fog,
     gap: UI_SIZES.spacing.minor,
     justifyContent: 'center',
-    width: REPORT_ACTION_WIDTH,
+    width: ACTION_WIDTH,
   },
-  reportButton: {
+  actionButton: {
     alignItems: 'center',
-    backgroundColor: theme.palette.grey.white,
-    borderColor: theme.palette.secondary.dark,
     borderRadius: UI_SIZES.radius.huge,
     borderWidth: UI_SIZES.border.thin,
-    height: REPORT_BUTTON_HEIGHT,
+    height: ACTION_BUTTON_HEIGHT,
     justifyContent: 'center',
     paddingHorizontal: UI_SIZES.spacing.minor,
     paddingVertical: UI_SIZES.spacing.minor,
-    width: REPORT_BUTTON_WIDTH,
+    width: ACTION_BUTTON_WIDTH,
   },
-  reportText: {
-    color: theme.palette.secondary.dark.toString(),
+  actions: {
+    flexDirection: 'row',
+  },
+  actionText: {
+    color: theme.palette.grey.black,
     textAlign: 'center',
+  },
+  empty: {
+    flex: 1,
   },
   row: {
     backgroundColor: theme.palette.grey.white,
