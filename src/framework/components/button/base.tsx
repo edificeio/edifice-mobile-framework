@@ -59,8 +59,8 @@ export const BaseButton = React.memo(
     const style = React.useCallback<Function & PressableProps['style']>(
       ({ pressed }) => [
         styles.base,
-        _style,
         isRound && styles.baseRound,
+        _style,
         pressed && activeStyle,
         { minHeight: loading ? measures?.height : undefined, minWidth: loading ? measures?.width : undefined },
       ],
