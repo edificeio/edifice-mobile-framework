@@ -30,15 +30,10 @@ export const useSocialCommentsData = (
       (SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted)['id'],
       [number, number][] // [start, nb]
     >
-  >(() =>
-    data.reduce(
-      (acc, item) => ({
-        ...acc,
-        [item.id]: [[0, config.responsesStart]],
-      }),
-      {},
-    ),
-  );
+  >({});
+
+  // Note: this is a callback to generate array, not a memoized value, because it will be mutated after for each comment.
+  const getDefaultResponseRanges = React.useCallback(() => [[0, config.responsesStart]], [config.responsesStart]);
 
   const showResponses = React.useCallback(
     (
@@ -48,10 +43,10 @@ export const useSocialCommentsData = (
     ) => {
       setDisplayedResponsesRangesByComment(oldRanges => ({
         ...oldRanges,
-        [id]: _addRange(oldRanges[id] ?? [], start, Math.min(count, config.responsesPage)),
+        [id]: _addRange(oldRanges[id] ?? getDefaultResponseRanges(), start, Math.min(count, config.responsesPage)),
       }));
     },
-    [config.responsesPage],
+    [config.responsesPage, getDefaultResponseRanges],
   );
 
   const filteredData = React.useMemo(() => {
@@ -59,11 +54,11 @@ export const useSocialCommentsData = (
       ...comment,
       responses: _buildResponses(
         comment.responses,
-        displayedResponsesRangesByComment[comment.id],
+        displayedResponsesRangesByComment[comment.id] ?? getDefaultResponseRanges(),
         (gapStart, gapSize) => ({ count: gapSize, start: gapStart }) as SocialResourceViewer.ResponseItemEllipsis,
       ),
     }));
-  }, [data, displayedResponsesRangesByComment]);
+  }, [data, displayedResponsesRangesByComment, getDefaultResponseRanges]);
 
   // Flatten & consolidate data
   const flatData = React.useMemo<SocialResourceViewerInternals.Item[]>(() => {

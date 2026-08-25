@@ -40,9 +40,9 @@ export namespace SocialResourceViewer {
     alwaysShowCommentField?: boolean;
     style?: StyleProp<ViewStyle>;
     data: (CommentItem | CommentItemDeleted)[];
-    onSubmit?: (data: Pick<CommonContentItemData, 'content' | 'isRichContent'>, replyTo?: Pick<BaseItemData, 'id'>) => void;
-    onEdit?: (data: Pick<CommonContentItemData, 'content' | 'isRichContent'>, id: Pick<BaseItemData, 'id'>) => void;
-    onDelete?: (id: Pick<BaseItemData, 'id'>) => void;
+    onSubmit?: (data: Pick<CommonContentItemData, 'content' | 'isRichContent'>, replyTo?: BaseItemData['id']) => Promise<void>;
+    onEdit?: (data: Pick<CommonContentItemData, 'content' | 'isRichContent'>, id: BaseItemData['id']) => Promise<void>;
+    onDelete?: (id: BaseItemData['id']) => Promise<void>;
   }
 }
 
