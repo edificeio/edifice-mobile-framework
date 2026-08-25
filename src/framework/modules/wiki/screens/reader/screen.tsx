@@ -234,12 +234,12 @@ export function WikiReaderScreenLoaded({
     ),
     [page, switchToPage, wiki],
   );
+
+  const canAddComment = wiki.rights.findIndex(e => e === 'comment' || e === 'creator') !== -1;
+
   return (
     <>
-      <SocialResourceViewer
-        navigation={navigation}
-        canAddComment={true} // ToDo: use resource rights here
-        data={page.comments}>
+      <SocialResourceViewer navigation={navigation} canAddComment={canAddComment} data={page.comments}>
         <WikiReaderContent onGoToPage={switchToPage} pageId={pageId} resourceId={resourceId} onLoad={onLoad} />
       </SocialResourceViewer>
       {!loaded && <View style={styles.webViewPlaceholder}>{renderPlaceholder()}</View>}
