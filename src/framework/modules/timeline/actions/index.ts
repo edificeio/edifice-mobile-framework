@@ -97,6 +97,21 @@ export const loadFlashMessagesAction = () => async (dispatch: ThunkDispatch<any,
 };
 
 /**
+ * Delete a notification for the reader only. It leaves the list at once and comes back if the
+ * server refuses.
+ */
+export const deleteNotificationAction = (notificationId: string) => async (dispatch: ThunkDispatch<any, any, any>) => {
+  try {
+    dispatch(notificationsActions.deleteRequest(notificationId));
+    await notificationsService.delete(notificationId);
+    dispatch(notificationsActions.deleteReceipt(notificationId));
+  } catch (e) {
+    dispatch(notificationsActions.deleteError(notificationId));
+    throw e;
+  }
+};
+
+/**
  * Dismiss a given flash message by marking it as read.
  */
 export const dismissFlashMessageAction =

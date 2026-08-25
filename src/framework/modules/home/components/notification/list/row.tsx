@@ -4,11 +4,13 @@ import { View } from 'react-native';
 import ReanimatedSwipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { SharedValue } from 'react-native-reanimated';
 
+import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import { NotificationCard, UserbookNotificationCard } from '~/framework/modules/home/components/notification/card';
 
 import { canOpenNotification, isUserbookNotification } from '../util';
-import { ReportAction } from './report-action';
-import styles, { REPORT_ACTION_WIDTH } from './styles';
+import styles, { ACTION_WIDTH } from './styles';
+import { SwipeAction } from './swipe-action';
 import { NotificationRowProps } from './types';
 
 const SWIPE_ANIMATION_OPTIONS = { damping: 20, mass: 0.4, stiffness: 200 };
@@ -22,6 +24,7 @@ export const NotificationRow = React.memo(
     isRowOpened,
     item,
     onClose,
+    onDelete,
     onOpen,
     onPress,
     onRef,
@@ -35,6 +38,7 @@ export const NotificationRow = React.memo(
     const setRef = React.useCallback((ref: SwipeableMethods | null) => onRef(item.id, ref), [item.id, onRef]);
     const handleCardPress = React.useCallback(() => onPress(item), [item, onPress]);
     const report = React.useCallback(() => onReport(item), [item, onReport]);
+    const remove = React.useCallback(() => onDelete(item.id), [item.id, onDelete]);
     const willOpen = React.useCallback(() => onWillOpen(item.id), [item.id, onWillOpen]);
     const openSwipeable = React.useCallback(() => onOpen(item.id), [item.id, onOpen]);
     const closeSwipeable = React.useCallback(() => onClose(item.id), [item.id, onClose]);
@@ -46,8 +50,28 @@ export const NotificationRow = React.memo(
     }, [onSwipeActive, openSwipeable]);
 
     const renderRightActions = React.useCallback(
-      (progress: SharedValue<number>) => <ReportAction progress={progress} onPress={report} />,
-      [report],
+      (progress: SharedValue<number>) => (
+        <View style={styles.actions}>
+          {canReport ? (
+            <SwipeAction
+              color={theme.palette.secondary.dark}
+              icon="ui-alert-triangle"
+              label={I18n.get('timeline-reportaction-button')}
+              onPress={report}
+              progress={progress}
+            />
+          ) : null}
+          <SwipeAction
+            color={theme.palette.status.failure.regular}
+            filled
+            icon="ui-delete"
+            label={I18n.get('common-delete')}
+            onPress={remove}
+            progress={progress}
+          />
+        </View>
+      ),
+      [canReport, remove, report],
     );
 
     const onCardPress = isOpenable || someRowOpen ? handleCardPress : undefined;
@@ -57,13 +81,11 @@ export const NotificationRow = React.memo(
       <NotificationCard notification={item} onPress={onCardPress} />
     );
 
-    if (!canReport) return card;
-
     return (
       <ReanimatedSwipeable
         ref={setRef}
         renderRightActions={renderRightActions}
-        rightThreshold={REPORT_ACTION_WIDTH / 2}
+        rightThreshold={((canReport ? 2 : 1) * ACTION_WIDTH) / 2}
         overshootRight={false}
         overshootFriction={8}
         animationOptions={SWIPE_ANIMATION_OPTIONS}

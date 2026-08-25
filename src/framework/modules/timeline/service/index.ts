@@ -30,6 +30,11 @@ export const notifFiltersService = {
 };
 
 export const notificationsService = {
+  delete: async (id: string) => {
+    const api = `/timeline/${id}`;
+    return sessionFetch.json(api, { method: 'PUT' });
+  },
+
   page: async (page: number, filters: string[]) => {
     const url = '/timeline/lastNotifications';
     const query = {
@@ -52,6 +57,7 @@ export const notificationsService = {
     // Run the notification adapter for each received notification
     return entcoreNotifications.results.map(n => notificationAdapter(n) as ITimelineNotification);
   },
+
   report: async (id: string) => {
     const api = `/timeline/${id}/report`;
     const method = 'PUT';
