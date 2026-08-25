@@ -234,12 +234,21 @@ export function WikiReaderScreenLoaded({
     ),
     [page, switchToPage, wiki],
   );
+  const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, WikiAction | WikiPageAction>>();
 
   const canAddComment = wiki.rights.findIndex(e => e === 'comment' || e === 'creator') !== -1;
+  const onSubmit = React.useCallback<NonNullable<React.ComponentProps<typeof SocialResourceViewer>['onSubmit']>>(
+    async (data, replyTo) => {
+      await service.page.postComment({ id: wiki.assetId, pageId: page.id }, data.content, replyTo);
+      const newPageData = await service.page.get({ id: resourceId, pageId: pageId });
+      dispatch(actions.loadPage(resourceId, newPageData));
+    },
+    [dispatch, page.id, pageId, resourceId, wiki.assetId],
+  );
 
   return (
     <>
-      <SocialResourceViewer navigation={navigation} canAddComment={canAddComment} data={page.comments}>
+      <SocialResourceViewer navigation={navigation} canAddComment={canAddComment} data={page.comments} onSubmit={onSubmit}>
         <WikiReaderContent onGoToPage={switchToPage} pageId={pageId} resourceId={resourceId} onLoad={onLoad} />
       </SocialResourceViewer>
       {!loaded && <View style={styles.webViewPlaceholder}>{renderPlaceholder()}</View>}

@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
 import { SingleAvatar } from '~/framework/components/avatar';
-import PrimaryButton from '~/framework/components/buttons/primary';
+// import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
@@ -23,6 +23,8 @@ import { useSocialCommentsData } from './hooks';
 import { SocialResourceViewerItem } from './item';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
 import { type SocialResourceViewer, SocialResourceViewerInternals } from './types';
+import { PrimaryButton } from '../../button';
+import toast from '../../toast';
 
 const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<SocialResourceViewerInternals.Item>);
 
@@ -36,6 +38,7 @@ export function SocialResourceViewer({
   canAddComment: _canAddComment,
   children,
   data,
+  onSubmit,
 }: SocialResourceViewer.Props) {
   // User data
   const session = useSelector(selectors.session);
@@ -189,7 +192,13 @@ export function SocialResourceViewer({
           keyboardShouldPersistTaps="handled"
         />
         {canAddComment && (
-          <SocialResourceViewerAddCommentForm session={session} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+          <SocialResourceViewerAddCommentForm
+            onSubmit={onSubmit}
+            session={session}
+            style={inputStyle}
+            onFocus={onFocus}
+            onBlur={onBlur}
+          />
         )}
       </NewCommentInputDispatchContext>
     </NewCommentInputContext>
@@ -199,6 +208,7 @@ export function SocialResourceViewer({
 export const SocialResourceViewerAddCommentForm = ({
   onBlur,
   onFocus,
+  onSubmit,
   session,
   style,
 }: {
@@ -206,9 +216,11 @@ export const SocialResourceViewerAddCommentForm = ({
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
   session: AuthActiveAccount;
+  onSubmit?: SocialResourceViewer.Props['onSubmit'];
 }) => {
   const inputState = React.useContext(NewCommentInputContext);
   const inputDispatch = React.useContext(NewCommentInputDispatchContext);
+  const [isSending, setIsSending] = React.useState(false);
   const navBarHeight = useHeaderHeight();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const stickyViewOffset = React.useMemo(
@@ -222,6 +234,18 @@ export const SocialResourceViewerAddCommentForm = ({
     }),
     [bottomInset, navBarHeight],
   );
+  const onPress = React.useCallback(async () => {
+    if (!onSubmit) return;
+    try {
+      setIsSending(true);
+      await onSubmit({ content: inputState.value, isRichContent: false });
+      inputDispatch(state => ({ ...state, value: '' }));
+    } catch {
+      toast.showError();
+    } finally {
+      setIsSending(false);
+    }
+  }, [inputDispatch, inputState.value, onSubmit]);
   return (
     <Animated.View
       style={style}
@@ -244,11 +268,18 @@ export const SocialResourceViewerAddCommentForm = ({
               },
               [inputDispatch],
             )}
+            editable={!isSending}
             onFocus={onFocus}
             onBlur={onBlur}
             placeholder={I18n.get('comment-add-comment')}
           />
-          <PrimaryButton disabled={!inputState.value.length} iconLeft="ui-send" round />
+          <PrimaryButton
+            onPress={onPress}
+            testID="comment-add"
+            disabled={!inputState.value.length}
+            icon="ui-send"
+            loading={isSending}
+          />
         </View>
       </KeyboardStickyView>
     </Animated.View>
