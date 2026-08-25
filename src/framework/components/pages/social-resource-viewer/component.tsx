@@ -16,6 +16,7 @@ import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
 import { FlatListProps } from '~/framework/components/list/flat-list';
+import { usePrevious } from '~/framework/hooks/previous';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 
@@ -38,6 +39,7 @@ export function SocialResourceViewer({
   canAddComment: _canAddComment,
   children,
   data,
+  focusItem,
   onSubmit,
 }: SocialResourceViewer.Props) {
   // User data
@@ -173,6 +175,19 @@ export function SocialResourceViewer({
     [],
   );
 
+  // auto-scroll
+  const previousFocusItem = usePrevious(focusItem);
+  if (focusItem && previousFocusItem !== focusItem) {
+    const scrollToIndex = flatData.findIndex(e => 'id' in e && e.id === focusItem);
+    scrollToIndex !== -1 &&
+      listRef.current?.scrollToIndex({
+        animated: true,
+        index: scrollToIndex,
+        viewOffset: newCommentFormState.height,
+        viewPosition: 1,
+      });
+  }
+
   return (
     <NewCommentInputContext value={newCommentFormState}>
       <NewCommentInputDispatchContext value={newCommentFormDispatch}>
@@ -193,6 +208,7 @@ export function SocialResourceViewer({
         />
         {canAddComment && (
           <SocialResourceViewerAddCommentForm
+            listRef={listRef}
             onSubmit={onSubmit}
             session={session}
             style={inputStyle}
@@ -209,6 +225,7 @@ export const SocialResourceViewerAddCommentForm = ({
   onBlur,
   onFocus,
   onSubmit,
+  // listRef,
   session,
   style,
 }: {
@@ -217,6 +234,7 @@ export const SocialResourceViewerAddCommentForm = ({
   onBlur?: ChatTextAreaProps['onBlur'];
   session: AuthActiveAccount;
   onSubmit?: SocialResourceViewer.Props['onSubmit'];
+  listRef: React.RefObject<FlashListRef<SocialResourceViewerInternals.Item> | null>;
 }) => {
   const inputState = React.useContext(NewCommentInputContext);
   const inputDispatch = React.useContext(NewCommentInputDispatchContext);

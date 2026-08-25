@@ -90,5 +90,8 @@ export namespace API {
     export interface GetPageCommentResponseDeleted extends GetPageCommentDeleted {
       replyTo: GetPageCommentDeleted['_id'];
     }
+    export interface PostCommentResponse {
+      _id: string;
+    }
   }
 }

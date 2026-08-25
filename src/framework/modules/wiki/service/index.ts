@@ -206,7 +206,7 @@ export default {
       return hydrateWikiPageData(rawData);
     },
     postComment: async (opts: API.Wiki.GetPagePayload, comment: string, replyTo?: string) => {
-      return sessionFetch.json<API.Wiki.GetPageResponse>(`/wiki/${opts.id}/page/${opts.pageId}/comment`, {
+      return sessionFetch.json<API.Wiki.PostCommentResponse>(`/wiki/${opts.id}/page/${opts.pageId}/comment`, {
         body: JSON.stringify({ comment, replyTo }),
         method: 'POST',
       });
