@@ -482,7 +482,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         {
           onPress: async () => {
             try {
-              await notificationsService.report(this.props.session, notif.id);
+              await notificationsService.report(notif.id);
               resolve(true);
               Toast.showSuccess(I18n.get('timeline-reportaction-success'));
             } catch (e) {

@@ -85,7 +85,7 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
           {
             onPress: async () => {
               try {
-                await notificationsService.report(session, notification.id);
+                await notificationsService.report(notification.id);
                 Toast.showSuccess(I18n.get('timeline-reportaction-success'));
                 resolve(true);
               } catch (e) {
@@ -99,7 +99,7 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
           { onPress: () => resolve(false), style: 'cancel', text: I18n.get('common-cancel') },
         ]);
       }),
-    [session],
+    [],
   );
 
   return (
