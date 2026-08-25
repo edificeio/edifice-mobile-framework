@@ -14,12 +14,12 @@ export const loadNotificationsDefinitionsAction = () => async (dispatch: Dispatc
     const session = assertSession();
     // 1. Fetch notif filters from backend
     dispatch(notifFiltersAsyncActions.request());
-    const filters = await notifFiltersService.list(session);
+    const filters = await notifFiltersService.list();
     // 1a. Fetch notif types from backend
     let notificationTypes;
     try {
       dispatch(notifTypesAsyncActions.request());
-      notificationTypes = await registeredNotificationsService.list(session);
+      notificationTypes = await registeredNotificationsService.list();
       dispatch(notifTypesAsyncActions.receipt(notificationTypes));
     } catch (e) {
       dispatch(notifTypesAsyncActions.error(e as Error));

@@ -3,7 +3,6 @@
  */
 import { ThunkDispatch } from 'redux-thunk';
 
-import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { TimelineState } from '~/framework/modules/timeline/reducer';
 import { actions as flashMessagesActions } from '~/framework/modules/timeline/reducer/flash-messages';
@@ -34,9 +33,8 @@ const $prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, an
 /**
  * Clear the timeline and fetch the first page. If the fetch fails, data is not cleared.
  */
-export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, _getState: () => any) => {
   try {
-    const session = assertSession();
     const state = (await dispatch($prepareNotificationsAction())) as unknown as TimelineState; // TS BUG: await is needed here
     if (state.notifications.isFetching) return;
     // Load notifications page 0 & flash messages (after reset)
@@ -46,8 +44,8 @@ export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch
     const filters = Object.keys(state.notifSettings.notifFilterSettings.data)
       .filter(filter => state.notifSettings.notifFilterSettings.data[filter])
       .filter(filter => state.notifDefinitions.notifFilters.data.find(nf => nf.type === filter)); // whitelist only authorized filters after settings application
-    const notifications = await notificationsService.page(session, page, filters);
-    const flashMessages = await flashMessagesService.list(session);
+    const notifications = await notificationsService.page(page, filters);
+    const flashMessages = await flashMessagesService.list();
     dispatch(notificationsActions.clear());
     dispatch(flashMessagesActions.clear());
     dispatch(notificationsActions.receipt(notifications, page));
@@ -66,7 +64,6 @@ export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch
 export const loadNotificationsPageAction =
   (page?: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = assertSession();
       let state = (await dispatch($prepareNotificationsAction())) as unknown as TimelineState; // TS BUG: await is needed here
       page = page || state.notifications.nextPage;
       if (state.notifications.isFetching) return;
@@ -76,7 +73,7 @@ export const loadNotificationsPageAction =
       const filters = Object.keys(state.notifSettings.notifFilterSettings.data).filter(
         filter => state.notifSettings.notifFilterSettings.data[filter],
       );
-      const notifications = await notificationsService.page(session, page, filters);
+      const notifications = await notificationsService.page(page, filters);
       dispatch(notificationsActions.receipt(notifications, page));
       // Returns true if there is more pages to load
       state = moduleConfig.getState(getState());
@@ -92,9 +89,8 @@ export const loadNotificationsPageAction =
  */
 export const loadFlashMessagesAction = () => async (dispatch: ThunkDispatch<any, any, any>) => {
   try {
-    const session = assertSession();
     dispatch(flashMessagesActions.request());
-    dispatch(flashMessagesActions.receipt(await flashMessagesService.list(session)));
+    dispatch(flashMessagesActions.receipt(await flashMessagesService.list()));
   } catch (e) {
     dispatch(flashMessagesActions.error(e as Error));
   }
@@ -104,13 +100,11 @@ export const loadFlashMessagesAction = () => async (dispatch: ThunkDispatch<any,
  * Dismiss a given flash message by marking it as read.
  */
 export const dismissFlashMessageAction =
-  (flashMessageId: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (flashMessageId: number) => async (dispatch: ThunkDispatch<any, any, any>, _getState: () => any) => {
     try {
-      const session = assertSession();
-
       // Dismiss flash message
       dispatch(flashMessagesActions.dismissRequest(flashMessageId));
-      await flashMessagesService.dismiss(session, flashMessageId);
+      await flashMessagesService.dismiss(flashMessageId);
       dispatch(flashMessagesActions.dismissReceipt(flashMessageId));
     } catch (e) {
       // ToDo: Error handling (notifier: "votre action n'a pas été correctement exécutée (problème de connexion)")
