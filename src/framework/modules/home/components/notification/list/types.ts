@@ -18,6 +18,7 @@ export interface SwipeActionProps {
 
 export interface NotificationRowProps {
   item: ITimelineNotification;
+  canDelete: boolean;
   canReport: boolean;
   isRowOpened: boolean;
   someRowOpen: boolean;
@@ -43,4 +44,5 @@ export interface NotificationListProps {
   loadingMore: boolean;
   refreshing: boolean;
   onRefresh: () => void;
+  userId: string;
 }
