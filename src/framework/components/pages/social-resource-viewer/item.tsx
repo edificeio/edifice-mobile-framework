@@ -5,15 +5,20 @@ import { ListRenderItemInfo } from '@shopify/flash-list';
 
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
-import { GhostButton } from '~/framework/components/button';
+import { GhostButton, TerciaryButton } from '~/framework/components/button';
 import { BodyBoldText, CaptionItalicText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { AccountTypeText } from '~/framework/modules/auth/components/account-type-text';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { TemporalTimeText } from '~/framework/util/date';
 
 import styles from './styles';
 import { SocialResourceViewerInternals } from './types';
 
-export const SocialResourceViewerCommentItem = (info: ListRenderItemInfo<SocialResourceViewerInternals.CommentItem>) => {
+export const SocialResourceViewerCommentItem = ({
+  canAddComment,
+  session,
+  ...info
+}: ListRenderItemInfo<SocialResourceViewerInternals.CommentItem> & { session?: AuthActiveAccount; canAddComment?: boolean }) => {
   const { item } = info;
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
   const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeComment], []);
@@ -26,7 +31,7 @@ export const SocialResourceViewerCommentItem = (info: ListRenderItemInfo<SocialR
         {item.hasResponses && <View style={itemTreeDecoStyle} />}
       </View>
       <View style={styles.itemCommentContentWrapper}>
-        <SocialResourceViewerContentItem {...info} />
+        <SocialResourceViewerContentItem session={session} canAddComment={canAddComment} {...info} />
       </View>
     </View>
   );
@@ -50,7 +55,11 @@ export const SocialResourceViewerCommentDeletedItem = (
   );
 };
 
-export const SocialResourceViewerResponseItem = (info: ListRenderItemInfo<SocialResourceViewerInternals.ResponseItem>) => {
+export const SocialResourceViewerResponseItem = ({
+  canAddComment,
+  session,
+  ...info
+}: ListRenderItemInfo<SocialResourceViewerInternals.ResponseItem> & { session?: AuthActiveAccount; canAddComment?: boolean }) => {
   const { item } = info;
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemResponse], []);
   const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeResponse], []);
@@ -68,7 +77,7 @@ export const SocialResourceViewerResponseItem = (info: ListRenderItemInfo<Social
         <SingleAvatar size="xsm" userId={item.authorId} />
       </View>
       <View style={styles.itemResponseContentWrapper}>
-        <SocialResourceViewerContentItem {...info} />
+        <SocialResourceViewerContentItem session={session} canAddComment={canAddComment} {...info} />
       </View>
     </View>
   );
@@ -98,10 +107,16 @@ export const SocialResourceViewerResponseDeletedItem = (
   );
 };
 
-export const SocialResourceViewerContentItem = (
-  info: ListRenderItemInfo<SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem>,
-) => {
+export const SocialResourceViewerContentItem = ({
+  canAddComment,
+  session,
+  ...info
+}: ListRenderItemInfo<SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem> & {
+  session?: AuthActiveAccount;
+  canAddComment?: boolean;
+}) => {
   const { item } = info;
+  const isAuthor = session && item.authorId === session.user.id;
   return (
     <>
       <View style={styles.itemUserHeader}>
@@ -116,7 +131,13 @@ export const SocialResourceViewerContentItem = (
       </View>
       <View>
         <SmallText style={styles.itemContentText}>{item.content}</SmallText>
-        <View style={styles.itemContentButtons} />
+        {session && canAddComment && (
+          <View style={styles.itemContentButtons}>
+            <TerciaryButton text="Répondre" testID="comment-reply" />
+            {isAuthor && <TerciaryButton text="Modifier" testID="comment-edit" />}
+            {isAuthor && <TerciaryButton text="Supprimer" testID="comment-delete" />}
+          </View>
+        )}
       </View>
     </>
   );
@@ -160,15 +181,31 @@ export const SocialResourceViewerShowMoreResponsesItem = ({
 };
 
 export const SocialResourceViewerItem = ({
+  canAddComment,
   onShowResponses,
+  session,
   ...info
 }: ListRenderItemInfo<SocialResourceViewerInternals.Item> & {
   onShowResponses?: (id: string, start: number, count: number) => void;
+  session?: AuthActiveAccount;
+  canAddComment?: boolean;
 }) => {
   if (info.item.type === SocialResourceViewerInternals.ITEM_COMMENT) {
-    return <SocialResourceViewerCommentItem {...(info as ListRenderItemInfo<SocialResourceViewerInternals.CommentItem>)} />;
+    return (
+      <SocialResourceViewerCommentItem
+        session={session}
+        canAddComment={canAddComment}
+        {...(info as ListRenderItemInfo<SocialResourceViewerInternals.CommentItem>)}
+      />
+    );
   } else if (info.item.type === SocialResourceViewerInternals.ITEM_RESPONSE) {
-    return <SocialResourceViewerResponseItem {...(info as ListRenderItemInfo<SocialResourceViewerInternals.ResponseItem>)} />;
+    return (
+      <SocialResourceViewerResponseItem
+        session={session}
+        canAddComment={canAddComment}
+        {...(info as ListRenderItemInfo<SocialResourceViewerInternals.ResponseItem>)}
+      />
+    );
   } else if (info.item.type === SocialResourceViewerInternals.ITEM_COMMENT_DELETED) {
     return (
       <SocialResourceViewerCommentDeletedItem {...(info as ListRenderItemInfo<SocialResourceViewerInternals.CommentItemDeleted>)} />
