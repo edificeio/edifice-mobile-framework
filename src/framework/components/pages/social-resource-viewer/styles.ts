@@ -23,7 +23,7 @@ export default StyleSheet.create({
     gap: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.big,
   },
-  itemContentButtons: { flexDirection: 'row', gap: UI_SIZES.spacing.minor },
+  itemContentButtons: { flexDirection: 'row', gap: UI_SIZES.spacing.minor, justifyContent: 'flex-start' },
   itemContentDeletedText: {
     borderColor: theme.palette.grey.pearl,
     borderWidth: UI_SIZES.border.small,

@@ -16,7 +16,7 @@ import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
 import { FlatListProps } from '~/framework/components/list/flat-list';
-import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 
 import { useSocialCommentsData } from './hooks';
@@ -147,8 +147,8 @@ export function SocialResourceViewer({
   );
 
   const renderItem = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['renderItem']>>(
-    info => <SocialResourceViewerItem {...info} onShowResponses={showResponses} />,
-    [showResponses],
+    info => <SocialResourceViewerItem {...info} onShowResponses={showResponses} session={session} canAddComment={canAddComment} />,
+    [canAddComment, session, showResponses],
   );
 
   const keyExtractor = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['keyExtractor']>>(item => {
@@ -205,7 +205,7 @@ export const SocialResourceViewerAddCommentForm = ({
   style: AnimatedStyle<ViewStyle>;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
-  session: AuthActiveAccount | AuthSavedLoggedInAccount;
+  session: AuthActiveAccount;
 }) => {
   const inputState = React.useContext(NewCommentInputContext);
   const inputDispatch = React.useContext(NewCommentInputDispatchContext);
