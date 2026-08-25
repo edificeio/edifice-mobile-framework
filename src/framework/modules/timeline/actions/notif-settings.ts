@@ -1,9 +1,6 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import { loadNotificationsDefinitionsAction } from './notif-definitions';
-
 import { I18n } from '~/app/i18n';
-import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { TimelineState } from '~/framework/modules/timeline/reducer';
 import * as notifDefinitionsStateHandler from '~/framework/modules/timeline/reducer/notif-definitions';
@@ -18,6 +15,8 @@ import {
 import { pushNotifsService } from '~/framework/modules/timeline/service';
 import { preferences } from '~/framework/modules/timeline/storage';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
+
+import { loadNotificationsDefinitionsAction } from './notif-definitions';
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
@@ -62,7 +61,6 @@ export const setFiltersAction =
 export const loadPushNotifsSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
     dispatch(pushNotifsSettingsActions.request());
-    const session = assertSession();
     // 1 - Load notification definitions if necessary
     let state = moduleConfig.getState(getState()) as TimelineState;
     if (!notifDefinitionsStateHandler.getAreNotificationDefinitionsLoaded(state.notifDefinitions)) {
@@ -71,7 +69,7 @@ export const loadPushNotifsSettingsAction = () => async (dispatch: ThunkDispatch
     state = moduleConfig.getState(getState());
 
     // 2 - Load notif settings from API
-    const pushNotifsSettings = await pushNotifsService.list(session);
+    const pushNotifsSettings = await pushNotifsService.list();
     dispatch(pushNotifsSettingsActions.receipt(pushNotifsSettings));
   } catch (e) {
     // ToDo: Error handling
@@ -83,8 +81,7 @@ export const updatePushNotifsSettingsAction =
   (changes: IPushNotifsSettings) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       dispatch(pushNotifsSettingsActions.setRequest(changes));
-      const session = assertSession();
-      await pushNotifsService.set(session, changes);
+      await pushNotifsService.set(changes);
       dispatch(pushNotifsSettingsActions.setReceipt(changes));
       dispatch(loadPushNotifsSettingsAction()); // no await here it's for refreshing datas
     } catch (e) {
