@@ -12,7 +12,11 @@ import { withSession } from '~/framework/modules/auth/util';
 import { NotificationList } from '~/framework/modules/home/components';
 import { isUserbookNotification } from '~/framework/modules/home/components/notification/util';
 import { useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
-import { loadNotificationsPageAction, startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
+import {
+  deleteNotificationAction,
+  loadNotificationsPageAction,
+  startLoadNotificationsAction,
+} from '~/framework/modules/timeline/actions';
 import timelineConfig from '~/framework/modules/timeline/module-config';
 import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
 import { notificationsService } from '~/framework/modules/timeline/service';
@@ -78,6 +82,17 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
 
   useFocusEffect(React.useCallback(() => () => onRowSwipeActiveChange(false), [onRowSwipeActiveChange]));
 
+  const onDeleteItem = React.useCallback(
+    async (id: string) => {
+      try {
+        await dispatch(deleteNotificationAction(id));
+      } catch {
+        Toast.showError(I18n.get('timeline-error-text'));
+      }
+    },
+    [dispatch],
+  );
+
   const onReportItem = React.useCallback(
     (notification: ITimelineNotification) =>
       new Promise<boolean>((resolve, reject) => {
@@ -110,6 +125,7 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
       refreshing={refreshing}
       onRefresh={onRefresh}
       onEndReached={onEndReached}
+      onDeleteItem={onDeleteItem}
       onPressItem={onPressItem}
       onReportItem={onReportItem}
       onSwipeActiveChange={onRowSwipeActiveChange}
