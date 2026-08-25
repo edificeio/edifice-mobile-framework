@@ -130,6 +130,7 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
       onReportItem={onReportItem}
       onSwipeActiveChange={onRowSwipeActiveChange}
       canReport={canReport}
+      userId={session.user.id}
     />
   );
 });
