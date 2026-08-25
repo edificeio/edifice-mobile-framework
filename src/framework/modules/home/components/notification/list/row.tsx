@@ -20,6 +20,7 @@ const NO_DRAG_OFFSET = 9999;
 
 export const NotificationRow = React.memo(
   ({
+    canDelete,
     canReport,
     isRowOpened,
     item,
@@ -61,17 +62,19 @@ export const NotificationRow = React.memo(
               progress={progress}
             />
           ) : null}
-          <SwipeAction
-            color={theme.palette.status.failure.regular}
-            filled
-            icon="ui-delete"
-            label={I18n.get('common-delete')}
-            onPress={remove}
-            progress={progress}
-          />
+          {canDelete ? (
+            <SwipeAction
+              color={theme.palette.status.failure.regular}
+              filled
+              icon="ui-delete"
+              label={I18n.get('common-delete')}
+              onPress={remove}
+              progress={progress}
+            />
+          ) : null}
         </View>
       ),
-      [canReport, remove, report],
+      [canDelete, canReport, remove, report],
     );
 
     const onCardPress = isOpenable || someRowOpen ? handleCardPress : undefined;
@@ -80,12 +83,16 @@ export const NotificationRow = React.memo(
     ) : (
       <NotificationCard notification={item} onPress={onCardPress} />
     );
+    const row = <View style={styles.row}>{card}</View>;
+
+    const actionCount = (canReport ? 1 : 0) + (canDelete ? 1 : 0);
+    if (!actionCount) return row;
 
     return (
       <ReanimatedSwipeable
         ref={setRef}
         renderRightActions={renderRightActions}
-        rightThreshold={((canReport ? 2 : 1) * ACTION_WIDTH) / 2}
+        rightThreshold={(actionCount * ACTION_WIDTH) / 2}
         overshootRight={false}
         overshootFriction={8}
         animationOptions={SWIPE_ANIMATION_OPTIONS}
@@ -95,7 +102,7 @@ export const NotificationRow = React.memo(
         onSwipeableWillOpen={willOpen}
         onSwipeableOpen={onOpened}
         onSwipeableClose={closeSwipeable}>
-        <View style={styles.row}>{card}</View>
+        {row}
       </ReanimatedSwipeable>
     );
   },
