@@ -1,0 +1,46 @@
+diff --git a/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/checksums/checksums.lock b/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/checksums/checksums.lock
+new file mode 100644
+index 0000000..f922f2f
+Binary files /dev/null and b/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/checksums/checksums.lock differ
+diff --git a/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/fileChanges/last-build.bin b/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/fileChanges/last-build.bin
+new file mode 100644
+index 0000000..f76dd23
+Binary files /dev/null and b/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/fileChanges/last-build.bin differ
+diff --git a/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/fileHashes/fileHashes.bin b/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/fileHashes/fileHashes.bin
+new file mode 100644
+index 0000000..dc059cf
+Binary files /dev/null and b/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/fileHashes/fileHashes.bin differ
+diff --git a/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/fileHashes/fileHashes.lock b/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/fileHashes/fileHashes.lock
+new file mode 100644
+index 0000000..450eb62
+Binary files /dev/null and b/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/fileHashes/fileHashes.lock differ
+diff --git a/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/gc.properties b/node_modules/@react-native-menu/menu/android/.gradle/9.2.0/gc.properties
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/@react-native-menu/menu/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock b/node_modules/@react-native-menu/menu/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+new file mode 100644
+index 0000000..3ef87d2
+Binary files /dev/null and b/node_modules/@react-native-menu/menu/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock differ
+diff --git a/node_modules/@react-native-menu/menu/android/.gradle/buildOutputCleanup/cache.properties b/node_modules/@react-native-menu/menu/android/.gradle/buildOutputCleanup/cache.properties
+new file mode 100644
+index 0000000..3561f65
+--- /dev/null
++++ b/node_modules/@react-native-menu/menu/android/.gradle/buildOutputCleanup/cache.properties
+@@ -0,0 +1,2 @@
++#Wed Aug 26 09:01:54 CEST 2026
++gradle.version=9.2.0
+diff --git a/node_modules/@react-native-menu/menu/android/.gradle/vcs-1/gc.properties b/node_modules/@react-native-menu/menu/android/.gradle/vcs-1/gc.properties
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/@react-native-menu/menu/ios/MenuViewManager.mm b/node_modules/@react-native-menu/menu/ios/MenuViewManager.mm
+index 3d149b3..6816e94 100644
+--- a/node_modules/@react-native-menu/menu/ios/MenuViewManager.mm
++++ b/node_modules/@react-native-menu/menu/ios/MenuViewManager.mm
+@@ -1,6 +1,6 @@
+ #import <React/RCTViewManager.h>
+ #import <React/RCTUIManager.h>
+-#import "RCTBridge.h"
++#import <React/RCTBridge.h>
+ 
+ #ifdef RCT_NEW_ARCH_ENABLED
+ // NEW ARCH
