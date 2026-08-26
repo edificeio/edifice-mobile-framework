@@ -2,6 +2,7 @@ import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import { DiscussionIcon } from '@edifice.io/community-client-rest-rn';
+import { Temporal } from '@js-temporal/polyfill';
 
 import { I18n } from '~/app/i18n';
 import theme, { IShades } from '~/app/theme';
@@ -10,15 +11,15 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg, SvgIconName } from '~/framework/components/picture';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
 
-import { getCardStyle, styles } from './styles';
-import { ConversationCardProps, ConversationCardType } from './types';
+import { DiscussionCardState, getCardStyle, styles } from './styles';
+import { DiscussionCardProps, DiscussionCardType } from './types';
 
 type TypeConfig = {
   color: IShades;
   icon: SvgIconName;
 };
 
-const TYPE_CONFIG: Record<ConversationCardType, TypeConfig> = {
+const TYPE_CONFIG: Record<DiscussionCardType, TypeConfig> = {
   [DiscussionIcon.DISCUSSION]: { color: theme.palette.complementary.blue, icon: 'ui-conversation' },
   [DiscussionIcon.EVENT]: { color: theme.palette.complementary.green, icon: 'ui-calendarLight' },
   [DiscussionIcon.IMPORTANT]: { color: theme.palette.complementary.orange, icon: 'ui-arrow-important' },
@@ -32,9 +33,26 @@ const getStatusIcon = (isHidden?: boolean, isLocked?: boolean): SvgIconName => {
   return 'ui-messageInfo';
 };
 
+const getCardState = (isHidden?: boolean, hasNewContent?: boolean): DiscussionCardState => {
+  if (isHidden) return 'hidden';
+  if (hasNewContent) return 'new';
+  return 'default';
+};
+
+const getNewMessagesSubtitle = (messagesCount: number): string => {
+  const i18nKey = messagesCount === 1 ? 'communities-discussioncard-newmessage' : 'communities-discussioncard-newmessages';
+  return I18n.get(i18nKey, { count: messagesCount });
+};
+
+const getSubtitle = (hasNewContent: boolean, messagesCount?: number, lastMessageDate?: Temporal.Instant): string => {
+  if (hasNewContent) return getNewMessagesSubtitle(messagesCount ?? 0);
+  if (lastMessageDate) return I18n.get('communities-discussioncard-lastmessage', { date: I18n.date(lastMessageDate) });
+  return '';
+};
+
 const AVATAR_SIZE = 'sm';
 
-export const ConversationCard = ({
+export const DiscussionCard = ({
   isHidden,
   isLocked,
   lastMessageDate,
@@ -45,25 +63,15 @@ export const ConversationCard = ({
   responsesCount,
   title,
   type,
-}: Readonly<ConversationCardProps>) => {
-  const state = isHidden ? 'hidden' : newContent?.hasNewContent ? 'new' : 'default';
-  const typeConfig = TYPE_CONFIG[type ?? [DiscussionIcon.DISCUSSION]];
+}: Readonly<DiscussionCardProps>) => {
+  const showsNewContent = !!newContent?.hasNewContent && !isHidden;
+  const state = getCardState(isHidden, newContent?.hasNewContent);
+  const typeConfig = TYPE_CONFIG[type ?? DiscussionIcon.DISCUSSION];
   const cardStyle = React.useMemo(() => [getCardStyle(state)], [state]);
-
-  const subtitle =
-    newContent?.hasNewContent && !isHidden
-      ? I18n.get(
-          newContent.messagesCount === 1 ? 'communities-conversationcard-newmessage' : 'communities-conversationcard-newmessages',
-          {
-            count: newContent.messagesCount ?? 0,
-          },
-        )
-      : lastMessageDate
-        ? I18n.get('communities-conversationcard-lastmessage', { date: I18n.date(lastMessageDate) })
-        : '';
+  const subtitle = getSubtitle(showsNewContent, newContent?.messagesCount, lastMessageDate);
 
   return (
-    <TouchableOpacity style={cardStyle} onPress={onPress} testID="community-conversation-card">
+    <TouchableOpacity style={cardStyle} onPress={onPress} testID="community-discussion-card">
       <View style={styles.topRow}>
         <View style={[styles.iconSquare, { backgroundColor: typeConfig.color.pale }]}>
           <Svg
@@ -78,12 +86,10 @@ export const ConversationCard = ({
             {title}
           </BodyBoldText>
           {subtitle ? (
-            <SmallText style={newContent?.hasNewContent && !isHidden ? styles.subtitleNew : styles.subtitleDefault}>
-              {subtitle}
-            </SmallText>
+            <SmallText style={showsNewContent ? styles.subtitleNew : styles.subtitleDefault}>{subtitle}</SmallText>
           ) : null}
         </View>
-        {newContent?.hasNewContent && !isHidden ? <View style={styles.redDot} /> : null}
+        {showsNewContent ? <View style={styles.redDot} /> : null}
       </View>
       <View style={styles.bottomRow}>
         <View style={styles.bottomRowLeft}>
@@ -94,7 +100,7 @@ export const ConversationCard = ({
             width={UI_SIZES.elements.icon.small}
           />
           <SmallText style={styles.responseDefault}>
-            {I18n.get(responsesCount === 1 ? 'communities-conversationcard-response' : 'communities-conversationcard-responses', {
+            {I18n.get(responsesCount === 1 ? 'communities-discussioncard-response' : 'communities-discussioncard-responses', {
               count: responsesCount,
             })}
           </SmallText>

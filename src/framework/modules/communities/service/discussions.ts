@@ -2,18 +2,12 @@ import { DiscussionClient, DiscussionDto, UserDto } from '@edifice.io/community-
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/communities/module-config';
-import { accountApi, sessionApi } from '~/framework/util/transport';
-
-export const hasDiscussions = async (communityId: number): Promise<boolean> => {
-  const { meta } = await sessionApi(moduleConfig, DiscussionClient).listDiscussions(communityId, { page: 1, size: 1 });
-
-  return meta.totalItems > 0;
-};
+import { accountApi } from '~/framework/util/transport';
 
 /**
- * Extension du type DiscussionDto : TODO demander un fix au retour d'Hippo
- * - firstUsers : ce champ est mal orthographié dans le type DiscussionDto du client (fisrtUsers) mais bien écrit dans la réponse
- * - hasUnreadMessages et lastVisitedTime sont absents du type DiscussionDto mais présents dans la réponse
+ * Extension of DiscussionDto type : TODO ask a fix to backend dev
+ * - firstUsers : this field is misspelled in the client's DiscussionDto type (fisrtUsers) but correctly spelled in the response
+ * - hasUnreadMessages and lastVisitedTime are missing from DiscussionDto type but present in the response
  */
 export type DiscussionRuntimeExtras = {
   firstUsers: UserDto[];
@@ -41,12 +35,17 @@ export const getDiscussionsSummary = async (session: AuthActiveAccount, communit
   };
 };
 
-export const getDiscussions = async (session: AuthActiveAccount, communityId: number): Promise<Discussion[]> => {
+export const getDiscussions = async (
+  session: AuthActiveAccount,
+  communityId: number,
+  page: number,
+  size: number,
+): Promise<{ discussions: Discussion[]; total: number }> => {
   const client = accountApi(session, moduleConfig, DiscussionClient);
-  const res = await client.listDiscussions(communityId);
+  const { items, meta } = await client.listDiscussions(communityId, { page: page + 1, size });
 
-  return Promise.all(
-    (res.items as unknown as (DiscussionDto & DiscussionRuntimeExtras)[]).map(async discussion => {
+  const discussions = await Promise.all(
+    (items as unknown as (DiscussionDto & DiscussionRuntimeExtras)[]).map(async discussion => {
       let unreadCount = 0;
       if (discussion.hasUnreadMessages) {
         const { count } = await client.countMessages(
@@ -59,4 +58,6 @@ export const getDiscussions = async (session: AuthActiveAccount, communityId: nu
       return { ...discussion, unreadCount };
     }),
   );
+
+  return { discussions, total: meta.totalItems };
 };

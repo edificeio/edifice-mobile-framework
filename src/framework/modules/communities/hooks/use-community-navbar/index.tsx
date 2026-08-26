@@ -8,8 +8,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Svg } from '~/framework/components/picture';
+import { Svg, SvgIconName } from '~/framework/components/picture';
 import { HeadingXSText } from '~/framework/components/text';
+import { usePrevious } from '~/framework/hooks/previous';
 
 import CommunityNavbar from './community-navbar';
 import { CommunityNavbarPlaceholder } from './community-navbar/component';
@@ -21,11 +22,18 @@ import { CommunityThumbnailNavbarScrollableProps } from './types';
 export { NAVBAR_RIGHT_BUTTON_STYLE } from './styles';
 export type { CommunityThumbnailNavbarScrollableProps } from './types';
 
+const SCROLL_INDICATOR_INSETS = {
+  bottom: 0,
+  right: 0.001,
+  top: BANNER_BASE_HEIGHT - UI_SIZES.spacing.medium * 2,
+};
+
 export default function useCommunityScrollableThumbnail({
   contentContainerStyle: _contentContainerStyle,
   contentInset: _contentInset,
   contentOffset: _contentOffset,
   image,
+  navigation,
   onScroll: _onScroll,
   title,
 }: CommunityThumbnailNavbarScrollableProps) {
@@ -67,6 +75,10 @@ export default function useCommunityScrollableThumbnail({
     [bannerTotalHeight, shouldStatusBarDark, statusBarHeight, _onScroll],
   );
 
+  const statusBarStyle = shouldStatusBarDark ? 'dark' : 'light';
+  const previousStatusBarStyle = usePrevious(statusBarStyle);
+  if (previousStatusBarStyle !== statusBarStyle) navigation.setOptions({ statusBarStyle });
+
   const contentContainerStyle = React.useMemo(
     () => [
       Platform.select({
@@ -75,7 +87,7 @@ export default function useCommunityScrollableThumbnail({
       }),
       _contentContainerStyle,
     ],
-    [_contentContainerStyle, bannerTotalHeight],
+    [_contentContainerStyle],
   );
   const contentInset = React.useMemo(
     () =>
@@ -87,7 +99,7 @@ export default function useCommunityScrollableThumbnail({
           // top: bannerTotalHeight + (_contentInset?.top ?? 0),
         },
       }),
-    [_contentInset, bannerTotalHeight],
+    [_contentInset],
   );
   const contentOffset = React.useMemo(
     () =>
@@ -100,12 +112,12 @@ export default function useCommunityScrollableThumbnail({
 
   return [
     [fixedTitleHeader, banner] as const,
-    shouldStatusBarDark ? 'dark' : 'light',
     {
       contentContainerStyle,
       contentInset,
       contentOffset,
       onScroll,
+      scrollIndicatorInsets: SCROLL_INDICATOR_INSETS,
       StickyHeaderComponent: CommunityScrollViewStickyHeader,
       stickyHeaderIndices: useCommunityScrollableThumbnail.stickyHeaderIndices,
     } as const,
@@ -116,18 +128,19 @@ useCommunityScrollableThumbnail.stickyHeaderIndices = [0, 1];
 
 export const communityNavBar = <NavigationParams extends ParamListBase, RouteName extends string & keyof NavigationParams>(
   { navigation }: NativeStackScreenProps<NavigationParams, RouteName>,
-  onInfoButton?: () => void,
+  onRightButton?: () => void,
+  rightButtonIcon: SvgIconName = 'ui-infoCircle',
 ): NativeStackNavigationOptions => ({
   header: () => (
     <View>
       <Header
         title=""
         headerRight={
-          onInfoButton
+          onRightButton
             ? () => (
-                <TouchableOpacity style={NAVBAR_RIGHT_BUTTON_STYLE} onPress={onInfoButton}>
+                <TouchableOpacity style={NAVBAR_RIGHT_BUTTON_STYLE} onPress={onRightButton}>
                   <Svg
-                    name="ui-infoCircle"
+                    name={rightButtonIcon}
                     width={UI_SIZES.elements.icon.small}
                     height={UI_SIZES.elements.icon.small}
                     fill={theme.palette.grey.black}
