@@ -1,7 +1,7 @@
 import { ParamListBase } from '@react-navigation/native';
 
 import moduleConfig from '~/framework/modules/communities/module-config';
-import { CommunitiesConversationScreen } from '~/framework/modules/communities/screens/conversation/types';
+import { CommunitiesDiscussionsScreen } from '~/framework/modules/communities/screens/discussions/types';
 import { CommunitiesDocumentsScreen } from '~/framework/modules/communities/screens/documents/types';
 import type { CommunitiesHomeScreen } from '~/framework/modules/communities/screens/home';
 import type { CommunitiesJoinConfirmScreen } from '~/framework/modules/communities/screens/join-confirm';
@@ -10,7 +10,7 @@ import { CommunitiesMembersScreen } from '~/framework/modules/communities/screen
 import { CommunitiesSpotlightedCourseScreen } from '~/framework/modules/communities/screens/spotlighted-course';
 
 export const communitiesRouteNames = {
-  conversation: `${moduleConfig.routeName}/conversation` as 'conversation',
+  discussions: `${moduleConfig.routeName}/discussions` as 'discussions',
   documents: `${moduleConfig.routeName}/documents` as 'documents',
   home: `${moduleConfig.routeName}/home` as 'home',
   joinConfirm: `${moduleConfig.routeName}/join-confirm` as 'joinConfirm',
@@ -19,7 +19,7 @@ export const communitiesRouteNames = {
   spotlightedCourse: `${moduleConfig.routeName}/spotlighted-course` as 'spotlightedCourse',
 };
 export interface CommunitiesNavigationParams extends ParamListBase {
-  conversation: CommunitiesConversationScreen.NavParams;
+  discussions: CommunitiesDiscussionsScreen.NavParams;
   list: CommunitiesListScreen.NavParams;
   home: CommunitiesHomeScreen.NavParams;
   documents: CommunitiesDocumentsScreen.NavParams;

@@ -1,10 +1,10 @@
 import { Temporal } from '@js-temporal/polyfill';
 
-export type ConversationCardType = 'discussion' | 'event' | 'important' | 'other' | 'question';
+export type DiscussionCardType = 'discussion' | 'event' | 'important' | 'other' | 'question';
 
-export interface ConversationCardProps {
+export interface DiscussionCardProps {
   title: string;
-  type: ConversationCardType;
+  type: DiscussionCardType;
   responsesCount: number;
   membersDisplayed: string[];
   membersTotal: number;

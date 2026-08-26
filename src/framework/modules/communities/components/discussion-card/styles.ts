@@ -3,7 +3,7 @@ import { StyleSheet, ViewStyle } from 'react-native';
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
-export type ConversationCardState = 'default' | 'hidden' | 'new';
+export type DiscussionCardState = 'default' | 'hidden' | 'new';
 
 const CARD_CONTAINER_STYLE: ViewStyle = {
   alignSelf: 'stretch',
@@ -16,7 +16,7 @@ const CARD_CONTAINER_STYLE: ViewStyle = {
 const ICON_SQUARE_SIZE = getScaleWidth(52);
 const RED_DOT_SIZE = getScaleWidth(6);
 
-export const getCardStyle = (state: ConversationCardState) => {
+export const getCardStyle = (state: DiscussionCardState) => {
   switch (state) {
     case 'new':
       return styles.cardNew;
