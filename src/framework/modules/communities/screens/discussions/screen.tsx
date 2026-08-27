@@ -10,9 +10,9 @@ import { screenOptions } from '~/app/navigation/util';
 import { getScaleImageSize } from '~/framework/components/constants';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
 import { LOADING_ITEM_DATA, PaginatedFlatListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
-import { HeadingXSText, SmallBoldText } from '~/framework/components/text';
+import { HeadingXSText } from '~/framework/components/text';
 import { withSession } from '~/framework/modules/auth/util';
-import DiscussionCard from '~/framework/modules/communities/components/discussion-card';
+import DiscussionCard, { DiscussionCardLoader } from '~/framework/modules/communities/components/discussion-card';
 import DecoratedPaginatedFlatList from '~/framework/modules/communities/components/list/decorated-paginated-list';
 import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/modules/communities/hooks/use-community-navbar';
 import { Discussion, getDiscussions } from '~/framework/modules/communities/service/discussions';
@@ -29,8 +29,11 @@ const PAGE_SIZE = 20;
 
 export const DiscussionsScreenOptions = screenOptions(props => communityNavBar(props, () => {}, 'ui-plus'));
 
-// to do : placeholder component
-const DiscussionCardPlaceholder = () => <SmallBoldText style={styles.itemContainer}>loading</SmallBoldText>;
+const DiscussionCardPlaceholder = () => (
+  <View style={styles.itemContainer}>
+    <DiscussionCardLoader />
+  </View>
+);
 
 export default withSession<CommunitiesDiscussionsScreen.AllProps>(function DiscussionsScreen({
   navigation,
