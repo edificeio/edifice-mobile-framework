@@ -16,10 +16,7 @@ const RESPONSE_COUNT_LOAD_PAGE = 10;
  */
 export const useSocialCommentsData = (
   data: SocialResourceViewer.Props['data'],
-  config: { responsesStart: number; responsesPage: number } = {
-    responsesPage: RESPONSE_COUNT_LOAD_PAGE,
-    responsesStart: RESPONSE_COUNT_LOAD_START,
-  },
+  config?: Partial<SocialResourceViewer.CommentsConfig>,
 ) => {
   // By default, all comments are displayed.
   // For each comment, only first 2 repsonses are show. A user can load the further responses 10 by 10.
@@ -33,7 +30,10 @@ export const useSocialCommentsData = (
   >({});
 
   // Note: this is a callback to generate array, not a memoized value, because it will be mutated after for each comment.
-  const getDefaultResponseRanges = React.useCallback(() => [[0, config.responsesStart]], [config.responsesStart]);
+  const getDefaultResponseRanges = React.useCallback(
+    () => [[0, config?.responsesStartSize ?? RESPONSE_COUNT_LOAD_START]],
+    [config?.responsesStartSize],
+  );
 
   const showResponses = React.useCallback(
     (
@@ -43,10 +43,14 @@ export const useSocialCommentsData = (
     ) => {
       setDisplayedResponsesRangesByComment(oldRanges => ({
         ...oldRanges,
-        [id]: _addRange(oldRanges[id] ?? getDefaultResponseRanges(), start, Math.min(count, config.responsesPage)),
+        [id]: _addRange(
+          oldRanges[id] ?? getDefaultResponseRanges(),
+          start,
+          Math.min(count, config?.responsesPageSize ?? RESPONSE_COUNT_LOAD_PAGE),
+        ),
       }));
     },
-    [config.responsesPage, getDefaultResponseRanges],
+    [config?.responsesPageSize, getDefaultResponseRanges],
   );
 
   const filteredData = React.useMemo(() => {

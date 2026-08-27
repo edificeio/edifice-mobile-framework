@@ -50,12 +50,14 @@ export function SocialResourceViewer({
   data,
   focusItem,
   onSubmit,
+  responsesPageSize,
+  responsesStartSize,
 }: SocialResourceViewer.Props) {
   // User data
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
 
-  const { flatData, showResponses } = useSocialCommentsData(data);
+  const { flatData, showResponses } = useSocialCommentsData(data, { responsesPageSize, responsesStartSize });
 
   // Screen layout
   const navBarHeight = useHeaderHeight();
