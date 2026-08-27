@@ -1,6 +1,5 @@
 import CookieManager from '@preeternal/react-native-cookie-manager';
-//import analytics from '@react-native-firebase/analytics';
-import crashlytics from '@react-native-firebase/crashlytics';
+import { getCrashlytics, log, recordError, setAttribute, setAttributes, setUserId } from '@react-native-firebase/crashlytics';
 import DeviceInfo from 'react-native-device-info';
 
 import { EntModule } from '~/app/module';
@@ -278,72 +277,46 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   }
 }
 
-/*export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
-  protected _properties = {};
-
-  async _setUserId(id: string) {
-    await analytics().setUserId(id);
-    return true;
-  }
-
-  async _setCustomDimension(id: number, name: string, value: string) {
-    this._properties[name] = value;
-    return true;
-  }
-
-  protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
-    analytics().logEvent(`${category}_${action}`.slice(0, 39), { name, value, ...this._properties });
-    return true;
-  }
-
-  async _trackView(path: string[]) {
-    const viewPath = path.join('/');
-    await analytics().logScreenView({
-      screen_class: viewPath,
-      screen_name: viewPath,
-    });
-    return true;
-  }
-}*/
-
 export class ConcreteCrashsTracker extends AbstractTracker<undefined> {
+  private static crashlyticsModule = getCrashlytics();
+
   protected _isDebugTracker(): boolean {
     return true;
   }
 
   async _setUserId(id: string) {
-    await crashlytics().setUserId(id);
+    await setUserId(ConcreteCrashsTracker.crashlyticsModule, id);
     return true;
   }
 
   async _setCustomDimension(id: number, name: string, value: string) {
-    crashlytics().setAttribute(name, value);
+    setAttribute(ConcreteCrashsTracker.crashlyticsModule, name, value);
     return true;
   }
 
   async _trackDebugEvent(category: string, action: string, name?: string, value?: number) {
-    crashlytics().log(`${category} ${action} ${name} ${value}`);
+    log(ConcreteCrashsTracker.crashlyticsModule, `${category} ${action} ${name} ${value}`);
     return true;
   }
 
   async _trackView(path: string[]) {
     const viewPath = path.join('/');
-    crashlytics().log(`VIEW: ${viewPath}`);
+    log(ConcreteCrashsTracker.crashlyticsModule, `VIEW: ${viewPath}`);
     return true;
   }
 
   async _setCrashAttribute(attributeName: string, attribute: string) {
-    await crashlytics().setAttribute(attributeName, attribute);
+    await setAttribute(ConcreteCrashsTracker.crashlyticsModule, attributeName, attribute);
     return true;
   }
 
   async _setCrashAttributes(attributes: Record<string, string>) {
-    await crashlytics().setAttributes(attributes);
+    await setAttributes(ConcreteCrashsTracker.crashlyticsModule, attributes);
     return true;
   }
 
   async _recordCrashError(error: Error, errorName?: string) {
-    await crashlytics().recordError(error, errorName);
+    await recordError(ConcreteCrashsTracker.crashlyticsModule, error, errorName);
     return true;
   }
 }

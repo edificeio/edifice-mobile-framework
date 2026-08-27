@@ -4,7 +4,8 @@
  */
 import React, { PropsWithChildren, useState } from 'react';
 
-import messaging, { RemoteMessage } from '@react-native-firebase/messaging';
+import type { RemoteMessage } from '@react-native-firebase/messaging';
+import { getInitialNotification, getMessaging, onNotificationOpenedApp } from '@react-native-firebase/messaging';
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { Action } from 'redux';
@@ -29,19 +30,16 @@ export function CloudMessagingProvider({ children }: PropsWithChildren) {
   const navDispatch = useNavigationRedirectionDispatch(isInitialRef.current ? navigation : navigationRef);
 
   React.useEffect(() => {
+    const messaging = getMessaging();
     // Check whether an initial notification is available
-    messaging()
-      .getInitialNotification()
-      .then(message => {
-        setRemoteMessage(message);
-      });
-
+    getInitialNotification(messaging).then(message => {
+      setRemoteMessage(message);
+    });
     // Listen to notification opening
-    const unsubscribe = messaging().onNotificationOpenedApp(message => {
+    const unsubscribe = onNotificationOpenedApp(messaging, message => {
       setRemoteMessage(message);
       isInitialRef.current = false;
     });
-
     // Clear listener
     return () => {
       unsubscribe();

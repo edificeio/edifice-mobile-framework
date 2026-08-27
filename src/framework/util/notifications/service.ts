@@ -1,7 +1,6 @@
-// eslint-disable-next-line react-native/split-platform-components
 import { PermissionsAndroid, Platform } from 'react-native';
 
-import messaging from '@react-native-firebase/messaging';
+import { AuthorizationStatus, getMessaging, getToken, onTokenRefresh, requestPermission } from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
@@ -42,6 +41,9 @@ class FirebaseCloudMessagingService {
     await Promise.all([this.unqueueRegisteringTasks(), this.unqueueUnregisteringTasks()]);
   };
 
+  /** Unsubscribe function returned by the token refresh listener. */
+  protected unsubscribeTokenRefresh?: () => void;
+
   /**
    * Build a storage slice for a specific account.
    *
@@ -54,18 +56,18 @@ class FirebaseCloudMessagingService {
 
   constructor() {
     // Listen for token change
-    messaging().onTokenRefresh(async newToken => {
+    this.unsubscribeTokenRefresh = onTokenRefresh(getMessaging(), async newToken => {
       console.debug('[FirebaseMessagingService] Token refreshed', newToken);
       const session = getSession();
       if (session) {
-        this.enablePushNotificationsForAccount(session);
+        void this.enablePushNotificationsForAccount(session);
       }
     });
 
     // ToDo : when to unqueue tasks ?
     // ToDo : store task queues in storage and unqueue them on app start
 
-    // console.debug('[FirebaseMessagingService] Service auto initialized ?', messaging().isAutoInitEnabled);
+    // console.debug('[FirebaseMessagingService] Service auto initialized ?', isAutoInitEnabled(getMessaging()));
   }
 
   /** Ensure that the app has the necessary permissions to receive notifications. Ask user for permission if needed. */
@@ -77,8 +79,8 @@ class FirebaseCloudMessagingService {
 
   /** Ensure that the app has the necessary permissions to receive notifications on iOS. Ask user for permission if needed. */
   protected async ensureNotificationPermissionsIOS() {
-    const authorizationStatus = await messaging().requestPermission();
-    if (authorizationStatus !== messaging.AuthorizationStatus.AUTHORIZED) {
+    const authorizationStatus = await requestPermission(getMessaging());
+    if (authorizationStatus !== AuthorizationStatus.AUTHORIZED) {
       // console.debug('[FirebaseMessagingService] ensureNotificationPermissionsIOS - Device permission to receive notifications is denied');
       return false;
     }
@@ -105,7 +107,7 @@ class FirebaseCloudMessagingService {
       if (checkPermissions && (await this.ensureNotificationPermissions()) === false) {
         return;
       }
-      return messaging().getToken();
+      return getToken(getMessaging());
     } catch (e) {
       throw new global.Error('[FirebaseMessagingService] Error getting FCM token for this device', { cause: e });
     }

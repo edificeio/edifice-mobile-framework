@@ -1,6 +1,6 @@
 import React from 'react';
 
-import inAppMessaging from '@react-native-firebase/in-app-messaging';
+import { getInAppMessaging, setMessagesDisplaySuppressed } from '@react-native-firebase/in-app-messaging';
 import BootSplash from 'react-native-bootsplash';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -34,7 +34,7 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
       initEditor().finally(null);
       dispatch(appReadyAction());
       BootSplash.hide({ fade: true });
-      inAppMessaging().setMessagesDisplaySuppressed(false).finally();
+      setMessagesDisplaySuppressed(getInAppMessaging(), false).finally();
     }
   });
 }

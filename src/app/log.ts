@@ -1,4 +1,4 @@
-import crashlytics from '@react-native-firebase/crashlytics';
+import { getCrashlytics, log, recordError } from '@react-native-firebase/crashlytics';
 import RNFS from 'react-native-fs';
 import { consoleTransport, fileAsyncTransport, logger } from 'react-native-logs';
 import Share from 'react-native-share';
@@ -6,14 +6,14 @@ import Share from 'react-native-share';
 import appConf from '~/framework/util/appConf';
 
 export namespace Log {
-  const crashlyticsModule = crashlytics();
+  const crashlyticsModule = getCrashlytics();
   const crashlyticsTransport = props => {
     // Only log errors and above
     if (props.level.severity >= 3) {
       try {
-        crashlyticsModule.log(`[${props.level.text}] ${props.msg}`);
+        log(crashlyticsModule, `[${props.level.text}] ${props.msg}`);
         if (props.rawMsg instanceof Error) {
-          crashlyticsModule.recordError(props.rawMsg);
+          recordError(crashlyticsModule, props.rawMsg);
         }
       } catch (error) {
         console.warn('Failed to log to Crashlytics:', error);
@@ -21,7 +21,7 @@ export namespace Log {
     }
   };
 
-  let log;
+  let appLog;
   const logFileName = 'appe.log';
   export const logFilePath = `${RNFS.DocumentDirectoryPath}/${logFileName}`;
 
@@ -34,7 +34,7 @@ export namespace Log {
         startNetworkLogging();
       }
       // initialize logger
-      log = logger.createLogger({
+      appLog = logger.createLogger({
         async: true,
         levels: {
           debug: 0,
@@ -55,7 +55,7 @@ export namespace Log {
         },
       });
       // Patch standard console.* statements
-      log?.patchConsole();
+      appLog?.patchConsole();
     } catch (e) {
       console.error('Unable to initialize logger: ', (e as Error).message);
     }
@@ -67,7 +67,6 @@ export namespace Log {
 
   export async function contentsAsArray(): Promise<string[]> {
     const logs: string[] = [];
-
     try {
       const contents = await RNFS.readFile(logFilePath);
       const lines = contents.split('\n');
@@ -93,11 +92,11 @@ export namespace Log {
   }
 
   export function pause() {
-    log?.disable();
+    appLog?.disable();
   }
 
   export function resume() {
-    log?.enable();
+    appLog?.enable();
   }
 
   export async function share() {

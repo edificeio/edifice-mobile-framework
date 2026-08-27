@@ -22,21 +22,19 @@ end
 
 ENV['RCT_NEW_ARCH_ENABLED'] = '1'
 
+$RNFirebaseDisableSPM = true
+
 target 'appe' do
 
   config = use_native_modules!
   $RNFirebaseAsStaticFramework = true
 
   #
-  # Static libraries => use modular headers
+  # Non-modular C pods that Firebase's Swift pods import when building as
+  # static libraries. Nothing else Firebase-related belongs here — RNFB
+  # pins its own versions.
   #
-  pod 'Firebase', :modular_headers => true
   pod 'FirebaseABTesting', :modular_headers => true
-  pod 'FirebaseAppDistribution', :modular_headers => true
-  pod 'FirebaseCrashlytics', :modular_headers => true
-  pod 'FirebaseCore', :modular_headers => true
-  pod 'FirebaseCoreExtension', :modular_headers => true
-  pod 'FirebaseInstallations', :modular_headers => true
   pod 'GoogleDataTransport', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
   pod 'nanopb', :modular_headers => true

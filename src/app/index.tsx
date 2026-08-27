@@ -3,7 +3,7 @@ import { AppState, AppStateStatus, Platform } from 'react-native';
 
 import FastImage from '@d11/react-native-fast-image';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
-import inAppMessaging from '@react-native-firebase/in-app-messaging';
+import { getInAppMessaging, setMessagesDisplaySuppressed } from '@react-native-firebase/in-app-messaging';
 import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
@@ -89,7 +89,7 @@ function useNotificationEvent() {
       const result = PushNotificationIOS.FetchResult.NoData;
       notification.finish(result);
     });
-    if (Platform.OS === 'ios') inAppMessaging().setMessagesDisplaySuppressed(true).finally();
+    if (Platform.OS === 'ios') setMessagesDisplaySuppressed(getInAppMessaging(), true).finally();
     return () => {
       PushNotificationIOS.removeEventListener(type);
     };
