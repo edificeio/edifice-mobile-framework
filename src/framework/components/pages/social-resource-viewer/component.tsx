@@ -11,7 +11,6 @@ import { useSelector } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
 import { SingleAvatar } from '~/framework/components/avatar';
-// import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
@@ -29,10 +28,20 @@ import toast from '../../toast';
 
 const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<SocialResourceViewerInternals.Item>);
 
-export const NewCommentInputContext = React.createContext<{ height: number; value: string }>({ height: 0, value: '' });
-export const NewCommentInputDispatchContext = React.createContext<
-  React.Dispatch<React.SetStateAction<{ height: number; value: string }>>
->(_ => _);
+const socialResourceViewerContextInitialData: SocialResourceViewerInternals.ContextState = {
+  newCommentHeight: 0,
+  newCommentValue: '',
+  newResponseId: undefined,
+  newResponseValue: '',
+};
+export const socialResourceViewerContextReducer: SocialResourceViewerInternals.ContextReducer = (state, values) => ({
+  ...state,
+  ...values,
+});
+export const SocialResourceViewerContext = React.createContext<SocialResourceViewerInternals.Context>([
+  socialResourceViewerContextInitialData,
+  _ => _,
+]);
 
 export function SocialResourceViewer({
   alwaysShowCommentField = false,
@@ -58,9 +67,10 @@ export function SocialResourceViewer({
   const [measuredListHeight, setMeasuredListHeight] = React.useState(0);
 
   // Input state
-  const [newCommentFormState, newCommentFormDispatch] = React.useState({ height: 0, value: '' });
+  const context = React.useReducer(socialResourceViewerContextReducer, socialResourceViewerContextInitialData);
+  const { newCommentHeight, newCommentValue } = context[0];
   const [isNewCommentFocused, setNewCommentIsFocused] = React.useState(false);
-  const alwaysShowNewCommentForm = alwaysShowCommentField || isNewCommentFocused || newCommentFormState.value.length > 0;
+  const alwaysShowNewCommentForm = alwaysShowCommentField || isNewCommentFocused || newCommentValue.length > 0;
 
   // Scroll animation values
   const { height: animatedKeyboardHeight } = useReanimatedKeyboardAnimation();
@@ -74,7 +84,7 @@ export function SocialResourceViewer({
       -animatedScrollOffset.value -
       measuredListHeight +
       measuredResourceHeight +
-      newCommentFormState.height +
+      newCommentHeight +
       Math.max(-animatedKeyboardHeight.value, bottomInset + UI_SIZES.elements.tabbarHeight) -
       bottomInset -
       UI_SIZES.elements.tabbarHeight;
@@ -89,7 +99,7 @@ export function SocialResourceViewer({
         },
       ],
     };
-  }, [measuredListHeight, measuredResourceHeight, newCommentFormState.height, alwaysShowNewCommentForm, bottomInset]);
+  }, [measuredListHeight, measuredResourceHeight, newCommentHeight, alwaysShowNewCommentForm, bottomInset]);
 
   const renderScrollComponent = React.useCallback<
     NonNullable<FlatListProps<SocialResourceViewerInternals.Item>['renderScrollComponent']>
@@ -134,21 +144,21 @@ export function SocialResourceViewer({
   }, []);
   const scrollIndicatorInsets = React.useMemo(
     () => ({
-      bottom: newCommentFormState.height,
+      bottom: newCommentHeight,
     }),
-    [newCommentFormState.height],
+    [newCommentHeight],
   );
 
-  useConfirmRemove(newCommentFormState.value.length > 0, {
+  useConfirmRemove(newCommentValue.length > 0, {
     text: I18n.get('comment-preventback-alert-text'),
     title: I18n.get('comment-preventback-alert-title'),
   });
 
   const listFooterStyle = React.useMemo(
     () => ({
-      height: newCommentFormState.height,
+      height: newCommentHeight,
     }),
-    [newCommentFormState.height],
+    [newCommentHeight],
   );
 
   const renderItem = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['renderItem']>>(
@@ -183,41 +193,39 @@ export function SocialResourceViewer({
       listRef.current?.scrollToIndex({
         animated: true,
         index: scrollToIndex,
-        viewOffset: newCommentFormState.height,
+        viewOffset: newCommentHeight,
         viewPosition: 1,
       });
   }
 
   return (
-    <NewCommentInputContext value={newCommentFormState}>
-      <NewCommentInputDispatchContext value={newCommentFormDispatch}>
-        <AnimatedFlashList
-          ref={listRef}
-          onLayout={onLayout}
-          keyboardDismissMode="interactive"
-          onScroll={scrollHandler}
-          renderScrollComponent={renderScrollComponent}
-          data={flatData}
-          renderItem={renderItem}
-          getItemType={getItemType}
-          keyExtractor={keyExtractor}
-          ListHeaderComponent={resourceElement}
-          ListFooterComponent={<View style={listFooterStyle} />}
-          scrollIndicatorInsets={scrollIndicatorInsets}
-          keyboardShouldPersistTaps="handled"
+    <SocialResourceViewerContext value={context}>
+      <AnimatedFlashList
+        ref={listRef}
+        onLayout={onLayout}
+        keyboardDismissMode="interactive"
+        onScroll={scrollHandler}
+        renderScrollComponent={renderScrollComponent}
+        data={flatData}
+        renderItem={renderItem}
+        getItemType={getItemType}
+        keyExtractor={keyExtractor}
+        ListHeaderComponent={resourceElement}
+        ListFooterComponent={<View style={listFooterStyle} />}
+        scrollIndicatorInsets={scrollIndicatorInsets}
+        keyboardShouldPersistTaps="handled"
+      />
+      {canAddComment && (
+        <SocialResourceViewerAddCommentForm
+          listRef={listRef}
+          onSubmit={onSubmit}
+          session={session}
+          style={inputStyle}
+          onFocus={onFocus}
+          onBlur={onBlur}
         />
-        {canAddComment && (
-          <SocialResourceViewerAddCommentForm
-            listRef={listRef}
-            onSubmit={onSubmit}
-            session={session}
-            style={inputStyle}
-            onFocus={onFocus}
-            onBlur={onBlur}
-          />
-        )}
-      </NewCommentInputDispatchContext>
-    </NewCommentInputContext>
+      )}
+    </SocialResourceViewerContext>
   );
 }
 
@@ -236,8 +244,7 @@ export const SocialResourceViewerAddCommentForm = ({
   onSubmit?: SocialResourceViewer.Props['onSubmit'];
   listRef: React.RefObject<FlashListRef<SocialResourceViewerInternals.Item> | null>;
 }) => {
-  const inputState = React.useContext(NewCommentInputContext);
-  const inputDispatch = React.useContext(NewCommentInputDispatchContext);
+  const [{ newCommentValue }, dispatch] = React.useContext(SocialResourceViewerContext);
   const [isSending, setIsSending] = React.useState(false);
   const navBarHeight = useHeaderHeight();
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -256,22 +263,22 @@ export const SocialResourceViewerAddCommentForm = ({
     if (!onSubmit) return;
     try {
       setIsSending(true);
-      await onSubmit({ content: inputState.value, isRichContent: false });
-      inputDispatch(state => ({ ...state, value: '' }));
+      await onSubmit({ content: newCommentValue, isRichContent: false });
+      dispatch({ newCommentValue: '' });
     } catch {
       toast.showError();
     } finally {
       setIsSending(false);
     }
-  }, [inputDispatch, inputState.value, onSubmit]);
+  }, [dispatch, newCommentValue, onSubmit]);
   return (
     <Animated.View
       style={style}
       onLayout={React.useCallback(
         ({ nativeEvent: { layout } }) => {
-          inputDispatch(state => ({ ...state, height: layout.height }));
+          dispatch({ newCommentHeight: layout.height });
         },
-        [inputDispatch],
+        [dispatch],
       )}>
       <KeyboardStickyView offset={stickyViewOffset}>
         <View style={styles.stickyCommentWrapper}>
@@ -279,12 +286,12 @@ export const SocialResourceViewerAddCommentForm = ({
           <ChatTextArea
             maxLength={80}
             wrapperStyle={[UI_STYLES.flex1]}
-            value={inputState.value}
+            value={newCommentValue}
             onChangeText={React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
               text => {
-                inputDispatch(state => ({ ...state, value: text }));
+                dispatch({ newCommentValue: text });
               },
-              [inputDispatch],
+              [dispatch],
             )}
             editable={!isSending}
             onFocus={onFocus}
@@ -294,7 +301,7 @@ export const SocialResourceViewerAddCommentForm = ({
           <PrimaryButton
             onPress={onPress}
             testID="comment-add"
-            disabled={!inputState.value.length}
+            disabled={!newCommentValue.length}
             icon="ui-send"
             loading={isSending}
           />
