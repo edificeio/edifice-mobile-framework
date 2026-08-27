@@ -35,7 +35,13 @@ export namespace SocialResourceViewer {
   export interface CommentItem extends CommonContentItemData, CommentCommentItemData {}
   export interface CommentItemDeleted extends CommonDeletedItemData, CommentCommentItemData {}
 
-  export interface Props extends Pick<NativeStackScreenProps<ParamListBase>, 'navigation'>, React.PropsWithChildren {
+  export interface CommentsConfig {
+    responsesStartSize: number;
+    responsesPageSize: number;
+  }
+
+  export interface Props
+    extends Pick<NativeStackScreenProps<ParamListBase>, 'navigation'>, React.PropsWithChildren, Partial<CommentsConfig> {
     canAddComment: boolean;
     alwaysShowCommentField?: boolean;
     style?: StyleProp<ViewStyle>;
