@@ -93,4 +93,13 @@ export namespace SocialResourceViewerInternals {
   }
 
   export type Item = CommentItem | ResponseItem | CommentItemDeleted | ResponseItemDeleted | ResponseItemEllipsis | AddResponseItem;
+
+  export interface ContextState {
+    newCommentHeight: number;
+    newCommentValue: string;
+    newResponseValue: string;
+    newResponseId: SocialResourceViewerInternals.CommentItem['id'] | undefined;
+  }
+  export type ContextReducer = (state: ContextState, newValues: Partial<ContextState>) => ContextState;
+  export type Context = [ContextState, React.ActionDispatch<[Partial<ContextState>]>];
 }
