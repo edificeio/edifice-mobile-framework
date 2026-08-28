@@ -38,6 +38,7 @@ export namespace SocialResourceViewer {
   export interface CommentsConfig {
     responsesStartSize: number;
     responsesPageSize: number;
+    showDeletedItems: 'always' | 'children' | 'never';
   }
 
   export interface Props
