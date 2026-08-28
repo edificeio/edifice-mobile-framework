@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 
 import { headerAction, screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
-import PopupMenu from '~/framework/components/menus/popup';
+import { Popover } from '~/framework/components/menus/popover';
 import { BarLine, NavBarProfileButton } from '~/framework/components/navigation';
 import { BodyBoldText, CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
@@ -69,15 +69,15 @@ export const HomeScreen = withSession<HomeScreenProps>(({ navigation, session })
 
     const createButton = (props: Parameters<typeof headerAction>[1]) =>
       headerAction(
-        { icon: 'ui-plus', testID: 'home-add-button' },
+        { icon: 'ui-plus', style: styles.addButton, testID: 'home-add-button' },
         { ...props, tintColor: theme.palette.secondary.dark.toString() },
       );
 
     navigation.setOptions({
-      headerRight: props => <PopupMenu actions={workflows}>{createButton(props).element}</PopupMenu>,
+      headerRight: props => <Popover actions={workflows}>{createButton(props).element}</Popover>,
       unstable_headerRightItems: props => {
         const action = createButton(props);
-        return [{ ...action, element: <PopupMenu actions={workflows}>{action.element}</PopupMenu> }] as NativeStackHeaderItem[];
+        return [{ ...action, element: <Popover actions={workflows}>{action.element}</Popover> }] as NativeStackHeaderItem[];
       },
     });
   }, [navigation, workflows]);
