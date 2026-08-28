@@ -7,8 +7,11 @@ import React from 'react';
 
 import { SocialResourceViewer, SocialResourceViewerInternals } from './types';
 
-const RESPONSE_COUNT_LOAD_START = 2;
-const RESPONSE_COUNT_LOAD_PAGE = 10;
+const DEFAULT_CONFIG: SocialResourceViewer.CommentsConfig = {
+  responsesPageSize: 10,
+  responsesStartSize: 2,
+  showDeletedItems: 'children',
+};
 
 /**
  * Returns only a portion of the full data to display.
@@ -22,6 +25,12 @@ export const useSocialCommentsData = (
   // For each comment, only first 2 repsonses are show. A user can load the further responses 10 by 10.
   // When posting a new reponse, it will be shown directly, after the others (visible or not).
 
+  const {
+    responsesPageSize = DEFAULT_CONFIG.responsesPageSize,
+    responsesStartSize = DEFAULT_CONFIG.responsesStartSize,
+    showDeletedItems = DEFAULT_CONFIG.showDeletedItems,
+  } = config ?? DEFAULT_CONFIG;
+
   const [displayedResponsesRangesByComment, setDisplayedResponsesRangesByComment] = React.useState<
     Record<
       (SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted)['id'],
@@ -30,10 +39,7 @@ export const useSocialCommentsData = (
   >({});
 
   // Note: this is a callback to generate array, not a memoized value, because it will be mutated after for each comment.
-  const getDefaultResponseRanges = React.useCallback(
-    () => [[0, config?.responsesStartSize ?? RESPONSE_COUNT_LOAD_START]],
-    [config?.responsesStartSize],
-  );
+  const getDefaultResponseRanges = React.useCallback(() => [[0, responsesStartSize]], [responsesStartSize]);
 
   const showResponses = React.useCallback(
     (
@@ -43,18 +49,35 @@ export const useSocialCommentsData = (
     ) => {
       setDisplayedResponsesRangesByComment(oldRanges => ({
         ...oldRanges,
-        [id]: _addRange(
-          oldRanges[id] ?? getDefaultResponseRanges(),
-          start,
-          Math.min(count, config?.responsesPageSize ?? RESPONSE_COUNT_LOAD_PAGE),
-        ),
+        [id]: _addRange(oldRanges[id] ?? getDefaultResponseRanges(), start, Math.min(count, responsesPageSize)),
       }));
     },
-    [config?.responsesPageSize, getDefaultResponseRanges],
+    [responsesPageSize, getDefaultResponseRanges],
   );
 
-  const filteredData = React.useMemo(() => {
-    return data.map(comment => ({
+  const [filteredData, totalItems] = React.useMemo(() => {
+    let total = 0;
+    const ret: typeof data = [];
+    for (const comment of data) {
+      if ('deleted' in comment && showDeletedItems === 'never') continue;
+      const children: typeof comment.responses = [];
+      for (const response of comment.responses) {
+        if ('deleted' in response && showDeletedItems !== 'always') continue;
+        children.push(response);
+        if ('count' in response) total += response.count;
+        else ++total;
+      }
+      if (!('deleted' in comment) || children.length || showDeletedItems === 'always') {
+        if (!('deleted' in comment)) ++total;
+        comment.responses = children;
+        ret.push(comment);
+      }
+    }
+    return [ret, total];
+  }, [data, showDeletedItems]);
+
+  const dataWithRanges = React.useMemo(() => {
+    return filteredData.map(comment => ({
       ...comment,
       responses: _buildResponses(
         comment.responses,
@@ -62,13 +85,13 @@ export const useSocialCommentsData = (
         (gapStart, gapSize) => ({ count: gapSize, start: gapStart }) as SocialResourceViewer.ResponseItemEllipsis,
       ),
     }));
-  }, [data, displayedResponsesRangesByComment, getDefaultResponseRanges]);
+  }, [filteredData, displayedResponsesRangesByComment, getDefaultResponseRanges]);
 
   // Flatten & consolidate data
   const flatData = React.useMemo<SocialResourceViewerInternals.Item[]>(() => {
     const ret: SocialResourceViewerInternals.Item[] = [];
-    for (let commentIndex = 0; commentIndex < filteredData.length; ++commentIndex) {
-      const { responses, ...commentItem } = filteredData[commentIndex];
+    for (let commentIndex = 0; commentIndex < dataWithRanges.length; ++commentIndex) {
+      const { responses, ...commentItem } = dataWithRanges[commentIndex];
       if ('deleted' in commentItem) {
         ret.push({
           ...commentItem,
@@ -111,9 +134,9 @@ export const useSocialCommentsData = (
       }
     }
     return ret;
-  }, [filteredData]);
+  }, [dataWithRanges]);
 
-  return { filteredData, flatData, showResponses };
+  return { filteredData: dataWithRanges, flatData, showResponses, totalItems };
 };
 
 const _addRange = (

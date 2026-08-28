@@ -57,7 +57,7 @@ export function SocialResourceViewer({
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
 
-  const { flatData, showResponses } = useSocialCommentsData(data, { responsesPageSize, responsesStartSize });
+  const { flatData, showResponses, totalItems } = useSocialCommentsData(data, { responsesPageSize, responsesStartSize });
 
   // Screen layout
   const navBarHeight = useHeaderHeight();
