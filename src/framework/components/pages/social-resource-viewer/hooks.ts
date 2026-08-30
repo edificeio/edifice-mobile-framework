@@ -20,6 +20,7 @@ const DEFAULT_CONFIG: SocialResourceViewer.CommentsConfig = {
 export const useSocialCommentsData = (
   data: SocialResourceViewer.Props['data'],
   config?: Partial<SocialResourceViewer.CommentsConfig>,
+  newResponse?: Partial<Pick<SocialResourceViewerInternals.ContextState, 'newResponseId' | 'newResponseValue'>>,
 ) => {
   // By default, all comments are displayed.
   // For each comment, only first 2 repsonses are show. A user can load the further responses 10 by 10.
@@ -92,19 +93,21 @@ export const useSocialCommentsData = (
     const ret: SocialResourceViewerInternals.Item[] = [];
     for (let commentIndex = 0; commentIndex < dataWithRanges.length; ++commentIndex) {
       const { responses, ...commentItem } = dataWithRanges[commentIndex];
+      // Add comment item here
       if ('deleted' in commentItem) {
         ret.push({
           ...commentItem,
-          hasResponses: responses.length > 0,
+          nbResponses: responses.length,
           type: SocialResourceViewerInternals.ITEM_COMMENT_DELETED,
         });
       } else {
         ret.push({
           ...commentItem,
-          hasResponses: responses.length > 0,
+          nbResponses: responses.length,
           type: SocialResourceViewerInternals.ITEM_COMMENT,
         });
       }
+      // Add all responses items & ellipsis here
       for (let responseIndex = 0; responseIndex < responses.length; ++responseIndex) {
         const responseItem = responses[responseIndex];
         const responseData = {
@@ -132,9 +135,19 @@ export const useSocialCommentsData = (
           });
         }
       }
+      // Add new response form here
+      if (commentItem.id === newResponse?.newResponseId) {
+        ret.push({
+          inReplyTo: commentItem.id,
+          inReplyToIndex: commentIndex,
+          type: SocialResourceViewerInternals.ITEM_ADD_RESPONSE,
+          value: newResponse?.newResponseValue ?? '',
+          // ToDo: get isRichContent from config here or something
+        });
+      }
     }
     return ret;
-  }, [dataWithRanges]);
+  }, [dataWithRanges, newResponse?.newResponseId, newResponse?.newResponseValue]);
 
   return { filteredData: dataWithRanges, flatData, showResponses, totalItems };
 };

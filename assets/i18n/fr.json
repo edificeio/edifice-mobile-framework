@@ -336,6 +336,8 @@
   "comment-deleted": "Commentaire supprimé",
   "comment-preventback-alert-title": "Commentaire non-enregistré",
   "comment-preventback-alert-text": "Vos modifications ne seront pas prises en compte. Êtes-vous sûr de quitter ?",
+  "comment-cancelreply-alert-title": "Réponse non-envoyée",
+  "comment-cancelreply-alert-text": "Votre réponse en cours de rédaction sera supprimée.",
   "commentfield-modify": "Modifier",
   "common-by": "Par :",
   "common-cancel": "Annuler",

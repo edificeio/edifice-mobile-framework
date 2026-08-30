@@ -3,8 +3,9 @@ import { StyleProp, ViewStyle } from 'react-native';
 import { Temporal } from '@js-temporal/polyfill';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ListRenderItemInfo } from '@shopify/flash-list';
 
-import { AccountType } from '~/framework/modules/auth/model';
+import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 
 export namespace SocialResourceViewer {
   interface BaseItemData {
@@ -67,11 +68,11 @@ export namespace SocialResourceViewerInternals {
 
   export interface CommentItem extends Omit<SocialResourceViewer.CommentItem, 'responses'> {
     type: typeof ITEM_COMMENT;
-    hasResponses: boolean;
+    nbResponses: number;
   }
   export interface CommentItemDeleted extends Omit<SocialResourceViewer.CommentItemDeleted, 'responses'> {
     type: typeof ITEM_COMMENT_DELETED;
-    hasResponses: boolean;
+    nbResponses: number;
   }
   export interface ResponseItem extends SocialResourceViewer.ResponseItem {
     type: typeof ITEM_RESPONSE;
@@ -109,4 +110,12 @@ export namespace SocialResourceViewerInternals {
   }
   export type ContextReducer = (state: ContextState, newValues: Partial<ContextState>) => ContextState;
   export type Context = [ContextState, React.ActionDispatch<[Partial<ContextState>]>];
+
+  export interface ItemProps extends ListRenderItemInfo<SocialResourceViewerInternals.Item> {
+    onShowResponses?: (id: string, start: number, count: number) => void;
+    session?: AuthActiveAccount;
+    canAddComment?: boolean;
+    onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;
+    onSendReply?: SocialResourceViewer.Props['onSubmit'];
+  }
 }

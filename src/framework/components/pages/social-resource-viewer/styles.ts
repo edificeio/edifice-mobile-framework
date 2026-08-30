@@ -66,6 +66,9 @@ export default StyleSheet.create({
     marginLeft: AvatarSizes.xsm / 2 - UI_SIZES.border.small / 2,
     marginRight: -UI_SIZES.spacing.tiny,
   },
+  itemTreeDecoCurveForm: {
+    height: UI_SIZES.spacing.small + 2 * UI_SIZES.border.small + AvatarSizes.sm / 2,
+  },
   itemTreeDecoCurveTop: {
     height: UI_SIZES.spacing.small + UI_SIZES.border.small / 2 + AvatarSizes.xsm / 2 + UI_SIZES.border.small / 2,
   },
@@ -93,6 +96,19 @@ export default StyleSheet.create({
   itemUserHeader: {
     alignItems: 'baseline',
     flexDirection: 'row',
+  },
+  nonStickyCommentWrapper: {
+    alignItems: 'flex-end',
+    // backgroundColor: theme.ui.background.card,
+    // borderTopColor: theme.palette.grey.cloudy,
+    // borderTopWidth: UI_SIZES.border.thin,
+    flex: 1,
+    flexDirection: 'row',
+    gap: UI_SIZES.spacing.minor,
+    // marginBottom: -COMMENT_FORM_OVERSCROLL_SIZE,
+    // paddingBottom: UI_SIZES.spacing.medium + COMMENT_FORM_OVERSCROLL_SIZE,
+    paddingVertical: UI_SIZES.spacing.small,
+    // paddingTop: UI_SIZES.spacing.medium,
   },
   page: { backgroundColor: theme.ui.background.page },
   stickyCommentWrapper: {

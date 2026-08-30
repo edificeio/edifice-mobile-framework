@@ -2,23 +2,31 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import { ListRenderItemInfo } from '@shopify/flash-list';
+import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { GhostButton, TerciaryButton } from '~/framework/components/button';
-import { BodyBoldText, CaptionItalicText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
+import { CaptionItalicText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { AccountTypeText } from '~/framework/modules/auth/components/account-type-text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { TemporalTimeText } from '~/framework/util/date';
 
+import { SocialResourceViewerAddResponseForm } from './form';
 import styles from './styles';
-import { SocialResourceViewerInternals } from './types';
+import { SocialResourceViewer, SocialResourceViewerInternals } from './types';
 
 export const SocialResourceViewerCommentItem = ({
   canAddComment,
+  onPressReply,
   session,
   ...info
-}: ListRenderItemInfo<SocialResourceViewerInternals.CommentItem> & { session?: AuthActiveAccount; canAddComment?: boolean }) => {
+}: ListRenderItemInfo<SocialResourceViewerInternals.CommentItem> & {
+  session?: AuthActiveAccount;
+  canAddComment?: boolean;
+  onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;
+}) => {
   const { item } = info;
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
   const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeComment], []);
@@ -28,10 +36,10 @@ export const SocialResourceViewerCommentItem = ({
     <View style={itemStyle}>
       <View style={itemTreeStyle}>
         <SingleAvatar size="xsm" userId={item.authorId} />
-        {item.hasResponses && <View style={itemTreeDecoStyle} />}
+        {item.nbResponses > 0 && <View style={itemTreeDecoStyle} />}
       </View>
       <View style={styles.itemCommentContentWrapper}>
-        <SocialResourceViewerContentItem session={session} canAddComment={canAddComment} {...info} />
+        <SocialResourceViewerContentItem session={session} canAddComment={canAddComment} onPressReply={onPressReply} {...info} />
       </View>
     </View>
   );
@@ -42,8 +50,8 @@ export const SocialResourceViewerCommentDeletedItem = (
 ) => {
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
   const contentStyle = React.useMemo(
-    () => [styles.itemCommentContentWrapper, info.item.hasResponses && styles.itemCommentContentWrapperDeletedComment],
-    [info.item.hasResponses],
+    () => [styles.itemCommentContentWrapper, info.item.nbResponses > 0 && styles.itemCommentContentWrapperDeletedComment],
+    [info.item.nbResponses],
   );
 
   return (
@@ -109,14 +117,19 @@ export const SocialResourceViewerResponseDeletedItem = (
 
 export const SocialResourceViewerContentItem = ({
   canAddComment,
+  onPressReply: _onPressReply,
   session,
   ...info
 }: ListRenderItemInfo<SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem> & {
   session?: AuthActiveAccount;
   canAddComment?: boolean;
+  onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;
 }) => {
-  const { item } = info;
+  const { index, item } = info;
   const isAuthor = session && item.authorId === session.user.id;
+  const onPressReply = React.useCallback(() => {
+    _onPressReply?.(item as SocialResourceViewerInternals.CommentItem, index);
+  }, [_onPressReply, index, item]);
   return (
     <>
       <View style={styles.itemUserHeader}>
@@ -133,7 +146,9 @@ export const SocialResourceViewerContentItem = ({
         <SmallText style={styles.itemContentText}>{item.content}</SmallText>
         {session && canAddComment && (
           <View style={styles.itemContentButtons}>
-            <TerciaryButton text="Répondre" testID="comment-reply" />
+            {item.type === SocialResourceViewerInternals.ITEM_COMMENT && (
+              <TerciaryButton text="Répondre" testID="comment-reply" onPress={onPressReply} />
+            )}
             {isAuthor && <TerciaryButton text="Modifier" testID="comment-edit" />}
             {isAuthor && <TerciaryButton text="Supprimer" testID="comment-delete" />}
           </View>
@@ -180,21 +195,47 @@ export const SocialResourceViewerShowMoreResponsesItem = ({
   );
 };
 
+export const SocialResourceViewerAddResponseItem = ({
+  onSubmit,
+  ...info
+}: ListRenderItemInfo<SocialResourceViewerInternals.AddResponseItem> & {
+  onSubmit?: SocialResourceViewer.Props['onSubmit'];
+}) => {
+  const session = useSelector(selectors.session)!; // ToDo: obtain session securely
+  const { item } = info;
+  const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemResponse], []);
+  const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeResponse], []);
+  const itemTreeCurveStyle = React.useMemo(() => [styles.itemTreeDecoCurveCommon, styles.itemTreeDecoCurveForm], []);
+
+  return (
+    <View style={itemStyle}>
+      <View style={itemTreeStyle}>
+        <View style={itemTreeCurveStyle} />
+      </View>
+      <SocialResourceViewerAddResponseForm
+        session={session}
+        onSubmit={onSubmit}
+        replyTo={item.inReplyTo}
+        // style={{ backgroundColor: 'red' }}
+      />
+    </View>
+  );
+};
+
 export const SocialResourceViewerItem = ({
   canAddComment,
+  onPressReply,
+  onSendReply,
   onShowResponses,
   session,
   ...info
-}: ListRenderItemInfo<SocialResourceViewerInternals.Item> & {
-  onShowResponses?: (id: string, start: number, count: number) => void;
-  session?: AuthActiveAccount;
-  canAddComment?: boolean;
-}) => {
+}: SocialResourceViewerInternals.ItemProps) => {
   if (info.item.type === SocialResourceViewerInternals.ITEM_COMMENT) {
     return (
       <SocialResourceViewerCommentItem
         session={session}
         canAddComment={canAddComment}
+        onPressReply={onPressReply}
         {...(info as ListRenderItemInfo<SocialResourceViewerInternals.CommentItem>)}
       />
     );
@@ -223,7 +264,15 @@ export const SocialResourceViewerItem = ({
         onShowResponses={onShowResponses}
       />
     );
+  } else if (info.item.type === SocialResourceViewerInternals.ITEM_ADD_RESPONSE) {
+    return (
+      <SocialResourceViewerAddResponseItem
+        {...(info as ListRenderItemInfo<SocialResourceViewerInternals.AddResponseItem>)}
+        onSubmit={onSendReply}
+      />
+    );
   } else {
-    return <BodyBoldText>${info.item.toString()}</BodyBoldText>;
+    console.warn(`[SocialResourceViewer]: Unknown item type "${(info.item as { type: any }).type}" at index ${info.index}`);
+    return null;
   }
 };
