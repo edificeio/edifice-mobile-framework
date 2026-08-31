@@ -41,7 +41,7 @@ export function SocialResourceViewer({
 
   const context = React.useReducer(socialResourceViewerContextReducer, socialResourceViewerContextInitialData);
 
-  const { flatData, showResponses } = useSocialCommentsData(data, { responsesPageSize, responsesStartSize }, context[0]);
+  const { flatData, showResponses } = useSocialCommentsData(data, context[0], { responsesPageSize, responsesStartSize });
 
   // Screen layout
   const navBarHeight = useHeaderHeight();
@@ -136,10 +136,13 @@ export function SocialResourceViewer({
     [newCommentHeight],
   );
 
-  useConfirmRemove(newCommentValue.length > 0 || (context[0].newResponseId !== undefined && context[0].newResponseValue !== ''), {
-    text: I18n.get('comment-preventback-alert-text'),
-    title: I18n.get('comment-preventback-alert-title'),
-  });
+  useConfirmRemove(
+    newCommentValue.length > 0 || (context[0].newResponseReplyTo !== undefined && context[0].newResponseValue !== ''),
+    {
+      text: I18n.get('comment-preventback-alert-text'),
+      title: I18n.get('comment-preventback-alert-title'),
+    },
+  );
 
   const listFooterStyle = React.useMemo(
     () => ({
@@ -150,12 +153,12 @@ export function SocialResourceViewer({
 
   const onPressReply = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressReply']>>(
     item => {
-      const isEditingResponse = context[0].newResponseId !== undefined && context[0].newResponseValue !== '';
-      const isDifferentCommentThanBefore = context[0].newResponseId !== item.id;
+      const isEditingResponse = context[0].newResponseReplyTo !== undefined && context[0].newResponseValue !== '';
+      const isDifferentCommentThanBefore = context[0].newResponseReplyTo !== item.id;
 
       const addReply = () => {
         if (isDifferentCommentThanBefore) {
-          context[1]({ newResponseId: item.id, newResponseValue: '' });
+          context[1]({ newResponseReplyTo: item.id, newResponseValue: '' });
         }
         requestAnimationFrame(() => {
           responseRef?.current?.focus();
