@@ -4,6 +4,7 @@ const { fixupConfigRules, fixupPluginRules } = require('@eslint/compat');
 const reactNativeConfig = require('@react-native/eslint-config/flat');
 const tsParser = require('@typescript-eslint/parser');
 const tsPlugin = require('@typescript-eslint/eslint-plugin');
+const espree = require('espree');
 const globals = require('globals');
 
 const pluginImport = require('eslint-plugin-import');
@@ -150,6 +151,25 @@ module.exports = [
       'jest/no-disabled-tests': 'warn',
       'jest/no-focused-tests': 'error',
       'jest/valid-expect': 'error',
+    },
+  },
+  // ── rawjs files management ────────────────────────────────────────────
+  {
+    files: ['**/*.rawjs'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.browser,
+        renderMathInElement: 'readonly',
+      },
+      parser: espree,
+      parserOptions: { project: null },
+      sourceType: 'script',
+    },
+    rules: {
+      'no-console': 'off',
+      'no-unused-vars': 'off',
+      'no-var': 'off',
     },
   },
 ];

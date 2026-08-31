@@ -3,25 +3,37 @@ import { ImageURISource, View } from 'react-native';
 
 import Animated, { Extrapolation, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 
-import styles from './styles';
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, Svg } from '~/framework/components/picture';
 import { FileMedia, isAudioContent, isImageContent, isVideoContent } from '~/framework/modules/media';
 
+import styles from './styles';
+
 interface PaginationItemProps {
   item: FileMedia;
   index: number;
+  count: number;
+  loop: boolean;
   thumbnailSrc?: ImageURISource;
   paginationProgress: SharedValue<number>;
   testID?: string;
 }
 
-const PaginationItem = ({ index, item, paginationProgress, testID, thumbnailSrc }: PaginationItemProps) => {
+function distanceToActiveItem(progress: number, index: number, length: number, loop: boolean): number {
+  'worklet';
+  const normalized = loop && length > 0 ? ((progress % length) + length) % length : progress;
+  let distance = Math.abs(normalized - index);
+  if (loop && index === 0 && normalized > length - 1) {
+    distance = Math.abs(normalized - length);
+  }
+  return distance;
+}
+
+const PaginationItem = ({ count, index, item, loop, paginationProgress, testID, thumbnailSrc }: PaginationItemProps) => {
   const iconAnimatedStyle = useAnimatedStyle(() => {
     'worklet';
-    const distance = Math.abs(paginationProgress.value - index);
+    const distance = distanceToActiveItem(paginationProgress.value, index, count, loop);
 
     const scale = interpolate(
       distance,

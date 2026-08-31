@@ -1,6 +1,8 @@
 module.exports = {
   presets: ['module:@react-native/babel-preset'],
   plugins: [
+    // Must run before anything else touches the import
+    ['babel-plugin-inline-import', { extensions: ['.rawjs'] }],
     // Decorators MUST come first
     ['@babel/plugin-proposal-decorators', { legacy: true }],
     // Flow stripping

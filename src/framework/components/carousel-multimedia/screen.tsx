@@ -5,8 +5,7 @@ import { Platform, StatusBar as RNStatusBar, useWindowDimensions, View } from 'r
 import { PanGesture } from 'react-native-gesture-handler';
 import { OrientationLocker } from 'react-native-orientation-locker';
 import { useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
-import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
-import { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
+import { Carousel, type CarouselRef, type CarouselRenderItemInfo } from 'react-native-reanimated-carousel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
@@ -84,7 +83,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
   const { onOrientationChange, orientation } = useCarouselOrientation();
   const { onShare } = useCarouselFileHandler(media[currentIndex]);
   const togglePaginationComponent = useTogglePagination(media, paginationTranslateY, setIsPaginationVisible);
-  const carouselRef = React.useRef<ICarouselInstance>(null);
+  const carouselRef = React.useRef<CarouselRef>(null);
   const playerContextValue = React.useContext(PlayerContext);
   const pdfContextValue = React.useContext(PdfContext);
   const insets = useSafeAreaInsets();
@@ -202,14 +201,16 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
     <View style={containerStyle}>
       <OrientationLocker orientation={'UNLOCK'} onChange={onOrientationChange} />
       <Carousel
-        height={carouselDimensions.height}
-        width={carouselDimensions.width}
+        style={{
+          height: carouselDimensions.height,
+          width: carouselDimensions.width,
+        }}
         data={media}
         defaultIndex={currentIndex}
-        enabled={media.length > 1 && isCarouselSwipeEnabled}
+        scrollEnabled={media.length > 1 && isCarouselSwipeEnabled}
         loop={media.length > 2}
         onConfigurePanGesture={configurePanGesture}
-        onProgressChange={paginationProgress}
+        progress={paginationProgress}
         onSnapToItem={onSnapToItem}
         renderItem={(info: CarouselRenderItemInfo<FileMedia>) => {
           const source = getSignedMediaSource(info.item);
@@ -233,7 +234,7 @@ const CarouselScreen = ({ navigation, route }: ModuleScreenProps<'media/carousel
           );
         }}
         ref={carouselRef}
-        windowSize={media.length === 1 ? 1 : Math.min(CAROUSEL_WINDOW_SIZE, media.length - 1)}
+        renderWindowSize={media.length === 1 ? 1 : Math.min(CAROUSEL_WINDOW_SIZE, media.length - 1)}
       />
       <CarouselPagination
         bottomInset={isAndroid ? (insets.bottom ?? 0) : 0}

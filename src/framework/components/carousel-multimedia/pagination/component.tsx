@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Platform, View } from 'react-native';
 
 import Animated, { Extrapolation, interpolate, useAnimatedStyle } from 'react-native-reanimated';
-import { Pagination } from 'react-native-reanimated-carousel';
 
 import { PAGINATION_ANIMATION_OFFSET } from '~/framework/components/carousel-multimedia/screen';
 import { getSignedPosterSource } from '~/framework/components/carousel-multimedia/util';
 import { UI_SIZES } from '~/framework/components/constants';
 import { FileMedia, isImageContent, isPlayableMedia } from '~/framework/modules/media';
 
+import { CustomPagination } from './custom-pagination';
 import PaginationBackground from './pagination-background/component';
 import PaginationItem from './pagination-item/component';
 import styles, { ACTIVE_ITEM_WIDTH, INACTIVE_ITEM_WIDTH, ITEM_GAP, PAGINATION_COMPONENT_HEIGHT } from './styles';
@@ -121,9 +121,10 @@ const CarouselPagination = ({
           height={PAGINATION_COMPONENT_HEIGHT + bottomInset}
         />
         <Animated.View style={paginationItemsAnimatedStyle}>
-          <Pagination.Custom
+          <CustomPagination
             containerStyle={styles.paginationContainer}
             data={media}
+            loop={media.length > 2}
             onPress={onPressPagination}
             progress={paginationProgress}
             renderItem={renderPaginationItem}
