@@ -19,8 +19,8 @@ const DEFAULT_CONFIG: SocialResourceViewer.CommentsConfig = {
  */
 export const useSocialCommentsData = (
   data: SocialResourceViewer.Props['data'],
+  editContext: SocialResourceViewerInternals.ContextState,
   config?: Partial<SocialResourceViewer.CommentsConfig>,
-  newResponse?: Partial<Pick<SocialResourceViewerInternals.ContextState, 'newResponseId' | 'newResponseValue'>>,
 ) => {
   // By default, all comments are displayed.
   // For each comment, only first 2 repsonses are show. A user can load the further responses 10 by 10.
@@ -93,7 +93,10 @@ export const useSocialCommentsData = (
     const ret: SocialResourceViewerInternals.Item[] = [];
     for (let commentIndex = 0; commentIndex < dataWithRanges.length; ++commentIndex) {
       const { responses, ...commentItem } = dataWithRanges[commentIndex];
-      const hasResponseForm = commentItem.id === newResponse?.newResponseId;
+      const hasResponseForm =
+        'newResponseReplyTo' in editContext &&
+        'newResponseValue' in editContext &&
+        commentItem.id === editContext.newResponseReplyTo;
       const nbResponses = responses.length + (hasResponseForm ? 1 : 0);
       // Add comment item here
       if ('deleted' in commentItem) {
@@ -143,13 +146,13 @@ export const useSocialCommentsData = (
           inReplyTo: commentItem.id,
           inReplyToIndex: commentIndex,
           type: SocialResourceViewerInternals.ITEM_ADD_RESPONSE,
-          value: newResponse?.newResponseValue ?? '',
+          value: editContext.newResponseValue ?? '',
           // ToDo: get isRichContent from config here or something
         });
       }
     }
     return ret;
-  }, [dataWithRanges, newResponse?.newResponseId, newResponse?.newResponseValue]);
+  }, [dataWithRanges, editContext]);
 
   return { filteredData: dataWithRanges, flatData, showResponses, totalItems };
 };

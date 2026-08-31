@@ -107,11 +107,21 @@ export namespace SocialResourceViewerInternals {
   export interface ContextState {
     newCommentHeight: number;
     newCommentValue: string;
-    newResponseValue: string;
-    newResponseId: SocialResourceViewerInternals.CommentItem['id'] | undefined;
+    newResponseValue?: string;
+    newResponseReplyTo?: SocialResourceViewerInternals.CommentItem['id'];
+    editId?: SocialResourceViewerInternals.ResponseItem['id'];
+    editValue?: string;
   }
-  export type ContextReducer = (state: ContextState, newValues: Partial<ContextState>) => ContextState;
-  export type Context = [ContextState, React.ActionDispatch<[Partial<ContextState>]>];
+  export type ContextAction =
+    | Pick<ContextState, 'newCommentHeight'>
+    | Pick<ContextState, 'newCommentValue'>
+    | Required<Pick<ContextState, 'newResponseReplyTo' | 'newResponseValue'>>
+    | { newResponseReplyTo: undefined; newResponseValue: undefined }
+    | Required<Pick<ContextState, 'editId' | 'editValue'>>
+    | { editId: undefined; editValue: undefined };
+
+  export type ContextReducer = (state: ContextState, newValues: ContextAction) => ContextState;
+  export type Context = [ContextState, React.ActionDispatch<[ContextAction]>];
 
   export interface ItemProps extends ListRenderItemInfo<SocialResourceViewerInternals.Item> {
     onShowResponses?: (id: string, start: number, count: number) => void;

@@ -101,11 +101,12 @@ export const SocialResourceViewerAddCommentForm = ({
   );
 };
 
+// ToDo : refacto these components
+
 export const SocialResourceViewerAddResponseForm = ({
   onBlur,
   onFocus,
   onSubmit,
-  // listRef,
   ref,
   replyTo,
   session,
@@ -118,51 +119,56 @@ export const SocialResourceViewerAddResponseForm = ({
   onSubmit?: SocialResourceViewer.Props['onSubmit'];
   replyTo: SocialResourceViewer.CommentItem['id'];
   ref?: ChatTextAreaProps['ref'];
-  // listRef: React.RefObject<FlashListRef<SocialResourceViewerInternals.Item> | null>;
 }) => {
-  const [{ newResponseValue }, dispatch] = React.useContext(SocialResourceViewerContext);
+  const [{ newResponseReplyTo, newResponseValue }, dispatch] = React.useContext(SocialResourceViewerContext);
   const [isSending, setIsSending] = React.useState(false);
   const onPress = React.useCallback(async () => {
-    if (!onSubmit) return;
+    if (!onSubmit || newResponseValue === undefined || newResponseReplyTo === undefined) return;
     try {
       setIsSending(true);
       await onSubmit({ content: newResponseValue, isRichContent: false }, replyTo);
-      dispatch({ newResponseId: undefined, newResponseValue: '' });
+      dispatch({ newResponseReplyTo: undefined, newResponseValue: undefined });
     } catch {
       toast.showError();
     } finally {
       setIsSending(false);
     }
-  }, [dispatch, newResponseValue, onSubmit, replyTo]);
+  }, [dispatch, newResponseReplyTo, newResponseValue, onSubmit, replyTo]);
 
   const style = React.useMemo(() => [styles.nonStickyCommentWrapper, _style], [_style]);
 
+  const onChangeText = React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
+    text => {
+      if (newResponseValue === undefined || newResponseReplyTo === undefined) return;
+      dispatch({ newResponseReplyTo, newResponseValue: text });
+    },
+    [dispatch, newResponseReplyTo, newResponseValue],
+  );
+
   return (
-    <View style={style}>
-      <SingleAvatar size="md" userId={session.user.id} />
-      <ChatTextArea
-        ref={ref}
-        maxLength={80}
-        wrapperStyle={[UI_STYLES.flex1]}
-        value={newResponseValue}
-        onChangeText={React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
-          text => {
-            dispatch({ newResponseValue: text });
-          },
-          [dispatch],
-        )}
-        editable={!isSending}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        placeholder={I18n.get('comment-add-response')}
-      />
-      <PrimaryButton
-        onPress={onPress}
-        testID="comment-add"
-        disabled={!newResponseValue.length}
-        icon="ui-send"
-        loading={isSending}
-      />
-    </View>
+    newResponseReplyTo !== undefined &&
+    newResponseValue !== undefined && (
+      <View style={style}>
+        <SingleAvatar size="md" userId={session.user.id} />
+        <ChatTextArea
+          ref={ref}
+          maxLength={80}
+          wrapperStyle={[UI_STYLES.flex1]}
+          value={newResponseValue}
+          onChangeText={onChangeText}
+          editable={!isSending}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          placeholder={I18n.get('comment-add-response')}
+        />
+        <PrimaryButton
+          onPress={onPress}
+          testID="comment-add"
+          disabled={newResponseValue === undefined || newResponseValue.length === 0}
+          icon="ui-send"
+          loading={isSending}
+        />
+      </View>
+    )
   );
 };
