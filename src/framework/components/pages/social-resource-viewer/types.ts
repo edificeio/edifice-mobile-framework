@@ -120,5 +120,13 @@ export namespace SocialResourceViewerInternals {
     onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;
     onSendReply?: SocialResourceViewer.Props['onSubmit'];
     inputRef?: ChatTextAreaProps['ref'];
+    onPressEdit?: (
+      item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
+      index: number,
+    ) => void;
+    onPressDelete?: (
+      item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
+      index: number,
+    ) => void;
   }
 }

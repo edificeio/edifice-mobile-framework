@@ -181,6 +181,14 @@ export function SocialResourceViewer({
     [context],
   );
 
+  const onPressEdit = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressEdit']>>(item => {
+    console.info('EDIT', item);
+  }, []);
+
+  const onPressDelete = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressDelete']>>(item => {
+    console.info('DELETE', item);
+  }, []);
+
   const renderItem = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['renderItem']>>(
     info => (
       <SocialResourceViewerItem
@@ -189,11 +197,13 @@ export function SocialResourceViewer({
         session={session}
         canAddComment={canAddComment}
         onPressReply={onPressReply}
+        onPressEdit={onPressEdit}
         onSendReply={onSubmit}
+        onPressDelete={onPressDelete}
         inputRef={responseRef}
       />
     ),
-    [canAddComment, onPressReply, onSubmit, session, showResponses],
+    [canAddComment, onPressDelete, onPressEdit, onPressReply, onSubmit, session, showResponses],
   );
 
   const keyExtractor = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['keyExtractor']>>(item => {
