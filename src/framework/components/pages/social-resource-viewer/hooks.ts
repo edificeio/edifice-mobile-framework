@@ -93,17 +93,19 @@ export const useSocialCommentsData = (
     const ret: SocialResourceViewerInternals.Item[] = [];
     for (let commentIndex = 0; commentIndex < dataWithRanges.length; ++commentIndex) {
       const { responses, ...commentItem } = dataWithRanges[commentIndex];
+      const hasResponseForm = commentItem.id === newResponse?.newResponseId;
+      const nbResponses = responses.length + (hasResponseForm ? 1 : 0);
       // Add comment item here
       if ('deleted' in commentItem) {
         ret.push({
           ...commentItem,
-          nbResponses: responses.length,
+          nbResponses,
           type: SocialResourceViewerInternals.ITEM_COMMENT_DELETED,
         });
       } else {
         ret.push({
           ...commentItem,
-          nbResponses: responses.length,
+          nbResponses,
           type: SocialResourceViewerInternals.ITEM_COMMENT,
         });
       }
@@ -111,7 +113,7 @@ export const useSocialCommentsData = (
       for (let responseIndex = 0; responseIndex < responses.length; ++responseIndex) {
         const responseItem = responses[responseIndex];
         const responseData = {
-          hasResponses: responseIndex < responses.length - 1,
+          hasResponses: responseIndex < responses.length - 1 || hasResponseForm,
           inReplyTo: commentItem.id,
           inReplyToIndex: commentIndex,
         };
@@ -136,7 +138,7 @@ export const useSocialCommentsData = (
         }
       }
       // Add new response form here
-      if (commentItem.id === newResponse?.newResponseId) {
+      if (hasResponseForm) {
         ret.push({
           inReplyTo: commentItem.id,
           inReplyToIndex: commentIndex,
