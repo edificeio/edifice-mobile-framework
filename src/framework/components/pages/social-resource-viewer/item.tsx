@@ -16,6 +16,7 @@ import { TemporalTimeText } from '~/framework/util/date';
 import { SocialResourceViewerAddResponseForm } from './form';
 import styles from './styles';
 import { SocialResourceViewer, SocialResourceViewerInternals } from './types';
+import { ChatTextAreaProps } from '../../inputs/text2';
 
 export const SocialResourceViewerCommentItem = ({
   canAddComment,
@@ -196,10 +197,12 @@ export const SocialResourceViewerShowMoreResponsesItem = ({
 };
 
 export const SocialResourceViewerAddResponseItem = ({
+  inputRef,
   onSubmit,
   ...info
 }: ListRenderItemInfo<SocialResourceViewerInternals.AddResponseItem> & {
   onSubmit?: SocialResourceViewer.Props['onSubmit'];
+  inputRef?: SocialResourceViewerInternals.ItemProps['inputRef'];
 }) => {
   const session = useSelector(selectors.session)!; // ToDo: obtain session securely
   const { item } = info;
@@ -212,18 +215,14 @@ export const SocialResourceViewerAddResponseItem = ({
       <View style={itemTreeStyle}>
         <View style={itemTreeCurveStyle} />
       </View>
-      <SocialResourceViewerAddResponseForm
-        session={session}
-        onSubmit={onSubmit}
-        replyTo={item.inReplyTo}
-        // style={{ backgroundColor: 'red' }}
-      />
+      <SocialResourceViewerAddResponseForm session={session} onSubmit={onSubmit} replyTo={item.inReplyTo} ref={inputRef} />
     </View>
   );
 };
 
 export const SocialResourceViewerItem = ({
   canAddComment,
+  inputRef,
   onPressReply,
   onSendReply,
   onShowResponses,
@@ -269,6 +268,7 @@ export const SocialResourceViewerItem = ({
       <SocialResourceViewerAddResponseItem
         {...(info as ListRenderItemInfo<SocialResourceViewerInternals.AddResponseItem>)}
         onSubmit={onSendReply}
+        inputRef={inputRef}
       />
     );
   } else {

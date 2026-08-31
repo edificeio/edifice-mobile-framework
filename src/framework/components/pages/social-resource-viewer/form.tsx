@@ -22,6 +22,7 @@ export const SocialResourceViewerAddCommentForm = ({
   onBlur,
   onFocus,
   onSubmit,
+  ref,
   session,
   style,
 }: {
@@ -30,6 +31,7 @@ export const SocialResourceViewerAddCommentForm = ({
   onBlur?: ChatTextAreaProps['onBlur'];
   session: AuthActiveAccount;
   onSubmit?: SocialResourceViewer.Props['onSubmit'];
+  ref?: ChatTextAreaProps['ref'];
 }) => {
   const [{ newCommentValue }, dispatch] = React.useContext(SocialResourceViewerContext);
   const [isSending, setIsSending] = React.useState(false);
@@ -71,6 +73,7 @@ export const SocialResourceViewerAddCommentForm = ({
         <View style={styles.stickyCommentWrapper}>
           <SingleAvatar size="md" userId={session.user.id} />
           <ChatTextArea
+            ref={ref}
             maxLength={80}
             wrapperStyle={[UI_STYLES.flex1]}
             value={newCommentValue}
@@ -103,6 +106,7 @@ export const SocialResourceViewerAddResponseForm = ({
   onFocus,
   onSubmit,
   // listRef,
+  ref,
   replyTo,
   session,
   style: _style,
@@ -113,6 +117,7 @@ export const SocialResourceViewerAddResponseForm = ({
   session: AuthActiveAccount;
   onSubmit?: SocialResourceViewer.Props['onSubmit'];
   replyTo: SocialResourceViewer.CommentItem['id'];
+  ref?: ChatTextAreaProps['ref'];
   // listRef: React.RefObject<FlashListRef<SocialResourceViewerInternals.Item> | null>;
 }) => {
   const [{ newResponseValue }, dispatch] = React.useContext(SocialResourceViewerContext);
@@ -136,6 +141,7 @@ export const SocialResourceViewerAddResponseForm = ({
     <View style={style}>
       <SingleAvatar size="md" userId={session.user.id} />
       <ChatTextArea
+        ref={ref}
         maxLength={80}
         wrapperStyle={[UI_STYLES.flex1]}
         value={newResponseValue}

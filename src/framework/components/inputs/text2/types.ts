@@ -1,16 +1,18 @@
-import type { TextInputProps as RNTextInputProps, ViewStyle } from 'react-native';
+import type { TextInputProps as RNTextInputProps, TextInput, ViewStyle } from 'react-native';
 import { StyleProp, TextStyle, ViewProps } from 'react-native';
 
 import { UI_SIZES } from '~/framework/components/constants';
 
 export interface BaseTextInputStyle
-  extends Omit<ViewStyle, 'padding' | 'paddingBottom' | 'paddingTop' | 'paddingVertical' | 'height'>,
+  extends
+    Omit<ViewStyle, 'padding' | 'paddingBottom' | 'paddingTop' | 'paddingVertical' | 'height'>,
     Omit<TextStyle, keyof ViewStyle> {}
 
 export interface BaseTextInputProps extends Omit<RNTextInputProps, 'style' | 'multiline'> {
   inputStyle?: StyleProp<BaseTextInputStyle>;
   wrapperStyle: ViewProps['style'];
   aimHeight: number;
+  ref?: React.Ref<TextInput>;
 }
 
 export interface BaseTextAreaProps extends Omit<RNTextInputProps, 'style' | 'multiline'> {
@@ -19,6 +21,7 @@ export interface BaseTextAreaProps extends Omit<RNTextInputProps, 'style' | 'mul
   maxLines?: number;
   minLines?: number;
   aimHeight: number;
+  ref?: React.Ref<TextInput>;
 }
 
 export interface ChatTextAreaProps extends Omit<BaseTextAreaProps, 'aimHeight' | 'inputStyle' | 'wrapperStyle'> {

@@ -26,6 +26,7 @@ export const BaseTextInput = ({
   inputStyle: _inputStyle,
   placeholder,
   placeholderTextColor,
+  ref,
   value,
   wrapperStyle: _wrapperStyle,
   ...props
@@ -69,7 +70,7 @@ export const BaseTextInput = ({
 
   return (
     <View style={wrapperStyle}>
-      <TextInput value={value} style={inputStyle} aria-label={placeholder} {...props} />
+      <TextInput ref={ref} value={value} style={inputStyle} aria-label={placeholder} {...props} />
       {placeholder && !value && (
         <Text style={placeholderStyle} numberOfLines={1}>
           {placeholder}
@@ -96,6 +97,7 @@ export const BaseTextArea = ({
   onContentSizeChange: _onContentSizeChange,
   placeholder,
   placeholderTextColor,
+  ref,
   value,
   wrapperStyle: _wrapperStyle,
   ...props
@@ -207,6 +209,7 @@ export const BaseTextArea = ({
           contentContainerStyle={scrollContentStyle}
           showsVerticalScrollIndicator={contentLines > maxLines}>
           <TextInput
+            ref={ref}
             value={value}
             multiline
             style={inputStyle}

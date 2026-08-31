@@ -35,6 +35,7 @@ export const BaseTextInput = ({
   inputStyle: _inputStyle,
   placeholder,
   placeholderTextColor,
+  ref,
   value,
   wrapperStyle: _wrapperStyle,
   ...props
@@ -82,7 +83,7 @@ export const BaseTextInput = ({
 
   return (
     <View style={wrapperStyle}>
-      <TextInput value={value} style={inputStyle} aria-label={placeholder} {...props} />
+      <TextInput ref={ref} value={value} style={inputStyle} aria-label={placeholder} {...props} />
       {placeholder && !value && <Text style={placeholderStyle}>{placeholder}</Text>}
     </View>
   );
@@ -106,6 +107,7 @@ export const BaseTextArea = ({
   onContentSizeChange: _onContentSizeChange,
   placeholder,
   placeholderTextColor,
+  ref,
   value,
   wrapperStyle: _wrapperStyle,
   ...props
@@ -156,7 +158,7 @@ export const BaseTextArea = ({
   return (
     <View style={wrapperStyle}>
       <View>
-        <TextInput value={value} maxLength={maxLength} multiline style={inputStyle} aria-label={placeholder} {...props} />
+        <TextInput ref={ref} value={value} maxLength={maxLength} multiline style={inputStyle} aria-label={placeholder} {...props} />
         {wrapperStyle.backgroundColor && <TextAreaDecoration color={wrapperStyle.backgroundColor} />}
       </View>
       {placeholder && !value && <Text style={placeholderStyle}>{placeholder}</Text>}

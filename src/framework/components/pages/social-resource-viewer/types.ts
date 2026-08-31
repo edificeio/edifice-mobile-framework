@@ -7,6 +7,8 @@ import { ListRenderItemInfo } from '@shopify/flash-list';
 
 import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 
+import { ChatTextAreaProps } from '../../inputs/text2';
+
 export namespace SocialResourceViewer {
   interface BaseItemData {
     id: string;
@@ -117,5 +119,6 @@ export namespace SocialResourceViewerInternals {
     canAddComment?: boolean;
     onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;
     onSendReply?: SocialResourceViewer.Props['onSubmit'];
+    inputRef?: ChatTextAreaProps['ref'];
   }
 }
