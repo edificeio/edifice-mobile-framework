@@ -19,6 +19,8 @@ import { SocialResourceViewer, SocialResourceViewerInternals } from './types';
 
 export const SocialResourceViewerCommentItem = ({
   canAddComment,
+  onPressDelete,
+  onPressEdit,
   onPressReply,
   session,
   ...info
@@ -26,6 +28,14 @@ export const SocialResourceViewerCommentItem = ({
   session?: AuthActiveAccount;
   canAddComment?: boolean;
   onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;
+  onPressEdit?: (
+    item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
+    index: number,
+  ) => void;
+  onPressDelete?: (
+    item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
+    index: number,
+  ) => void;
 }) => {
   const { item } = info;
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
@@ -39,7 +49,14 @@ export const SocialResourceViewerCommentItem = ({
         {item.nbResponses > 0 && <View style={itemTreeDecoStyle} />}
       </View>
       <View style={styles.itemCommentContentWrapper}>
-        <SocialResourceViewerContentItem session={session} canAddComment={canAddComment} onPressReply={onPressReply} {...info} />
+        <SocialResourceViewerContentItem
+          session={session}
+          canAddComment={canAddComment}
+          onPressReply={onPressReply}
+          onPressEdit={onPressEdit}
+          onPressDelete={onPressDelete}
+          {...info}
+        />
       </View>
     </View>
   );
@@ -65,9 +82,22 @@ export const SocialResourceViewerCommentDeletedItem = (
 
 export const SocialResourceViewerResponseItem = ({
   canAddComment,
+  onPressDelete,
+  onPressEdit,
   session,
   ...info
-}: ListRenderItemInfo<SocialResourceViewerInternals.ResponseItem> & { session?: AuthActiveAccount; canAddComment?: boolean }) => {
+}: ListRenderItemInfo<SocialResourceViewerInternals.ResponseItem> & {
+  session?: AuthActiveAccount;
+  canAddComment?: boolean;
+  onPressEdit?: (
+    item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
+    index: number,
+  ) => void;
+  onPressDelete?: (
+    item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
+    index: number,
+  ) => void;
+}) => {
   const { item } = info;
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemResponse], []);
   const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeResponse], []);
@@ -85,7 +115,13 @@ export const SocialResourceViewerResponseItem = ({
         <SingleAvatar size="xsm" userId={item.authorId} />
       </View>
       <View style={styles.itemResponseContentWrapper}>
-        <SocialResourceViewerContentItem session={session} canAddComment={canAddComment} {...info} />
+        <SocialResourceViewerContentItem
+          session={session}
+          canAddComment={canAddComment}
+          onPressEdit={onPressEdit}
+          onPressDelete={onPressDelete}
+          {...info}
+        />
       </View>
     </View>
   );
@@ -117,6 +153,8 @@ export const SocialResourceViewerResponseDeletedItem = (
 
 export const SocialResourceViewerContentItem = ({
   canAddComment,
+  onPressDelete: _onPressDelete,
+  onPressEdit: _onPressEdit,
   onPressReply: _onPressReply,
   session,
   ...info
@@ -124,12 +162,26 @@ export const SocialResourceViewerContentItem = ({
   session?: AuthActiveAccount;
   canAddComment?: boolean;
   onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;
+  onPressEdit?: (
+    item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
+    index: number,
+  ) => void;
+  onPressDelete?: (
+    item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
+    index: number,
+  ) => void;
 }) => {
   const { index, item } = info;
   const isAuthor = session && item.authorId === session.user.id;
   const onPressReply = React.useCallback(() => {
     _onPressReply?.(item as SocialResourceViewerInternals.CommentItem, index);
   }, [_onPressReply, index, item]);
+  const onPressEdit = React.useCallback(() => {
+    _onPressEdit?.(item as SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem, index);
+  }, [_onPressEdit, index, item]);
+  const onPressDelete = React.useCallback(() => {
+    _onPressDelete?.(item as SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem, index);
+  }, [_onPressDelete, index, item]);
   return (
     <>
       <View style={styles.itemUserHeader}>
@@ -149,8 +201,8 @@ export const SocialResourceViewerContentItem = ({
             {item.type === SocialResourceViewerInternals.ITEM_COMMENT && (
               <TerciaryButton text="Répondre" testID="comment-reply" onPress={onPressReply} />
             )}
-            {isAuthor && <TerciaryButton text="Modifier" testID="comment-edit" />}
-            {isAuthor && <TerciaryButton text="Supprimer" testID="comment-delete" />}
+            {isAuthor && <TerciaryButton text="Modifier" testID="comment-edit" onPress={onPressEdit} />}
+            {isAuthor && <TerciaryButton text="Supprimer" testID="comment-delete" onPress={onPressDelete} />}
           </View>
         )}
       </View>
@@ -224,6 +276,8 @@ export const SocialResourceViewerAddResponseItem = ({
 export const SocialResourceViewerItem = ({
   canAddComment,
   inputRef,
+  onPressDelete,
+  onPressEdit,
   onPressReply,
   onSendReply,
   onShowResponses,
@@ -236,6 +290,8 @@ export const SocialResourceViewerItem = ({
         session={session}
         canAddComment={canAddComment}
         onPressReply={onPressReply}
+        onPressEdit={onPressEdit}
+        onPressDelete={onPressDelete}
         {...(info as ListRenderItemInfo<SocialResourceViewerInternals.CommentItem>)}
       />
     );
@@ -244,6 +300,8 @@ export const SocialResourceViewerItem = ({
       <SocialResourceViewerResponseItem
         session={session}
         canAddComment={canAddComment}
+        onPressEdit={onPressEdit}
+        onPressDelete={onPressDelete}
         {...(info as ListRenderItemInfo<SocialResourceViewerInternals.ResponseItem>)}
       />
     );
