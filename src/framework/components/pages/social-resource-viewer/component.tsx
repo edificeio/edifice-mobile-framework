@@ -92,6 +92,7 @@ export function SocialResourceViewer({
     props => (
       <KeyboardChatScrollView
         {...props}
+        keyboardLiftBehavior="whenAtEnd"
         offset={
           navBarHeight -
           styles.stickyCommentWrapper.paddingBottom +
