@@ -150,13 +150,18 @@ export function SocialResourceViewer({
 
   const onPressReply = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressReply']>>(
     item => {
+      const isEditingResponse = context[0].newResponseId !== undefined && context[0].newResponseValue !== '';
+      const isDifferentCommentThanBefore = context[0].newResponseId !== item.id;
+
       const addReply = () => {
-        context[1]({ newResponseId: item.id, newResponseValue: '' });
+        if (isDifferentCommentThanBefore) {
+          context[1]({ newResponseId: item.id, newResponseValue: '' });
+        }
         requestAnimationFrame(() => {
           responseRef?.current?.focus();
         });
       };
-      if (context[0].newResponseId !== undefined && context[0].newResponseValue !== '') {
+      if (isEditingResponse && isDifferentCommentThanBefore) {
         Alert.alert(I18n.get('comment-cancelreply-alert-title'), I18n.get('comment-cancelreply-alert-text'), [
           {
             onPress: addReply,
