@@ -175,6 +175,7 @@ export const SocialResourceViewerShowMoreResponsesItem = ({
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemResponse], []);
   const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeResponse], []);
   const itemTreeCurveStyle = React.useMemo(() => [styles.itemTreeDecoCurveCommon, styles.itemTreeDecoCurveTop], []);
+  const itemTreeDecoStyle = React.useMemo(() => [styles.itemTreeDecoStraight], []);
   const showResponses = React.useCallback(() => {
     onShowResponses?.(item.inReplyTo, item.start, item.count);
   }, [item.count, item.inReplyTo, item.start, onShowResponses]);
@@ -183,6 +184,7 @@ export const SocialResourceViewerShowMoreResponsesItem = ({
     <View style={itemStyle}>
       <View style={itemTreeStyle}>
         <View style={itemTreeCurveStyle} />
+        {item.hasResponses && <View style={itemTreeDecoStyle} />}
       </View>
       <View style={styles.itemResponsesShowMoreButtonWrapper}>
         <GhostButton
