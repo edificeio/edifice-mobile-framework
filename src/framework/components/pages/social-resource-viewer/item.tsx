@@ -16,7 +16,6 @@ import { TemporalTimeText } from '~/framework/util/date';
 import { SocialResourceViewerAddResponseForm } from './form';
 import styles from './styles';
 import { SocialResourceViewer, SocialResourceViewerInternals } from './types';
-import { ChatTextAreaProps } from '../../inputs/text2';
 
 export const SocialResourceViewerCommentItem = ({
   canAddComment,
