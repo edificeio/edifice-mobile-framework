@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Platform, View } from 'react-native';
+import { Alert, Platform, TextInput, View } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
 import { FlashList, FlashListProps, FlashListRef } from '@shopify/flash-list';
@@ -51,6 +51,7 @@ export function SocialResourceViewer({
   const listRef = React.useRef<FlashListRef<SocialResourceViewerInternals.Item>>(null);
   const [measuredResourceHeight, setMeasuredResourceHeight] = React.useState(0);
   const [measuredListHeight, setMeasuredListHeight] = React.useState(0);
+  const responseRef = React.useRef<TextInput>(null);
 
   // Input state
   const { newCommentHeight, newCommentValue } = context[0];
@@ -151,6 +152,9 @@ export function SocialResourceViewer({
     item => {
       const addReply = () => {
         context[1]({ newResponseId: item.id, newResponseValue: '' });
+        requestAnimationFrame(() => {
+          responseRef?.current?.focus();
+        });
       };
       if (context[0].newResponseId !== undefined && context[0].newResponseValue !== '') {
         Alert.alert(I18n.get('comment-cancelreply-alert-title'), I18n.get('comment-cancelreply-alert-text'), [
@@ -181,6 +185,7 @@ export function SocialResourceViewer({
         canAddComment={canAddComment}
         onPressReply={onPressReply}
         onSendReply={onSubmit}
+        inputRef={responseRef}
       />
     ),
     [canAddComment, onPressReply, onSubmit, session, showResponses],
