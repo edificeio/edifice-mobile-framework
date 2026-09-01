@@ -35,7 +35,7 @@ export interface NotificationRowProps {
 export interface NotificationListProps {
   notifications: ITimelineNotification[];
   loading: boolean;
-  onDeleteItem: (id: string) => void;
+  onDeleteItem: (id: string) => Promise<void>;
   onEndReached: () => void;
   onPressItem: (notification: ITimelineNotification) => void;
   onReportItem: (notification: ITimelineNotification) => Promise<boolean>;
