@@ -309,6 +309,39 @@ export const SocialResourceViewerEditCommentItem = ({
   );
 };
 
+export const SocialResourceViewerEditResponseItem = ({
+  inputRef,
+  onSubmit,
+  ...info
+}: ListRenderItemInfo<SocialResourceViewerInternals.ResponseItem> & {
+  onSubmit?: SocialResourceViewer.Props['onEdit'];
+  inputRef?: SocialResourceViewerInternals.ItemProps['inputRef'];
+}) => {
+  const { item } = info;
+  const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemResponse], []);
+  const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeResponse], []);
+  const itemAvatarStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemResponseAvatar], []);
+  const itemTreeCurveStyle = React.useMemo(() => [styles.itemTreeDecoCurveCommon, styles.itemTreeDecoCurveTop], []);
+  const itemTreeDecoStyle = React.useMemo(() => [styles.itemTreeDecoStraight], []);
+  const session = useSelector(selectors.session)!; // ToDo: obtain session securely
+
+  return (
+    <View style={itemStyle}>
+      <View style={itemTreeStyle}>
+        <View style={itemTreeCurveStyle} />
+        {item.hasResponses && <View style={itemTreeDecoStyle} />}
+      </View>
+      <View style={itemAvatarStyle}>
+        <SingleAvatar size="xsm" userId={item.authorId} />
+      </View>
+      <View style={styles.itemResponseContentWrapper}>
+        <SocialResourceViewerContentItemHeader {...info} />
+        <SocialResourceViewerEditCommentForm session={session} onSubmit={onSubmit} ref={inputRef} {...info} />
+      </View>
+    </View>
+  );
+};
+
 export const SocialResourceViewerItem = ({
   canAddComment,
   inputRef,
@@ -341,7 +374,13 @@ export const SocialResourceViewerItem = ({
       />
     );
   } else if (info.item.type === SocialResourceViewerInternals.ITEM_RESPONSE) {
-    return (
+    return editContext.editId === info.item.id ? (
+      <SocialResourceViewerEditResponseItem
+        {...(info as ListRenderItemInfo<SocialResourceViewerInternals.ResponseItem>)}
+        onSubmit={onSendEdit}
+        inputRef={inputRef}
+      />
+    ) : (
       <SocialResourceViewerResponseItem
         session={session}
         canAddComment={canAddComment}
