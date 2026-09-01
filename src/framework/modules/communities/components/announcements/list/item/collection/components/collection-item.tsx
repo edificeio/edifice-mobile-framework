@@ -54,11 +54,13 @@ const CollectionItem = ({ announcement, platformUrl, style, userRole }: Readonly
     );
 
   return (
-    <TouchableOpacity style={style} onPress={redirectToWeb}>
+    <TouchableOpacity style={style} onPress={redirectToWeb} testID="communities-collection-touchable">
       <View style={styles.header}>
         <DeadlineBadge colors={colors} deadline={deadlineInstant} isCompleted={isCompleted} />
         <View style={UI_STYLES.flex1}>
-          <BodyText numberOfLines={1}>{name}</BodyText>
+          <BodyText numberOfLines={1} testID="communities-collection-title">
+            {name}
+          </BodyText>
           <SmallText style={styles.distributedDate}>{displayedDate}</SmallText>
         </View>
       </View>
