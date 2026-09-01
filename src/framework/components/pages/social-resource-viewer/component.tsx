@@ -18,7 +18,7 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 
 import { SocialResourceViewerContext, socialResourceViewerContextInitialData, socialResourceViewerContextReducer } from './context';
 import { SocialResourceViewerAddCommentForm } from './form';
-import { useSocialCommentsData } from './hooks';
+import { DEFAULT_CONFIG, useSocialCommentsData } from './hooks';
 import { SocialResourceViewerItem } from './item';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
 import { type SocialResourceViewer, SocialResourceViewerInternals } from './types';
@@ -26,6 +26,7 @@ import { type SocialResourceViewer, SocialResourceViewerInternals } from './type
 const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<SocialResourceViewerInternals.Item>);
 
 export function SocialResourceViewer({
+  allowResponses = DEFAULT_CONFIG.allowResponses,
   alwaysShowCommentField = false,
   canAddComment: _canAddComment,
   children,
@@ -44,7 +45,11 @@ export function SocialResourceViewer({
 
   const context = React.useReducer(socialResourceViewerContextReducer, socialResourceViewerContextInitialData);
 
-  const { flatData, showResponses } = useSocialCommentsData(data, context[0], { responsesPageSize, responsesStartSize });
+  const { flatData, showResponses } = useSocialCommentsData(data, context[0], {
+    allowResponses,
+    responsesPageSize,
+    responsesStartSize,
+  });
 
   // Screen layout
   const navBarHeight = useHeaderHeight();
@@ -258,6 +263,7 @@ export function SocialResourceViewer({
     info => (
       <SocialResourceViewerItem
         {...info}
+        allowResponses={allowResponses}
         onShowResponses={showResponses}
         canAddComment={canAddComment}
         onPressReply={onPressReply}
@@ -268,7 +274,7 @@ export function SocialResourceViewer({
         inputRef={inlineEditRef}
       />
     ),
-    [canAddComment, onEdit, onPressDelete, onPressEdit, onPressReply, onSubmit, showResponses],
+    [allowResponses, canAddComment, onEdit, onPressDelete, onPressEdit, onPressReply, onSubmit, showResponses],
   );
 
   const keyExtractor = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['keyExtractor']>>(item => {

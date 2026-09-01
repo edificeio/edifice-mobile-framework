@@ -18,6 +18,7 @@ import styles from './styles';
 import { SocialResourceViewer, SocialResourceViewerInternals } from './types';
 
 export const SocialResourceViewerCommentItem = ({
+  allowResponses,
   canAddComment,
   onPressDelete,
   onPressEdit,
@@ -34,7 +35,7 @@ export const SocialResourceViewerCommentItem = ({
     item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
     index: number,
   ) => void;
-}) => {
+} & Partial<Pick<SocialResourceViewer.CommentsConfig, 'allowResponses'>>) => {
   const { item } = info;
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
   const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeComment], []);
@@ -48,6 +49,7 @@ export const SocialResourceViewerCommentItem = ({
       </View>
       <View style={styles.itemCommentContentWrapper}>
         <SocialResourceViewerContentItem
+          allowResponses={allowResponses}
           canAddComment={canAddComment}
           onPressReply={onPressReply}
           onPressEdit={onPressEdit}
@@ -164,6 +166,7 @@ export const SocialResourceViewerContentItemHeader = ({
 };
 
 export const SocialResourceViewerContentItem = ({
+  allowResponses,
   canAddComment,
   onPressDelete: _onPressDelete,
   onPressEdit: _onPressEdit,
@@ -180,7 +183,7 @@ export const SocialResourceViewerContentItem = ({
     item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
     index: number,
   ) => void;
-}) => {
+} & Partial<Pick<SocialResourceViewer.CommentsConfig, 'allowResponses'>>) => {
   const { index, item } = info;
   const session = useSelector(selectors.session);
   const isAuthor = session && item.authorId === session.user.id;
@@ -200,7 +203,7 @@ export const SocialResourceViewerContentItem = ({
         <SmallText style={styles.itemContentText}>{item.content}</SmallText>
         {session && canAddComment && (
           <View style={styles.itemContentButtons}>
-            {item.type === SocialResourceViewerInternals.ITEM_COMMENT && (
+            {allowResponses && item.type === SocialResourceViewerInternals.ITEM_COMMENT && (
               <TerciaryButton text={I18n.get('comment-reply')} testID="comment-reply" onPress={onPressReply} />
             )}
             {isAuthor && <TerciaryButton text={I18n.get('comment-edit')} testID="comment-edit" onPress={onPressEdit} />}
@@ -332,6 +335,7 @@ export const SocialResourceViewerEditResponseItem = ({
 };
 
 export const SocialResourceViewerItem = ({
+  allowResponses,
   canAddComment,
   inputRef,
   onPressDelete,
@@ -353,6 +357,7 @@ export const SocialResourceViewerItem = ({
       />
     ) : (
       <SocialResourceViewerCommentItem
+        allowResponses={allowResponses}
         canAddComment={canAddComment}
         onPressReply={onPressReply}
         onPressEdit={onPressEdit}
