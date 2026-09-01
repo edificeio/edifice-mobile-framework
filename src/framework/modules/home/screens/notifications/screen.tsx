@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 
 import { MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
 import { NavigationProp, ParamListBase, useFocusEffect } from '@react-navigation/native';
+import DeviceInfo from 'react-native-device-info';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -83,36 +84,52 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
   useFocusEffect(React.useCallback(() => () => onRowSwipeActiveChange(false), [onRowSwipeActiveChange]));
 
   const onDeleteItem = React.useCallback(
-    async (id: string) => {
-      try {
-        await dispatch(deleteNotificationAction(id));
-      } catch {
-        Toast.showError(I18n.get('timeline-error-text'));
-      }
-    },
+    (id: string) =>
+      new Promise<void>(resolve => {
+        Alert.alert(I18n.get('home-notifications-delete-title'), I18n.get('home-notifications-delete-description'), [
+          {
+            onPress: async () => {
+              try {
+                await dispatch(deleteNotificationAction(id));
+              } catch {
+                Toast.showError(I18n.get('timeline-error-text'));
+              } finally {
+                resolve();
+              }
+            },
+            style: 'destructive',
+            text: I18n.get('common-delete'),
+          },
+          { onPress: () => resolve(), style: 'cancel', text: I18n.get('common-cancel') },
+        ]);
+      }),
     [dispatch],
   );
 
   const onReportItem = React.useCallback(
     (notification: ITimelineNotification) =>
       new Promise<boolean>((resolve, reject) => {
-        Alert.alert(I18n.get('timeline-reportaction-title'), I18n.get('timeline-reportaction-description'), [
-          {
-            onPress: async () => {
-              try {
-                await notificationsService.report(notification.id);
-                Toast.showSuccess(I18n.get('timeline-reportaction-success'));
-                resolve(true);
-              } catch (e) {
-                Alert.alert(I18n.get('timeline-error-text'));
-                reject(e);
-              }
+        Alert.alert(
+          I18n.get('timeline-reportaction-title'),
+          I18n.get('timeline-reportaction-description', { appName: DeviceInfo.getApplicationName() }),
+          [
+            {
+              onPress: async () => {
+                try {
+                  await notificationsService.report(notification.id);
+                  Toast.showSuccess(I18n.get('timeline-reportaction-success'));
+                  resolve(true);
+                } catch (e) {
+                  Alert.alert(I18n.get('timeline-error-text'));
+                  reject(e);
+                }
+              },
+              style: 'destructive',
+              text: I18n.get('timeline-reportaction-submit'),
             },
-            style: 'destructive',
-            text: I18n.get('timeline-reportaction-submit'),
-          },
-          { onPress: () => resolve(false), style: 'cancel', text: I18n.get('common-cancel') },
-        ]);
+            { onPress: () => resolve(false), style: 'cancel', text: I18n.get('common-cancel') },
+          ],
+        );
       }),
     [],
   );
