@@ -55,7 +55,7 @@ export const NotificationRow = React.memo(
         <View style={styles.actions}>
           {canReport ? (
             <SwipeAction
-              color={theme.palette.secondary.dark}
+              color={theme.palette.primary.dark}
               icon="ui-alert-triangle"
               label={I18n.get('timeline-reportaction-button')}
               onPress={report}
