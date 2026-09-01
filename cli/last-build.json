@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-08-17 17:34:58",
-  "notes": "release: 1.17.5-rc.2(1170502)",
-  "version": "1.17.5-rc.3(1170503)",
-  "track": "1.17.5",
-  "order": "rc.3"
+  "last": "2026-08-27 16:01:36",
+  "notes": "update(stack): yarn cache update && allow android parallel sync\nupdate(stack): yarn cache update\nfeat(communities): PEDAGO-4212 discussion list loader\nfeat(communities): PEDAGO-2897 adding discussions list screen (324)\nupdate(stack): yarn cache update\nMerge branch 'dev/1.17.6' into dev/peda\nfeat(communities): PEDAGO-2898 adding conversation cards\nupdate(stack): yarn cache update\nMerge branch 'main' into dev/1.17.6\nMerge branch 'release/1.17.5-android'\nrelease: 1.17.5-rc.3(1170503)",
+  "version": "1.17.6-peda.2(1170604)",
+  "track": "1.17.6",
+  "order": "peda.2"
 }

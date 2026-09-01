@@ -48,6 +48,7 @@ const CoursesTile = ({ communityId, navigation, platformUrl, spotlightedCourseId
       </View>
       {isUnavailable && (
         <Pill
+          bold
           color={pillColor}
           italic={isUnavailable && !isMember}
           text={I18n.get('communities-tile-courses-courseless')}
