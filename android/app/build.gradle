@@ -105,6 +105,10 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-core:2.22.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.22.2")
     implementation("com.google.android.gms:play-services-base:18.10.1")
+    // Fix OkHttp version mismatch
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:5.5.0"))
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:okhttp-urlconnection")
     // Fix Duplicate class
     implementation('org.jetbrains:annotations:26.1.0')
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.22"))
