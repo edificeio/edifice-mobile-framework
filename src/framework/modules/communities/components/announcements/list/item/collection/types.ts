@@ -6,6 +6,7 @@ import { CollectAnnouncementDetails } from '~/framework/modules/communities/serv
 
 export interface CollectionItemProps {
   announcement: CollectAnnouncementDetails<number>;
+  platformUrl: string;
   style?: ViewProps['style'];
   userRole?: MembershipRole;
 }

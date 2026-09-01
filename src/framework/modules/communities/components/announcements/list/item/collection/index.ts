@@ -1,4 +1,4 @@
-import CollectionItem from './component';
+import CollectionItem from './components/collection-item';
 
 export * from './status';
 
