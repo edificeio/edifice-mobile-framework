@@ -345,6 +345,8 @@
   "comment-cancelreply-alert-text": "Une réponse en cours de rédaction va être supprimée. Êtes-vous sûr ?",
   "comment-canceledit-alert-title": "Commentaire non-enregistré",
   "comment-canceledit-alert-text": "Un commentaire est cours de modification. Êtes-vous sûr d'annuler vos changements ?",
+  "comment-delete-alert-title": "Suppression",
+  "comment-delete-alert-text": "Êtes-vous sûr de supprimer ce commentaire ?",
   "commentfield-modify": "Modifier",
   "common-by": "Par :",
   "common-cancel": "Annuler",

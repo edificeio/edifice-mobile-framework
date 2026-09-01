@@ -201,6 +201,11 @@ const hydratePageComments = async (
 
 export default {
   page: {
+    deleteComment: async (opts: API.Wiki.GetPagePayload, id: string) => {
+      return sessionFetch.json<API.Wiki.PostCommentResponse>(`/wiki/${opts.id}/page/${opts.pageId}/comment/${id}`, {
+        method: 'DELETE',
+      });
+    },
     editComment: async (opts: API.Wiki.GetPagePayload, id: string, comment: string) => {
       return sessionFetch.json<API.Wiki.PostCommentResponse>(`/wiki/${opts.id}/page/${opts.pageId}/comment/${id}`, {
         body: JSON.stringify({ comment }),
