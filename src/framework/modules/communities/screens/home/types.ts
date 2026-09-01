@@ -5,6 +5,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import type { CommunitiesNavigationParams } from '~/framework/modules/communities/navigation';
+import type { DiscussionsSummary } from '~/framework/modules/communities/service/discussions';
 
 export namespace CommunitiesHomeScreen {
   export interface NavParams {
@@ -15,7 +16,7 @@ export namespace CommunitiesHomeScreen {
   export type NavigationProps = NativeStackScreenProps<CommunitiesNavigationParams, 'home'>;
   export type AllProps = CommunitiesHomeScreen.NavigationProps;
   export type RequiredData = Pick<CommunityResponseDto, 'title' | 'welcomeNote'> & {
-    hasDiscussions: boolean;
+    discussionsSummary: DiscussionsSummary;
     totalMembers: number;
     membersId: string[];
     session: AuthActiveAccount;
