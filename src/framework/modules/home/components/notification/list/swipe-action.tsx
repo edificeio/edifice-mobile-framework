@@ -26,7 +26,12 @@ export const SwipeAction = React.memo(({ color, filled, icon, label, onPress, pr
   return (
     <View style={styles.action}>
       <AnimatedPressable accessibilityRole="button" onPress={onPress} style={buttonStyle}>
-        <Svg name={icon} width={ACTION_ICON_SIZE} height={ACTION_ICON_SIZE} fill={filled ? theme.palette.grey.white : color} />
+        <Svg
+          name={icon}
+          width={ACTION_ICON_SIZE}
+          height={ACTION_ICON_SIZE}
+          fill={filled ? theme.palette.grey.white : theme.palette.secondary.dark}
+        />
       </AnimatedPressable>
       <Animated.View style={actionStyle}>
         <CaptionBoldText style={styles.actionText}>{label}</CaptionBoldText>
