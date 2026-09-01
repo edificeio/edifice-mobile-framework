@@ -33,6 +33,7 @@ import { actions, selectors, WikiAction, WikiPageAction } from '~/framework/modu
 
 import styles from './styles';
 import type { WikiReaderScreen } from './types';
+import { FlashListProps } from '@shopify/flash-list';
 
 export const computeNavBar = screenOptions<'wiki/reader'>(
   ({ route }: NativeStackScreenProps<WikiNavigationParams, typeof wikiRouteNames.reader>) => {
@@ -164,7 +165,9 @@ const WikiReaderContent = ({
   pageId,
   resourceId,
 }: Pick<WikiReaderScreen.NavParams, 'pageId' | 'resourceId'> &
-  Pick<RichEditorViewerProps, 'onLoad'> & { onGoToPage: (id: WikiPage['id'], reverse?: boolean) => void }) => {
+  Pick<RichEditorViewerProps, 'onLoad'> & {
+    onGoToPage: (id: WikiPage['id'], reverse?: boolean) => void;
+  }) => {
   const wiki = useSelector(selectors.wiki(resourceId))!;
   const page = useSelector(selectors.page(pageId));
 
@@ -209,10 +212,11 @@ const WikiReaderContent = ({
 
 export function WikiReaderScreenLoaded({
   navigation,
+  refreshControl,
   route: {
     params: { pageId, resourceId },
   },
-}: WikiReaderScreen.AllProps) {
+}: WikiReaderScreen.AllProps & { refreshControl: FlashListProps<any>['refreshControl'] }) {
   const wiki = useSelector(selectors.wiki(resourceId));
   const page = useSelector(selectors.page(pageId));
 
@@ -240,25 +244,36 @@ export function WikiReaderScreenLoaded({
     ArrayElement<React.ComponentProps<typeof SocialResourceViewer>['data']>['id'] | undefined
   >(undefined);
 
+  const refreshPage = React.useCallback(async () => {
+    const newPageData = await service.page.get({ id: resourceId, pageId: pageId });
+    dispatch(actions.loadPage(resourceId, newPageData));
+  }, [dispatch, pageId, resourceId]);
+
   const canAddComment = wiki.rights.findIndex(e => e === 'comment' || e === 'creator') !== -1;
   const onSubmit = React.useCallback<NonNullable<React.ComponentProps<typeof SocialResourceViewer>['onSubmit']>>(
     async (data, replyTo) => {
       const { _id: newCommentId } = await service.page.postComment({ id: wiki.assetId, pageId: page.id }, data.content, replyTo);
-      const newPageData = await service.page.get({ id: resourceId, pageId: pageId });
-      dispatch(actions.loadPage(resourceId, newPageData));
+      await refreshPage();
       setAutoScrollItem(newCommentId);
       return newCommentId;
     },
-    [dispatch, page.id, pageId, resourceId, wiki.assetId],
+    [page.id, refreshPage, wiki.assetId],
   );
 
   const onEdit = React.useCallback<NonNullable<React.ComponentProps<typeof SocialResourceViewer>['onEdit']>>(
     async (data, id) => {
       await service.page.editComment({ id: wiki.assetId, pageId: page.id }, id, data.content);
-      const newPageData = await service.page.get({ id: resourceId, pageId: pageId });
-      dispatch(actions.loadPage(resourceId, newPageData));
+      await refreshPage();
     },
-    [dispatch, page.id, pageId, resourceId, wiki.assetId],
+    [page.id, refreshPage, wiki.assetId],
+  );
+
+  const onDelete = React.useCallback<NonNullable<React.ComponentProps<typeof SocialResourceViewer>['onDelete']>>(
+    async id => {
+      await service.page.deleteComment({ id: wiki.assetId, pageId: page.id }, id);
+      await refreshPage();
+    },
+    [page.id, refreshPage, wiki.assetId],
   );
 
   return (
@@ -269,7 +284,9 @@ export function WikiReaderScreenLoaded({
         data={page.comments}
         onSubmit={onSubmit}
         onEdit={onEdit}
-        focusItem={autoScrollItem}>
+        onDelete={onDelete}
+        focusItem={autoScrollItem}
+        refreshControl={refreshControl}>
         <WikiReaderContent onGoToPage={switchToPage} pageId={pageId} resourceId={resourceId} onLoad={onLoad} />
       </SocialResourceViewer>
       {!loaded && <View style={styles.webViewPlaceholder}>{renderPlaceholder()}</View>}
@@ -298,8 +315,8 @@ export default function WikiReaderScreen({
     markView();
   }, [resourceId, pageId, dispatch, navigation, markView]);
 
-  const renderContent = React.useCallback(
-    () => <WikiReaderScreenLoaded navigation={navigation} route={route} {...props} />,
+  const renderContent = React.useCallback<NonNullable<ContentLoaderProps['renderContent']>>(
+    refreshControl => <WikiReaderScreenLoaded navigation={navigation} route={route} refreshControl={refreshControl} {...props} />,
     [navigation, props, route],
   );
 

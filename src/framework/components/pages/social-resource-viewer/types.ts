@@ -3,7 +3,7 @@ import { StyleProp, ViewStyle } from 'react-native';
 import { Temporal } from '@js-temporal/polyfill';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ListRenderItemInfo } from '@shopify/flash-list';
+import { FlashListProps, ListRenderItemInfo } from '@shopify/flash-list';
 
 import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 
@@ -45,7 +45,11 @@ export namespace SocialResourceViewer {
   }
 
   export interface Props
-    extends Pick<NativeStackScreenProps<ParamListBase>, 'navigation'>, React.PropsWithChildren, Partial<CommentsConfig> {
+    extends
+      Pick<NativeStackScreenProps<ParamListBase>, 'navigation'>,
+      React.PropsWithChildren,
+      Partial<CommentsConfig>,
+      Pick<FlashListProps<SocialResourceViewerInternals.Item>, 'refreshControl'> {
     canAddComment: boolean;
     alwaysShowCommentField?: boolean;
     style?: StyleProp<ViewStyle>;

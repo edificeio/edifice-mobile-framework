@@ -31,8 +31,10 @@ export function SocialResourceViewer({
   children,
   data,
   focusItem,
+  onDelete,
   onEdit,
   onSubmit,
+  refreshControl,
   responsesPageSize,
   responsesStartSize,
 }: SocialResourceViewer.Props) {
@@ -172,28 +174,28 @@ export function SocialResourceViewer({
   const confirmQuitReply = React.useCallback((callback: () => void) => {
     Alert.alert(I18n.get('comment-cancelreply-alert-title'), I18n.get('comment-cancelreply-alert-text'), [
       {
-        onPress: callback,
-        style: 'destructive',
-        text: I18n.get('common-delete'),
-      },
-      {
         onPress: () => {},
         style: 'default',
         text: I18n.get('common-cancel'),
+      },
+      {
+        onPress: callback,
+        style: 'destructive',
+        text: I18n.get('common-delete'),
       },
     ]);
   }, []);
   const confirmQuitEdit = React.useCallback((callback: () => void) => {
     Alert.alert(I18n.get('comment-canceledit-alert-title'), I18n.get('comment-canceledit-alert-text'), [
       {
-        onPress: callback,
-        style: 'destructive',
-        text: I18n.get('common-delete'),
-      },
-      {
         onPress: () => {},
         style: 'default',
         text: I18n.get('common-cancel'),
+      },
+      {
+        onPress: callback,
+        style: 'destructive',
+        text: I18n.get('common-delete'),
       },
     ]);
   }, []);
@@ -232,9 +234,25 @@ export function SocialResourceViewer({
     [confirmQuitEdit, confirmQuitReply, context, isRedactingAnyResponse, isRedactingComment],
   );
 
-  const onPressDelete = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressDelete']>>(item => {
-    console.info('DELETE', item);
-  }, []);
+  const onPressDelete = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressDelete']>>(
+    item => {
+      Alert.alert(I18n.get('comment-delete-alert-title'), I18n.get('comment-delete-alert-text'), [
+        {
+          onPress: () => {},
+          style: 'default',
+          text: I18n.get('common-cancel'),
+        },
+        {
+          onPress: () => {
+            onDelete?.(item.id);
+          },
+          style: 'destructive',
+          text: I18n.get('common-delete'),
+        },
+      ]);
+    },
+    [onDelete],
+  );
 
   const renderItem = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['renderItem']>>(
     info => (
@@ -286,6 +304,9 @@ export function SocialResourceViewer({
       });
   }
 
+  // Need a empty function to FlashLIst to enable `refreshControl`. Seems like an issue for them.
+  const onRefresh = React.useCallback(() => {}, []);
+
   return (
     <SocialResourceViewerContext value={context}>
       <AnimatedFlashList
@@ -302,10 +323,11 @@ export function SocialResourceViewer({
         ListFooterComponent={<View style={listFooterStyle} />}
         scrollIndicatorInsets={scrollIndicatorInsets}
         keyboardShouldPersistTaps="handled"
+        refreshControl={refreshControl}
+        onRefresh={onRefresh}
       />
       {canAddComment && (
         <SocialResourceViewerAddCommentForm
-          // listRef={listRef}
           onSubmit={onSubmit}
           session={session}
           style={inputStyle}
