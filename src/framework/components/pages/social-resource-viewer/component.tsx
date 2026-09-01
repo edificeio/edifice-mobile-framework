@@ -305,7 +305,7 @@ export function SocialResourceViewer({
   }
 
   // Need a empty function to FlashLIst to enable `refreshControl`. Seems like an issue for them.
-  const onRefresh = React.useCallback(() => {}, []);
+  const onRefresh = React.useMemo(() => (refreshControl !== undefined ? () => {} : undefined), [refreshControl]);
 
   return (
     <SocialResourceViewerContext value={context}>
