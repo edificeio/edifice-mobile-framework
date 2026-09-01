@@ -31,6 +31,7 @@ export function SocialResourceViewer({
   children,
   data,
   focusItem,
+  onEdit,
   onSubmit,
   responsesPageSize,
   responsesStartSize,
@@ -51,7 +52,7 @@ export function SocialResourceViewer({
   const listRef = React.useRef<FlashListRef<SocialResourceViewerInternals.Item>>(null);
   const [measuredResourceHeight, setMeasuredResourceHeight] = React.useState(0);
   const [measuredListHeight, setMeasuredListHeight] = React.useState(0);
-  const responseRef = React.useRef<TextInput>(null);
+  const inlineEditRef = React.useRef<TextInput>(null);
 
   // Input state
   const { newCommentHeight, newCommentValue } = context[0];
@@ -151,42 +152,85 @@ export function SocialResourceViewer({
     [newCommentHeight],
   );
 
+  const isRedactingResponse = React.useCallback(
+    (item: SocialResourceViewerInternals.CommentItem) =>
+      context[0].newResponseReplyTo !== undefined &&
+      context[0].newResponseReplyTo !== item.id &&
+      context[0].newResponseValue !== '',
+    [context],
+  );
+  const isRedactingAnyResponse = React.useCallback(
+    () => context[0].newResponseReplyTo !== undefined && context[0].newResponseValue !== '',
+    [context],
+  );
+  const isRedactingComment = React.useCallback(
+    (item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem) =>
+      context[0].editId !== undefined && context[0].editId !== item.id && context[0].editHasChanges,
+    [context],
+  );
+
+  const confirmQuitReply = React.useCallback((callback: () => void) => {
+    Alert.alert(I18n.get('comment-cancelreply-alert-title'), I18n.get('comment-cancelreply-alert-text'), [
+      {
+        onPress: callback,
+        style: 'destructive',
+        text: I18n.get('common-delete'),
+      },
+      {
+        onPress: () => {},
+        style: 'default',
+        text: I18n.get('common-cancel'),
+      },
+    ]);
+  }, []);
+  const confirmQuitEdit = React.useCallback((callback: () => void) => {
+    Alert.alert(I18n.get('comment-canceledit-alert-title'), I18n.get('comment-canceledit-alert-text'), [
+      {
+        onPress: callback,
+        style: 'destructive',
+        text: I18n.get('common-delete'),
+      },
+      {
+        onPress: () => {},
+        style: 'default',
+        text: I18n.get('common-cancel'),
+      },
+    ]);
+  }, []);
+
   const onPressReply = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressReply']>>(
     item => {
-      const isEditingResponse = context[0].newResponseReplyTo !== undefined && context[0].newResponseValue !== '';
       const isDifferentCommentThanBefore = context[0].newResponseReplyTo !== item.id;
-
       const addReply = () => {
         if (isDifferentCommentThanBefore) {
           context[1]({ newResponseReplyTo: item.id, newResponseValue: '' });
         }
         requestAnimationFrame(() => {
-          responseRef?.current?.focus();
+          inlineEditRef?.current?.focus();
         });
       };
-      if (isEditingResponse && isDifferentCommentThanBefore) {
-        Alert.alert(I18n.get('comment-cancelreply-alert-title'), I18n.get('comment-cancelreply-alert-text'), [
-          {
-            onPress: addReply,
-            style: 'destructive',
-            text: I18n.get('common-delete'),
-          },
-          {
-            onPress: () => {},
-            style: 'default',
-            text: I18n.get('common-cancel'),
-          },
-        ]);
-        return;
-      }
-      addReply();
+
+      if (isRedactingResponse(item) && isDifferentCommentThanBefore) confirmQuitReply(addReply);
+      else if (isRedactingComment(item)) confirmQuitEdit(addReply);
+      else addReply();
     },
-    [context],
+    [confirmQuitEdit, confirmQuitReply, context, isRedactingComment, isRedactingResponse],
   );
 
-  const onPressEdit = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressEdit']>>(item => {
-    console.info('EDIT', item);
-  }, []);
+  const onPressEdit = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressEdit']>>(
+    item => {
+      const beginEdit = () => {
+        context[1]({ editHasChanges: false, editId: item.id, editValue: item.content });
+        requestAnimationFrame(() => {
+          inlineEditRef?.current?.focus();
+        });
+      };
+      if (isRedactingAnyResponse()) confirmQuitReply(beginEdit);
+      else if (isRedactingComment(item)) confirmQuitEdit(beginEdit);
+      else beginEdit();
+    },
+    [confirmQuitEdit, confirmQuitReply, context, isRedactingAnyResponse, isRedactingComment],
+  );
 
   const onPressDelete = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressDelete']>>(item => {
     console.info('DELETE', item);
@@ -202,11 +246,12 @@ export function SocialResourceViewer({
         onPressReply={onPressReply}
         onPressEdit={onPressEdit}
         onSendReply={onSubmit}
+        onSendEdit={onEdit}
         onPressDelete={onPressDelete}
-        inputRef={responseRef}
+        inputRef={inlineEditRef}
       />
     ),
-    [canAddComment, onPressDelete, onPressEdit, onPressReply, onSubmit, session, showResponses],
+    [canAddComment, onEdit, onPressDelete, onPressEdit, onPressReply, onSubmit, session, showResponses],
   );
 
   const keyExtractor = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['keyExtractor']>>(item => {

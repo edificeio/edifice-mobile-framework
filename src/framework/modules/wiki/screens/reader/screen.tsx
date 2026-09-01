@@ -252,6 +252,15 @@ export function WikiReaderScreenLoaded({
     [dispatch, page.id, pageId, resourceId, wiki.assetId],
   );
 
+  const onEdit = React.useCallback<NonNullable<React.ComponentProps<typeof SocialResourceViewer>['onEdit']>>(
+    async (data, id) => {
+      await service.page.editComment({ id: wiki.assetId, pageId: page.id }, id, data.content);
+      const newPageData = await service.page.get({ id: resourceId, pageId: pageId });
+      dispatch(actions.loadPage(resourceId, newPageData));
+    },
+    [dispatch, page.id, pageId, resourceId, wiki.assetId],
+  );
+
   return (
     <>
       <SocialResourceViewer
@@ -259,6 +268,7 @@ export function WikiReaderScreenLoaded({
         canAddComment={canAddComment}
         data={page.comments}
         onSubmit={onSubmit}
+        onEdit={onEdit}
         focusItem={autoScrollItem}>
         <WikiReaderContent onGoToPage={switchToPage} pageId={pageId} resourceId={resourceId} onLoad={onLoad} />
       </SocialResourceViewer>
