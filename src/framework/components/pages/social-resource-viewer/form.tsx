@@ -241,7 +241,13 @@ export const SocialResourceViewerEditCommentForm = ({
             onPress={onCancel}
             disabled={isSending}
           />
-          <TerciaryButton text={I18n.get('comment-save')} testID="comment-save" onPress={onPress} loading={isSending} />
+          <TerciaryButton
+            text={I18n.get('comment-save')}
+            testID="comment-save"
+            onPress={onPress}
+            loading={isSending}
+            disabled={editValue.length === 0}
+          />
         </View>
       </View>
     )
