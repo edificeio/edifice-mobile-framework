@@ -9,7 +9,6 @@ import { SingleAvatar } from '~/framework/components/avatar';
 import { GhostButton, TerciaryButton } from '~/framework/components/button';
 import { CaptionItalicText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { AccountTypeText } from '~/framework/modules/auth/components/account-type-text';
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { TemporalTimeText } from '~/framework/util/date';
 
@@ -23,10 +22,8 @@ export const SocialResourceViewerCommentItem = ({
   onPressDelete,
   onPressEdit,
   onPressReply,
-  session,
   ...info
 }: ListRenderItemInfo<SocialResourceViewerInternals.CommentItem> & {
-  session?: AuthActiveAccount;
   canAddComment?: boolean;
   onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;
   onPressEdit?: (
@@ -51,7 +48,6 @@ export const SocialResourceViewerCommentItem = ({
       </View>
       <View style={styles.itemCommentContentWrapper}>
         <SocialResourceViewerContentItem
-          session={session}
           canAddComment={canAddComment}
           onPressReply={onPressReply}
           onPressEdit={onPressEdit}
@@ -85,10 +81,8 @@ export const SocialResourceViewerResponseItem = ({
   canAddComment,
   onPressDelete,
   onPressEdit,
-  session,
   ...info
 }: ListRenderItemInfo<SocialResourceViewerInternals.ResponseItem> & {
-  session?: AuthActiveAccount;
   canAddComment?: boolean;
   onPressEdit?: (
     item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
@@ -117,7 +111,6 @@ export const SocialResourceViewerResponseItem = ({
       </View>
       <View style={styles.itemResponseContentWrapper}>
         <SocialResourceViewerContentItem
-          session={session}
           canAddComment={canAddComment}
           onPressEdit={onPressEdit}
           onPressDelete={onPressDelete}
@@ -175,10 +168,8 @@ export const SocialResourceViewerContentItem = ({
   onPressDelete: _onPressDelete,
   onPressEdit: _onPressEdit,
   onPressReply: _onPressReply,
-  session,
   ...info
 }: ListRenderItemInfo<SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem> & {
-  session?: AuthActiveAccount;
   canAddComment?: boolean;
   onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;
   onPressEdit?: (
@@ -191,6 +182,7 @@ export const SocialResourceViewerContentItem = ({
   ) => void;
 }) => {
   const { index, item } = info;
+  const session = useSelector(selectors.session);
   const isAuthor = session && item.authorId === session.user.id;
   const onPressReply = React.useCallback(() => {
     _onPressReply?.(item as SocialResourceViewerInternals.CommentItem, index);
@@ -266,7 +258,6 @@ export const SocialResourceViewerAddResponseItem = ({
   onSubmit?: SocialResourceViewer.Props['onSubmit'];
   inputRef?: SocialResourceViewerInternals.ItemProps['inputRef'];
 }) => {
-  const session = useSelector(selectors.session)!; // ToDo: obtain session securely
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemResponse], []);
   const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeResponse], []);
   const itemTreeCurveStyle = React.useMemo(() => [styles.itemTreeDecoCurveCommon, styles.itemTreeDecoCurveForm], []);
@@ -276,7 +267,7 @@ export const SocialResourceViewerAddResponseItem = ({
       <View style={itemTreeStyle}>
         <View style={itemTreeCurveStyle} />
       </View>
-      <SocialResourceViewerAddResponseForm session={session} onSubmit={onSubmit} ref={inputRef} />
+      <SocialResourceViewerAddResponseForm onSubmit={onSubmit} ref={inputRef} />
     </View>
   );
 };
@@ -293,7 +284,6 @@ export const SocialResourceViewerEditCommentItem = ({
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
   const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeComment], []);
   const itemTreeDecoStyle = React.useMemo(() => [styles.itemTreeDecoStraight, styles.itemTreeDecoStraightComment], []);
-  const session = useSelector(selectors.session)!; // ToDo: obtain session securely
 
   return (
     <View style={itemStyle}>
@@ -303,7 +293,7 @@ export const SocialResourceViewerEditCommentItem = ({
       </View>
       <View style={styles.itemCommentContentWrapper}>
         <SocialResourceViewerContentItemHeader {...info} />
-        <SocialResourceViewerEditCommentForm session={session} onSubmit={onSubmit} ref={inputRef} {...info} />
+        <SocialResourceViewerEditCommentForm onSubmit={onSubmit} ref={inputRef} {...info} />
       </View>
     </View>
   );
@@ -323,7 +313,6 @@ export const SocialResourceViewerEditResponseItem = ({
   const itemAvatarStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemResponseAvatar], []);
   const itemTreeCurveStyle = React.useMemo(() => [styles.itemTreeDecoCurveCommon, styles.itemTreeDecoCurveTop], []);
   const itemTreeDecoStyle = React.useMemo(() => [styles.itemTreeDecoStraight], []);
-  const session = useSelector(selectors.session)!; // ToDo: obtain session securely
 
   return (
     <View style={itemStyle}>
@@ -336,7 +325,7 @@ export const SocialResourceViewerEditResponseItem = ({
       </View>
       <View style={styles.itemResponseContentWrapper}>
         <SocialResourceViewerContentItemHeader {...info} />
-        <SocialResourceViewerEditCommentForm session={session} onSubmit={onSubmit} ref={inputRef} {...info} />
+        <SocialResourceViewerEditCommentForm onSubmit={onSubmit} ref={inputRef} {...info} />
       </View>
     </View>
   );
@@ -351,7 +340,6 @@ export const SocialResourceViewerItem = ({
   onSendEdit,
   onSendReply,
   onShowResponses,
-  session,
   ...info
 }: SocialResourceViewerInternals.ItemProps) => {
   const [editContext] = React.useContext(SocialResourceViewerContext);
@@ -365,7 +353,6 @@ export const SocialResourceViewerItem = ({
       />
     ) : (
       <SocialResourceViewerCommentItem
-        session={session}
         canAddComment={canAddComment}
         onPressReply={onPressReply}
         onPressEdit={onPressEdit}
@@ -382,7 +369,6 @@ export const SocialResourceViewerItem = ({
       />
     ) : (
       <SocialResourceViewerResponseItem
-        session={session}
         canAddComment={canAddComment}
         onPressEdit={onPressEdit}
         onPressDelete={onPressDelete}

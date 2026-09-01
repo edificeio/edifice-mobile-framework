@@ -5,7 +5,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashListProps, ListRenderItemInfo } from '@shopify/flash-list';
 
-import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
+import { AccountType } from '~/framework/modules/auth/model';
 
 import { ChatTextAreaProps } from '../../inputs/text2';
 
@@ -130,7 +130,6 @@ export namespace SocialResourceViewerInternals {
 
   export interface ItemProps extends ListRenderItemInfo<SocialResourceViewerInternals.Item> {
     onShowResponses?: (id: string, start: number, count: number) => void;
-    session?: AuthActiveAccount;
     canAddComment?: boolean;
     onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;
     onSendReply?: SocialResourceViewer.Props['onSubmit'];
