@@ -12,12 +12,12 @@ export default StyleSheet.create({
   tileCaptionTextUnavailable: {
     ...baseStyles.tileCaptionTextUnavailable,
   },
-  tileConversationAvailable: {
+  tileDiscussionsAvailable: {
     ...baseStyles.tileBase,
     ...baseStyles.tileAvailable,
     justifyContent: 'center',
   },
-  tileConversationUnavailable: {
+  tileDiscussionsUnavailable: {
     ...baseStyles.tileBase,
     ...baseStyles.tileUnavailable,
   },

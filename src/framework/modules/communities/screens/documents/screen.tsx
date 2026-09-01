@@ -23,12 +23,12 @@ import { FolderItem } from '~/framework/components/list/paginated-document-list/
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { sessionScreen } from '~/framework/components/screen';
 import { HeadingXSText } from '~/framework/components/text';
-import { usePrevious } from '~/framework/hooks/previous';
 import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/modules/communities/hooks/use-community-navbar';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
-import { isFileMedia, isResourceMedia, MediaType, mime, toURISource, UNKNOWN_MIME_TYPE } from '~/framework/modules/media';
+import { getCommunityBannerImage } from '~/framework/modules/communities/utils';
+import { isFileMedia, isResourceMedia, MediaType, mime, UNKNOWN_MIME_TYPE } from '~/framework/modules/media';
 import { openMedia } from '~/framework/modules/media/hooks';
 import { accountApi } from '~/framework/util/transport';
 
@@ -162,26 +162,14 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     [communityId, navigation, route.name, isFocused],
   );
 
-  const image = React.useMemo(
-    () =>
-      communityData.mobileThumbnails?.length
-        ? communityData.mobileThumbnails.map(src => ({ ...src, height: 130, width: 440 }))
-        : [toURISource(communityData.image!)],
-    [communityData],
-  );
+  const image = React.useMemo(() => getCommunityBannerImage(communityData), [communityData]);
 
-  const [scrollElements, statusBar, { ...scrollViewProps }, placeholderBanner] = useCommunityScrollableThumbnail({
+  const [scrollElements, { ...scrollViewProps }, placeholderBanner] = useCommunityScrollableThumbnail({
     contentContainerStyle: styles.list,
     image,
+    navigation,
     title: currentFolderMeta?.title ?? I18n.get('communities-documents-title'),
   });
-
-  const previousStatusBar = usePrevious(statusBar);
-  if (previousStatusBar !== statusBar) {
-    navigation.setOptions({
-      statusBarStyle: statusBar,
-    });
-  }
 
   const stickyPlaceholderElements = React.useMemo(
     () => [placeholderBanner, <PlaceholderLine width={60} noMargin style={styles.titlePlaceholder} />],

@@ -1,6 +1,9 @@
 import * as React from 'react';
 
 import moduleConfig from '~/framework/modules/communities/module-config';
+import CommunitiesDiscussionsScreen, {
+  DiscussionsScreenOptions as discussionsNavBar,
+} from '~/framework/modules/communities/screens/discussions';
 import CommunitiesDocumentsScreen, { computeNavBar as documentsNavBar } from '~/framework/modules/communities/screens/documents';
 import CommunitiesHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/communities/screens/home';
 import CommunitiesJoinConfirmScreen, {
@@ -21,6 +24,12 @@ export default () =>
     <>
       <Stack.Screen name={communitiesRouteNames.list} component={CommunitiesListScreen} options={listNavBar} initialParams={{}} />
       <Stack.Screen name={communitiesRouteNames.home} component={CommunitiesHomeScreen} options={homeNavBar} initialParams={{}} />
+      <Stack.Screen
+        name={communitiesRouteNames.discussions}
+        component={CommunitiesDiscussionsScreen}
+        options={discussionsNavBar}
+        initialParams={{}}
+      />
       <Stack.Screen
         name={communitiesRouteNames.documents}
         component={CommunitiesDocumentsScreen}
