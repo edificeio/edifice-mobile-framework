@@ -2,13 +2,14 @@ import * as React from 'react';
 import { Platform, StyleProp, View, ViewStyle } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
+import { ListRenderItemInfo } from '@shopify/flash-list';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
-import { PrimaryButton } from '~/framework/components/button';
+import { PrimaryButton, TerciaryButton } from '~/framework/components/button';
 import { UI_STYLES } from '~/framework/components/constants';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
 import toast from '~/framework/components/toast';
@@ -16,7 +17,7 @@ import { AuthActiveAccount } from '~/framework/modules/auth/model';
 
 import { SocialResourceViewerContext } from './context';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
-import { type SocialResourceViewer } from './types';
+import { type SocialResourceViewer, SocialResourceViewerInternals } from './types';
 
 export const SocialResourceViewerAddCommentForm = ({
   onBlur,
@@ -108,7 +109,6 @@ export const SocialResourceViewerAddResponseForm = ({
   onFocus,
   onSubmit,
   ref,
-  replyTo,
   session,
   style: _style,
 }: {
@@ -117,7 +117,6 @@ export const SocialResourceViewerAddResponseForm = ({
   onBlur?: ChatTextAreaProps['onBlur'];
   session: AuthActiveAccount;
   onSubmit?: SocialResourceViewer.Props['onSubmit'];
-  replyTo: SocialResourceViewer.CommentItem['id'];
   ref?: ChatTextAreaProps['ref'];
 }) => {
   const [{ newResponseReplyTo, newResponseValue }, dispatch] = React.useContext(SocialResourceViewerContext);
@@ -126,16 +125,16 @@ export const SocialResourceViewerAddResponseForm = ({
     if (!onSubmit || newResponseValue === undefined || newResponseReplyTo === undefined) return;
     try {
       setIsSending(true);
-      await onSubmit({ content: newResponseValue, isRichContent: false }, replyTo);
+      await onSubmit({ content: newResponseValue, isRichContent: false }, newResponseReplyTo);
       dispatch({ newResponseReplyTo: undefined, newResponseValue: undefined });
     } catch {
       toast.showError();
     } finally {
       setIsSending(false);
     }
-  }, [dispatch, newResponseReplyTo, newResponseValue, onSubmit, replyTo]);
+  }, [dispatch, newResponseReplyTo, newResponseValue, onSubmit]);
 
-  const style = React.useMemo(() => [styles.nonStickyCommentWrapper, _style], [_style]);
+  const style = React.useMemo(() => [styles.nonStickyResponseWrapper, _style], [_style]);
 
   const onChangeText = React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
     text => {
@@ -168,6 +167,82 @@ export const SocialResourceViewerAddResponseForm = ({
           icon="ui-send"
           loading={isSending}
         />
+      </View>
+    )
+  );
+};
+
+export const SocialResourceViewerEditCommentForm = ({
+  onBlur,
+  onFocus,
+  onSubmit,
+  ref,
+  // session,
+  style: _style,
+  ...info
+}: {
+  style?: StyleProp<ViewStyle>;
+  onFocus?: ChatTextAreaProps['onFocus'];
+  onBlur?: ChatTextAreaProps['onBlur'];
+  session: AuthActiveAccount;
+  onSubmit?: SocialResourceViewer.Props['onEdit'];
+  ref?: ChatTextAreaProps['ref'];
+} & ListRenderItemInfo<SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem>) => {
+  const [{ editId, editValue }, dispatch] = React.useContext(SocialResourceViewerContext);
+  const [isSending, setIsSending] = React.useState(false);
+  const onPress = React.useCallback(async () => {
+    if (!onSubmit || editValue === undefined || editId === undefined) return;
+    try {
+      setIsSending(true);
+      await onSubmit({ content: editValue, isRichContent: false }, editId);
+      dispatch({ editHasChanges: undefined, editId: undefined, editValue: undefined });
+    } catch {
+      toast.showError();
+    } finally {
+      setIsSending(false);
+    }
+  }, [dispatch, editId, editValue, onSubmit]);
+
+  const onCancel = React.useCallback(async () => {
+    dispatch({ editHasChanges: undefined, editId: undefined, editValue: undefined });
+  }, [dispatch]);
+
+  const style = React.useMemo(() => [styles.nonStickyEditWrapper, _style], [_style]);
+  const buttonsStyle = React.useMemo(() => [styles.itemContentButtons, styles.itemContentButtonsEdit], []);
+
+  const onChangeText = React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
+    text => {
+      if (editValue === undefined || editId === undefined) return;
+      dispatch({ editHasChanges: text !== info.item.content, editId, editValue: text });
+    },
+    [dispatch, editId, editValue, info.item.content],
+  );
+
+  return (
+    editId !== undefined &&
+    editValue !== undefined && (
+      <View style={style}>
+        <ChatTextArea
+          ref={ref}
+          maxLength={80}
+          wrapperStyle={UI_STYLES.flex1}
+          value={editValue}
+          onChangeText={onChangeText}
+          editable={!isSending}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          placeholder={I18n.get('comment-add-response')}
+        />
+        <View style={buttonsStyle}>
+          <TerciaryButton
+            textStyle={styles.buttonCancel}
+            text={I18n.get('comment-cancel')}
+            testID="comment-cancel"
+            onPress={onCancel}
+            disabled={isSending}
+          />
+          <TerciaryButton text={I18n.get('comment-save')} testID="comment-save" onPress={onPress} loading={isSending} />
+        </View>
       </View>
     )
   );

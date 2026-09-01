@@ -8,6 +8,9 @@ import { AvatarSizes } from '../../avatar/styles';
 export const COMMENT_FORM_OVERSCROLL_SIZE = UI_SIZES.spacing.huge;
 
 export default StyleSheet.create({
+  buttonCancel: {
+    color: theme.palette.grey.black,
+  },
   itemAuthor: {
     flexShrink: 1,
   },
@@ -18,12 +21,16 @@ export default StyleSheet.create({
   },
   itemCommentContentWrapper: { flex: 1, gap: UI_SIZES.spacing.tiny, paddingBottom: UI_SIZES.spacing.minor },
   itemCommentContentWrapperDeletedComment: { paddingBottom: 0 },
+  itemCommentEdit: {
+    gap: 0,
+  },
   itemCommon: {
     flexDirection: 'row',
     gap: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.big,
   },
   itemContentButtons: { flexDirection: 'row', gap: UI_SIZES.spacing.minor, justifyContent: 'flex-start' },
+  itemContentButtonsEdit: { justifyContent: 'space-between' },
   itemContentDeletedText: {
     borderColor: theme.palette.grey.pearl,
     borderWidth: UI_SIZES.border.small,
@@ -97,7 +104,20 @@ export default StyleSheet.create({
     alignItems: 'baseline',
     flexDirection: 'row',
   },
-  nonStickyCommentWrapper: {
+  nonStickyEditWrapper: {
+    alignItems: 'stretch',
+    // backgroundColor: theme.ui.background.card,
+    // borderTopColor: theme.palette.grey.cloudy,
+    // borderTopWidth: UI_SIZES.border.thin,
+    flex: 1,
+    flexDirection: 'column',
+    // gap: UI_SIZES.spacing.minor,
+    // marginBottom: -COMMENT_FORM_OVERSCROLL_SIZE,
+    // paddingBottom: UI_SIZES.spacing.medium + COMMENT_FORM_OVERSCROLL_SIZE,
+    // paddingVertical: UI_SIZES.spacing.tiny,
+    // paddingTop: UI_SIZES.spacing.medium,
+  },
+  nonStickyResponseWrapper: {
     alignItems: 'flex-end',
     // backgroundColor: theme.ui.background.card,
     // borderTopColor: theme.palette.grey.cloudy,

@@ -201,6 +201,12 @@ const hydratePageComments = async (
 
 export default {
   page: {
+    editComment: async (opts: API.Wiki.GetPagePayload, id: string, comment: string) => {
+      return sessionFetch.json<API.Wiki.PostCommentResponse>(`/wiki/${opts.id}/page/${opts.pageId}/comment/${id}`, {
+        body: JSON.stringify({ comment }),
+        method: 'PUT',
+      });
+    },
     get: async (opts: API.Wiki.GetPagePayload) => {
       const rawData = await sessionFetch.json<API.Wiki.GetPageResponse>(`/wiki/${opts.id}/page/${opts.pageId}`);
       return hydrateWikiPageData(rawData);

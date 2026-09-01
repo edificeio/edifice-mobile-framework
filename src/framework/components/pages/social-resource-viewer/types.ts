@@ -111,14 +111,15 @@ export namespace SocialResourceViewerInternals {
     newResponseReplyTo?: SocialResourceViewerInternals.CommentItem['id'];
     editId?: SocialResourceViewerInternals.ResponseItem['id'];
     editValue?: string;
+    editHasChanges?: boolean;
   }
   export type ContextAction =
     | Pick<ContextState, 'newCommentHeight'>
     | Pick<ContextState, 'newCommentValue'>
     | Required<Pick<ContextState, 'newResponseReplyTo' | 'newResponseValue'>>
     | { newResponseReplyTo: undefined; newResponseValue: undefined }
-    | Required<Pick<ContextState, 'editId' | 'editValue'>>
-    | { editId: undefined; editValue: undefined };
+    | Required<Pick<ContextState, 'editId' | 'editValue' | 'editHasChanges'>>
+    | { editId: undefined; editValue: undefined; editHasChanges: undefined };
 
   export type ContextReducer = (state: ContextState, newValues: ContextAction) => ContextState;
   export type Context = [ContextState, React.ActionDispatch<[ContextAction]>];
@@ -129,6 +130,7 @@ export namespace SocialResourceViewerInternals {
     canAddComment?: boolean;
     onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;
     onSendReply?: SocialResourceViewer.Props['onSubmit'];
+    onSendEdit?: SocialResourceViewer.Props['onEdit'];
     inputRef?: ChatTextAreaProps['ref'];
     onPressEdit?: (
       item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
