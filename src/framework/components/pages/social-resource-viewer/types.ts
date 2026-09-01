@@ -42,6 +42,7 @@ export namespace SocialResourceViewer {
     responsesStartSize: number;
     responsesPageSize: number;
     showDeletedItems: 'always' | 'children' | 'never';
+    allowResponses: boolean;
   }
 
   export interface Props
@@ -128,7 +129,10 @@ export namespace SocialResourceViewerInternals {
   export type ContextReducer = (state: ContextState, newValues: ContextAction) => ContextState;
   export type Context = [ContextState, React.ActionDispatch<[ContextAction]>];
 
-  export interface ItemProps extends ListRenderItemInfo<SocialResourceViewerInternals.Item> {
+  export interface ItemProps
+    extends
+      ListRenderItemInfo<SocialResourceViewerInternals.Item>,
+      Partial<Pick<SocialResourceViewer.CommentsConfig, 'allowResponses'>> {
     onShowResponses?: (id: string, start: number, count: number) => void;
     canAddComment?: boolean;
     onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;

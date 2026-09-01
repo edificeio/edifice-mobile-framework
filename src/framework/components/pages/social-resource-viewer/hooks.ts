@@ -7,7 +7,8 @@ import React from 'react';
 
 import { SocialResourceViewer, SocialResourceViewerInternals } from './types';
 
-const DEFAULT_CONFIG: SocialResourceViewer.CommentsConfig = {
+export const DEFAULT_CONFIG: SocialResourceViewer.CommentsConfig = {
+  allowResponses: true,
   responsesPageSize: 10,
   responsesStartSize: 2,
   showDeletedItems: 'children',

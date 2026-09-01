@@ -2,6 +2,7 @@ import * as React from 'react';
 import { LayoutChangeEvent, View } from 'react-native';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { FlashListProps } from '@shopify/flash-list';
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -33,7 +34,6 @@ import { actions, selectors, WikiAction, WikiPageAction } from '~/framework/modu
 
 import styles from './styles';
 import type { WikiReaderScreen } from './types';
-import { FlashListProps } from '@shopify/flash-list';
 
 export const computeNavBar = screenOptions<'wiki/reader'>(
   ({ route }: NativeStackScreenProps<WikiNavigationParams, typeof wikiRouteNames.reader>) => {
