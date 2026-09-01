@@ -111,9 +111,12 @@ export const NotificationList = React.memo(
     );
 
     const onDelete = React.useCallback(
-      (id: string) => {
-        closeRow(id);
-        onDeleteItem(id);
+      async (id: string) => {
+        try {
+          await onDeleteItem(id);
+        } finally {
+          closeRow(id);
+        }
       },
       [closeRow, onDeleteItem],
     );
