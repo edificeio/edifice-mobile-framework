@@ -259,7 +259,6 @@ export function SocialResourceViewer({
       <SocialResourceViewerItem
         {...info}
         onShowResponses={showResponses}
-        session={session}
         canAddComment={canAddComment}
         onPressReply={onPressReply}
         onPressEdit={onPressEdit}
@@ -269,7 +268,7 @@ export function SocialResourceViewer({
         inputRef={inlineEditRef}
       />
     ),
-    [canAddComment, onEdit, onPressDelete, onPressEdit, onPressReply, onSubmit, session, showResponses],
+    [canAddComment, onEdit, onPressDelete, onPressEdit, onPressReply, onSubmit, showResponses],
   );
 
   const keyExtractor = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['keyExtractor']>>(item => {
@@ -327,13 +326,7 @@ export function SocialResourceViewer({
         onRefresh={onRefresh}
       />
       {canAddComment && (
-        <SocialResourceViewerAddCommentForm
-          onSubmit={onSubmit}
-          session={session}
-          style={inputStyle}
-          onFocus={onFocus}
-          onBlur={onBlur}
-        />
+        <SocialResourceViewerAddCommentForm onSubmit={onSubmit} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
       )}
     </SocialResourceViewerContext>
   );

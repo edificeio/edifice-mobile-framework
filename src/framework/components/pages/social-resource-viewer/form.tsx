@@ -6,6 +6,7 @@ import { ListRenderItemInfo } from '@shopify/flash-list';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
@@ -13,7 +14,7 @@ import { PrimaryButton, TerciaryButton } from '~/framework/components/button';
 import { UI_STYLES } from '~/framework/components/constants';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
 import toast from '~/framework/components/toast';
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { selectors } from '~/framework/modules/auth/redux/reducer';
 
 import { SocialResourceViewerContext } from './context';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
@@ -24,13 +25,11 @@ export const SocialResourceViewerAddCommentForm = ({
   onFocus,
   onSubmit,
   ref,
-  session,
   style,
 }: {
   style?: AnimatedStyle<ViewStyle>;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
-  session: AuthActiveAccount;
   onSubmit?: SocialResourceViewer.Props['onSubmit'];
   ref?: ChatTextAreaProps['ref'];
 }) => {
@@ -61,6 +60,8 @@ export const SocialResourceViewerAddCommentForm = ({
       setIsSending(false);
     }
   }, [dispatch, newCommentValue, onSubmit]);
+  const session = useSelector(selectors.session);
+
   return (
     <Animated.View
       style={style}
@@ -72,7 +73,7 @@ export const SocialResourceViewerAddCommentForm = ({
       )}>
       <KeyboardStickyView offset={stickyViewOffset}>
         <View style={styles.stickyCommentWrapper}>
-          <SingleAvatar size="md" userId={session.user.id} />
+          <SingleAvatar size="md" userId={session?.user.id} />
           <ChatTextArea
             ref={ref}
             maxLength={80}
@@ -109,13 +110,11 @@ export const SocialResourceViewerAddResponseForm = ({
   onFocus,
   onSubmit,
   ref,
-  session,
   style: _style,
 }: {
   style?: StyleProp<ViewStyle>;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
-  session: AuthActiveAccount;
   onSubmit?: SocialResourceViewer.Props['onSubmit'];
   ref?: ChatTextAreaProps['ref'];
 }) => {
@@ -144,11 +143,13 @@ export const SocialResourceViewerAddResponseForm = ({
     [dispatch, newResponseReplyTo, newResponseValue],
   );
 
+  const session = useSelector(selectors.session);
+
   return (
     newResponseReplyTo !== undefined &&
     newResponseValue !== undefined && (
       <View style={style}>
-        <SingleAvatar size="md" userId={session.user.id} />
+        <SingleAvatar size="md" userId={session?.user.id} />
         <ChatTextArea
           ref={ref}
           maxLength={80}
@@ -177,14 +178,12 @@ export const SocialResourceViewerEditCommentForm = ({
   onFocus,
   onSubmit,
   ref,
-  // session,
   style: _style,
   ...info
 }: {
   style?: StyleProp<ViewStyle>;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
-  session: AuthActiveAccount;
   onSubmit?: SocialResourceViewer.Props['onEdit'];
   ref?: ChatTextAreaProps['ref'];
 } & ListRenderItemInfo<SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem>) => {
