@@ -11,4 +11,5 @@ export interface RichToolbarItemProps {
   selected?: boolean;
   fill?: ColorValue;
   onSelected?: () => void;
+  testId?: string;
 }

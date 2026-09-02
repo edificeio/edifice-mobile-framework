@@ -283,6 +283,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
           iconLeft={userReaction ? userReaction.toLowerCase() : 'ui-reaction'}
           contentColor={theme.palette.grey.black}
           style={styles.button}
+          testID="button-reaction"
         />
       </Animated.View>
     );

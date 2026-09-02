@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
 import { Animated, TouchableOpacity, View } from 'react-native';
 
-import { RichToolbarActionItem } from './item/action/component';
-import { RichToolbarCustomItem } from './item/custom/component';
-import { RichToolbarSeparator } from './item/separator';
-import styles from './styles';
-import { RichToolbarProps, RichToolbarState } from './types';
-
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -14,6 +8,12 @@ import { actions } from '~/framework/components/inputs/rich-text/editor/const';
 import type RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import { RichToolbarItemsList } from '~/framework/components/inputs/rich-text/toolbar/list';
 import { Svg } from '~/framework/components/picture';
+
+import { RichToolbarActionItem } from './item/action/component';
+import { RichToolbarCustomItem } from './item/custom/component';
+import { RichToolbarSeparator } from './item/separator';
+import styles from './styles';
+import { RichToolbarProps, RichToolbarState } from './types';
 
 const toolbarTextOptions = [
   actions.setBold,
@@ -174,10 +174,16 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
                         fill={theme.palette.complementary.green.regular}
                         icon="ui-image"
                         key="bottomSheet"
+                        testId="button-editor-images"
                       />,
                     ]
                   : []),
-                <RichToolbarCustomItem icon="ui-text-options" key="text" action={this.startAnimation} />,
+                <RichToolbarCustomItem
+                  icon="ui-text-options"
+                  key="text"
+                  action={this.startAnimation}
+                  testId="button-editor-policy"
+                />,
               ]}
             />
             <View>

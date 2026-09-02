@@ -2,4 +2,5 @@ import { RichToolbarItemProps } from '~/framework/components/inputs/rich-text/to
 
 export interface RichToolbarCustomItemProps extends RichToolbarItemProps {
   action: () => void;
+  testId?: string;
 }

@@ -81,9 +81,7 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
         const file = toAdd[idx];
         const fileUrl =
           file.fileUrl ??
-          (props.uploadParams.public
-            ? `/workspace/pub/document/${file.workspaceID}`
-            : `/workspace/document/${file.workspaceID}`);
+          (props.uploadParams.public ? `/workspace/pub/document/${file.workspaceID}` : `/workspace/document/${file.workspaceID}`);
         richText.current?.insertHTML(
           `<img class="${ui.image.class}" src="${fileUrl}" width="${ui.image.width}" height="${ui.image.height}">`,
         );
@@ -220,9 +218,19 @@ const RichEditorForm = React.forwardRef<ScrollView, RichEditorFormAllProps>((pro
     return (
       <BottomSheetModal ref={choosePicsMenuRef} onDismiss={handleChoosePicsMenuDismissed}>
         <HeaderBottomSheetModal title={I18n.get('pickfile-image')} />
-        <ActionButtonBottomSheetModal title={I18n.get('pickfile-take')} icon="ui-camera" onPress={handleTakePic} />
+        <ActionButtonBottomSheetModal
+          title={I18n.get('pickfile-take')}
+          icon="ui-camera"
+          onPress={handleTakePic}
+          testID="button-image-picture"
+        />
         <Separator marginHorizontal={UI_SIZES.spacing.small} marginVertical={UI_SIZES.spacing.minor} />
-        <ActionButtonBottomSheetModal title={I18n.get('pickfile-pick')} icon="ui-smartphone" onPress={handleChoosePics} />
+        <ActionButtonBottomSheetModal
+          title={I18n.get('pickfile-pick')}
+          icon="ui-smartphone"
+          onPress={handleChoosePics}
+          testID="button-image-gallery"
+        />
       </BottomSheetModal>
     );
   };

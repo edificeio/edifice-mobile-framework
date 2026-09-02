@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Keyboard } from 'react-native';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { modalScreenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
@@ -15,7 +15,6 @@ import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigat
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { sendBlogPostAction } from '~/framework/modules/blog/actions';
-import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import {
   createBlogPostResourceRight,
@@ -25,23 +24,12 @@ import {
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
 import { BlogCreatePostScreenDataProps, BlogCreatePostScreenEventProps, BlogCreatePostScreenProps } from './types';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogCreatePost>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('blog-createpost-title'),
-    titleStyle: { width: undefined },
-  }),
-});
+export const computeNavBar = modalScreenOptions('fullScreenModal', () => ({ title: I18n.get('blog-createpost-title') }));
 
 const preventBackI18n = {
   text: 'blog-createpost-unsavedpublication',
@@ -131,7 +119,12 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
               ...(loadingState ? (
                 <LoadingIndicator small customColor={theme.ui.text.inverse} />
               ) : (
-                <NavBarAction icon="ui-send" disabled={title.trim().length === 0 || content.trim().length === 0} onPress={doSend} />
+                <NavBarAction
+                  icon="ui-send"
+                  disabled={title.trim().length === 0 || content.trim().length === 0}
+                  onPress={doSend}
+                  testID="button-header-send"
+                />
               )),
             },
           ]}
@@ -151,6 +144,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
           onChange();
         }}
         value={title}
+        testID="input-subject-title"
       />
     ),
     [title],
@@ -175,6 +169,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
         saving={saving}
         pageStyle={styles.page}
         placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
+        testID="input-subject-content"
       />
     );
   };

@@ -5,10 +5,6 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 
-import AudienceReactButton from './button';
-import styles from './styles';
-import { AudienceAllProps } from './types';
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
@@ -17,6 +13,10 @@ import { audienceService } from '~/framework/modules/audience/service';
 import { getValidReactionTypes } from '~/framework/modules/auth/redux/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { isEmpty } from '~/framework/util/object';
+
+import AudienceReactButton from './button';
+import styles from './styles';
+import { AudienceAllProps } from './types';
 
 const Audience = (props: AudienceAllProps) => {
   const { showComments = true } = props;
@@ -100,7 +100,9 @@ const Audience = (props: AudienceAllProps) => {
         <Component
           onPress={() => navigation.navigate(ModalsRouteNames.AudienceReactions, { referer: props.referer })}
           style={styles.statsItem}>
-          <TextComponent style={styles.statsItemText}>{totalReactions ?? 0}</TextComponent>
+          <TextComponent style={styles.statsItemText} testID="label-count-reaction">
+            {totalReactions ?? 0}
+          </TextComponent>
           <View style={styles.statsReactions}>
             {!isEmpty(typesReactions) ? (
               typesReactions.map(reaction => (
@@ -125,7 +127,9 @@ const Audience = (props: AudienceAllProps) => {
           <Component
             onPress={() => navigation.navigate(ModalsRouteNames.AudienceViews, { referer: props.referer })}
             style={styles.statsItem}>
-            <SmallText style={styles.statsItemText}>{props.nbViews ?? 0}</SmallText>
+            <SmallText style={styles.statsItemText} testID="label-count-view">
+              {props.nbViews ?? 0}
+            </SmallText>
             <Svg
               name="ui-see"
               fill={theme.palette.grey.graphite}
@@ -136,7 +140,9 @@ const Audience = (props: AudienceAllProps) => {
         ) : null}
         {showComments && (
           <View style={styles.statsItem}>
-            <SmallText style={styles.statsItemText}>{props.nbComments ?? 0}</SmallText>
+            <SmallText style={styles.statsItemText} testID="label-count-comment">
+              {props.nbComments ?? 0}
+            </SmallText>
             <Svg
               name="ui-messageInfo"
               fill={theme.palette.grey.graphite}
