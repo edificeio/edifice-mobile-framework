@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Platform, StyleProp, View, ViewStyle } from 'react-native';
+import { ListRenderItemInfo, Platform, StyleProp, View, ViewStyle } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { ListRenderItemInfo } from '@shopify/flash-list';
 import { KeyboardStickyView, useKeyboardState } from 'react-native-keyboard-controller';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -213,7 +212,9 @@ export const SocialResourceViewerEditCommentForm = ({
   const style = React.useMemo(() => [styles.nonStickyEditWrapper, _style], [_style]);
   const buttonsStyle = React.useMemo(() => [styles.itemContentButtons, styles.itemContentButtonsEdit], []);
 
-  const viewOffset = newCommentHeight + useKeyboardState(state => state.height) - useBottomTabBarHeight();
+  // Note: FlashList and FlatList have opposite behavior of scroll offset. The first line is for FlashList, the second is for FlatList.
+  // const viewOffset = newCommentHeight + useKeyboardState(state => state.height) - useBottomTabBarHeight();
+  const viewOffset = -newCommentHeight - useKeyboardState(state => state.height) + useBottomTabBarHeight();
 
   const onChangeText = React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
     text => {

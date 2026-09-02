@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Alert, Platform, TextInput, View } from 'react-native';
+import { Alert, FlatList, Platform, TextInput, View } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
-import { FlashList, FlashListProps, FlashListRef } from '@shopify/flash-list';
 import { KeyboardChatScrollView, useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
 import Animated, { useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -26,7 +25,7 @@ import { SocialResourceViewerItem } from './item';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
 import { type SocialResourceViewer, SocialResourceViewerInternals } from './types';
 
-const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<SocialResourceViewerInternals.Item>);
+// const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<SocialResourceViewerInternals.Item>);
 
 export function SocialResourceViewer({
   allowResponses = DEFAULT_CONFIG.allowResponses,
@@ -59,7 +58,7 @@ export function SocialResourceViewer({
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   // Component layout
-  const listRef = React.useRef<FlashListRef<SocialResourceViewerInternals.Item>>(null);
+  const listRef = React.useRef<FlatList<SocialResourceViewerInternals.Item>>(null);
   const [measuredResourceHeight, setMeasuredResourceHeight] = React.useState(0);
   const [measuredListHeight, setMeasuredListHeight] = React.useState(0);
   const inlineEditRef = React.useRef<TextInput>(null);
@@ -262,7 +261,7 @@ export function SocialResourceViewer({
     [onDelete],
   );
 
-  const renderItem = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['renderItem']>>(
+  const renderItem = React.useCallback<NonNullable<FlatListProps<SocialResourceViewerInternals.Item>['renderItem']>>(
     info => (
       <SocialResourceViewerItem
         {...info}
@@ -281,7 +280,7 @@ export function SocialResourceViewer({
     [allowResponses, canAddComment, onEdit, onPressDelete, onPressEdit, onPressReply, onSubmit, showResponses],
   );
 
-  const keyExtractor = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['keyExtractor']>>(item => {
+  const keyExtractor = React.useCallback<NonNullable<FlatListProps<SocialResourceViewerInternals.Item>['keyExtractor']>>(item => {
     switch (item.type) {
       case SocialResourceViewerInternals.ITEM_COMMENT:
       case SocialResourceViewerInternals.ITEM_COMMENT_DELETED:
@@ -295,10 +294,10 @@ export function SocialResourceViewer({
     }
   }, []);
 
-  const getItemType = React.useCallback<NonNullable<FlashListProps<SocialResourceViewerInternals.Item>['getItemType']>>(
-    item => item.type.toString(),
-    [],
-  );
+  // const getItemType = React.useCallback<NonNullable<FlatListProps<SocialResourceViewerInternals.Item>['getItemType']>>(
+  //   item => item.type.toString(),
+  //   [],
+  // );
 
   // auto-scroll
   const previousFocusItem = usePrevious(focusItem);
@@ -318,7 +317,7 @@ export function SocialResourceViewer({
 
   return (
     <SocialResourceViewerContext value={context}>
-      <AnimatedFlashList
+      <Animated.FlatList
         ref={listRef}
         onLayout={onLayout}
         keyboardDismissMode="interactive"
@@ -326,7 +325,7 @@ export function SocialResourceViewer({
         renderScrollComponent={renderScrollComponent}
         data={flatData}
         renderItem={renderItem}
-        getItemType={getItemType}
+        // getItemType={getItemType}
         keyExtractor={keyExtractor}
         ListHeaderComponent={resourceElement}
         ListFooterComponent={<View style={listFooterStyle} />}
