@@ -1,9 +1,9 @@
-import { StyleProp, ViewStyle } from 'react-native';
+import { FlatList, FlatListProps, ListRenderItemInfo, StyleProp, ViewStyle } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { FlashListProps, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
+// import { FlashListProps, FlashListRef } from '@shopify/flash-list';
 
 import { AccountType } from '~/framework/modules/auth/model';
 
@@ -50,7 +50,7 @@ export namespace SocialResourceViewer {
       Pick<NativeStackScreenProps<ParamListBase>, 'navigation'>,
       React.PropsWithChildren,
       Partial<CommentsConfig>,
-      Pick<FlashListProps<SocialResourceViewerInternals.Item>, 'refreshControl'> {
+      Pick<FlatListProps<SocialResourceViewerInternals.Item>, 'refreshControl'> {
     canAddComment: boolean;
     alwaysShowCommentField?: boolean;
     style?: StyleProp<ViewStyle>;
@@ -139,7 +139,7 @@ export namespace SocialResourceViewerInternals {
     onSendReply?: SocialResourceViewer.Props['onSubmit'];
     onSendEdit?: SocialResourceViewer.Props['onEdit'];
     inputRef?: ChatTextAreaProps['ref'];
-    listRef?: React.RefObject<FlashListRef<SocialResourceViewerInternals.Item> | null>;
+    listRef?: React.RefObject<FlatList<SocialResourceViewerInternals.Item> | null>;
     onPressEdit?: (
       item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
       index: number,

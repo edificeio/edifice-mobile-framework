@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { ListRenderItemInfo, View } from 'react-native';
 
-import { ListRenderItemInfo } from '@shopify/flash-list';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
