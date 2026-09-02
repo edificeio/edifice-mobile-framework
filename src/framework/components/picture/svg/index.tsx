@@ -254,6 +254,7 @@ const imports = {
   'ui-download': async () => import('ASSETS/icons/uiIcons/download.svg'),
   'ui-drag': async () => import('ASSETS/icons/uiIcons/drag.svg'),
   'ui-edifice': async () => import('ASSETS/icons/uiIcons/edifice.svg'),
+  'ui-edifice-comments-color': async () => import('ASSETS/images/comments/comments-color.svg'),
   'ui-edifice-shape-arc': async () => import('ASSETS/images/wiki/edifice-shape-arc.svg'),
   'ui-edifice-shape-half-circle': async () => import('ASSETS/images/wiki/edifice-shape-half-circle.svg'),
   'ui-edit': async () => import('ASSETS/icons/uiIcons/edit.svg'),

@@ -347,6 +347,8 @@
   "comment-canceledit-alert-text": "Un commentaire est cours de modification. Êtes-vous sûr d'annuler vos changements ?",
   "comment-delete-alert-title": "Suppression",
   "comment-delete-alert-text": "Êtes-vous sûr de supprimer ce commentaire ?",
+  "comments-empty-title": "Pas encore de commentaires",
+  "comments-empty-description": "Commencez une discussion !",
   "commentfield-modify": "Modifier",
   "common-by": "Par :",
   "common-cancel": "Annuler",

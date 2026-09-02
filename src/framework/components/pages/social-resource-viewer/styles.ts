@@ -1,15 +1,57 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-
-import { AvatarSizes } from '../../avatar/styles';
+import { AvatarSizes } from '~/framework/components/avatar/styles';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export const COMMENT_FORM_OVERSCROLL_SIZE = UI_SIZES.spacing.huge;
 
 export default StyleSheet.create({
   buttonCancel: {
     color: theme.palette.grey.black,
+  },
+  emptyBorderBottom: {
+    backgroundColor: theme.palette.grey.cloudy,
+    height: UI_SIZES.border.thin,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  emptyBorderTop: {
+    backgroundColor: theme.palette.grey.cloudy,
+    bottom: 0,
+    height: UI_SIZES.border.thin,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
+  emptyDeco: {
+    flex: 0,
+    height: getScaleWidth(40),
+    width: getScaleWidth(50),
+  },
+  emptyDecoBackground: {
+    alignSelf: 'center',
+    height: getScaleWidth(92),
+    left: -UI_SIZES.spacing.tiny,
+    position: 'absolute',
+    transform: [{ scaleX: -1 }],
+    width: getScaleWidth(46),
+  },
+  emptyDescription: {
+    color: theme.palette.grey.graphite,
+  },
+  emptyTexts: { flex: 1, flexDirection: 'column' },
+  emptyTitle: {},
+  emptyWrapper: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: UI_SIZES.spacing.medium,
+    marginBottom: -UI_SIZES.border.thin,
+    overflow: 'hidden',
+    paddingHorizontal: UI_SIZES.spacing.big,
+    paddingVertical: UI_SIZES.spacing.minor,
   },
   itemAuthor: {
     flexShrink: 1,
