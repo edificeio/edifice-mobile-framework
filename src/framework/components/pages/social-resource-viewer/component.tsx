@@ -10,9 +10,12 @@ import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { FlatListProps } from '~/framework/components/list/flat-list';
+import { Svg } from '~/framework/components/picture';
+import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import { usePrevious } from '~/framework/hooks/previous';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 
@@ -330,6 +333,7 @@ export function SocialResourceViewer({
         keyboardShouldPersistTaps="handled"
         refreshControl={refreshControl}
         onRefresh={onRefresh}
+        ListEmptyComponent={<SocialResourceViewerEmpty canAddComment={canAddComment ?? false} />}
       />
       {canAddComment && (
         <SocialResourceViewerAddCommentForm onSubmit={onSubmit} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
@@ -339,3 +343,30 @@ export function SocialResourceViewer({
 }
 
 export const SocialResourceViewerError = () => <EmptyContentScreen />;
+
+export const SocialResourceViewerEmpty = ({ canAddComment }: Pick<SocialResourceViewer.Props, 'canAddComment'>) =>
+  canAddComment && (
+    <View style={styles.emptyWrapper}>
+      <Svg
+        name="ui-edifice-shape-half-circle"
+        style={styles.emptyDecoBackground}
+        fill={theme.palette.primary.light}
+        preserveAspectRatio="meet"
+        width={styles.emptyDecoBackground.width}
+        height={styles.emptyDecoBackground.height}
+      />
+      <Svg
+        name="ui-edifice-comments-color"
+        style={styles.emptyDeco}
+        preserveAspectRatio="meet"
+        width={styles.emptyDeco.width}
+        height={styles.emptyDeco.height}
+      />
+      <View style={styles.emptyBorderTop} />
+      <View style={styles.emptyBorderBottom} />
+      <View style={styles.emptyTexts}>
+        <SmallBoldText style={styles.emptyTitle}>{I18n.get('comments-empty-title')}</SmallBoldText>
+        <CaptionText style={styles.emptyDescription}>{I18n.get('comments-empty-description')}</CaptionText>
+      </View>
+    </View>
+  );
