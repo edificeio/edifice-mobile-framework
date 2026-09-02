@@ -275,6 +275,7 @@ export function SocialResourceViewer({
         onSendEdit={onEdit}
         onPressDelete={onPressDelete}
         inputRef={inlineEditRef}
+        listRef={listRef}
       />
     ),
     [allowResponses, canAddComment, onEdit, onPressDelete, onPressEdit, onPressReply, onSubmit, showResponses],

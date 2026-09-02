@@ -277,12 +277,13 @@ export const SocialResourceViewerAddResponseItem = ({
 
 export const SocialResourceViewerEditCommentItem = ({
   inputRef,
+  listRef,
   onSubmit,
   ...info
 }: ListRenderItemInfo<SocialResourceViewerInternals.CommentItem> & {
   onSubmit?: SocialResourceViewer.Props['onEdit'];
   inputRef?: SocialResourceViewerInternals.ItemProps['inputRef'];
-}) => {
+} & Pick<SocialResourceViewerInternals.ItemProps, 'listRef'>) => {
   const { item } = info;
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
   const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeComment], []);
@@ -296,7 +297,7 @@ export const SocialResourceViewerEditCommentItem = ({
       </View>
       <View style={styles.itemCommentContentWrapper}>
         <SocialResourceViewerContentItemHeader {...info} />
-        <SocialResourceViewerEditCommentForm onSubmit={onSubmit} ref={inputRef} {...info} />
+        <SocialResourceViewerEditCommentForm onSubmit={onSubmit} ref={inputRef} listRef={listRef} {...info} />
       </View>
     </View>
   );
@@ -304,12 +305,13 @@ export const SocialResourceViewerEditCommentItem = ({
 
 export const SocialResourceViewerEditResponseItem = ({
   inputRef,
+  listRef,
   onSubmit,
   ...info
 }: ListRenderItemInfo<SocialResourceViewerInternals.ResponseItem> & {
   onSubmit?: SocialResourceViewer.Props['onEdit'];
   inputRef?: SocialResourceViewerInternals.ItemProps['inputRef'];
-}) => {
+} & Pick<SocialResourceViewerInternals.ItemProps, 'listRef'>) => {
   const { item } = info;
   const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemResponse], []);
   const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeResponse], []);
@@ -328,7 +330,7 @@ export const SocialResourceViewerEditResponseItem = ({
       </View>
       <View style={styles.itemResponseContentWrapper}>
         <SocialResourceViewerContentItemHeader {...info} />
-        <SocialResourceViewerEditCommentForm onSubmit={onSubmit} ref={inputRef} {...info} />
+        <SocialResourceViewerEditCommentForm onSubmit={onSubmit} ref={inputRef} listRef={listRef} {...info} />
       </View>
     </View>
   );
@@ -338,6 +340,7 @@ export const SocialResourceViewerItem = ({
   allowResponses,
   canAddComment,
   inputRef,
+  listRef,
   onPressDelete,
   onPressEdit,
   onPressReply,
@@ -354,6 +357,7 @@ export const SocialResourceViewerItem = ({
         {...(info as ListRenderItemInfo<SocialResourceViewerInternals.CommentItem>)}
         onSubmit={onSendEdit}
         inputRef={inputRef}
+        listRef={listRef}
       />
     ) : (
       <SocialResourceViewerCommentItem
@@ -371,6 +375,7 @@ export const SocialResourceViewerItem = ({
         {...(info as ListRenderItemInfo<SocialResourceViewerInternals.ResponseItem>)}
         onSubmit={onSendEdit}
         inputRef={inputRef}
+        listRef={listRef}
       />
     ) : (
       <SocialResourceViewerResponseItem

@@ -3,7 +3,7 @@ import { StyleProp, ViewStyle } from 'react-native';
 import { Temporal } from '@js-temporal/polyfill';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { FlashListProps, ListRenderItemInfo } from '@shopify/flash-list';
+import { FlashListProps, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 
 import { AccountType } from '~/framework/modules/auth/model';
 
@@ -139,6 +139,7 @@ export namespace SocialResourceViewerInternals {
     onSendReply?: SocialResourceViewer.Props['onSubmit'];
     onSendEdit?: SocialResourceViewer.Props['onEdit'];
     inputRef?: ChatTextAreaProps['ref'];
+    listRef?: React.RefObject<FlashListRef<SocialResourceViewerInternals.Item> | null>;
     onPressEdit?: (
       item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem,
       index: number,
