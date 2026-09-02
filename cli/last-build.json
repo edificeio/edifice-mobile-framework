@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-08-27 16:01:36",
-  "notes": "update(stack): yarn cache update && allow android parallel sync\nupdate(stack): yarn cache update\nfeat(communities): PEDAGO-4212 discussion list loader\nfeat(communities): PEDAGO-2897 adding discussions list screen (324)\nupdate(stack): yarn cache update\nMerge branch 'dev/1.17.6' into dev/peda\nfeat(communities): PEDAGO-2898 adding conversation cards\nupdate(stack): yarn cache update\nMerge branch 'main' into dev/1.17.6\nMerge branch 'release/1.17.5-android'\nrelease: 1.17.5-rc.3(1170503)",
-  "version": "1.17.6-peda.2(1170604)",
+  "last": "2026-09-01 17:31:28",
+  "notes": "update(stack): yarn cache update\nfeat(communities) PEDAGO-4287 : adding test ids\nchore(dependencies): PEDAGO-4281 : updating edifice clients versions (communities and collect)\nfix(communities): PEDAGO-4060 adding web redirection, fixing fetch with member status\nMerge branch 'dev/1.17.6' into dev/peda\nMerging dev/peda into dev/1.17.6\nrelease: 1.17.6-peda.2(1170604)",
+  "version": "1.17.6-peda.3(1170605)",
   "track": "1.17.6",
-  "order": "peda.2"
+  "order": "peda.3"
 }

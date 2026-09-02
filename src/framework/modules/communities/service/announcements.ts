@@ -15,7 +15,7 @@ import { audienceService } from '~/framework/modules/audience/service';
 import { toMedia } from '~/framework/modules/communities/adapter';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { getCollectionsByCollectId } from '~/framework/modules/communities/service/collections';
-import { Media } from '~/framework/util/media';
+import { Media } from '~/framework/modules/media';
 import { sessionApi } from '~/framework/util/transport';
 
 export const ANNOUNCEMENT_AUDIENCE_REFERER = {
