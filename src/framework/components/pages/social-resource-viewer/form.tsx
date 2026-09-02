@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Platform, StyleProp, View, ViewStyle } from 'react-native';
 
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { ListRenderItemInfo } from '@shopify/flash-list';
-import { KeyboardStickyView } from 'react-native-keyboard-controller';
+import { KeyboardStickyView, useKeyboardState } from 'react-native-keyboard-controller';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
@@ -174,6 +175,7 @@ export const SocialResourceViewerAddResponseForm = ({
 };
 
 export const SocialResourceViewerEditCommentForm = ({
+  listRef,
   onBlur,
   onFocus,
   onSubmit,
@@ -186,8 +188,10 @@ export const SocialResourceViewerEditCommentForm = ({
   onBlur?: ChatTextAreaProps['onBlur'];
   onSubmit?: SocialResourceViewer.Props['onEdit'];
   ref?: ChatTextAreaProps['ref'];
-} & ListRenderItemInfo<SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem>) => {
-  const [{ editId, editValue }, dispatch] = React.useContext(SocialResourceViewerContext);
+} & ListRenderItemInfo<SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem> &
+  Pick<SocialResourceViewerInternals.ItemProps, 'listRef'>) => {
+  const scrollToAllowed = React.useRef(true);
+  const [{ editId, editValue, newCommentHeight }, dispatch] = React.useContext(SocialResourceViewerContext);
   const [isSending, setIsSending] = React.useState(false);
   const onPress = React.useCallback(async () => {
     if (!onSubmit || editValue === undefined || editId === undefined) return;
@@ -209,12 +213,21 @@ export const SocialResourceViewerEditCommentForm = ({
   const style = React.useMemo(() => [styles.nonStickyEditWrapper, _style], [_style]);
   const buttonsStyle = React.useMemo(() => [styles.itemContentButtons, styles.itemContentButtonsEdit], []);
 
+  const viewOffset = newCommentHeight + useKeyboardState(state => state.height) - useBottomTabBarHeight();
+
   const onChangeText = React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
     text => {
       if (editValue === undefined || editId === undefined) return;
       dispatch({ editHasChanges: text !== info.item.content, editId, editValue: text });
+      if (scrollToAllowed.current === true) {
+        listRef?.current?.scrollToIndex({ animated: true, index: info.index, viewOffset, viewPosition: 1 });
+        scrollToAllowed.current = false;
+        setTimeout(() => {
+          scrollToAllowed.current = true;
+        }, 500);
+      }
     },
-    [dispatch, editId, editValue, info.item.content],
+    [dispatch, editId, editValue, info.index, info.item.content, listRef, viewOffset],
   );
 
   return (
