@@ -33,7 +33,7 @@ const InfoHeader = ({ author, date }: Readonly<Pick<AnnouncementDetails<number>,
 
 const AnnouncementListItem = ({ announcement, session, style, userRole }: Readonly<AnnouncementListItemProps>) => {
   if (announcement.type === AnnouncementType.COLLECT) {
-    return <CollectionItem announcement={announcement} style={style} userRole={userRole} />;
+    return <CollectionItem announcement={announcement} platformUrl={session.platform.url} style={style} userRole={userRole} />;
   }
 
   return (

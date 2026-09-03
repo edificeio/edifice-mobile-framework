@@ -14,7 +14,7 @@ export const getCollectionsByCollectId = async (
   const collectClient = sessionApi(COLLECT_API, CollectionClient as any) as unknown as CollectionClient; // bug with CollectionClient typings
   const queryParams = { ids: collectIds, size: collectIds.length };
   const [{ items: collections }, { items: submissions }] = await Promise.all([
-    collectClient.getCollections(queryParams),
+    collectClient.getCollections(queryParams).catch(() => ({ items: [] as CollectionDto[] })),
     collectClient.getCollectionsToSubmit(queryParams),
   ]);
 
