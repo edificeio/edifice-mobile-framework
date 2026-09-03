@@ -45,20 +45,28 @@ DerivedData
 ios/assets
 ios/appe/main.jsbundle
 
+# Yarn (without zero-install)
+# .pnp.*
+# .yarn/*
+# !.yarn/patches
+# !.yarn/plugins
+# !.yarn/releases
+# !.yarn/sdks
+# !.yarn/versions
+# yarn-error.log
+
 # Lockfiles
 package-lock.json
 jetificableGroups.json
 ios/Podfile.lock
 Gemfile.lock
-yarn.lock
 
 # Metals (scala)
 .metals
 
-# node.js / npm / yarn
+# node.js / npm
 node_modules/
 npm-debug.log
-yarn-error.log
 
 # Overrides
 __overrides__
@@ -76,12 +84,3 @@ vendor
 
 # VS Code
 .vscode/
-
-# Yarn
-.yarn/*
-!.yarn/cache
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
