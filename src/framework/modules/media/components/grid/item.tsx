@@ -1,8 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, TouchableOpacityProps, View, ViewProps } from 'react-native';
 
-import styles from './styles';
-
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -23,6 +21,8 @@ import {
 import { getMediaIcon } from '~/framework/modules/media/navigation';
 import { Image } from '~/framework/util/media-deprecated';
 import { sessionImageSource, sessionURISource } from '~/framework/util/transport';
+
+import styles from './styles';
 
 export interface MediaDefaultItemProps {
   media: Media;
@@ -123,9 +123,10 @@ export interface MediaItemProps {
   media: Media;
   style?: ViewProps['style'];
   onPress?: TouchableOpacityProps['onPress'];
+  testID?: string;
 }
 
-export function MediaItem({ media, onPress, style }: Readonly<MediaItemProps>) {
+export function MediaItem({ media, onPress, style, testID }: Readonly<MediaItemProps>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
   let itemElement: React.ReactElement;
   if (isImageMedia(media)) {
@@ -138,7 +139,7 @@ export function MediaItem({ media, onPress, style }: Readonly<MediaItemProps>) {
     itemElement = <MediaDefaultItem media={media} />;
   }
   return (
-    <WrapperComponent onPress={onPress} style={React.useMemo(() => [styles.mediaCard, style], [style])}>
+    <WrapperComponent onPress={onPress} style={React.useMemo(() => [styles.mediaCard, style], [style])} testID={testID}>
       {itemElement}
     </WrapperComponent>
   );

@@ -36,7 +36,6 @@ import { schoolbookService } from '~/framework/modules/schoolbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { removeFirstWord } from '~/framework/util/string';
 
 //FIXME: create/move to styles.ts
 const styles = {
@@ -189,7 +188,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
           const allChildren = childrenByStructure?.map(structure => structure.children)?.flat();
           const formattedAllChildren = allChildren?.map(child => ({
             id: child.id,
-            name: child.displayName && removeFirstWord(child.displayName),
+            name: child.firstName || child.displayName,
           }));
           const wordsCountPromises = formattedAllChildren?.map(child =>
             schoolbookService.list.parentUnacknowledgedWordsCount(session, child.id),

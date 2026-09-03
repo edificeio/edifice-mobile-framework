@@ -139,7 +139,7 @@ export const communityNavBar = <NavigationParams extends ParamListBase, RouteNam
         headerRight={
           onRightButton
             ? () => (
-                <TouchableOpacity style={NAVBAR_RIGHT_BUTTON_STYLE} onPress={onRightButton}>
+                <TouchableOpacity style={NAVBAR_RIGHT_BUTTON_STYLE} onPress={onRightButton} testID="communities-navbar-right">
                   <Svg
                     name={rightButtonIcon}
                     width={UI_SIZES.elements.icon.small}
