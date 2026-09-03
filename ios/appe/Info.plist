@@ -5,7 +5,7 @@
 	<key>BundleVersionOverride</key>
 	<string>empty</string>
 	<key>BundleVersionType</key>
-	<string>rc.1</string>
+	<string>rc.2</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -27,7 +27,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1170606</string>
+	<string>1170607</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>http</string>

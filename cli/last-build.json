@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-09-03 12:22:29",
-  "notes": "chore: yarn cache update\nchore: fucking install-state.gz\nchore: yarn cache update\nfix(schoolbook): IMPULS-4737, show the child's first name instead of guessing it (325)\nfix(myapps): IMPULS-6255, register the livret scolaire icon under the name the app sends (326)\nUpdated translations from Phrase (327)\nMerging dev/peda into dev/1.17.6",
-  "version": "1.17.6-rc.1(1170606)",
+  "last": "2026-09-03 13:01:56",
+  "notes": "Updated translations from Phrase (328)\nrelease: 1.17.6-rc.1(1170606)",
+  "version": "1.17.6-rc.2(1170607)",
   "track": "1.17.6",
-  "order": "rc.1"
+  "order": "rc.2"
 }
