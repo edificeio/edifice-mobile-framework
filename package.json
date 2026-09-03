@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.17.6",
+  "version": "1.17.7",
   "private": true,
   "codegenConfig": {
     "name": "AppSpecs",
@@ -54,8 +54,8 @@
   "dependencies": {
     "@bam.tech/react-native-image-resizer": "3.0.11",
     "@d11/react-native-fast-image": "8.13.0",
-    "@edifice.io/collect-client-rest-rn": "1.0.4",
-    "@edifice.io/community-client-rest-rn": "1.4.7-0",
+    "@edifice.io/collect-client-rest-rn": "1.0.8",
+    "@edifice.io/community-client-rest-rn": "1.5.4",
     "@emotion/native": "11.11.0",
     "@emotion/react": "11.14.0",
     "@flyerhq/react-native-android-uri-path": "2.3.0",

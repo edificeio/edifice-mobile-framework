@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-08-17 17:34:58",
-  "notes": "release: 1.17.5-rc.2(1170502)",
-  "version": "1.17.5-rc.3(1170503)",
-  "track": "1.17.5",
-  "order": "rc.3"
+  "last": "2026-09-03 13:01:56",
+  "notes": "Updated translations from Phrase (328)\nrelease: 1.17.6-rc.1(1170606)",
+  "version": "1.17.6-rc.2(1170607)",
+  "track": "1.17.6",
+  "order": "rc.2"
 }

@@ -21,7 +21,7 @@ const PostDetails = React.memo((props: Readonly<PostDetailsProps<number>>) => {
   const referer = React.useMemo(() => ({ ...ANNOUNCEMENT_AUDIENCE_REFERER, resourceId: resourceId.toString() }), [resourceId]);
 
   return (
-    <View style={style}>
+    <View style={style} testID="communities-announcement">
       {header}
       {richContent}
       <MediaGrid navigation={useNavigation()} media={media} />

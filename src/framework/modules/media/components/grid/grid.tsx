@@ -35,6 +35,7 @@ export function MediaGrid({ media = MediaGrid.EMPTY_MEDIA, navigation }: Readonl
               key={toURISource(item.src).uri}
               media={item}
               style={itemStyle}
+              testID={`media-grid-${index}`}
               onPress={() => {
                 openMedias(navigation, media, index);
               }}
