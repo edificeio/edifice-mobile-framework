@@ -46,14 +46,14 @@ ios/assets
 ios/appe/main.jsbundle
 
 # Yarn (without zero-install)
-# .pnp.*
-# .yarn/*
-# !.yarn/patches
-# !.yarn/plugins
-# !.yarn/releases
-# !.yarn/sdks
-# !.yarn/versions
-# yarn-error.log
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+yarn-error.log
 
 # Lockfiles
 package-lock.json
