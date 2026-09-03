@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-09-01 17:31:28",
-  "notes": "update(stack): yarn cache update\nfeat(communities) PEDAGO-4287 : adding test ids\nchore(dependencies): PEDAGO-4281 : updating edifice clients versions (communities and collect)\nfix(communities): PEDAGO-4060 adding web redirection, fixing fetch with member status\nMerge branch 'dev/1.17.6' into dev/peda\nMerging dev/peda into dev/1.17.6\nrelease: 1.17.6-peda.2(1170604)",
-  "version": "1.17.6-peda.3(1170605)",
+  "last": "2026-09-03 12:22:29",
+  "notes": "chore: yarn cache update\nchore: fucking install-state.gz\nchore: yarn cache update\nfix(schoolbook): IMPULS-4737, show the child's first name instead of guessing it (325)\nfix(myapps): IMPULS-6255, register the livret scolaire icon under the name the app sends (326)\nUpdated translations from Phrase (327)\nMerging dev/peda into dev/1.17.6",
+  "version": "1.17.6-rc.1(1170606)",
   "track": "1.17.6",
-  "order": "peda.3"
+  "order": "rc.1"
 }
