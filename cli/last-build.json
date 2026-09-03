@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-09-01 17:31:28",
-  "notes": "update(stack): yarn cache update\nfeat(communities) PEDAGO-4287 : adding test ids\nchore(dependencies): PEDAGO-4281 : updating edifice clients versions (communities and collect)\nfix(communities): PEDAGO-4060 adding web redirection, fixing fetch with member status\nMerge branch 'dev/1.17.6' into dev/peda\nMerging dev/peda into dev/1.17.6\nrelease: 1.17.6-peda.2(1170604)",
-  "version": "1.17.6-peda.3(1170605)",
+  "last": "2026-09-03 13:01:56",
+  "notes": "Updated translations from Phrase (328)\nrelease: 1.17.6-rc.1(1170606)",
+  "version": "1.17.6-rc.2(1170607)",
   "track": "1.17.6",
-  "order": "peda.3"
+  "order": "rc.2"
 }
