@@ -26,9 +26,12 @@ export function useCarnetDeBord() {
   return {
     children,
     data,
-    error: state.error,
+    // The reducer keeps the last error even after a later success, so it only counts while there
+    // is nothing to show.
+    error: data.length ? undefined : state.error,
     load,
-    loading: state.isPristine || state.isFetching,
+    // A failed request leaves the state pristine, which would keep the loading on for ever.
+    loading: state.isFetching || (state.isPristine && !state.error),
     select,
     selected,
     selectedId,
