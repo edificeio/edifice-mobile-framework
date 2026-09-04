@@ -2,6 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import {
+  AnnouncementSearchType,
   AnnouncementType,
   CommunityClient,
   CommunitySection,
@@ -56,9 +57,19 @@ const ANNOUNCEMENTS_PAGE_SIZE = 20;
 const EMPTY_DISCUSSIONS_SUMMARY: DiscussionsSummary = { hasUnreadMessages: false, totalDiscussions: 0 };
 
 const ANNOUNCEMENT_FILTERS = [
-  { i18n: 'communities-announcements-filter-all', id: 'all', type: undefined },
-  { i18n: 'communities-announcements-filter-information', id: 'information', type: AnnouncementType.INFORMATION },
-  { i18n: 'communities-announcements-filter-collect', id: 'collect', type: AnnouncementType.COLLECT },
+  { i18n: 'communities-announcements-filter-all', id: 'all', searchType: AnnouncementSearchType.ALL, type: undefined },
+  {
+    i18n: 'communities-announcements-filter-information',
+    id: 'information',
+    searchType: AnnouncementSearchType.INFORMATION,
+    type: AnnouncementType.INFORMATION,
+  },
+  {
+    i18n: 'communities-announcements-filter-collect',
+    id: 'collect',
+    searchType: AnnouncementSearchType.COLLECT,
+    type: AnnouncementType.COLLECT,
+  },
 ] as const;
 
 const ALL_FILTER_INDEX = ANNOUNCEMENT_FILTERS.findIndex(filter => filter.type === undefined);
@@ -131,10 +142,32 @@ export const CommunitiesHomeScreenLoaded = function ({
     [],
   );
 
-  const [announcements, setAnnouncements] = React.useState<AnnouncementsPage>([]);
+  const [announcementsByFilter, setAnnouncementsByFilter] = React.useState<Record<number, AnnouncementsPage>>({});
   const [isLoadingAnnouncements, setIsLoadingAnnouncements] = React.useState(true);
   const [filterIndex, setFilterIndex] = React.useState(ALL_FILTER_INDEX);
-  const data = filterIndex === ALL_FILTER_INDEX ? announcements : NO_ANNOUNCEMENTS;
+
+  const announcements = announcementsByFilter[ALL_FILTER_INDEX] ?? NO_ANNOUNCEMENTS;
+
+  const recycled = React.useMemo(() => {
+    const { type } = ANNOUNCEMENT_FILTERS[filterIndex];
+    if (!type) return NO_ANNOUNCEMENTS;
+
+    const firstHole = announcements.indexOf(LOADING_ITEM_DATA);
+    const loadedHead = firstHole < 0 ? announcements : announcements.slice(0, firstHole);
+
+    return loadedHead.filter(item => item !== LOADING_ITEM_DATA && item.type === type);
+  }, [announcements, filterIndex]);
+
+  const data = React.useMemo<AnnouncementsPage>(() => {
+    const own = announcementsByFilter[filterIndex];
+    if (own) return own;
+    if (filterIndex === ALL_FILTER_INDEX) return NO_ANNOUNCEMENTS;
+    // TODO: drop this once the collects tab gets wired the same way.
+    if (filterIndex === COLLECT_FILTER_INDEX) return NO_ANNOUNCEMENTS;
+
+    const isAllComplete = announcements.length > 0 && !announcements.includes(LOADING_ITEM_DATA);
+    return isAllComplete ? recycled : [...recycled, LOADING_ITEM_DATA];
+  }, [announcementsByFilter, filterIndex, announcements, recycled]);
 
   const renderItem = React.useCallback(
     ({ index, item }: { index: number; item: AnnouncementDetails<number> }) => {
@@ -229,39 +262,51 @@ export const CommunitiesHomeScreenLoaded = function ({
     ],
   );
 
-  // Note: `onViewableItemsChanged` can ask twice for the same page while it is still in flight.
-  const loadingPagesRef = React.useRef<Set<number>>(new Set());
+  const loadingPagesRef = React.useRef<Set<string>>(new Set());
+  const recycledRef = React.useRef(recycled);
+  recycledRef.current = recycled;
 
   const loadPage = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
-      if (loadingPagesRef.current.has(page)) return;
-      loadingPagesRef.current.add(page);
+      // A refresh always reloads the 'all' list, which every other list derives from
+      const targetFilterIndex = reloadAll ? ALL_FILTER_INDEX : filterIndex;
+      const loadingPageKey = `${targetFilterIndex}-${page}`;
+      if (loadingPagesRef.current.has(loadingPageKey)) return;
+      loadingPagesRef.current.add(loadingPageKey);
 
       try {
         const { announcements: newAnnouncements, total } = await getAnnouncementsDetails(
           communityId,
           page,
           ANNOUNCEMENTS_PAGE_SIZE,
+          ANNOUNCEMENT_FILTERS[targetFilterIndex].searchType,
           role,
         );
 
-        setAnnouncements(prevData =>
-          staleOrSplice({
+        setAnnouncementsByFilter(prevData => {
+          const merged = staleOrSplice({
             newData: newAnnouncements,
-            previousData: prevData,
+            previousData: prevData[targetFilterIndex] ?? NO_ANNOUNCEMENTS,
             reloadAll,
             start: page * ANNOUNCEMENTS_PAGE_SIZE,
             total,
-          }),
-        );
+          });
+
+          // Put the prefix back because `staleOrSplice` can start over from an empty array
+          const prefix = targetFilterIndex === ALL_FILTER_INDEX ? NO_ANNOUNCEMENTS : recycledRef.current;
+          if (prefix.length) merged.splice(0, prefix.length, ...prefix);
+
+          // On a refresh, drop the derived lists
+          return reloadAll ? { [ALL_FILTER_INDEX]: merged } : { ...prevData, [targetFilterIndex]: merged };
+        });
       } catch (e) {
         console.error('Error while loading community announcements list', e);
       } finally {
         setIsLoadingAnnouncements(false);
-        loadingPagesRef.current.delete(page);
+        loadingPagesRef.current.delete(loadingPageKey);
       }
     },
-    [communityId, role],
+    [communityId, filterIndex, role],
   );
 
   useFocusEffect(

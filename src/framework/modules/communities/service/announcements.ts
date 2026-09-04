@@ -55,12 +55,13 @@ export const getAnnouncementsDetails = async (
   communityId: number,
   page: number,
   size: number,
+  type: AnnouncementSearchType = AnnouncementSearchType.ALL,
   userRole?: MembershipRole,
 ): Promise<{ announcements: AnnouncementDetails<number>[]; total: number }> => {
   const baseQueryParams: SearchAnnouncementDto = {
     page: page + 1,
     size,
-    type: AnnouncementSearchType.ALL,
+    type,
   };
 
   const { items, meta } = (await sessionApi(moduleConfig, AnnouncementClient).getAnnouncements(communityId, baseQueryParams)) as {
