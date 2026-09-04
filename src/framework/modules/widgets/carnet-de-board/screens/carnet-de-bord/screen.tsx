@@ -10,9 +10,10 @@ import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { SmallBoldText } from '~/framework/components/text';
 import UserList from '~/framework/components/UserList';
-import { ContentLoader } from '~/framework/hooks/loader';
+import { ContentLoader, LoadingState } from '~/framework/hooks/loader';
 import { withSession } from '~/framework/modules/auth/util';
 import { CarnetDeBordSectionCard } from '~/framework/modules/widgets/carnet-de-board/components/section-card';
+import { CarnetDeBordSectionPlaceholder } from '~/framework/modules/widgets/carnet-de-board/components/section-placeholder';
 import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks/carnet-de-bord';
 import { useSelectedChild } from '~/framework/modules/widgets/carnet-de-board/hooks/selected-child';
 import {
@@ -41,6 +42,10 @@ export const computeNavBar = ({ navigation, route }: CarnetDeBordScreenProps): N
 export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ navigation, session }) => {
   const { data, error, load } = useCarnetDeBord();
   const { select, selected, selectedId } = useSelectedChild<ICarnetDeBord>(data);
+
+  // The home page has just loaded this data, so the screen shows it at once instead of a spinner.
+  // Frozen on mount: the loader only ever reads this state when it initialises.
+  const hadData = React.useRef(data.length > 0).current;
 
   const users = React.useMemo(
     () => data.map(child => ({ avatarId: child.id, id: getChildId(child), name: child.firstName })),
@@ -103,6 +108,8 @@ export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ naviga
     [openPronote, openSection, select, selected, selectedId, structureName, users],
   );
 
+  const renderLoading = React.useCallback(() => <CarnetDeBordSectionPlaceholder style={styles.sections} />, []);
+
   const renderError = React.useCallback(
     (refreshControl: ScrollViewProps['refreshControl']) => (
       <ScrollView refreshControl={refreshControl}>
@@ -122,7 +129,13 @@ export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ naviga
 
   return (
     <PageView>
-      <ContentLoader renderError={renderError} loadContent={load} renderContent={renderContent} />
+      <ContentLoader
+        initialLoadingState={hadData ? LoadingState.DONE : undefined}
+        renderLoading={renderLoading}
+        renderError={renderError}
+        loadContent={load}
+        renderContent={renderContent}
+      />
     </PageView>
   );
 });
