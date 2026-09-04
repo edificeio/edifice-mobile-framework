@@ -1,11 +1,9 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
-import {
-  WIDGET_BORDER_COLOR,
-  WIDGET_ICON_SIZE,
-} from '~/framework/modules/widgets/carnet-de-board/components/home-widget/constants';
+import { UI_SIZES } from '~/framework/components/constants';
+import { WIDGET_BORDER_COLOR } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/constants';
+import { SECTION_ICON_SIZE } from '~/framework/modules/widgets/carnet-de-board/model/sections';
 
 export default StyleSheet.create({
   body: {
@@ -24,9 +22,9 @@ export default StyleSheet.create({
     alignItems: 'center',
     borderRadius: UI_SIZES.radius.newCard,
     borderWidth: UI_SIZES.border.thin,
-    height: getScaleWidth(WIDGET_ICON_SIZE),
+    height: SECTION_ICON_SIZE,
     justifyContent: 'center',
-    width: getScaleWidth(WIDGET_ICON_SIZE),
+    width: SECTION_ICON_SIZE,
   },
   sectionCard: {
     alignItems: 'center',

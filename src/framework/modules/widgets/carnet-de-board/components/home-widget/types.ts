@@ -1,10 +1,7 @@
 import type { SvgIconName } from '~/framework/components/picture';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
-import type { BLOCK_COLORS } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/constants';
 import type { CarnetDeBordSection, ICarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
-import { ValueOf } from '~/utils/types';
-
-export type CarnetDeBordSectionColors = ValueOf<typeof BLOCK_COLORS>;
+import type { CarnetDeBordSectionColors } from '~/framework/modules/widgets/carnet-de-board/model/sections';
 
 export interface CarnetDeBordSectionCardProps {
   colors: CarnetDeBordSectionColors;
