@@ -14,8 +14,10 @@ export function CarnetDeBordSectionCard({ colors, emptyText, icon, onPress, sect
     [colors],
   );
 
+  const Wrapper = value ? TouchableOpacity : View;
+
   return (
-    <TouchableOpacity style={styles.sectionCard} onPress={open} activeOpacity={0.7}>
+    <Wrapper style={styles.sectionCard} onPress={open} activeOpacity={0.7}>
       <View style={iconStyle}>
         <Svg name={icon} fill={colors.icon} width={SECTION_ICON_INNER_SIZE} height={SECTION_ICON_INNER_SIZE} />
       </View>
@@ -25,6 +27,6 @@ export function CarnetDeBordSectionCard({ colors, emptyText, icon, onPress, sect
           {value ?? emptyText}
         </SmallText>
       </View>
-    </TouchableOpacity>
+    </Wrapper>
   );
 }
