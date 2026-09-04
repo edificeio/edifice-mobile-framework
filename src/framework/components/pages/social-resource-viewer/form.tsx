@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { PrimaryButton, TerciaryButton } from '~/framework/components/button';
 import { UI_STYLES } from '~/framework/components/constants';
@@ -248,7 +249,10 @@ export const SocialResourceViewerEditCommentForm = ({
         />
         <View style={buttonsStyle}>
           <TerciaryButton
-            textStyle={styles.buttonCancel}
+            // Note : very ugly workaround because of this one-time specific gray terciary button that is a single one of all its brood
+            // @ts-ignore
+            contentColor={theme.palette.grey.black}
+            contentColorActive={theme.palette.grey.darkness}
             text={I18n.get('comment-cancel')}
             testID="comment-cancel"
             onPress={onCancel}
