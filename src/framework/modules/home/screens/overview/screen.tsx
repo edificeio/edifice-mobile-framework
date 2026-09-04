@@ -31,8 +31,9 @@ export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ naviga
   const { canView: canViewNews, load: loadNews, loading: newsLoading, news } = useHomeNews(session);
   const { load: loadCarnetDeBord, loading: carnetDeBordLoading } = useCarnetDeBord();
 
+  // Each block shows its own failure, so one of them going down must not take the reload with it.
   const reload = React.useCallback(async () => {
-    await Promise.all([loadFlashMessages(), loadNews(), loadCarnetDeBord()]);
+    await Promise.allSettled([loadFlashMessages(), loadNews(), loadCarnetDeBord()]);
   }, [loadCarnetDeBord, loadFlashMessages, loadNews]);
 
   // everything is fetched again
