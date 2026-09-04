@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { BaseStackScreenLayout } from '~/app/navigation/layout';
 import moduleConfig from '~/framework/modules/widgets/carnet-de-board/module-config';
-import CarnetDeBoardModalScreen from '~/framework/modules/widgets/carnet-de-board/screens/carnet-de-board-modal';
+import CarnetDeBordModalScreen from '~/framework/modules/widgets/carnet-de-board/screens/modal';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { AnyNavigableModule } from '~/framework/util/moduleTool';
@@ -23,7 +23,7 @@ export default (() =>
         <Stack.Screen
           key={pronoteRouteNames.carnetDeBordModal}
           name={pronoteRouteNames.carnetDeBordModal}
-          component={CarnetDeBoardModalScreen}
+          component={CarnetDeBordModalScreen}
           options={{ headerShown: false }}
           initialParams={undefined}
         />
