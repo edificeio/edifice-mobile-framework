@@ -90,7 +90,7 @@ export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ naviga
       {showCarnetDeBord ? (
         <View style={styles.widgets}>
           <HeadingSText>{I18n.get('home-widgets-title')}</HeadingSText>
-          <CarnetDeBordWidget onOpen={onOpenCarnetDeBord} onOpenSection={onOpenCarnetDeBordSection} />
+          <CarnetDeBordWidget session={session} onOpen={onOpenCarnetDeBord} onOpenSection={onOpenCarnetDeBordSection} />
         </View>
       ) : null}
     </ScrollView>
