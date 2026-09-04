@@ -182,6 +182,14 @@ export type ICarnetDeBordVieScolaireObservation = {
   Observation?: string;
 };
 
+export type ICarnetDeBordVieScolaire =
+  | ICarnetDeBordVieScolaireAbsence
+  | ICarnetDeBordVieScolaireRetard
+  | ICarnetDeBordVieScolairePassageInfirmerie
+  | ICarnetDeBordVieScolairePunition
+  | ICarnetDeBordVieScolaireSanction
+  | ICarnetDeBordVieScolaireObservation;
+
 export function sortCarnetDeBordItems<T extends { Date?: moment.Moment; DateDebut?: moment.Moment; PourLe?: moment.Moment }>(
   items: T[],
   reverse?: boolean,

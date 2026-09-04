@@ -25,6 +25,7 @@ export function useCarnetDeBord() {
 
   return {
     children,
+    data,
     error: state.error,
     load,
     loading: state.isPristine || state.isFetching,
