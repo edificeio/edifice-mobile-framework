@@ -1,5 +1,11 @@
 import { WidgetUserSelector } from './component';
+import { WidgetUserSelectorPlaceholder } from './placeholder';
 
-export type { WidgetUserSelectorAction, WidgetUserSelectorItem, WidgetUserSelectorProps } from './types';
+export type {
+  WidgetUserSelectorAction,
+  WidgetUserSelectorItem,
+  WidgetUserSelectorPlaceholderProps,
+  WidgetUserSelectorProps,
+} from './types';
 export default WidgetUserSelector;
-export { WidgetUserSelector };
+export { WidgetUserSelector, WidgetUserSelectorPlaceholder };
