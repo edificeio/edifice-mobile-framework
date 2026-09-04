@@ -1,8 +1,8 @@
 import { NavigatorScreenParams, ParamListBase } from '@react-navigation/native';
 
 import moduleConfig from '~/framework/modules/widgets/carnet-de-board/module-config';
-import type { CarnetDeBordScreenNavParams as PronoteCarnetDeBordScreenNavParams } from '~/framework/modules/widgets/carnet-de-board/screens/carnet-de-bord';
-import type { CarnetDeBordDetailsScreenNavigationParams as PronoteCarnetDeBordDetailsScreenNavParams } from '~/framework/modules/widgets/carnet-de-board/screens/carnet-de-bord-details';
+import type { CarnetDeBordDetailsScreenNavigationParams as PronoteCarnetDeBordDetailsScreenNavParams } from '~/framework/modules/widgets/carnet-de-board/screens/details';
+import type { CarnetDeBordScreenNavParams as PronoteCarnetDeBordScreenNavParams } from '~/framework/modules/widgets/carnet-de-board/screens/home';
 
 export const pronoteRouteNames = {
   carnetDeBord: `${moduleConfig.routeName}/home` as 'carnetDeBord',
