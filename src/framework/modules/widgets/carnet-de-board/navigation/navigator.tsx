@@ -24,7 +24,9 @@ export default (() =>
           key={pronoteRouteNames.carnetDeBordModal}
           name={pronoteRouteNames.carnetDeBordModal}
           component={CarnetDeBordModalScreen}
-          options={{ headerShown: false }}
+          // the leaf stack inside brings its own bar. iOS still paints an inherited `headerBackground`
+          // under a hidden header, which would stack a second line above that bar.
+          options={{ headerBackground: undefined, headerShown: false }}
           initialParams={undefined}
         />
       </Stack.Group>,
