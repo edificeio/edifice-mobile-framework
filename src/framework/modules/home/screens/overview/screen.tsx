@@ -13,6 +13,7 @@ import type { HomeNewsItem } from '~/framework/modules/home/components/news/type
 import { useFlashMessages, useHomeNews, useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
 import { newsRouteNames } from '~/framework/modules/news/navigation';
 import { CarnetDeBordWidget } from '~/framework/modules/widgets/carnet-de-board/components/home-widget';
+import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks/carnet-de-bord';
 import type { CarnetDeBordSection, ICarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
 import { pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
 import { canSeeCarnetDeBordWidget } from '~/framework/modules/widgets/carnet-de-board/rights';
@@ -28,10 +29,11 @@ export const HomeOverviewScreenOptions = (): MaterialTopTabNavigationOptions => 
 export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ navigation, session }) => {
   const { dismiss: onDismissFlashMessage, load: loadFlashMessages, pristine, visible: flashMessages } = useFlashMessages();
   const { canView: canViewNews, load: loadNews, loading: newsLoading, news } = useHomeNews(session);
+  const { load: loadCarnetDeBord, loading: carnetDeBordLoading } = useCarnetDeBord();
 
   const reload = React.useCallback(async () => {
-    await Promise.all([loadFlashMessages(), loadNews()]);
-  }, [loadFlashMessages, loadNews]);
+    await Promise.all([loadFlashMessages(), loadNews(), loadCarnetDeBord()]);
+  }, [loadCarnetDeBord, loadFlashMessages, loadNews]);
 
   // everything is fetched again
   // every time the tab is opened
@@ -90,7 +92,12 @@ export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ naviga
       {showCarnetDeBord ? (
         <View style={styles.widgets}>
           <HeadingSText>{I18n.get('home-widgets-title')}</HeadingSText>
-          <CarnetDeBordWidget session={session} onOpen={onOpenCarnetDeBord} onOpenSection={onOpenCarnetDeBordSection} />
+          <CarnetDeBordWidget
+            session={session}
+            loading={carnetDeBordLoading}
+            onOpen={onOpenCarnetDeBord}
+            onOpenSection={onOpenCarnetDeBordSection}
+          />
         </View>
       ) : null}
     </ScrollView>

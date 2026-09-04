@@ -20,6 +20,7 @@ export interface CarnetDeBordWidgetPlaceholderProps {
 
 export interface CarnetDeBordWidgetProps {
   session: AuthActiveAccount;
+  loading: boolean;
   onOpen: () => void;
   onOpenSection: (section: CarnetDeBordSection, data: ICarnetDeBord) => void;
 }

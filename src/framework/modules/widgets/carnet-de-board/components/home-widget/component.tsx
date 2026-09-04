@@ -8,6 +8,7 @@ import { Svg, SvgIconName } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
 import { WIDGET_EMPTY_IMAGE_SIZE } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/constants';
+import { CarnetDeBordWidgetPlaceholder } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/placeholder';
 import { CarnetDeBordSectionCard } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/section-card';
 import { WIDGET_SECTIONS } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/sections';
 import styles from '~/framework/modules/widgets/carnet-de-board/components/home-widget/styles';
@@ -32,13 +33,9 @@ function Message({ illustration, text }: { illustration: SvgIconName; text: stri
   );
 }
 
-export function CarnetDeBordWidget({ onOpen, onOpenSection, session }: CarnetDeBordWidgetProps) {
-  const { children, error, load, select, selected, selectedId } = useCarnetDeBord();
+export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: CarnetDeBordWidgetProps) {
+  const { children, error, select, selected, selectedId } = useCarnetDeBord();
   const isRelative = session.user.type === AccountType.Relative;
-
-  React.useEffect(() => {
-    load();
-  }, [load]);
 
   const openSection = React.useCallback(
     (section: CarnetDeBordSection) => {
@@ -48,6 +45,13 @@ export function CarnetDeBordWidget({ onOpen, onOpenSection, session }: CarnetDeB
   );
 
   const otherChildrenAction = React.useMemo(() => ({ icon: 'ui-users' as const, testID: 'carnet-de-bord-widget-children' }), []);
+
+  if (loading)
+    return (
+      <WidgetCard title={I18n.get('pronote-widget-title')} onExpand={onOpen} expandTestID="carnet-de-bord-widget-open">
+        <CarnetDeBordWidgetPlaceholder tabs={isRelative} />
+      </WidgetCard>
+    );
 
   if (error)
     return (
