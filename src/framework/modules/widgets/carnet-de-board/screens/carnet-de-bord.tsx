@@ -22,6 +22,7 @@ import { ContentLoader } from '~/framework/hooks/loader';
 import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { loadCarnetDeBordAction } from '~/framework/modules/widgets/carnet-de-board/actions/carnet-de-bord';
+import { useSelectedChild } from '~/framework/modules/widgets/carnet-de-board/hooks/selected-child';
 import {
   CarnetDeBordSection,
   formatCarnetDeBordCompetencesValue,
@@ -31,11 +32,11 @@ import {
   ICarnetDeBord,
   PronoteCdbInitError,
 } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import { getChildId, hasPronoteData } from '~/framework/modules/widgets/carnet-de-board/model/child';
 import moduleConfig from '~/framework/modules/widgets/carnet-de-board/module-config';
 import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
 import { ICarnetDeBordStateData } from '~/framework/modules/widgets/carnet-de-board/reducer/carnet-de-bord';
 import redirect from '~/framework/modules/widgets/carnet-de-board/service/redirect';
-import { preferences } from '~/framework/modules/widgets/carnet-de-board/storage';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
@@ -96,34 +97,16 @@ const styles = StyleSheet.create({
 function CarnetDeBordScreen({ data, error, handleLoadData, navigation, session, structures }: CarnetDeBordScreenProps) {
   // UserList info & selected user
   const getUsers = React.useCallback(
-    (_data: typeof data) => _data.map(cdb => ({ avatarId: cdb.id, id: cdb.idPronote ?? cdb.id, name: cdb.firstName })),
+    (_data: typeof data) => _data.map(cdb => ({ avatarId: cdb.id, id: getChildId(cdb), name: cdb.firstName })),
     [],
   );
   const users = React.useMemo(() => getUsers(data), [getUsers, data]);
-  const usersRef = React.useRef(users);
-  const [selectedId, setSelectedId] = React.useState<string | undefined>(undefined);
-  const selectUser = React.useCallback(async (id: string | undefined) => {
-    // Prevent selecting a non-existing user. Fallback onto the first of the list.
-    const idToBeSelected = usersRef.current.find(u => u.id === id) ? id : usersRef.current[0]?.id;
-    if (!idToBeSelected) throw new Error(`idToBeSelected is undefined. CarnetDeBord need to select an existing user`);
-    setSelectedId(idToBeSelected);
-    preferences.set('carnet-de-bord.selected-user', idToBeSelected);
-  }, []);
+  const { select: selectUser, selected: selectedCdbData, selectedId } = useSelectedChild(data);
   const isUserListShown = React.useMemo(
     () => /* session.user.type === UserType.Relative || */ users.length > 1,
     [/*session, */ users],
   );
 
-  // Data & content
-  const loadData = React.useCallback(async () => {
-    const savedSelectedId = preferences.getString('carnet-de-bord.selected-user');
-    const newData = await handleLoadData();
-    usersRef.current = getUsers(newData);
-    await selectUser(savedSelectedId ?? undefined);
-  }, [selectUser, handleLoadData, getUsers]);
-  const selectedCdbData = React.useMemo(() => {
-    return data.find(d => d.idPronote === selectedId);
-  }, [data, selectedId]);
   const isStructureShown = React.useMemo(() => {
     const dataOfUser = data.filter(d => d.id === selectedCdbData?.id);
     return dataOfUser.length > 1;
@@ -168,7 +151,7 @@ function CarnetDeBordScreen({ data, error, handleLoadData, navigation, session, 
             </ScrollView>
           );
         }}
-        loadContent={loadData}
+        loadContent={handleLoadData}
         renderContent={renderContent}
       />
     </PageView>
@@ -202,7 +185,7 @@ CarnetDeBordScreen.getRenderContent =
         {isStructureShown ? (
           <BodyBoldText style={styles.card}>{structures?.find(s => s.id === data?.structureId)?.name ?? ' '}</BodyBoldText>
         ) : null}
-        {data && data.idPronote && data.address ? (
+        {hasPronoteData(data) ? (
           <>
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-cahierdetextes-title')}
