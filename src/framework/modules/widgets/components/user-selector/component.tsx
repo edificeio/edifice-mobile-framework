@@ -6,7 +6,11 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 import { TextAvatar } from '~/framework/components/textAvatar';
-import { WIDGET_ACTION_ICON_SIZE, WIDGET_USER_SELECTOR_AVATAR_SIZE } from '~/framework/modules/widgets/components/constants';
+import {
+  WIDGET_ACTION_ICON_SIZE,
+  WIDGET_USER_SELECTOR_AVATAR_SIZE,
+  WIDGET_USER_SELECTOR_MAX_SHOWN,
+} from '~/framework/modules/widgets/components/constants';
 import { TabLayout, useTabbedPanel } from '~/framework/modules/widgets/components/tabbed-panel';
 
 import styles from './styles';
@@ -18,8 +22,6 @@ import {
   WidgetUserSelectorProps,
   WidgetUserSelectorTabProps,
 } from './types';
-
-const DEFAULT_MAX_SHOWN = 2;
 
 function Tab({ item, onMeasure, onSelect, ringColor, selected }: WidgetUserSelectorTabProps) {
   const select = React.useCallback(() => onSelect(item.id), [item.id, onSelect]);
@@ -124,7 +126,7 @@ function usePickOrder(items: WidgetUserSelectorItem[], selectedId: string | unde
 export function WidgetUserSelector({
   action,
   items,
-  maxShown = DEFAULT_MAX_SHOWN,
+  maxShown = WIDGET_USER_SELECTOR_MAX_SHOWN,
   onSelect,
   ringColor,
   selectedId,

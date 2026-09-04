@@ -2,12 +2,14 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { TextFontStyle } from '~/framework/components/text';
+import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import {
   WIDGET_USER_SELECTOR_ACTION_SIZE,
   WIDGET_USER_SELECTOR_ACTION_WIDTH,
   WIDGET_USER_SELECTOR_HEIGHT,
   WIDGET_USER_SELECTOR_ITEM_MAX_WIDTH,
+  WIDGET_USER_SELECTOR_PLACEHOLDER_INITIAL_WIDTH,
+  WIDGET_USER_SELECTOR_PLACEHOLDER_NAME_WIDTH,
 } from '~/framework/modules/widgets/components/constants';
 
 export default StyleSheet.create({
@@ -49,6 +51,21 @@ export default StyleSheet.create({
   itemText: {
     ...TextFontStyle.Bold,
   },
+  placeholderInitial: {
+    width: WIDGET_USER_SELECTOR_PLACEHOLDER_INITIAL_WIDTH,
+  },
+  placeholderName: {
+    height: TextSizeStyle.Small.fontSize,
+    marginHorizontal: UI_SIZES.spacing.minor,
+    width: WIDGET_USER_SELECTOR_PLACEHOLDER_NAME_WIDTH,
+  },
+  placeholderTab: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexShrink: 1,
+    paddingTop: 2,
+  },
+
   menu: {
     backgroundColor: theme.palette.grey.white,
     borderRadius: UI_SIZES.radius.mediumPlus,

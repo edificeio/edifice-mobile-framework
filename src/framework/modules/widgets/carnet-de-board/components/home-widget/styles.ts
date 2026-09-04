@@ -26,6 +26,16 @@ export default StyleSheet.create({
     justifyContent: 'center',
     width: SECTION_ICON_SIZE,
   },
+  placeholderCard: {
+    borderColor: theme.palette.grey.cloudy,
+  },
+  placeholderIcon: {
+    borderColor: 'transparent',
+  },
+  placeholderLines: {
+    gap: UI_SIZES.spacing.tiny,
+    justifyContent: 'center',
+  },
   sectionCard: {
     alignItems: 'center',
     backgroundColor: theme.palette.grey.white,

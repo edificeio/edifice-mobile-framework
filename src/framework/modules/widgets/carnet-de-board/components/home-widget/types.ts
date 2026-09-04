@@ -14,6 +14,10 @@ export interface CarnetDeBordSectionCardProps {
   onPress: (section: CarnetDeBordSection) => void;
 }
 
+export interface CarnetDeBordWidgetPlaceholderProps {
+  tabs: boolean;
+}
+
 export interface CarnetDeBordWidgetProps {
   session: AuthActiveAccount;
   onOpen: () => void;
