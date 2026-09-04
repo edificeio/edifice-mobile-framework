@@ -1,15 +1,21 @@
 import React from 'react';
-import { RefreshControl } from 'react-native';
+import { RefreshControl, View } from 'react-native';
 
 import { MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
 
 import { I18n } from '~/app/i18n';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import ScrollView from '~/framework/components/scrollView';
+import { HeadingSText } from '~/framework/components/text';
 import { withSession } from '~/framework/modules/auth/util';
 import { FlashMessageList, NewsSection } from '~/framework/modules/home/components';
 import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
 import { useFlashMessages, useHomeNews, useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
 import { newsRouteNames } from '~/framework/modules/news/navigation';
+import { CarnetDeBordWidget } from '~/framework/modules/widgets/carnet-de-board/components/home-widget';
+import type { CarnetDeBordSection, ICarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import { pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
+import { canSeeCarnetDeBordWidget } from '~/framework/modules/widgets/carnet-de-board/rights';
 
 import styles from './styles';
 import { HomeOverviewScreenProps } from './types';
@@ -45,6 +51,32 @@ export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ naviga
     [navigation],
   );
 
+  const onOpenCarnetDeBord = React.useCallback(() => navigation.navigate(pronoteRouteNames.carnetDeBordModal), [navigation]);
+
+  const onOpenCarnetDeBordSection = React.useCallback(
+    (section: CarnetDeBordSection, data: ICarnetDeBord) =>
+      navigation.navigate(pronoteRouteNames.carnetDeBordModal, {
+        params: { data, type: section },
+        screen: pronoteRouteNames.carnetDeBordDetails,
+      }),
+    [navigation],
+  );
+
+  const showCarnetDeBord = React.useMemo(() => canSeeCarnetDeBordWidget(session), [session]);
+
+  // Every section hides itself when it has nothing to show, and the page is no list, so it would be
+  // left blank. The first load is waited for, or this would flash on every opening.
+  const isEmpty = !pristine && !flashMessages.length && !canViewNews && !showCarnetDeBord;
+
+  if (isEmpty)
+    return (
+      <EmptyScreen
+        svgImage="empty-hammock"
+        title={I18n.get('home-overview-empty-title')}
+        text={I18n.get('home-overview-empty-text')}
+      />
+    );
+
   return (
     <ScrollView contentContainerStyle={styles.content} refreshControl={refreshControl} showsVerticalScrollIndicator={false}>
       <FlashMessageList
@@ -54,6 +86,13 @@ export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ naviga
       />
 
       <NewsSection canView={canViewNews} loading={newsLoading} news={news} onPressItem={onOpenNews} onSeeMore={onSeeMorePress} />
+
+      {showCarnetDeBord ? (
+        <View style={styles.widgets}>
+          <HeadingSText>{I18n.get('home-widgets-title')}</HeadingSText>
+          <CarnetDeBordWidget onOpen={onOpenCarnetDeBord} onOpenSection={onOpenCarnetDeBordSection} />
+        </View>
+      ) : null}
     </ScrollView>
   );
 });

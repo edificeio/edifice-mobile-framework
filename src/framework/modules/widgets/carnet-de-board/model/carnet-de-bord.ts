@@ -113,9 +113,9 @@ export type ICarnetDeBordReleveDeNotesDevoir = {
   DateString?: string;
 };
 const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
-  abs: 'pronote-transcript-value-absent',
-  disp: 'pronote-transcript-value-exempted',
-  inap: 'pronote-transcript-value-unfit',
+  'abs': 'pronote-transcript-value-absent',
+  'disp': 'pronote-transcript-value-exempted',
+  'inap': 'pronote-transcript-value-unfit',
   'n.not': 'pronote-transcript-value-unrated',
   'n.rdu': 'pronote-transcript-value-unreturned',
 };
