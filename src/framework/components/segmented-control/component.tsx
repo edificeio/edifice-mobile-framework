@@ -15,6 +15,7 @@ const SegmentedControl = ({ canUnselect, initialSelectedIndex, onChange, segment
 
       return (
         <SegmentedControlItem
+          badgeColor={segment.badgeColor}
           count={segment.count}
           id={segment.id}
           isActive={isSelected}

@@ -19,8 +19,8 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: UI_SIZES.spacing.tiny,
     justifyContent: 'center',
-    paddingHorizontal: UI_SIZES.spacing.small,
-    paddingVertical: UI_SIZES.spacing.minor,
+    minWidth: getScaleWidth(101),
+    padding: UI_SIZES.spacing.minor,
   },
   inactiveContainer: {
     backgroundColor: theme.palette.grey.white,
@@ -32,17 +32,23 @@ export const styles = StyleSheet.create({
     flexShrink: 1,
     justifyContent: 'center',
   },
+  loaderContainerFullWidth: {
+    alignSelf: 'stretch',
+  },
   loaderContent: {
     borderRadius: UI_SIZES.radius.input,
     height: LOADER_HEIGHT,
     width: LOADER_WIDTH,
+  },
+  loaderContentFullWidth: {
+    width: '100%',
   },
   scrollContainer: {
     borderColor: theme.palette.primary.pale,
     borderRadius: UI_SIZES.radius.input,
     borderWidth: UI_SIZES.border.thin,
     flexDirection: 'row',
-    gap: UI_SIZES.spacing.minor,
+    gap: UI_SIZES.spacing.tiny,
     padding: UI_SIZES.spacing.tiny,
   },
 });

@@ -5,6 +5,7 @@ import {
   AnnouncementType,
   CollectAnnouncementDto,
   InformationAnnouncementDto,
+  MembershipRole,
   PageMetadataDto,
   SearchAnnouncementDto,
 } from '@edifice.io/community-client-rest-rn';
@@ -14,7 +15,7 @@ import { AudienceProps } from '~/framework/modules/audience/components/types';
 import { audienceService } from '~/framework/modules/audience/service';
 import { toMedia } from '~/framework/modules/communities/adapter';
 import moduleConfig from '~/framework/modules/communities/module-config';
-import { getCollectionsByCollectId } from '~/framework/modules/communities/service/collections';
+import { getCollectionsByCollectId, getOpenCollectsCount } from '~/framework/modules/communities/service/collections';
 import { Media } from '~/framework/modules/media';
 import { sessionApi } from '~/framework/util/transport';
 
@@ -54,11 +55,13 @@ export const getAnnouncementsDetails = async (
   communityId: number,
   page: number,
   size: number,
+  type: AnnouncementSearchType = AnnouncementSearchType.ALL,
+  userRole?: MembershipRole,
 ): Promise<{ announcements: AnnouncementDetails<number>[]; total: number }> => {
   const baseQueryParams: SearchAnnouncementDto = {
     page: page + 1,
     size,
-    type: AnnouncementSearchType.ALL,
+    type,
   };
 
   const { items, meta } = (await sessionApi(moduleConfig, AnnouncementClient).getAnnouncements(communityId, baseQueryParams)) as {
@@ -67,7 +70,7 @@ export const getAnnouncementsDetails = async (
   };
 
   const collectIds = [...new Set(items.filter((i): i is CollectAnnouncementDto => 'collectId' in i).map(i => i.collectId))];
-  const { adminCollections, memberSubmissions } = await getCollectionsByCollectId(collectIds);
+  const { adminCollections, memberSubmissions } = await getCollectionsByCollectId(collectIds, userRole);
 
   // Audience data is only needed for information announcements
   const informationIds = items.filter(i => !('collectId' in i)).map(i => i.id.toString());
@@ -117,4 +120,27 @@ export const getAnnouncementsDetails = async (
   });
 
   return { announcements, total: meta.totalItems };
+};
+
+const COLLECT_IDS_PAGE_SIZE = 100;
+
+/**
+ * @returns the number of collects with a non expired deadline
+ * A community is never supposed to have more than 100 collects,
+ * it was admitted that we can fetch the count using the first 100 collects to return the number of unexpired
+ */
+export const getCommunityOpenCollectsCount = async (communityId: number, userRole?: MembershipRole): Promise<number> => {
+  const client = sessionApi(moduleConfig, AnnouncementClient);
+  const getCollectPage = (page: number) =>
+    client.getAnnouncements(communityId, {
+      page,
+      size: COLLECT_IDS_PAGE_SIZE,
+      type: AnnouncementSearchType.COLLECT,
+    }) as Promise<{ items: CollectAnnouncementDto[]; meta: PageMetadataDto }>;
+
+  const { items, meta } = await getCollectPage(1);
+  const nextPages = await Promise.all(Array.from({ length: Math.max(0, meta.totalPages - 1) }, (v, i) => getCollectPage(i + 2)));
+  const collectIds = [...new Set([items, ...nextPages.map(page => page.items)].flat().map(item => item.collectId))];
+
+  return getOpenCollectsCount(collectIds, userRole);
 };
