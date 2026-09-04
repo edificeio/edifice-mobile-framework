@@ -19,6 +19,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: UI_SIZES.spacing.tiny,
     justifyContent: 'center',
+    minWidth: getScaleWidth(101),
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
   },

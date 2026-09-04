@@ -1,4 +1,7 @@
+import { ColorValue } from 'react-native';
+
 export interface SegmentedItemProps {
+  badgeColor?: ColorValue;
   count?: number;
   id: string;
   isActive: boolean;
@@ -11,5 +14,5 @@ export interface SegmentedControlProps {
   canUnselect?: boolean;
   initialSelectedIndex?: number;
   onChange?: (index?: number) => void;
-  segments: Pick<SegmentedItemProps, 'id' | 'count' | 'text'>[];
+  segments: Pick<SegmentedItemProps, 'badgeColor' | 'id' | 'count' | 'text'>[];
 }

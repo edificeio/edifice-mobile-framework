@@ -5,6 +5,7 @@ import {
   AnnouncementType,
   CollectAnnouncementDto,
   InformationAnnouncementDto,
+  MembershipRole,
   PageMetadataDto,
   SearchAnnouncementDto,
 } from '@edifice.io/community-client-rest-rn';
@@ -54,6 +55,7 @@ export const getAnnouncementsDetails = async (
   communityId: number,
   page: number,
   size: number,
+  userRole?: MembershipRole,
 ): Promise<{ announcements: AnnouncementDetails<number>[]; total: number }> => {
   const baseQueryParams: SearchAnnouncementDto = {
     page: page + 1,
@@ -67,7 +69,7 @@ export const getAnnouncementsDetails = async (
   };
 
   const collectIds = [...new Set(items.filter((i): i is CollectAnnouncementDto => 'collectId' in i).map(i => i.collectId))];
-  const { adminCollections, memberSubmissions } = await getCollectionsByCollectId(collectIds);
+  const { adminCollections, memberSubmissions } = await getCollectionsByCollectId(collectIds, userRole);
 
   // Audience data is only needed for information announcements
   const informationIds = items.filter(i => !('collectId' in i)).map(i => i.id.toString());
