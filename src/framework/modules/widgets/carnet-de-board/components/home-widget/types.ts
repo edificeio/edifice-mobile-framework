@@ -1,4 +1,5 @@
 import type { SvgIconName } from '~/framework/components/picture';
+import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import type { BLOCK_COLORS } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/constants';
 import type { CarnetDeBordSection, ICarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
 import { ValueOf } from '~/utils/types';
@@ -17,6 +18,7 @@ export interface CarnetDeBordSectionCardProps {
 }
 
 export interface CarnetDeBordWidgetProps {
+  session: AuthActiveAccount;
   onOpen: () => void;
   onOpenSection: (section: CarnetDeBordSection, data: ICarnetDeBord) => void;
 }

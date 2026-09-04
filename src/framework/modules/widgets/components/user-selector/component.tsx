@@ -134,6 +134,8 @@ export function WidgetUserSelector({
   const hidden = React.useMemo(() => ordered.slice(maxShown), [maxShown, ordered]);
   const panel = useTabbedPanel();
 
+  const asTabs = shown.length > 1;
+
   const actionButton = React.useRef<View>(null);
   const [anchor, setAnchor] = React.useState<AnchorLayout>();
 
@@ -159,14 +161,14 @@ export function WidgetUserSelector({
   const measureTab = React.useCallback(
     (id: string, layout: TabLayout) => {
       tabLayouts.current[id] = layout;
-      if (id === selectedId) panel?.setTab(layout);
+      if (asTabs && id === selectedId) panel?.setTab(layout);
     },
-    [panel, selectedId],
+    [asTabs, panel, selectedId],
   );
 
   React.useEffect(() => {
-    panel?.setTab(selectedId ? tabLayouts.current[selectedId] : undefined);
-  }, [panel, selectedId]);
+    panel?.setTab(asTabs && selectedId ? tabLayouts.current[selectedId] : undefined);
+  }, [asTabs, panel, selectedId]);
 
   return (
     <View style={styles.row} accessibilityRole="tablist">

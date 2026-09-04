@@ -6,6 +6,7 @@ import theme from '~/app/theme';
 import { getScaleImageSize } from '~/framework/components/constants';
 import { Svg, SvgIconName } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
+import { AccountType } from '~/framework/modules/auth/model';
 import { WIDGET_EMPTY_IMAGE_SIZE } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/constants';
 import { CarnetDeBordSectionCard } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/section-card';
 import { WIDGET_SECTIONS } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/sections';
@@ -30,9 +31,10 @@ function Message({ illustration, text }: { illustration: SvgIconName; text: stri
   );
 }
 
-export function CarnetDeBordWidget({ onOpen, onOpenSection }: CarnetDeBordWidgetProps) {
+export function CarnetDeBordWidget({ onOpen, onOpenSection, session }: CarnetDeBordWidgetProps) {
   const { children, error, load, select, selected, selectedId } = useCarnetDeBord();
 
+  const isRelative = session.user.type === AccountType.Relative;
   React.useEffect(() => {
     load();
   }, [load]);
@@ -63,9 +65,10 @@ export function CarnetDeBordWidget({ onOpen, onOpenSection }: CarnetDeBordWidget
     ? { background: theme.palette.complementary.yellow.pale, border: theme.palette.complementary.yellow.light }
     : { background: theme.palette.grey.white, border: theme.palette.grey.cloudy };
 
-  // A single child needs no row of tabs, and the panel is then a plain rounded rectangle.
+  // A pupil is alone in his own dashboard: no tabs at all, and the panel is then a plain rounded
+  // rectangle. A parent keeps his row, one tab even for an only child.
   const selector =
-    children.length > 1 ? (
+    isRelative && children.length ? (
       <WidgetUserSelector
         items={children}
         selectedId={selectedId}
