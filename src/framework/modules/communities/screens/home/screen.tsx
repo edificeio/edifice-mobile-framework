@@ -132,6 +132,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   );
 
   const [announcements, setAnnouncements] = React.useState<AnnouncementsPage>([]);
+  const [isLoadingAnnouncements, setIsLoadingAnnouncements] = React.useState(true);
   const [filterIndex, setFilterIndex] = React.useState(ALL_FILTER_INDEX);
   const data = filterIndex === ALL_FILTER_INDEX ? announcements : NO_ANNOUNCEMENTS;
 
@@ -168,6 +169,15 @@ export const CommunitiesHomeScreenLoaded = function ({
 
   const onFilterChange = React.useCallback((index?: number) => setFilterIndex(index ?? 0), []);
 
+  // Sync the SegmentedControl + loader with the announcements list + loader
+  const filters = React.useMemo(() => {
+    if (isLoadingAnnouncements) return <SegmentedControlLoader isFullWidth />;
+
+    return announcements.length ? (
+      <SegmentedControl initialSelectedIndex={filterIndex} segments={segments} onChange={onFilterChange} />
+    ) : null;
+  }, [isLoadingAnnouncements, announcements.length, filterIndex, segments, onFilterChange]);
+
   const stickyElements = React.useMemo(
     () => [
       ...scrollElements,
@@ -199,7 +209,7 @@ export const CommunitiesHomeScreenLoaded = function ({
         </View>
         <View style={styles.announcementHeader}>
           <HeadingXSText>{I18n.get('communities-announcements-title')}</HeadingXSText>
-          <SegmentedControl initialSelectedIndex={filterIndex} segments={segments} onChange={onFilterChange} />
+          {filters}
         </View>
       </View>,
     ],
@@ -215,9 +225,7 @@ export const CommunitiesHomeScreenLoaded = function ({
       role,
       discussionsSummary.hasUnreadMessages,
       discussionsSummary.totalDiscussions,
-      filterIndex,
-      segments,
-      onFilterChange,
+      filters,
     ],
   );
 
@@ -249,6 +257,7 @@ export const CommunitiesHomeScreenLoaded = function ({
       } catch (e) {
         console.error('Error while loading community announcements list', e);
       } finally {
+        setIsLoadingAnnouncements(false);
         loadingPagesRef.current.delete(page);
       }
     },
@@ -315,7 +324,7 @@ export const CommunitiesHomeScreenPlaceholder = () => (
         </View>
         <View style={styles.announcementHeader}>
           <TitleLoader isShort={true} />
-          <SegmentedControlLoader />
+          <SegmentedControlLoader isFullWidth />
         </View>
       </View>
       <PostDetailsLoader />

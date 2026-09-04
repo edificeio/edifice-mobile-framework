@@ -10,6 +10,10 @@ export interface SegmentedItemProps {
   text: string;
 }
 
+export interface SegmentedControlLoaderProps {
+  isFullWidth?: boolean;
+}
+
 export interface SegmentedControlProps {
   canUnselect?: boolean;
   initialSelectedIndex?: number;

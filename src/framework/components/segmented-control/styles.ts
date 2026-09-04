@@ -33,10 +33,16 @@ export const styles = StyleSheet.create({
     flexShrink: 1,
     justifyContent: 'center',
   },
+  loaderContainerFullWidth: {
+    alignSelf: 'stretch',
+  },
   loaderContent: {
     borderRadius: UI_SIZES.radius.input,
     height: LOADER_HEIGHT,
     width: LOADER_WIDTH,
+  },
+  loaderContentFullWidth: {
+    width: '100%',
   },
   scrollContainer: {
     borderColor: theme.palette.primary.pale,
