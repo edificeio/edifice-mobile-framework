@@ -5966,7 +5966,7 @@ __metadata:
     react-native-image-pan-zoom: "npm:2.1.12"
     react-native-image-picker: "npm:8.2.1"
     react-native-keyboard-avoiding-scroll-view: "npm:1.0.1"
-    react-native-keyboard-controller: "npm:1.21.11"
+    react-native-keyboard-controller: "npm:1.22.4"
     react-native-layout-debug: "npm:1.1.1"
     react-native-localize: "npm:3.7.0"
     react-native-logs: "npm:5.6.0"
@@ -13921,16 +13921,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-keyboard-controller@npm:1.21.11":
-  version: 1.21.11
-  resolution: "react-native-keyboard-controller@npm:1.21.11"
+"react-native-keyboard-controller@npm:1.22.4":
+  version: 1.22.4
+  resolution: "react-native-keyboard-controller@npm:1.22.4"
   dependencies:
     react-native-is-edge-to-edge: "npm:^1.2.1"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-reanimated: ">=3.0.0"
-  checksum: 10/4f6119207132cb837b4d3f02b60826907b8ea5d7440c3f1907bd256272a89cda0552d70f26b24918f663d91143df9723ebf6920a43e84139b4f65e133da853e8
+  checksum: 10/f4e8529622c231c9619ca72afa1e66444dfe7a2063b1392b4f37322007406da5e71b01bd26792d1972ae71968524eaf9393e8a5de10de1387b9e145ed0ecd812
   languageName: node
   linkType: hard
 
