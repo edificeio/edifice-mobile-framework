@@ -1,10 +1,3 @@
-/**
- * What the home widget shows for each of its four blocks.
- *
- * The full carnet de bord screen shows the next item to come, or the latest past one. The widget
- * follows the 2026 rules instead: a thirty day window on what already happened, and only what is
- * still ahead for the homework.
- */
 import moment from 'moment';
 
 import {
@@ -16,7 +9,7 @@ import {
   ICarnetDeBordReleveDeNotesDevoir,
   ICarnetDeBordVieScolaireAbsence,
   ICarnetDeBordVieScolaireRetard,
-} from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+} from './carnet-de-bord';
 
 export const SUMMARY_WINDOW_DAYS = 30;
 

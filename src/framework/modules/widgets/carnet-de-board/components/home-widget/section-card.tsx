@@ -5,7 +5,7 @@ import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import styles from '~/framework/modules/widgets/carnet-de-board/components/home-widget/styles';
 import { CarnetDeBordSectionCardProps } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/types';
-import { SECTION_ICON_INNER_SIZE } from '~/framework/modules/widgets/carnet-de-board/model/sections';
+import { SECTION_ICON_INNER_SIZE } from '~/framework/modules/widgets/carnet-de-board/model';
 
 export function CarnetDeBordSectionCard({ colors, emptyText, icon, onPress, section, title, value }: CarnetDeBordSectionCardProps) {
   const open = React.useCallback(() => onPress(section), [onPress, section]);

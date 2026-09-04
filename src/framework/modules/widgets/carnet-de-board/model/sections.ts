@@ -3,7 +3,8 @@ import type { ColorValue } from 'react-native';
 import theme from '~/app/theme';
 import { getScaleWidth } from '~/framework/components/constants';
 import type { SvgIconName } from '~/framework/components/picture';
-import { CarnetDeBordSection } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+
+import { CarnetDeBordSection } from './carnet-de-bord';
 
 export const SECTION_ICON_SIZE = getScaleWidth(36);
 export const SECTION_ICON_INNER_SIZE = getScaleWidth(20);

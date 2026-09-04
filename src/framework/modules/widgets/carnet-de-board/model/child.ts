@@ -1,4 +1,4 @@
-import type { ICarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import type { ICarnetDeBord } from './carnet-de-bord';
 
 export type CarnetDeBordChild = Pick<ICarnetDeBord, 'address' | 'id' | 'idPronote'>;
 
