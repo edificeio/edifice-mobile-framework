@@ -12,8 +12,9 @@ import { CarnetDeBordSectionCard } from '~/framework/modules/widgets/carnet-de-b
 import { WIDGET_SECTIONS } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/sections';
 import styles from '~/framework/modules/widgets/carnet-de-board/components/home-widget/styles';
 import { CarnetDeBordWidgetProps } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/types';
-import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks/use-carnet-de-bord';
+import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks/carnet-de-bord';
 import { CarnetDeBordSection } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import { hasPronoteData } from '~/framework/modules/widgets/carnet-de-board/model/child';
 import { WidgetCard } from '~/framework/modules/widgets/components/card';
 import { TabbedPanel } from '~/framework/modules/widgets/components/tabbed-panel';
 import { WidgetUserSelector } from '~/framework/modules/widgets/components/user-selector';
@@ -33,8 +34,8 @@ function Message({ illustration, text }: { illustration: SvgIconName; text: stri
 
 export function CarnetDeBordWidget({ onOpen, onOpenSection, session }: CarnetDeBordWidgetProps) {
   const { children, error, load, select, selected, selectedId } = useCarnetDeBord();
-
   const isRelative = session.user.type === AccountType.Relative;
+
   React.useEffect(() => {
     load();
   }, [load]);
@@ -57,9 +58,7 @@ export function CarnetDeBordWidget({ onOpen, onOpenSection, session }: CarnetDeB
 
   if (!selected) return null;
 
-  // structureId is left out on purpose: it only names the structure, and the API does not always
-  // send it, which would hide a child who has data.
-  const hasPronote = !!(selected.idPronote && selected.address);
+  const hasPronote = hasPronoteData(selected);
 
   const panel = hasPronote
     ? { background: theme.palette.complementary.yellow.pale, border: theme.palette.complementary.yellow.light }
