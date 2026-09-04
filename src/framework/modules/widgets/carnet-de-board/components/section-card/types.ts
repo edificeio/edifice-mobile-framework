@@ -1,5 +1,4 @@
-import type { CarnetDeBordSection } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
-import type { CarnetDeBordScreenSectionLabels } from '~/framework/modules/widgets/carnet-de-board/model/screen-sections';
+import type { CarnetDeBordScreenSectionLabels, CarnetDeBordSection } from '~/framework/modules/widgets/carnet-de-board/model';
 
 export interface CarnetDeBordSectionCardProps {
   emptyText: string;

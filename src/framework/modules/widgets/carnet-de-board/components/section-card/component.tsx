@@ -5,7 +5,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { SECTION_ICON_INNER_SIZE, SECTION_STYLE } from '~/framework/modules/widgets/carnet-de-board/model/sections';
+import { SECTION_ICON_INNER_SIZE, SECTION_STYLE } from '~/framework/modules/widgets/carnet-de-board/model';
 
 import styles from './styles';
 import { CarnetDeBordSectionCardProps } from './types';

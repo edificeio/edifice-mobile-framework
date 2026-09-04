@@ -3,10 +3,11 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { loadCarnetDeBordAction } from '~/framework/modules/widgets/carnet-de-board/actions/carnet-de-bord';
-import { useSelectedChild } from '~/framework/modules/widgets/carnet-de-board/hooks/selected-child';
-import { getChildId } from '~/framework/modules/widgets/carnet-de-board/model/child';
+import { loadCarnetDeBordAction } from '~/framework/modules/widgets/carnet-de-board/actions';
+import { getChildId } from '~/framework/modules/widgets/carnet-de-board/model';
 import { getCarnetDeBordState } from '~/framework/modules/widgets/carnet-de-board/reducer/carnet-de-bord';
+
+import { useSelectedChild } from './selected-child';
 
 export function useCarnetDeBord() {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();

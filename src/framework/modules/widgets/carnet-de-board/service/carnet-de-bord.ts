@@ -4,13 +4,13 @@
  */
 import CookieManager from '@preeternal/react-native-cookie-manager';
 
-import { carnetDeBordAdapter } from './adapters';
-import redirect from './redirect';
-
 import { AuthActiveAccount, UserChildrenFlattened } from '~/framework/modules/auth/model';
-import { IPronoteConnectorInfo, PronoteCdbInitError } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import { IPronoteConnectorInfo, PronoteCdbInitError } from '~/framework/modules/widgets/carnet-de-board/model';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 import { sessionFetch } from '~/framework/util/transport';
+
+import { carnetDeBordAdapter } from './adapters';
+import redirect from './redirect';
 
 export type ICarnetDeBordBackend = (IPronoteConnectorInfo & {
   xmlResponse: string;

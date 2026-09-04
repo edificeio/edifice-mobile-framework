@@ -20,7 +20,7 @@ import {
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
   ICarnetDeBord,
-} from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+} from '~/framework/modules/widgets/carnet-de-board/model';
 import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
 import redirect from '~/framework/modules/widgets/carnet-de-board/service/redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';

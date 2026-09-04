@@ -1,9 +1,6 @@
-/**
- * The four groups of data as the full screen shows them: the next item to come, or the latest past
- * one, turned into the two labels a card displays. The home widget follows other rules, in
- * `model/summary.ts`.
- */
 import { I18n } from '~/app/i18n';
+import { displayDate } from '~/framework/util/date';
+
 import {
   CarnetDeBordSection,
   formatCarnetDeBordCompetencesValue,
@@ -12,8 +9,7 @@ import {
   getSummaryItem,
   ICarnetDeBord,
   ICarnetDeBordVieScolaire,
-} from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
-import { displayDate } from '~/framework/util/date';
+} from './carnet-de-bord';
 
 export interface CarnetDeBordScreenSectionLabels {
   textLabel: string;

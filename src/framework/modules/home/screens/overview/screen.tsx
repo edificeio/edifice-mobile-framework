@@ -13,8 +13,8 @@ import type { HomeNewsItem } from '~/framework/modules/home/components/news/type
 import { useFlashMessages, useHomeNews, useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
 import { newsRouteNames } from '~/framework/modules/news/navigation';
 import { CarnetDeBordWidget } from '~/framework/modules/widgets/carnet-de-board/components/home-widget';
-import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks/carnet-de-bord';
-import type { CarnetDeBordSection, ICarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks';
+import type { CarnetDeBordSection, ICarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/model';
 import { pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
 import { canSeeCarnetDeBordWidget } from '~/framework/modules/widgets/carnet-de-board/rights';
 

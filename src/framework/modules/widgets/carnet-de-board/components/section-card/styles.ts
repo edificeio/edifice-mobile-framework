@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { SECTION_ICON_SIZE } from '~/framework/modules/widgets/carnet-de-board/model/sections';
+import { SECTION_ICON_SIZE } from '~/framework/modules/widgets/carnet-de-board/model';
 
 export default StyleSheet.create({
   card: {

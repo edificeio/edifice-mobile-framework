@@ -1,4 +1,4 @@
-import { IPronoteConnectorInfo } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import { IPronoteConnectorInfo } from '~/framework/modules/widgets/carnet-de-board/model';
 
 export type ICarnetDeBordBackend = (IPronoteConnectorInfo & {
   xmlResponse: string;

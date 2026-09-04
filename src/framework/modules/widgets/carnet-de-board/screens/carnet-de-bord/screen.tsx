@@ -14,15 +14,15 @@ import { ContentLoader, LoadingState } from '~/framework/hooks/loader';
 import { withSession } from '~/framework/modules/auth/util';
 import { CarnetDeBordSectionCard } from '~/framework/modules/widgets/carnet-de-board/components/section-card';
 import { CarnetDeBordSectionPlaceholder } from '~/framework/modules/widgets/carnet-de-board/components/section-placeholder';
-import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks/carnet-de-bord';
-import { useSelectedChild } from '~/framework/modules/widgets/carnet-de-board/hooks/selected-child';
+import { useCarnetDeBord, useSelectedChild } from '~/framework/modules/widgets/carnet-de-board/hooks';
 import {
   CarnetDeBordSection,
+  getChildId,
+  hasPronoteData,
   ICarnetDeBord,
   PronoteCdbInitError,
-} from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
-import { getChildId, hasPronoteData } from '~/framework/modules/widgets/carnet-de-board/model/child';
-import { SCREEN_SECTIONS } from '~/framework/modules/widgets/carnet-de-board/model/screen-sections';
+  SCREEN_SECTIONS,
+} from '~/framework/modules/widgets/carnet-de-board/model';
 import { pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
 import redirect from '~/framework/modules/widgets/carnet-de-board/service/redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';

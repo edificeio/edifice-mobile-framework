@@ -2,18 +2,16 @@ import { I18n } from '~/app/i18n';
 import type { SvgIconName } from '~/framework/components/picture';
 import {
   CarnetDeBordSection,
+  type CarnetDeBordSectionColors,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
-  ICarnetDeBord,
-} from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
-import type { CarnetDeBordSectionColors } from '~/framework/modules/widgets/carnet-de-board/model/sections';
-import { SECTION_STYLE } from '~/framework/modules/widgets/carnet-de-board/model/sections';
-import {
   getHomeworkSummary,
   getNoteSummary,
   getSkillSummary,
   getUnjustifiedDate,
   getUnjustifiedLatenessSummary,
-} from '~/framework/modules/widgets/carnet-de-board/model/summary';
+  ICarnetDeBord,
+  SECTION_STYLE,
+} from '~/framework/modules/widgets/carnet-de-board/model';
 
 const noInfo = () => I18n.get('pronote-noinfo');
 

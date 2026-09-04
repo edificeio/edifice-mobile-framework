@@ -13,9 +13,8 @@ import { CarnetDeBordSectionCard } from '~/framework/modules/widgets/carnet-de-b
 import { WIDGET_SECTIONS } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/sections';
 import styles from '~/framework/modules/widgets/carnet-de-board/components/home-widget/styles';
 import { CarnetDeBordWidgetProps } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/types';
-import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks/carnet-de-bord';
-import { CarnetDeBordSection } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
-import { hasPronoteData } from '~/framework/modules/widgets/carnet-de-board/model/child';
+import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks';
+import { CarnetDeBordSection, hasPronoteData } from '~/framework/modules/widgets/carnet-de-board/model';
 import { WidgetCard } from '~/framework/modules/widgets/components/card';
 import { TabbedPanel } from '~/framework/modules/widgets/components/tabbed-panel';
 import { WidgetUserSelector } from '~/framework/modules/widgets/components/user-selector';
