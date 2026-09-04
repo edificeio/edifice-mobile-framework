@@ -2079,12 +2079,12 @@ __metadata:
   linkType: hard
 
 "@eslint/plugin-kit@npm:^0.7.2":
-  version: 0.7.2
-  resolution: "@eslint/plugin-kit@npm:0.7.2"
+  version: 0.7.3
+  resolution: "@eslint/plugin-kit@npm:0.7.3"
   dependencies:
     "@eslint/core": "npm:^1.2.1"
     levn: "npm:^0.4.1"
-  checksum: 10/ef9fc6f8ca28e132d4c81cfbaa92274800d1d73bb9d6ef2124613dd39b7f09e3592deb64bad10b183bff78db5465d4b100f522d994c8550424526b9ac4a072b0
+  checksum: 10/bd603f0438d6829a5b0c8cbb90383e3b0fda3aac3a87faa22c80124ce4121f5dcfe8ef9b933c3308cbed70a27c4f51036403e3f0cb64ca2743e595dd865ccef6
   languageName: node
   linkType: hard
 
@@ -4431,7 +4431,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-navigation/elements@npm:^2.9.25":
+"@react-navigation/elements@npm:^2.9.25, @react-navigation/elements@npm:^2.9.36":
   version: 2.9.40
   resolution: "@react-navigation/elements@npm:2.9.40"
   dependencies:
@@ -4448,6 +4448,23 @@ __metadata:
     "@react-native-masked-view/masked-view":
       optional: true
   checksum: 10/fedea8eadc62fee35414014d31f3b891d390fd25fd20e9fca291c1483fcda1589f00f2c506bea0da1949cf35550f4f919a10fd84272a28560c28723b7b8698be
+  languageName: node
+  linkType: hard
+
+"@react-navigation/material-top-tabs@npm:7.6.13":
+  version: 7.6.13
+  resolution: "@react-navigation/material-top-tabs@npm:7.6.13"
+  dependencies:
+    "@react-navigation/elements": "npm:^2.9.36"
+    color: "npm:^4.2.3"
+    react-native-tab-view: "npm:^4.3.2"
+  peerDependencies:
+    "@react-navigation/native": ^7.3.14
+    react: ">= 18.2.0"
+    react-native: "*"
+    react-native-pager-view: ">= 6.0.0"
+    react-native-safe-area-context: ">= 4.0.0"
+  checksum: 10/f71ce6c375022b51e29db28587cf3da5d03b8b8369d7423b810ba839a7ceaf0e31f12b98d172d69a2f3a7ae12d4253e25d29e402ec64164b233de8bd9016a86c
   languageName: node
   linkType: hard
 
@@ -5875,6 +5892,7 @@ __metadata:
     "@react-navigation/devtools": "npm:7.1.1"
     "@react-navigation/drawer": "npm:7.12.2"
     "@react-navigation/elements": "npm:2.9.25"
+    "@react-navigation/material-top-tabs": "npm:7.6.13"
     "@react-navigation/native": "npm:7.3.3"
     "@react-navigation/native-stack": "npm:7.17.5"
     "@shopify/flash-list": "npm:2.3.2"
@@ -6588,11 +6606,11 @@ __metadata:
   linkType: hard
 
 "baseline-browser-mapping@npm:^2.11.12":
-  version: 2.11.20
-  resolution: "baseline-browser-mapping@npm:2.11.20"
+  version: 2.11.21
+  resolution: "baseline-browser-mapping@npm:2.11.21"
   bin:
     baseline-browser-mapping: dist/cli.cjs
-  checksum: 10/5263ac0e5f2d5cac5f48fe131a97a2e7a267487934403443282119c7a1a76670762fcb48e42a0eab4501dd1f2bb5021f4033e3fa07d96dddae4ebca6ae3bb24d
+  checksum: 10/b4d223df8dbb8deeaa3dae3b9b60ad48b24c57a5473827b5a6ee1c21917e7c37af2185224c5366f2932654ec5fb1a9fee4f95fe7213cc29f4347550f25e4234b
   languageName: node
   linkType: hard
 
@@ -7895,9 +7913,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.402":
-  version: 1.5.420
-  resolution: "electron-to-chromium@npm:1.5.420"
-  checksum: 10/9abf7840d9c954c754f3d59c6d1b59437aca9a634012cc63939f45376384b897649cdbd9c6102bde9471ea5f45dece13e28c03b693195a2afc383a0c7c9168a3
+  version: 1.5.422
+  resolution: "electron-to-chromium@npm:1.5.422"
+  checksum: 10/a4cc1bd7204bdb3da063f1ad8103f9990e03da3d0dae0aaf75e1669f2c36a9ae807498c5b27eed61fa98d6b10baf7fe05ff6038a99a4a85a0285e623825253d6
   languageName: node
   linkType: hard
 
@@ -14236,6 +14254,19 @@ __metadata:
     react-native: "*"
     react-native-pager-view: ">= 6.0.0"
   checksum: 10/71bb9384f7de870ef77b596a26cd2330f90e8541607175b9f888846ba3533e563082a77ac3f391c158b6a3535fbded096bb13fe7d57f85c11e9edfcec722c1f5
+  languageName: node
+  linkType: hard
+
+"react-native-tab-view@npm:^4.3.2":
+  version: 4.3.2
+  resolution: "react-native-tab-view@npm:4.3.2"
+  dependencies:
+    use-latest-callback: "npm:^0.2.4"
+  peerDependencies:
+    react: ">= 18.2.0"
+    react-native: "*"
+    react-native-pager-view: ">= 6.0.0"
+  checksum: 10/715aaef13b6e07c84bc802337f35017ec5c5709865ec80c75c5a35d2a1ee53bf1950a2e0c87c58db2f8ffd7487e7497ce1d37241805dd355e3ead56467711a4c
   languageName: node
   linkType: hard
 
