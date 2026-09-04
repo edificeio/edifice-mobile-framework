@@ -8,6 +8,7 @@ import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { cardPadding, CardWithoutPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
+import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
@@ -52,16 +53,23 @@ const PAGE_TITLE_I18N = {
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<
-  PronoteNavigationParams,
-  typeof pronoteRouteNames.carnetDeBordDetails
->): NativeStackNavigationOptions => ({
-  ...navBarOptions({
+}: NativeStackScreenProps<PronoteNavigationParams, typeof pronoteRouteNames.carnetDeBordDetails>): NativeStackNavigationOptions => {
+  const options = navBarOptions({
     navigation,
     route,
     title: I18n.get(PAGE_TITLE_I18N[route.params.type]),
-  }),
-});
+  });
+
+  return {
+    ...options,
+    // Opened from the home widget, this screen stands alone in the modal, so the stack draws no
+    // button. Leaving it then means closing the modal, as on the carnet de bord itself.
+    headerLeft: props =>
+      options.headerLeft?.(props) ?? (
+        <NavBarAction icon="ui-close" onPress={navigation.goBack} testID="carnet-de-bord-details-close-button" />
+      ),
+  };
+};
 
 const styles = StyleSheet.create({
   button: {

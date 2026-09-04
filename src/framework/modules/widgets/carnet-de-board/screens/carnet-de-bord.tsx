@@ -202,7 +202,7 @@ CarnetDeBordScreen.getRenderContent =
         {isStructureShown ? (
           <BodyBoldText style={styles.card}>{structures?.find(s => s.id === data?.structureId)?.name ?? ' '}</BodyBoldText>
         ) : null}
-        {data && data.idPronote && data.address && data.structureId ? (
+        {data && data.idPronote && data.address ? (
           <>
             <CarnetDeBordScreen.SectionContent
               title={I18n.get('pronote-cahierdetextes-title')}
