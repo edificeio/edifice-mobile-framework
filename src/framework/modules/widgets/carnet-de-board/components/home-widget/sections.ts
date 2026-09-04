@@ -1,12 +1,12 @@
 import { I18n } from '~/app/i18n';
 import type { SvgIconName } from '~/framework/components/picture';
-import { BLOCK_COLORS } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/constants';
-import type { CarnetDeBordSectionColors } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/types';
 import {
   CarnetDeBordSection,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   ICarnetDeBord,
 } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import type { CarnetDeBordSectionColors } from '~/framework/modules/widgets/carnet-de-board/model/sections';
+import { SECTION_STYLE } from '~/framework/modules/widgets/carnet-de-board/model/sections';
 import {
   getHomeworkSummary,
   getNoteSummary,
@@ -29,7 +29,7 @@ export interface CarnetDeBordWidgetSection {
 
 export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
   {
-    colors: BLOCK_COLORS.homework,
+    colors: SECTION_STYLE[CarnetDeBordSection.CAHIER_DE_TEXTES].colors,
     emptyText: 'pronote-cahierdetextes-empty',
     getValue: data => {
       const taf = getHomeworkSummary(data);
@@ -38,12 +38,12 @@ export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
         ? I18n.get('pronote-widget-homework-value', { date: taf.PourLe.format('L'), subject: taf.Matiere || noInfo() })
         : undefined;
     },
-    icon: 'diary-outline',
+    icon: SECTION_STYLE[CarnetDeBordSection.CAHIER_DE_TEXTES].icon,
     section: CarnetDeBordSection.CAHIER_DE_TEXTES,
     title: 'pronote-cahierdetextes-title',
   },
   {
-    colors: BLOCK_COLORS.note,
+    colors: SECTION_STYLE[CarnetDeBordSection.NOTES].colors,
     emptyText: 'pronote-transcript-empty',
     getValue: data => {
       const devoir = getNoteSummary(data);
@@ -56,13 +56,13 @@ export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
           })
         : undefined;
     },
-    icon: 'ui-notes',
+    icon: SECTION_STYLE[CarnetDeBordSection.NOTES].icon,
     section: CarnetDeBordSection.NOTES,
     title: 'pronote-transcript-title',
   },
 
   {
-    colors: BLOCK_COLORS.skill,
+    colors: SECTION_STYLE[CarnetDeBordSection.COMPETENCES].colors,
     emptyText: 'pronote-skills-empty',
     getValue: data => {
       const competence = getSkillSummary(data);
@@ -75,12 +75,12 @@ export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
           })
         : undefined;
     },
-    icon: 'ui-teacher',
+    icon: SECTION_STYLE[CarnetDeBordSection.COMPETENCES].icon,
     section: CarnetDeBordSection.COMPETENCES,
     title: 'pronote-widget-skills-title',
   },
   {
-    colors: BLOCK_COLORS.lateness,
+    colors: SECTION_STYLE[CarnetDeBordSection.VIE_SCOLAIRE].colors,
     emptyText: 'pronote-widget-lateness-empty',
     getValue: data => {
       const event = getUnjustifiedLatenessSummary(data);
@@ -88,7 +88,7 @@ export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
 
       return date ? I18n.get('pronote-widget-lateness-value', { date: date.format('L'), time: date.format('LT') }) : undefined;
     },
-    icon: 'ui-clock-alert',
+    icon: SECTION_STYLE[CarnetDeBordSection.VIE_SCOLAIRE].icon,
     section: CarnetDeBordSection.VIE_SCOLAIRE,
     title: 'pronote-widget-lateness-title',
   },
