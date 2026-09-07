@@ -4,7 +4,6 @@ import { ScrollView, ScrollViewProps, View } from 'react-native';
 import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
 import { I18n } from '~/app/i18n';
-import SecondaryButton from '~/framework/components/buttons/secondary';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
@@ -12,6 +11,7 @@ import { SmallBoldText } from '~/framework/components/text';
 import UserList from '~/framework/components/UserList';
 import { ContentLoader, LoadingState } from '~/framework/hooks/loader';
 import { withSession } from '~/framework/modules/auth/util';
+import { CarnetDeBordPronoteButton } from '~/framework/modules/widgets/carnet-de-board/components/pronote-button';
 import { CarnetDeBordSectionCard } from '~/framework/modules/widgets/carnet-de-board/components/section-card';
 import { CarnetDeBordSectionPlaceholder } from '~/framework/modules/widgets/carnet-de-board/components/section-placeholder';
 import { useCarnetDeBord, useSelectedChild } from '~/framework/modules/widgets/carnet-de-board/hooks';
@@ -24,7 +24,6 @@ import {
   SCREEN_SECTIONS,
 } from '~/framework/modules/widgets/carnet-de-board/model';
 import { pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
-import redirect from '~/framework/modules/widgets/carnet-de-board/service/redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
@@ -66,10 +65,6 @@ export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ naviga
     [navigation, selected],
   );
 
-  const openPronote = React.useCallback(() => {
-    if (selected?.address) redirect(session, selected.address);
-  }, [selected, session]);
-
   const renderContent = React.useCallback(
     (refreshControl: ScrollViewProps['refreshControl']) => (
       <ScrollView refreshControl={refreshControl}>
@@ -89,12 +84,7 @@ export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ naviga
                 title={I18n.get(section.title)}
               />
             ))}
-            <SecondaryButton
-              style={styles.button}
-              action={openPronote}
-              iconRight="pictos-external-link"
-              text={I18n.get('pronote-openinpronote')}
-            />
+            <CarnetDeBordPronoteButton address={selected.address} session={session} />
           </View>
         ) : (
           <EmptyScreen
@@ -105,7 +95,7 @@ export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ naviga
         )}
       </ScrollView>
     ),
-    [openPronote, openSection, select, selected, selectedId, structureName, users],
+    [openSection, select, selected, selectedId, session, structureName, users],
   );
 
   const renderLoading = React.useCallback(() => <CarnetDeBordSectionPlaceholder style={styles.sections} />, []);
