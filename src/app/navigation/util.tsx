@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { Platform, StyleProp, ViewStyle } from 'react-native';
 
 import { HeaderBackButton, HeaderButton, HeaderTitle } from '@react-navigation/elements';
 import {
@@ -148,18 +148,25 @@ export function headerAction(
     disabled,
     icon,
     onPress,
+    style,
     testID,
   }: {
     icon: SvgProps['name'];
     disabled?: boolean;
     onPress?: () => void;
+    style?: StyleProp<ViewStyle>;
     testID: string;
   },
   { tintColor }: NativeStackHeaderItemProps,
 ): NativeStackHeaderItemCustom {
   return {
     element: (
-      <HeaderButton onPress={onPress} testID={testID} disabled={disabled} style={styles.headerButton} pressColor={'transparent'}>
+      <HeaderButton
+        onPress={onPress}
+        testID={testID}
+        disabled={disabled}
+        style={[styles.headerButton, style]}
+        pressColor={'transparent'}>
         <Svg name={icon} fill={tintColor} width={UI_SIZES.elements.navbarIconSize} height={UI_SIZES.elements.navbarIconSize} />
       </HeaderButton>
     ),
