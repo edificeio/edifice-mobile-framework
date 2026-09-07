@@ -1,27 +1,20 @@
 import * as React from 'react';
-import { LayoutChangeEvent, Modal, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { LayoutChangeEvent, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { Popover, PopoverAction } from '~/framework/components/menus/popover';
 import { Svg } from '~/framework/components/picture';
-import { SmallBoldText } from '~/framework/components/text';
 import { TextAvatar } from '~/framework/components/textAvatar';
 import {
   WIDGET_ACTION_ICON_SIZE,
   WIDGET_USER_SELECTOR_AVATAR_SIZE,
+  WIDGET_USER_SELECTOR_ITEM_MAX_WIDTH,
   WIDGET_USER_SELECTOR_MAX_SHOWN,
 } from '~/framework/modules/widgets/components/constants';
 import { TabLayout, useTabbedPanel } from '~/framework/modules/widgets/components/tabbed-panel';
 
 import styles from './styles';
-import {
-  AnchorLayout,
-  WidgetUserSelectorItem,
-  WidgetUserSelectorMenuItemProps,
-  WidgetUserSelectorMenuProps,
-  WidgetUserSelectorProps,
-  WidgetUserSelectorTabProps,
-} from './types';
+import { WidgetUserSelectorItem, WidgetUserSelectorProps, WidgetUserSelectorTabProps } from './types';
 
 function Tab({ item, onMeasure, onSelect, ringColor, selected }: Readonly<WidgetUserSelectorTabProps>) {
   const select = React.useCallback(() => onSelect(item.id), [item.id, onSelect]);
@@ -49,43 +42,6 @@ function Tab({ item, onMeasure, onSelect, ringColor, selected }: Readonly<Widget
         customAvatarStyle={selected ? ringStyle : undefined}
       />
     </TouchableOpacity>
-  );
-}
-
-function MenuItem({ item, onSelect }: Readonly<WidgetUserSelectorMenuItemProps>) {
-  const select = React.useCallback(() => onSelect(item.id), [item.id, onSelect]);
-
-  return (
-    <TouchableOpacity style={styles.menuItem} onPress={select} accessibilityRole="menuitem">
-      <SmallBoldText numberOfLines={1}>{item.name}</SmallBoldText>
-    </TouchableOpacity>
-  );
-}
-
-function Menu({ anchor, items, onClose, onSelect }: Readonly<WidgetUserSelectorMenuProps>) {
-  const position = React.useMemo(
-    () =>
-      anchor
-        ? {
-            right: UI_SIZES.screen.width - (anchor.x + anchor.width),
-            top: anchor.y + anchor.height + UI_SIZES.spacing.tiny,
-          }
-        : undefined,
-    [anchor],
-  );
-
-  return (
-    <Modal visible={!!anchor} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={StyleSheet.absoluteFill} onPress={onClose}>
-        {position ? (
-          <View style={[styles.menu, position]} accessibilityRole="menu">
-            {items.map(item => (
-              <MenuItem key={item.id} item={item} onSelect={onSelect} />
-            ))}
-          </View>
-        ) : null}
-      </Pressable>
-    </Modal>
   );
 }
 
@@ -138,22 +94,17 @@ export function WidgetUserSelector({
 
   const asTabs = shown.length > 1;
 
-  const actionButton = React.useRef<View>(null);
-  const [anchor, setAnchor] = React.useState<AnchorLayout>();
-
-  const openMenu = React.useCallback(() => {
-    actionButton.current?.measureInWindow((x, y, width, height) => setAnchor({ height, width, x, y }));
-  }, []);
-
-  const closeMenu = React.useCallback(() => setAnchor(undefined), []);
-
   const selectFromMenu = React.useCallback(
     (id: string) => {
-      setAnchor(undefined);
       moveFirst(id);
       onSelect(id);
     },
     [moveFirst, onSelect],
+  );
+
+  const menuActions = React.useMemo<PopoverAction[]>(
+    () => hidden.map(item => ({ action: () => selectFromMenu(item.id), title: item.name })),
+    [hidden, selectFromMenu],
   );
 
   // All of them are kept, though the panel only ever wants the selected one: a tab reports itself
@@ -185,21 +136,18 @@ export function WidgetUserSelector({
         />
       ))}
       {action && hidden.length ? (
-        <>
-          <Pressable ref={actionButton} style={styles.action} onPress={openMenu} testID={action.testID}>
-            {({ pressed }) => (
-              <View style={[styles.actionCircle, pressed && styles.actionCirclePressed]}>
-                <Svg
-                  name={action.icon}
-                  fill={theme.palette.secondary.dark}
-                  width={WIDGET_ACTION_ICON_SIZE}
-                  height={WIDGET_ACTION_ICON_SIZE}
-                />
-              </View>
-            )}
-          </Pressable>
-          <Menu anchor={anchor} items={hidden} onClose={closeMenu} onSelect={selectFromMenu} />
-        </>
+        <Popover actions={menuActions} minWidth={WIDGET_USER_SELECTOR_ITEM_MAX_WIDTH} style={styles.action} testID={action.testID}>
+          {opened => (
+            <View style={[styles.actionCircle, opened && styles.actionCirclePressed]}>
+              <Svg
+                name={action.icon}
+                fill={theme.palette.secondary.dark}
+                width={WIDGET_ACTION_ICON_SIZE}
+                height={WIDGET_ACTION_ICON_SIZE}
+              />
+            </View>
+          )}
+        </Popover>
       ) : null}
     </View>
   );
