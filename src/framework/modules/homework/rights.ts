@@ -12,6 +12,7 @@ import { resourceHasRight } from '~/framework/util/resourceRights';
 
 import { fetchHomeworkDiaryList } from './actions/diaryList';
 import { homeworkDiarySelected } from './actions/selectedDiary';
+import moduleConfig from './module-config';
 import { homeworkRouteNames } from './navigation';
 import { IHomeworkDiary } from './reducers/diaryList';
 
@@ -70,6 +71,8 @@ export default () =>
             Toast.showError(I18n.get('homework-rights-error-text'));
           }
         },
+        appName: moduleConfig.name,
+        icon: 'homework1D',
         title: I18n.get('homework-resourcename'),
       }
     );

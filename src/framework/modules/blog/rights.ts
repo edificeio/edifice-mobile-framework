@@ -8,6 +8,7 @@ import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-
 import { resourceHasRight } from '~/framework/util/resourceRights';
 
 import { getPublishableBlogListAction } from './actions';
+import moduleConfig from './module-config';
 import { blogRouteNames } from './navigation';
 import { Blog } from './reducer';
 
@@ -81,6 +82,8 @@ export default () =>
             Toast.showError(I18n.get('blog-rights-error-text'));
           }
         },
+        appName: moduleConfig.name,
+        icon: 'blog',
         title: I18n.get('blog-resourcename'),
       }
     );
