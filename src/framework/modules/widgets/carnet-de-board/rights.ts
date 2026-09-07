@@ -4,10 +4,10 @@ import { timelineWidgets } from '~/framework/modules/timeline/timeline-modules';
 import moduleConfig from './module-config';
 
 // the dashboard only ever speaks of a pupil, so only a pupil and their family are shown it
-const READERS = [AccountType.Student, AccountType.Relative];
+const READERS = new Set([AccountType.Student, AccountType.Relative]);
 
 export const canSeeCarnetDeBordWidget = (session: AuthActiveAccount) =>
-  READERS.includes(session.user.type) &&
+  READERS.has(session.user.type) &&
   timelineWidgets
     .get()
     .filterAvailables(session)

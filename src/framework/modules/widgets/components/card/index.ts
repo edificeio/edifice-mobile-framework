@@ -1,5 +1,2 @@
-import { WidgetCard } from './component';
-
 export type { WidgetCardProps } from './types';
-export default WidgetCard;
-export { WidgetCard };
+export { WidgetCard, WidgetCard as default } from './component';

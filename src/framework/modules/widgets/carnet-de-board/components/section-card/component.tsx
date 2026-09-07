@@ -10,7 +10,7 @@ import { SECTION_ICON_INNER_SIZE, SECTION_STYLE } from '~/framework/modules/widg
 import styles from './styles';
 import { CarnetDeBordSectionCardProps } from './types';
 
-export function CarnetDeBordSectionCard({ emptyText, labels, onPress, section, title }: CarnetDeBordSectionCardProps) {
+export function CarnetDeBordSectionCard({ emptyText, labels, onPress, section, title }: Readonly<CarnetDeBordSectionCardProps>) {
   const open = React.useCallback(() => onPress(section), [onPress, section]);
   const { colors, icon } = SECTION_STYLE[section];
   const cardStyle = React.useMemo(() => [styles.card, { borderColor: colors.borders }], [colors]);

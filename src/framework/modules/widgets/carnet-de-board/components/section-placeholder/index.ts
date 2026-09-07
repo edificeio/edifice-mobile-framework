@@ -1,5 +1,2 @@
-import { CarnetDeBordSectionPlaceholder } from './component';
-
 export type { CarnetDeBordSectionPlaceholderProps } from './types';
-export default CarnetDeBordSectionPlaceholder;
-export { CarnetDeBordSectionPlaceholder };
+export { CarnetDeBordSectionPlaceholder, CarnetDeBordSectionPlaceholder as default } from './component';

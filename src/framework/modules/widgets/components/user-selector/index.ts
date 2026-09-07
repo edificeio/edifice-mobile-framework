@@ -1,11 +1,8 @@
-import { WidgetUserSelector } from './component';
-import { WidgetUserSelectorPlaceholder } from './placeholder';
-
 export type {
   WidgetUserSelectorAction,
   WidgetUserSelectorItem,
   WidgetUserSelectorPlaceholderProps,
   WidgetUserSelectorProps,
 } from './types';
-export default WidgetUserSelector;
-export { WidgetUserSelector, WidgetUserSelectorPlaceholder };
+export { WidgetUserSelector, WidgetUserSelector as default } from './component';
+export { WidgetUserSelectorPlaceholder } from './placeholder';

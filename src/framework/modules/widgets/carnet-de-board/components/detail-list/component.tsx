@@ -7,7 +7,7 @@ import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import styles from './styles';
 import { CarnetDeBordDetailListProps, CarnetDeBordDetailRowProps } from './types';
 
-function Row({ item, separated }: CarnetDeBordDetailRowProps) {
+function Row({ item, separated }: Readonly<CarnetDeBordDetailRowProps>) {
   return (
     <View style={[styles.row, separated && styles.rowSeparated]}>
       <View style={styles.rowText}>
@@ -29,11 +29,11 @@ function Row({ item, separated }: CarnetDeBordDetailRowProps) {
   );
 }
 
-export function CarnetDeBordDetailList({ items, style }: CarnetDeBordDetailListProps) {
+export function CarnetDeBordDetailList({ items, style }: Readonly<CarnetDeBordDetailListProps>) {
   return (
     <View style={[styles.list, style]}>
       {items.map((item, index) => (
-        <Row key={index} item={item} separated={index + 1 < items.length} />
+        <Row key={item?.date} item={item} separated={index + 1 < items.length} />
       ))}
     </View>
   );
