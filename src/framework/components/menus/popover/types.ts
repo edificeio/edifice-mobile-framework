@@ -20,6 +20,7 @@ export interface PopoverProps {
   children: ReactNode | ((opened: boolean) => ReactNode);
   disabled?: boolean;
   align?: 'start' | 'end';
+  minWidth?: number;
   style?: StyleProp<ViewStyle>;
   testID?: string;
 }
@@ -32,7 +33,7 @@ export interface PopoverAnchor {
   y: number;
 }
 
-export interface PopoverMenuProps extends Required<Pick<PopoverProps, 'actions' | 'align'>> {
+export interface PopoverMenuProps extends Required<Pick<PopoverProps, 'actions' | 'align' | 'minWidth'>> {
   anchor: PopoverAnchor;
   onClose: () => void;
 }
