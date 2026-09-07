@@ -12,7 +12,7 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { TemporalTimeText } from '~/framework/util/date';
 
 import { SocialResourceViewerContext } from './context';
-import { SocialResourceViewerAddResponseForm, SocialResourceViewerEditCommentForm } from './form';
+import { SocialResourceViewerEditCommentForm } from './form';
 import styles from './styles';
 import { SocialResourceViewer, SocialResourceViewerInternals } from './types';
 
@@ -253,27 +253,6 @@ export const SocialResourceViewerShowMoreResponsesItem = ({
   );
 };
 
-export const SocialResourceViewerAddResponseItem = ({
-  inputRef,
-  onSubmit,
-}: ListRenderItemInfo<SocialResourceViewerInternals.AddResponseItem> & {
-  onSubmit?: SocialResourceViewer.Props['onSubmit'];
-  inputRef?: SocialResourceViewerInternals.ItemProps['inputRef'];
-}) => {
-  const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemResponse], []);
-  const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeResponse], []);
-  const itemTreeCurveStyle = React.useMemo(() => [styles.itemTreeDecoCurveCommon, styles.itemTreeDecoCurveForm], []);
-
-  return (
-    <View style={itemStyle}>
-      <View style={itemTreeStyle}>
-        <View style={itemTreeCurveStyle} />
-      </View>
-      <SocialResourceViewerAddResponseForm onSubmit={onSubmit} ref={inputRef} />
-    </View>
-  );
-};
-
 export const SocialResourceViewerEditCommentItem = ({
   inputRef,
   listRef,
@@ -344,7 +323,6 @@ export const SocialResourceViewerItem = ({
   onPressEdit,
   onPressReply,
   onSendEdit,
-  onSendReply,
   onShowResponses,
   ...info
 }: SocialResourceViewerInternals.ItemProps) => {
@@ -399,14 +377,6 @@ export const SocialResourceViewerItem = ({
       <SocialResourceViewerShowMoreResponsesItem
         {...(info as ListRenderItemInfo<SocialResourceViewerInternals.ResponseItemEllipsis>)}
         onShowResponses={onShowResponses}
-      />
-    );
-  } else if (info.item.type === SocialResourceViewerInternals.ITEM_ADD_RESPONSE) {
-    return (
-      <SocialResourceViewerAddResponseItem
-        {...(info as ListRenderItemInfo<SocialResourceViewerInternals.AddResponseItem>)}
-        onSubmit={onSendReply}
-        inputRef={inputRef}
       />
     );
   } else {

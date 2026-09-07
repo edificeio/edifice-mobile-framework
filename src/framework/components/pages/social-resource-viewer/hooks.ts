@@ -94,22 +94,17 @@ export const useSocialCommentsData = (
     const ret: SocialResourceViewerInternals.Item[] = [];
     for (let commentIndex = 0; commentIndex < dataWithRanges.length; ++commentIndex) {
       const { responses, ...commentItem } = dataWithRanges[commentIndex];
-      const hasResponseForm =
-        'newResponseReplyTo' in editContext &&
-        'newResponseValue' in editContext &&
-        commentItem.id === editContext.newResponseReplyTo;
-      const nbResponses = responses.length + (hasResponseForm ? 1 : 0);
       // Add comment item here
       if ('deleted' in commentItem) {
         ret.push({
           ...commentItem,
-          nbResponses,
+          nbResponses: responses.length,
           type: SocialResourceViewerInternals.ITEM_COMMENT_DELETED,
         });
       } else {
         ret.push({
           ...commentItem,
-          nbResponses,
+          nbResponses: responses.length,
           type: SocialResourceViewerInternals.ITEM_COMMENT,
         });
       }
@@ -117,7 +112,7 @@ export const useSocialCommentsData = (
       for (let responseIndex = 0; responseIndex < responses.length; ++responseIndex) {
         const responseItem = responses[responseIndex];
         const responseData = {
-          hasResponses: responseIndex < responses.length - 1 || hasResponseForm,
+          hasResponses: responseIndex < responses.length - 1,
           inReplyTo: commentItem.id,
           inReplyToIndex: commentIndex,
         };
@@ -141,19 +136,9 @@ export const useSocialCommentsData = (
           });
         }
       }
-      // Add new response form here
-      if (hasResponseForm) {
-        ret.push({
-          inReplyTo: commentItem.id,
-          inReplyToIndex: commentIndex,
-          type: SocialResourceViewerInternals.ITEM_ADD_RESPONSE,
-          value: editContext.newResponseValue ?? '',
-          // ToDo: get isRichContent from config here or something
-        });
-      }
     }
     return ret;
-  }, [dataWithRanges, editContext]);
+  }, [dataWithRanges]);
 
   return { filteredData: dataWithRanges, flatData, showResponses, totalItems };
 };
@@ -213,11 +198,3 @@ const _buildResponses = <ItemT, GapT>(
   }
   return ret;
 };
-
-// const _isInRanges = (ranges: [number, number][], index: number) => {
-//   for (const range of ranges) {
-//     if (index < range[0]) return false;
-//     if (index < range[0] + range[1]) return true;
-//   }
-//   return false;
-// };

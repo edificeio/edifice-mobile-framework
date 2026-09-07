@@ -3,7 +3,6 @@ import { FlatList, FlatListProps, ListRenderItemInfo, StyleProp, ViewStyle } fro
 import { Temporal } from '@js-temporal/polyfill';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-// import { FlashListProps, FlashListRef } from '@shopify/flash-list';
 
 import { AccountType } from '~/framework/modules/auth/model';
 
@@ -66,7 +65,6 @@ export namespace SocialResourceViewer {
 }
 
 export namespace SocialResourceViewerInternals {
-  export const ITEM_ADD_RESPONSE = Symbol('ITEM_ADD_RESPONSE');
   export const ITEM_RESPONSE_ELLIPSIS = Symbol('ITEM_RESPONSE_ELLIPSIS');
   export const ITEM_COMMENT = Symbol('ITEM_COMMENT');
   export const ITEM_RESPONSE = Symbol('ITEM_RESPONSE');
@@ -99,21 +97,12 @@ export namespace SocialResourceViewerInternals {
     inReplyToIndex: number;
     hasResponses: boolean;
   }
-  export interface AddResponseItem {
-    type: typeof ITEM_ADD_RESPONSE;
-    inReplyTo: CommentItem['id'];
-    inReplyToIndex: number;
-    value: string;
-    isRichContent?: boolean;
-  }
 
-  export type Item = CommentItem | ResponseItem | CommentItemDeleted | ResponseItemDeleted | ResponseItemEllipsis | AddResponseItem;
+  export type Item = CommentItem | ResponseItem | CommentItemDeleted | ResponseItemDeleted | ResponseItemEllipsis;
 
   export interface ContextState {
     newCommentHeight: number;
     newCommentValue: string;
-    newResponseValue?: string;
-    newResponseReplyTo?: SocialResourceViewerInternals.CommentItem['id'];
     editId?: SocialResourceViewerInternals.ResponseItem['id'];
     editValue?: string;
     editHasChanges?: boolean;
@@ -121,8 +110,6 @@ export namespace SocialResourceViewerInternals {
   export type ContextAction =
     | Pick<ContextState, 'newCommentHeight'>
     | Pick<ContextState, 'newCommentValue'>
-    | Required<Pick<ContextState, 'newResponseReplyTo' | 'newResponseValue'>>
-    | { newResponseReplyTo: undefined; newResponseValue: undefined }
     | Required<Pick<ContextState, 'editId' | 'editValue' | 'editHasChanges'>>
     | { editId: undefined; editValue: undefined; editHasChanges: undefined };
 
@@ -136,7 +123,6 @@ export namespace SocialResourceViewerInternals {
     onShowResponses?: (id: string, start: number, count: number) => void;
     canAddComment?: boolean;
     onPressReply?: (item: SocialResourceViewerInternals.CommentItem, index: number) => void;
-    onSendReply?: SocialResourceViewer.Props['onSubmit'];
     onSendEdit?: SocialResourceViewer.Props['onEdit'];
     inputRef?: ChatTextAreaProps['ref'];
     listRef?: React.RefObject<FlatList<SocialResourceViewerInternals.Item> | null>;

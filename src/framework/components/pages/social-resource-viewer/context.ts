@@ -10,9 +10,6 @@ export const socialResourceViewerContextReducer: SocialResourceViewerInternals.C
   if ('newCommentValue' in action || 'newCommentHeight' in action) {
     return { ...state, ...action };
   }
-  if ('newResponseReplyTo' in action && 'newResponseValue' in action) {
-    return { newCommentHeight: state.newCommentHeight, newCommentValue: state.newCommentValue, ...action };
-  }
   if ('editId' in action && 'editValue' in action) {
     return { newCommentHeight: state.newCommentHeight, newCommentValue: state.newCommentValue, ...action };
   }
