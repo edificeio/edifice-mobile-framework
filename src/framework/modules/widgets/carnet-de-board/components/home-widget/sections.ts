@@ -10,10 +10,9 @@ import {
   getUnjustifiedDate,
   getUnjustifiedLatenessSummary,
   ICarnetDeBord,
+  noInfo,
   SECTION_STYLE,
 } from '~/framework/modules/widgets/carnet-de-board/model';
-
-const noInfo = () => I18n.get('pronote-noinfo');
 
 export interface CarnetDeBordWidgetSection {
   colors: CarnetDeBordSectionColors;
