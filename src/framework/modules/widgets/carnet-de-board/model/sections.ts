@@ -20,6 +20,13 @@ export interface CarnetDeBordSectionStyle {
   icon: SvgIconName;
 }
 
+export const SECTION_TITLE: Record<CarnetDeBordSection, string> = {
+  [CarnetDeBordSection.CAHIER_DE_TEXTES]: 'pronote-cahierdetextes-title',
+  [CarnetDeBordSection.COMPETENCES]: 'pronote-skills-title',
+  [CarnetDeBordSection.NOTES]: 'pronote-transcript-title',
+  [CarnetDeBordSection.VIE_SCOLAIRE]: 'pronote-viescolaire-title',
+};
+
 export const SECTION_STYLE: Record<CarnetDeBordSection, CarnetDeBordSectionStyle> = {
   [CarnetDeBordSection.CAHIER_DE_TEXTES]: {
     colors: {

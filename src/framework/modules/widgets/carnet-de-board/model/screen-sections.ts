@@ -6,10 +6,12 @@ import {
   formatCarnetDeBordCompetencesValue,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
+  formatVieScolaireDate,
   getSummaryItem,
   ICarnetDeBord,
-  ICarnetDeBordVieScolaire,
+  noInfo,
 } from './carnet-de-bord';
+import { SECTION_TITLE } from './sections';
 
 export interface CarnetDeBordScreenSectionLabels {
   textLabel: string;
@@ -22,31 +24,6 @@ export interface CarnetDeBordScreenSection {
   section: CarnetDeBordSection;
   title: string;
 }
-
-const noInfo = () => I18n.get('pronote-noinfo');
-
-const formatVieScolaireDate = (event: ICarnetDeBordVieScolaire) => {
-  if (event.type === 'Absence') {
-    const { DateDebut: start, DateFin: end } = event;
-    if (!start || !end) return noInfo();
-    if (!start.isSame(end, 'day'))
-      return I18n.get('pronote-viescolaire-datefromto', {
-        end: displayDate(end, 'short'),
-        start: displayDate(start, 'short'),
-      });
-    if (start.isSame(end, 'minute')) return displayDate(start, 'short');
-    return (
-      displayDate(start, 'short') +
-      I18n.get('common-space') +
-      I18n.get('pronote-viescolaire-datefromto', { end: end.format('LT'), start: start.format('LT') })
-    );
-  }
-
-  if (!event.Date) return noInfo();
-  if (event.type === 'Retard' || event.type === 'PassageInfirmerie')
-    return displayDate(event.Date, 'short') + I18n.get('common-space') + event.Date.format('LT');
-  return displayDate(event.Date, 'short');
-};
 
 export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
   {
@@ -63,7 +40,7 @@ export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
       };
     },
     section: CarnetDeBordSection.CAHIER_DE_TEXTES,
-    title: 'pronote-cahierdetextes-title',
+    title: SECTION_TITLE[CarnetDeBordSection.CAHIER_DE_TEXTES],
   },
   {
     emptyText: 'pronote-transcript-empty',
@@ -77,7 +54,7 @@ export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
       };
     },
     section: CarnetDeBordSection.NOTES,
-    title: 'pronote-transcript-title',
+    title: SECTION_TITLE[CarnetDeBordSection.NOTES],
   },
   {
     emptyText: 'pronote-skills-empty',
@@ -91,7 +68,7 @@ export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
       };
     },
     section: CarnetDeBordSection.COMPETENCES,
-    title: 'pronote-skills-title',
+    title: SECTION_TITLE[CarnetDeBordSection.COMPETENCES],
   },
   {
     emptyText: 'pronote-viescolaire-empty',
@@ -99,9 +76,9 @@ export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
       const event = getSummaryItem(data.PageVieScolaire?.VieScolairePast, data.PageVieScolaire?.VieScolaireFuture);
       if (!event) return undefined;
 
-      return { textLabel: formatCarnetDeBordVieScolaireType(event.type), valueLabel: formatVieScolaireDate(event) };
+      return { textLabel: formatCarnetDeBordVieScolaireType(event.type), valueLabel: formatVieScolaireDate(event, 'short') };
     },
     section: CarnetDeBordSection.VIE_SCOLAIRE,
-    title: 'pronote-viescolaire-title',
+    title: SECTION_TITLE[CarnetDeBordSection.VIE_SCOLAIRE],
   },
 ];
