@@ -16,7 +16,7 @@ import { cardPaddingMerging } from '~/framework/components/card/base';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
-import PopupMenu from '~/framework/components/menus/popup';
+import { Popover } from '~/framework/components/menus/popover';
 import { NavBarProfileButton } from '~/framework/components/navigation';
 import { pageGutterSize } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
@@ -385,7 +385,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
             },
             props,
           );
-          ret.push(<PopupMenu actions={workflows}>{action.element}</PopupMenu>);
+          ret.push(<Popover actions={workflows}>{action.element}</Popover>);
         }
         return ret;
       },
@@ -412,7 +412,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
           );
           ret.push({
             ...action,
-            element: <PopupMenu actions={workflows}>{action.element}</PopupMenu>,
+            element: <Popover actions={workflows}>{action.element}</Popover>,
           });
         }
         return ret;
