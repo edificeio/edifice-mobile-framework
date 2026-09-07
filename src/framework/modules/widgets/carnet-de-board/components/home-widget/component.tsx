@@ -19,7 +19,7 @@ import { WidgetCard } from '~/framework/modules/widgets/components/card';
 import { TabbedPanel } from '~/framework/modules/widgets/components/tabbed-panel';
 import { WidgetUserSelector } from '~/framework/modules/widgets/components/user-selector';
 
-function Message({ illustration, text }: { illustration: SvgIconName; text: string }) {
+function Message({ illustration, text }: Readonly<{ illustration: SvgIconName; text: string }>) {
   return (
     <View style={styles.empty}>
       <Svg
@@ -32,7 +32,7 @@ function Message({ illustration, text }: { illustration: SvgIconName; text: stri
   );
 }
 
-export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: CarnetDeBordWidgetProps) {
+export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: Readonly<CarnetDeBordWidgetProps>) {
   const { children, error, select, selected, selectedId } = useCarnetDeBord();
   const isRelative = session.user.type === AccountType.Relative;
 

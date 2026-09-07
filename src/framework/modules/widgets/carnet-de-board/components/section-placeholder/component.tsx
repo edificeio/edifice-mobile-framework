@@ -9,7 +9,7 @@ import { CarnetDeBordSectionPlaceholderProps } from './types';
 const DEFAULT_COUNT = 4;
 
 export const CarnetDeBordSectionPlaceholder = React.memo(
-  ({ count = DEFAULT_COUNT, style }: CarnetDeBordSectionPlaceholderProps) => (
+  ({ count = DEFAULT_COUNT, style }: Readonly<CarnetDeBordSectionPlaceholderProps>) => (
     <Placeholder style={[styles.list, style]} Animation={Fade}>
       {Array.from({ length: count }, (_unused, index) => (
         <View key={index} style={styles.card}>

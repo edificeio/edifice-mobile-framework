@@ -7,7 +7,15 @@ import styles from '~/framework/modules/widgets/carnet-de-board/components/home-
 import { CarnetDeBordSectionCardProps } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/types';
 import { SECTION_ICON_INNER_SIZE } from '~/framework/modules/widgets/carnet-de-board/model';
 
-export function CarnetDeBordSectionCard({ colors, emptyText, icon, onPress, section, title, value }: CarnetDeBordSectionCardProps) {
+export function CarnetDeBordSectionCard({
+  colors,
+  emptyText,
+  icon,
+  onPress,
+  section,
+  title,
+  value,
+}: Readonly<CarnetDeBordSectionCardProps>) {
   const open = React.useCallback(() => onPress(section), [onPress, section]);
   const iconStyle = React.useMemo(
     () => [styles.icon, { backgroundColor: colors.background, borderColor: colors.borders }],

@@ -24,8 +24,12 @@ export function buildTabbedPanelPath({ height, radius, tab, width }: TabbedPanel
   const path: string[] = [];
 
   if (!tab) {
-    path.push(`M ${left} ${top + corner}`, turn(corner, left + corner, top));
-    path.push(`L ${right - corner} ${top}`, turn(corner, right, top + corner));
+    path.push(
+      `M ${left} ${top + corner}`,
+      turn(corner, left + corner, top),
+      `L ${right - corner} ${top}`,
+      turn(corner, right, top + corner),
+    );
   } else {
     // The line the tab meets the panel on, and the sides it stands between.
     const junction = tab.height;
@@ -37,22 +41,35 @@ export function buildTabbedPanelPath({ height, radius, tab, width }: TabbedPanel
     if (start <= left) {
       path.push(`M ${left} ${top + corner}`, turn(corner, left + corner, top));
     } else {
-      path.push(`M ${left} ${junction + corner}`, turn(corner, left + corner, junction));
-      path.push(`L ${start - curve} ${junction}`, turnIn(curve, start, junction - curve));
-      path.push(`L ${start} ${top + corner}`, turn(corner, start + corner, top));
+      path.push(
+        `M ${left} ${junction + corner}`,
+        turn(corner, left + corner, junction),
+        `L ${start - curve} ${junction}`,
+        turnIn(curve, start, junction - curve),
+        `L ${start} ${top + corner}`,
+        turn(corner, start + corner, top),
+      );
     }
 
     path.push(`L ${end - corner} ${top}`, turn(corner, end, top + corner));
 
     if (end < right) {
-      path.push(`L ${end} ${junction - curve}`, turnIn(curve, end + curve, junction));
-      path.push(`L ${right - corner} ${junction}`, turn(corner, right, junction + corner));
+      path.push(
+        `L ${end} ${junction - curve}`,
+        turnIn(curve, end + curve, junction),
+        `L ${right - corner} ${junction}`,
+        turn(corner, right, junction + corner),
+      );
     }
   }
 
-  path.push(`L ${right} ${bottom - corner}`, turn(corner, right - corner, bottom));
-  path.push(`L ${left + corner} ${bottom}`, turn(corner, left, bottom - corner));
-  path.push('Z');
+  path.push(
+    `L ${right} ${bottom - corner}`,
+    turn(corner, right - corner, bottom),
+    `L ${left + corner} ${bottom}`,
+    turn(corner, left, bottom - corner),
+    'Z',
+  );
 
   return path.join(' ');
 }

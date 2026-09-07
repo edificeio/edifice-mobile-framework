@@ -1,5 +1,2 @@
-import { CarnetDeBordSectionCard } from './component';
-
 export type { CarnetDeBordSectionCardProps } from './types';
-export default CarnetDeBordSectionCard;
-export { CarnetDeBordSectionCard };
+export { CarnetDeBordSectionCard, CarnetDeBordSectionCard as default } from './component';

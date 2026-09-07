@@ -9,7 +9,9 @@ import { useTabbedPanel } from '~/framework/modules/widgets/components/tabbed-pa
 import styles from './styles';
 import { WidgetUserSelectorPlaceholderProps } from './types';
 
-export function WidgetUserSelectorPlaceholder({ count = WIDGET_USER_SELECTOR_MAX_SHOWN }: WidgetUserSelectorPlaceholderProps) {
+export function WidgetUserSelectorPlaceholder({
+  count = WIDGET_USER_SELECTOR_MAX_SHOWN,
+}: Readonly<WidgetUserSelectorPlaceholderProps>) {
   const panel = useTabbedPanel();
 
   const measure = React.useCallback(

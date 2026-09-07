@@ -10,7 +10,7 @@ import { CarnetDeBordWidgetPlaceholderProps } from '~/framework/modules/widgets/
 import { TabbedPanel } from '~/framework/modules/widgets/components/tabbed-panel';
 import { WidgetUserSelectorPlaceholder } from '~/framework/modules/widgets/components/user-selector';
 
-export function CarnetDeBordWidgetPlaceholder({ tabs }: CarnetDeBordWidgetPlaceholderProps) {
+export function CarnetDeBordWidgetPlaceholder({ tabs }: Readonly<CarnetDeBordWidgetPlaceholderProps>) {
   return (
     <Placeholder Animation={Fade}>
       <TabbedPanel

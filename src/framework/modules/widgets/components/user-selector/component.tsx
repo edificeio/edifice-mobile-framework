@@ -23,7 +23,7 @@ import {
   WidgetUserSelectorTabProps,
 } from './types';
 
-function Tab({ item, onMeasure, onSelect, ringColor, selected }: WidgetUserSelectorTabProps) {
+function Tab({ item, onMeasure, onSelect, ringColor, selected }: Readonly<WidgetUserSelectorTabProps>) {
   const select = React.useCallback(() => onSelect(item.id), [item.id, onSelect]);
   const ringStyle = React.useMemo(() => StyleSheet.flatten([styles.itemAvatarSelected, { borderColor: ringColor }]), [ringColor]);
 
@@ -52,7 +52,7 @@ function Tab({ item, onMeasure, onSelect, ringColor, selected }: WidgetUserSelec
   );
 }
 
-function MenuItem({ item, onSelect }: WidgetUserSelectorMenuItemProps) {
+function MenuItem({ item, onSelect }: Readonly<WidgetUserSelectorMenuItemProps>) {
   const select = React.useCallback(() => onSelect(item.id), [item.id, onSelect]);
 
   return (
@@ -62,7 +62,7 @@ function MenuItem({ item, onSelect }: WidgetUserSelectorMenuItemProps) {
   );
 }
 
-function Menu({ anchor, items, onClose, onSelect }: WidgetUserSelectorMenuProps) {
+function Menu({ anchor, items, onClose, onSelect }: Readonly<WidgetUserSelectorMenuProps>) {
   const position = React.useMemo(
     () =>
       anchor
@@ -130,7 +130,7 @@ export function WidgetUserSelector({
   onSelect,
   ringColor,
   selectedId,
-}: WidgetUserSelectorProps) {
+}: Readonly<WidgetUserSelectorProps>) {
   const { moveFirst, ordered } = usePickOrder(items, selectedId, maxShown);
   const shown = React.useMemo(() => ordered.slice(0, maxShown), [maxShown, ordered]);
   const hidden = React.useMemo(() => ordered.slice(maxShown), [maxShown, ordered]);

@@ -7,7 +7,7 @@ import redirect from '~/framework/modules/widgets/carnet-de-board/service/redire
 import styles from './styles';
 import { CarnetDeBordPronoteButtonProps } from './types';
 
-export function CarnetDeBordPronoteButton({ address, pageId, session, style }: CarnetDeBordPronoteButtonProps) {
+export function CarnetDeBordPronoteButton({ address, pageId, session, style }: Readonly<CarnetDeBordPronoteButtonProps>) {
   const open = React.useCallback(() => {
     if (address) redirect(session, address, pageId);
   }, [address, pageId, session]);
