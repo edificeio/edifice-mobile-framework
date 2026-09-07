@@ -161,22 +161,24 @@ export function SocialResourceViewer({
     [newCommentHeight],
   );
 
-  const isRedactingResponse = React.useCallback(
+  const hasChangesInNewResponse = React.useCallback(
     (item: SocialResourceViewerInternals.CommentItem) =>
       context[0].newResponseReplyTo !== undefined &&
       context[0].newResponseReplyTo !== item.id &&
       context[0].newResponseValue !== '',
     [context],
   );
-  const isRedactingAnyResponse = React.useCallback(
+  const hasChangesInAnyResponse = React.useCallback(
     () => context[0].newResponseReplyTo !== undefined && context[0].newResponseValue !== '',
     [context],
   );
-  const isRedactingComment = React.useCallback(
+  const hasChangesInEditing = React.useCallback(
     (item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem) =>
       context[0].editId !== undefined && context[0].editId !== item.id && context[0].editHasChanges,
     [context],
   );
+
+  const isInlineEditing = context[0].editId !== undefined || context[0].newResponseReplyTo !== undefined;
 
   const confirmQuitReply = React.useCallback((callback: () => void) => {
     Alert.alert(I18n.get('comment-cancelreply-alert-title'), I18n.get('comment-cancelreply-alert-text'), [
@@ -219,11 +221,11 @@ export function SocialResourceViewer({
         });
       };
 
-      if (isRedactingResponse(item) && isDifferentCommentThanBefore) confirmQuitReply(addReply);
-      else if (isRedactingComment(item)) confirmQuitEdit(addReply);
+      if (hasChangesInNewResponse(item) && isDifferentCommentThanBefore) confirmQuitReply(addReply);
+      else if (hasChangesInEditing(item)) confirmQuitEdit(addReply);
       else addReply();
     },
-    [confirmQuitEdit, confirmQuitReply, context, isRedactingComment, isRedactingResponse],
+    [confirmQuitEdit, confirmQuitReply, context, hasChangesInEditing, hasChangesInNewResponse],
   );
 
   const onPressEdit = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressEdit']>>(
@@ -234,11 +236,11 @@ export function SocialResourceViewer({
           inlineEditRef?.current?.focus();
         });
       };
-      if (isRedactingAnyResponse()) confirmQuitReply(beginEdit);
-      else if (isRedactingComment(item)) confirmQuitEdit(beginEdit);
+      if (hasChangesInAnyResponse()) confirmQuitReply(beginEdit);
+      else if (hasChangesInEditing(item)) confirmQuitEdit(beginEdit);
       else beginEdit();
     },
-    [confirmQuitEdit, confirmQuitReply, context, isRedactingAnyResponse, isRedactingComment],
+    [confirmQuitEdit, confirmQuitReply, context, hasChangesInAnyResponse, hasChangesInEditing],
   );
 
   const onPressDelete = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressDelete']>>(
@@ -335,7 +337,7 @@ export function SocialResourceViewer({
         onRefresh={onRefresh}
         ListEmptyComponent={<SocialResourceViewerEmpty canAddComment={canAddComment ?? false} />}
       />
-      {canAddComment && (
+      {canAddComment && !isInlineEditing && (
         <SocialResourceViewerAddCommentForm onSubmit={onSubmit} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
       )}
     </SocialResourceViewerContext>

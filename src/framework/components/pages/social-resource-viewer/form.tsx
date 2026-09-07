@@ -191,7 +191,7 @@ export const SocialResourceViewerEditCommentForm = ({
 } & ListRenderItemInfo<SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem> &
   Pick<SocialResourceViewerInternals.ItemProps, 'listRef'>) => {
   const scrollToAllowed = React.useRef(true);
-  const [{ editId, editValue, newCommentHeight }, dispatch] = React.useContext(SocialResourceViewerContext);
+  const [{ editId, editValue }, dispatch] = React.useContext(SocialResourceViewerContext);
   const [isSending, setIsSending] = React.useState(false);
   const onPress = React.useCallback(async () => {
     if (!onSubmit || editValue === undefined || editId === undefined) return;
@@ -214,8 +214,8 @@ export const SocialResourceViewerEditCommentForm = ({
   const buttonsStyle = React.useMemo(() => [styles.itemContentButtons, styles.itemContentButtonsEdit], []);
 
   // Note: FlashList and FlatList have opposite behavior of scroll offset. The first line is for FlashList, the second is for FlatList.
-  // const viewOffset = newCommentHeight + useKeyboardState(state => state.height) - useBottomTabBarHeight();
-  const viewOffset = -newCommentHeight - useKeyboardState(state => state.height) + useBottomTabBarHeight();
+  // const viewOffset = useKeyboardState(state => state.height) - useBottomTabBarHeight();
+  const viewOffset = -useKeyboardState(state => state.height) + useBottomTabBarHeight();
 
   const onChangeText = React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
     text => {
