@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 
 import { headerAction, screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Popover } from '~/framework/components/menus/popover';
 import { BarLine, NavBarProfileButton } from '~/framework/components/navigation';
 import { BodyBoldText, CaptionText } from '~/framework/components/text';
@@ -19,7 +20,7 @@ import { HomeOverviewScreen, HomeOverviewScreenOptions } from '~/framework/modul
 import { getTimelineWorkflows } from '~/framework/modules/timeline/timeline-modules';
 import { accountTypeInfos } from '~/framework/util/accountType';
 
-import { styles } from './styles';
+import { ADD_BUTTON_SIZE, styles } from './styles';
 import { HomeScreenProps, HomeTabsParamList } from './types';
 
 export const HomeScreenOptions = screenOptions(({ navigation }) => {
@@ -64,6 +65,16 @@ export const HomeScreen = withSession<HomeScreenProps>(({ navigation, session })
     [navigation, session],
   );
 
+  // Measuring a view held by the native header gives an unstable origin, where the bar tells
+  // exactly where its last button sits.
+  const addButtonAnchor = React.useMemo(() => {
+    const barRightEdge = UI_SIZES.screen.width - UI_SIZES.elements.navbarMargin;
+    const barTopEdge = UI_SIZES.screen.topInset;
+    const centeredInBar = barTopEdge + (UI_SIZES.elements.navbarHeight - ADD_BUTTON_SIZE) / 2;
+
+    return { height: ADD_BUTTON_SIZE, width: ADD_BUTTON_SIZE, x: barRightEdge - ADD_BUTTON_SIZE, y: centeredInBar };
+  }, []);
+
   React.useEffect(() => {
     if (!workflows.length) return;
 
@@ -74,13 +85,26 @@ export const HomeScreen = withSession<HomeScreenProps>(({ navigation, session })
       );
 
     navigation.setOptions({
-      headerRight: props => <Popover actions={workflows}>{createButton(props).element}</Popover>,
+      headerRight: props => (
+        <Popover actions={workflows} anchor={addButtonAnchor}>
+          {createButton(props).element}
+        </Popover>
+      ),
       unstable_headerRightItems: props => {
         const action = createButton(props);
-        return [{ ...action, element: <Popover actions={workflows}>{action.element}</Popover> }] as NativeStackHeaderItem[];
+        return [
+          {
+            ...action,
+            element: (
+              <Popover actions={workflows} anchor={addButtonAnchor}>
+                {action.element}
+              </Popover>
+            ),
+          },
+        ] as NativeStackHeaderItem[];
       },
     });
-  }, [navigation, workflows]);
+  }, [addButtonAnchor, navigation, workflows]);
 
   return (
     <HomeReloadProvider value={reloadKey}>

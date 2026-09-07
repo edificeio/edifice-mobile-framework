@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { LayoutChangeEvent, Modal, Pressable, useWindowDimensions, View, ViewStyle } from 'react-native';
 
+import { PlatformPressable } from '@react-navigation/elements';
+
 import theme from '~/app/theme';
 import { Svg } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
@@ -23,12 +25,12 @@ function Action({ action, onDone }: { action: PopoverAction; onDone: () => void 
   const fill = action.destructive ? theme.palette.status.failure.regular : action.appName ? app.colors.regular : action.color;
 
   return (
-    <Pressable style={style} onPress={press} disabled={action.disabled} testID={action.testID}>
+    <PlatformPressable style={style} onPress={press} disabled={action.disabled} testID={action.testID}>
       {action.icon ? <Svg name={action.icon} fill={fill} width={POPOVER_ICON_SIZE} height={POPOVER_ICON_SIZE} /> : null}
       <SmallText numberOfLines={1} style={action.destructive ? styles.actionTitleDestructive : styles.actionTitle}>
         {action.title}
       </SmallText>
-    </Pressable>
+    </PlatformPressable>
   );
 }
 
@@ -79,13 +81,22 @@ function Menu({ actions, align, anchor, onClose }: PopoverMenuProps) {
  *
  * Whatever is given as children only opens the menu: give it no press handler of its own.
  */
-export function Popover({ actions, align = 'end', children, disabled, style, testID }: PopoverProps) {
+export function Popover({
+  actions,
+  align = 'end',
+  anchor: knownAnchor,
+  children,
+  disabled,
+  style,
+  testID,
+}: Readonly<PopoverProps>) {
   const anchorRef = React.useRef<View>(null);
   const [anchor, setAnchor] = React.useState<PopoverAnchor>();
 
   const open = React.useCallback(() => {
+    if (knownAnchor) return setAnchor(knownAnchor);
     anchorRef.current?.measureInWindow((x, y, width, height) => setAnchor({ height, width, x, y }));
-  }, []);
+  }, [knownAnchor]);
 
   const close = React.useCallback(() => setAnchor(undefined), []);
 
@@ -94,9 +105,9 @@ export function Popover({ actions, align = 'end', children, disabled, style, tes
 
   return (
     <View ref={anchorRef} style={anchorStyle} collapsable={false} testID={testID} pointerEvents={disabled ? 'none' : undefined}>
-      <Pressable onPress={open} disabled={disabled}>
-        {content}
-      </Pressable>
+      <PlatformPressable onPress={open} disabled={disabled} pressColor="transparent">
+        <View pointerEvents="none">{content}</View>
+      </PlatformPressable>
 
       {anchor ? <Menu actions={actions} align={align} anchor={anchor} onClose={close} /> : null}
     </View>

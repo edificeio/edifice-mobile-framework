@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import theme from '~/app/theme';
 import { getScaleFontSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
-const ADD_BUTTON_SIZE = getScaleWidth(38);
+export const ADD_BUTTON_SIZE = getScaleWidth(38);
 
 export const styles = StyleSheet.create({
   addButton: {
