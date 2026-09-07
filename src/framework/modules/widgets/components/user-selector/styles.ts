@@ -66,22 +66,6 @@ export default StyleSheet.create({
     paddingTop: 2,
   },
 
-  menu: {
-    backgroundColor: theme.palette.grey.white,
-    borderRadius: UI_SIZES.radius.mediumPlus,
-    elevation: 10,
-    minWidth: WIDGET_USER_SELECTOR_ITEM_MAX_WIDTH,
-    paddingVertical: UI_SIZES.spacing.tiny,
-    position: 'absolute',
-    shadowColor: theme.ui.shadowColor,
-    shadowOffset: { height: 4, width: 0 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-  },
-  menuItem: {
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.small,
-  },
   row: {
     alignItems: 'stretch',
     flexDirection: 'row',

@@ -27,24 +27,6 @@ export interface WidgetUserSelectorPlaceholderProps {
   count?: number;
 }
 
-export interface AnchorLayout {
-  height: number;
-  width: number;
-  x: number;
-  y: number;
-}
-
-export interface WidgetUserSelectorMenuItemProps {
-  item: WidgetUserSelectorItem;
-  onSelect: (id: string) => void;
-}
-
-export interface WidgetUserSelectorMenuProps extends Pick<WidgetUserSelectorMenuItemProps, 'onSelect'> {
-  anchor?: AnchorLayout;
-  items: WidgetUserSelectorItem[];
-  onClose: () => void;
-}
-
 export interface WidgetUserSelectorTabProps extends Pick<WidgetUserSelectorProps, 'onSelect' | 'ringColor'> {
   item: WidgetUserSelectorItem;
   selected: boolean;
