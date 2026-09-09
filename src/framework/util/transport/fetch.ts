@@ -1,5 +1,14 @@
 import CookieManager from '@preeternal/react-native-cookie-manager';
 
+import { I18n } from '~/app/i18n';
+import { AuthActiveAccount, AuthSavedLoggedInAccount, AuthTokenSet } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
+import appConf, { Platform } from '~/framework/util/appConf';
+import { Error } from '~/framework/util/error';
+import { isTokenExpired, refreshTokenForAccount } from '~/framework/util/oauth2';
+import { Trackers } from '~/framework/util/tracker';
+import { FetchError, FetchErrorCode, HTTPError } from '~/framework/util/transport/error';
+
 import {
   getAuthenticationHeaderForAccount,
   getAuthenticationHeaderForToken,
@@ -8,14 +17,6 @@ import {
   getPlatformRequest,
   MAX_FETCH_TIMEOUT_MS,
 } from './common';
-
-import { I18n } from '~/app/i18n';
-import { AuthActiveAccount, AuthSavedLoggedInAccount, AuthTokenSet } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/redux/reducer';
-import appConf, { Platform } from '~/framework/util/appConf';
-import { Error } from '~/framework/util/error';
-import { isTokenExpired, refreshTokenForAccount } from '~/framework/util/oauth2';
-import { FetchError, FetchErrorCode, HTTPError } from '~/framework/util/transport/error';
 
 /**
  * Returns the url that will be used by the provided fetch arguments
@@ -222,6 +223,7 @@ export function getAccountFetch(account: AuthSavedLoggedInAccount | AuthActiveAc
   return async (input: Parameters<typeof _platformFetch>[0], init: Parameters<typeof _platformFetch>[1]) => {
     // 3. Refresh token if needed
     if (isTokenExpired(account.tokens.access)) {
+      Trackers.handleRefreshToken();
       await refreshTokenForAccount(account);
       // ToDo: What to do if the refresh token fails?
     }
