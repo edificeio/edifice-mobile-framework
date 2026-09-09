@@ -83,7 +83,10 @@ export default () =>
           }
         },
         appName: moduleConfig.name,
-        icon: 'blog',
+        icon: {
+          android: 'ic_blog',
+          ios: 'megaphone',
+        },
         title: I18n.get('blog-resourcename'),
       }
     );
