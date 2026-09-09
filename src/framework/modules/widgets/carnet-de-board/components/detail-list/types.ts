@@ -9,5 +9,4 @@ export interface CarnetDeBordDetailListProps {
 
 export interface CarnetDeBordDetailRowProps {
   item: CarnetDeBordDetailItem;
-  separated: boolean;
 }
