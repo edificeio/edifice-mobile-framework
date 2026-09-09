@@ -5,6 +5,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { KeyboardChatScrollView, useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
 import Animated, {
+  FlatListPropsWithLayout,
   useAnimatedRef,
   useAnimatedScrollHandler,
   useAnimatedStyle,
@@ -40,6 +41,7 @@ export function CommentsThread({
   canAddComment: _canAddComment,
   data,
   focusItem,
+  ListFooterComponent: UserListFooterComponent,
   ListHeaderComponent: UserListHeaderComponent,
   navigation,
   onDelete,
@@ -51,6 +53,7 @@ export function CommentsThread({
   repliesPageSize,
   repliesStartSize,
   route,
+  ...props
 }: Readonly<CommentsThreadProps>) {
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
@@ -111,9 +114,9 @@ export function CommentsThread({
   const renderScrollComponent = React.useCallback<
     NonNullable<FlatListProps<CommentsThreadInternals.Item>['renderScrollComponent']>
   >(
-    props => (
+    scrollProps => (
       <KeyboardChatScrollView
-        {...props}
+        {...scrollProps}
         keyboardLiftBehavior="whenAtEnd"
         offset={
           navBarHeight -
@@ -166,6 +169,19 @@ export function CommentsThread({
       height: newCommentHeight + formInset,
     }),
     [formInset, newCommentHeight],
+  );
+
+  const ListFooterComponent = React.useCallback<React.ComponentType & NonNullable<CommentsThreadProps['ListFooterComponent']>>(
+    (headerProps: any) => {
+      const Resolved = unwrapAnimatedProp(UserListFooterComponent);
+      return (
+        <>
+          {!!Resolved && (React.isValidElement(Resolved) ? Resolved : <Resolved {...headerProps} />)}
+          <View style={listFooterStyle} />
+        </>
+      );
+    },
+    [UserListFooterComponent, listFooterStyle],
   );
 
   const hasChangesInInlineEditingFrom = React.useCallback(
@@ -303,6 +319,7 @@ export function CommentsThread({
   return (
     <CommentsThreadContext value={context}>
       <Animated.FlatList
+        {...(props as FlatListPropsWithLayout<CommentsThreadInternals.Item>)}
         ref={useSyncRef(listRef, ref)}
         onLayout={onLayout}
         keyboardDismissMode="interactive"
@@ -312,7 +329,7 @@ export function CommentsThread({
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ListHeaderComponent={ListHeaderComponent}
-        ListFooterComponent={<View style={listFooterStyle} />}
+        ListFooterComponent={ListFooterComponent}
         scrollIndicatorInsets={scrollIndicatorInsets}
         keyboardShouldPersistTaps="handled"
         refreshControl={refreshControl}
