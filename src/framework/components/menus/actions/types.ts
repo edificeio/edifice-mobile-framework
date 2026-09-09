@@ -1,3 +1,5 @@
+import { ColorValue } from 'react-native';
+
 import { DocumentPickerResponse } from '@react-native-documents/picker';
 
 import { LocalFile } from '~/framework/util/fileHandler/models';
@@ -20,6 +22,7 @@ export interface MenuAction {
     ios: string;
     android: string;
   };
+  imageColor?: ColorValue;
   destructive?: boolean;
   testID?: string;
 }
