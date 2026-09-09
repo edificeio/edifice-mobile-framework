@@ -19,10 +19,6 @@ export default StyleSheet.create({
     flexDirection: 'row',
     padding: UI_SIZES.spacing.medium,
   },
-  rowSeparated: {
-    borderBottomColor: theme.palette.grey.cloudy,
-    borderBottomWidth: UI_SIZES.border.thin,
-  },
   rowText: {
     flex: 1,
     gap: UI_SIZES.spacing.tinyExtra,

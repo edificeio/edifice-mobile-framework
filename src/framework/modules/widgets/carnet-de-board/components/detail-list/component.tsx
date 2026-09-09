@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
+import Separator from '~/framework/components/separator';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 
 import styles from './styles';
 import { CarnetDeBordDetailListProps, CarnetDeBordDetailRowProps } from './types';
 
-function Row({ item, separated }: Readonly<CarnetDeBordDetailRowProps>) {
+function Row({ item }: Readonly<CarnetDeBordDetailRowProps>) {
   return (
-    <View style={[styles.row, separated && styles.rowSeparated]}>
+    <View style={styles.row}>
       <View style={styles.rowText}>
         {item.title ? <SmallBoldText numberOfLines={1}>{item.title}</SmallBoldText> : null}
         {item.date ? (
@@ -33,7 +34,10 @@ export function CarnetDeBordDetailList({ items, style }: Readonly<CarnetDeBordDe
   return (
     <View style={[styles.list, style]}>
       {items.map((item, index) => (
-        <Row key={item?.date} item={item} separated={index + 1 < items.length} />
+        <React.Fragment key={item?.date}>
+          {index > 0 ? <Separator /> : null}
+          <Row item={item} />
+        </React.Fragment>
       ))}
     </View>
   );
