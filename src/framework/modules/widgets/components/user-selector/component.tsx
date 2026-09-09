@@ -2,13 +2,13 @@ import * as React from 'react';
 import { LayoutChangeEvent, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { Popover, PopoverAction } from '~/framework/components/menus/popover';
+import { MenuAction } from '~/framework/components/menus/actions';
+import PopupMenu from '~/framework/components/menus/popup';
 import { Svg } from '~/framework/components/picture';
 import { TextAvatar } from '~/framework/components/textAvatar';
 import {
   WIDGET_ACTION_ICON_SIZE,
   WIDGET_USER_SELECTOR_AVATAR_SIZE,
-  WIDGET_USER_SELECTOR_ITEM_MAX_WIDTH,
   WIDGET_USER_SELECTOR_MAX_SHOWN,
 } from '~/framework/modules/widgets/components/constants';
 import { TabLayout, useTabbedPanel } from '~/framework/modules/widgets/components/tabbed-panel';
@@ -102,7 +102,7 @@ export function WidgetUserSelector({
     [moveFirst, onSelect],
   );
 
-  const menuActions = React.useMemo<PopoverAction[]>(
+  const menuActions = React.useMemo<MenuAction[]>(
     () => hidden.map(item => ({ action: () => selectFromMenu(item.id), title: item.name })),
     [hidden, selectFromMenu],
   );
@@ -136,9 +136,9 @@ export function WidgetUserSelector({
         />
       ))}
       {action && hidden.length ? (
-        <Popover actions={menuActions} minWidth={WIDGET_USER_SELECTOR_ITEM_MAX_WIDTH} style={styles.action} testID={action.testID}>
-          {opened => (
-            <View style={[styles.actionCircle, opened && styles.actionCirclePressed]}>
+        <View style={styles.action}>
+          <PopupMenu actions={menuActions} testID={action.testID}>
+            <View style={styles.actionCircle}>
               <Svg
                 name={action.icon}
                 fill={theme.palette.secondary.dark}
@@ -146,8 +146,8 @@ export function WidgetUserSelector({
                 height={WIDGET_ACTION_ICON_SIZE}
               />
             </View>
-          )}
-        </Popover>
+          </PopupMenu>
+        </View>
       ) : null}
     </View>
   );
