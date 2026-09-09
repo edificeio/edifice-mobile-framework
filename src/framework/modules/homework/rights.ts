@@ -74,7 +74,7 @@ export default () =>
         appName: moduleConfig.name,
         icon: {
           android: 'ic_homework',
-          ios: 'text.book.closed',
+          ios: 'ic_homework',
         },
         title: I18n.get('homework-resourcename'),
       }
