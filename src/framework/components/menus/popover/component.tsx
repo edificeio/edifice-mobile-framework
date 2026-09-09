@@ -5,16 +5,10 @@ import { PlatformPressable } from '@react-navigation/elements';
 
 import theme from '~/app/theme';
 import { Svg } from '~/framework/components/picture';
-import { BodyText } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
 
-import styles, {
-  POPOVER_ANCHOR_GAP,
-  POPOVER_BOTTOM_SPACE,
-  POPOVER_ICON_SIZE,
-  POPOVER_MIN_WIDTH,
-  POPOVER_SCREEN_MARGIN,
-} from './styles';
+import styles, { POPOVER_ANCHOR_GAP, POPOVER_ICON_SIZE, POPOVER_SCREEN_MARGIN } from './styles';
 import { PopoverAction, PopoverAnchor, PopoverMenuProps, PopoverProps } from './types';
 
 function Action({ action, onDone }: { action: PopoverAction; onDone: () => void }) {
@@ -33,14 +27,14 @@ function Action({ action, onDone }: { action: PopoverAction; onDone: () => void 
   return (
     <PlatformPressable style={style} onPress={press} disabled={action.disabled} testID={action.testID}>
       {action.icon ? <Svg name={action.icon} fill={fill} width={POPOVER_ICON_SIZE} height={POPOVER_ICON_SIZE} /> : null}
-      <BodyText numberOfLines={1} style={action.destructive ? styles.actionTitleDestructive : styles.actionTitle}>
+      <SmallText numberOfLines={1} style={action.destructive ? styles.actionTitleDestructive : styles.actionTitle}>
         {action.title}
-      </BodyText>
+      </SmallText>
     </PlatformPressable>
   );
 }
 
-function Menu({ actions, align, anchor, minWidth, onClose }: Readonly<PopoverMenuProps>) {
+function Menu({ actions, align, anchor, onClose }: PopoverMenuProps) {
   const window = useWindowDimensions();
   const [card, setCard] = React.useState<{ height: number; width: number }>();
 
@@ -51,26 +45,25 @@ function Menu({ actions, align, anchor, minWidth, onClose }: Readonly<PopoverMen
 
   // Under the anchor, flipped above it when it would run past the bottom, and never past a side.
   // Hidden until measured, which takes the frame the card needs to lay itself out.
-  const placement = React.useMemo<Pick<ViewStyle, 'left' | 'opacity' | 'top'>>(() => {
+  const placement = React.useMemo<ViewStyle>(() => {
     if (!card) return { opacity: 0 };
 
-    // The tab bar and the system bar own the bottom of the screen, whatever the window says.
-    const lowest = window.height - POPOVER_BOTTOM_SPACE - card.height;
     const below = anchor.y + anchor.height + POPOVER_ANCHOR_GAP;
-    const above = anchor.y - POPOVER_ANCHOR_GAP - card.height;
+    const fits = below + card.height <= window.height - POPOVER_SCREEN_MARGIN;
+    const top = fits ? below : anchor.y - POPOVER_ANCHOR_GAP - card.height;
     const start = align === 'end' ? anchor.x + anchor.width - card.width : anchor.x;
     const furthest = window.width - POPOVER_SCREEN_MARGIN - card.width;
 
     return {
       left: Math.max(POPOVER_SCREEN_MARGIN, Math.min(start, furthest)),
-      top: Math.max(POPOVER_SCREEN_MARGIN, Math.min(below <= lowest ? below : above, lowest)),
+      top: Math.max(POPOVER_SCREEN_MARGIN, top),
     };
   }, [align, anchor, card, window.height, window.width]);
 
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
-        <View style={[styles.card, { minWidth }, placement]} onLayout={measureCard}>
+        <View style={[styles.card, placement]} onLayout={measureCard}>
           {actions.map(action => (
             <Action key={action.title} action={action} onDone={onClose} />
           ))}
@@ -81,8 +74,12 @@ function Menu({ actions, align, anchor, minWidth, onClose }: Readonly<PopoverMen
 }
 
 /**
- * A menu anchored under what opens it, closing on a touch outside. Whatever is given as children
- * only opens it: give it no press handler of its own, it would take the touch on iOS.
+ * A menu of ours, anchored under what opens it. Unlike the system menu it draws our own icons, and
+ * closes on a touch anywhere outside since everything here belongs to our view tree.
+ *
+ *     <Popover actions={actions}>{opened => <MyButton active={opened} />}</Popover>
+ *
+ * Whatever is given as children only opens the menu: give it no press handler of its own.
  */
 export function Popover({
   actions,
@@ -90,7 +87,6 @@ export function Popover({
   anchor: knownAnchor,
   children,
   disabled,
-  minWidth = POPOVER_MIN_WIDTH,
   style,
   testID,
 }: Readonly<PopoverProps>) {
@@ -113,7 +109,7 @@ export function Popover({
         <View pointerEvents="none">{content}</View>
       </PlatformPressable>
 
-      {anchor ? <Menu actions={actions} align={align} anchor={anchor} minWidth={minWidth} onClose={close} /> : null}
+      {anchor ? <Menu actions={actions} align={align} anchor={anchor} onClose={close} /> : null}
     </View>
   );
 }

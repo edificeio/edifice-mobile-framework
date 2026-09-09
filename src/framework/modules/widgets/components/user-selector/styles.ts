@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 
-import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import {
@@ -26,11 +25,6 @@ export default StyleSheet.create({
     padding: UI_SIZES.spacing.minor,
     width: WIDGET_USER_SELECTOR_ACTION_SIZE,
   },
-  actionCirclePressed: {
-    backgroundColor: theme.palette.primary.pale,
-    borderRadius: '50%',
-  },
-
   item: {
     alignItems: 'center',
     flex: 1,
