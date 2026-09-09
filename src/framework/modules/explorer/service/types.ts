@@ -46,10 +46,10 @@ export namespace API {
     }
 
     export interface ResourceHistory {
-      updatedAt: number; // timestamp
+      createdAt?: number; // timestamp. Optional : backend can omit it.
+      updatedAt?: number;
       updaterName: string;
       updaterId?: string; // Optional in case of updater is a deleted user.
-      createdAt: number; // timestamp
       creatorName: string;
       creatorId?: string; // Optional in case of updater is a deleted user.
       version: number; // timestamp
