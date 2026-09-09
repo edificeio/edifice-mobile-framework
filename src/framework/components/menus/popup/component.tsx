@@ -21,7 +21,7 @@ const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {
       },
       id: id.toString(),
       image: action.icon ? action.icon[Platform.OS] : '',
-      imageColor: action.destructive ? ICON_COLOR_DESTRUCTIVE : ICON_COLOR,
+      imageColor: action.imageColor ?? (action.destructive ? ICON_COLOR_DESTRUCTIVE : ICON_COLOR),
       title: action.title,
     };
   });
