@@ -88,7 +88,7 @@ export const HomeScreen = withSession<HomeScreenProps>(({ navigation, session })
 
   return (
     <HomeReloadProvider value={reloadKey}>
-      <HomeTabs.Navigator style={styles.page} tabBar={renderTabBar}>
+      <HomeTabs.Navigator style={styles.page} screenOptions={{ sceneStyle: styles.scene }} tabBar={renderTabBar}>
         <HomeTabs.Screen name="home/overview" component={HomeOverviewScreen} options={HomeOverviewScreenOptions} />
         <HomeTabs.Screen name="home/notifications" component={HomeNotificationsScreen} options={HomeNotificationsScreenOptions} />
       </HomeTabs.Navigator>

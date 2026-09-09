@@ -1,6 +1,7 @@
 import moment from 'moment';
 
 import { I18n } from '~/app/i18n';
+import { displayDate } from '~/framework/util/date';
 
 export enum CarnetDeBordSection {
   CAHIER_DE_TEXTES = 1, // No falsy values in this
@@ -113,9 +114,9 @@ export type ICarnetDeBordReleveDeNotesDevoir = {
   DateString?: string;
 };
 const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
-  abs: 'pronote-transcript-value-absent',
-  disp: 'pronote-transcript-value-exempted',
-  inap: 'pronote-transcript-value-unfit',
+  'abs': 'pronote-transcript-value-absent',
+  'disp': 'pronote-transcript-value-exempted',
+  'inap': 'pronote-transcript-value-unfit',
   'n.not': 'pronote-transcript-value-unrated',
   'n.rdu': 'pronote-transcript-value-unreturned',
 };
@@ -182,6 +183,14 @@ export type ICarnetDeBordVieScolaireObservation = {
   Observation?: string;
 };
 
+export type ICarnetDeBordVieScolaire =
+  | ICarnetDeBordVieScolaireAbsence
+  | ICarnetDeBordVieScolaireRetard
+  | ICarnetDeBordVieScolairePassageInfirmerie
+  | ICarnetDeBordVieScolairePunition
+  | ICarnetDeBordVieScolaireSanction
+  | ICarnetDeBordVieScolaireObservation;
+
 export function sortCarnetDeBordItems<T extends { Date?: moment.Moment; DateDebut?: moment.Moment; PourLe?: moment.Moment }>(
   items: T[],
   reverse?: boolean,
@@ -232,5 +241,32 @@ export function formatCarnetDeBordCompetencesValue(value?: number) {
     ? I18n.get(carnetDeBordCompetencesValueI18n[value])
     : I18n.get('pronote-noinfo');
 }
+
+// what every label falls back to when Pronote sends nothing
+export const noInfo = () => I18n.get('pronote-noinfo');
+
+/**
+ * When a school life event happened. An absence spans two dates, the others hold one, and only
+ * some of them carry a meaningful time of day.
+ */
+export const formatVieScolaireDate = (event: ICarnetDeBordVieScolaire, format?: 'short' | 'extraShort') => {
+  if (event.type === 'Absence') {
+    const { DateDebut: start, DateFin: end } = event;
+    if (!start || !end) return noInfo();
+    if (!start.isSame(end, 'day'))
+      return I18n.get('pronote-viescolaire-datefromto', { end: displayDate(end, format), start: displayDate(start, format) });
+    if (start.isSame(end, 'minute')) return displayDate(start, format);
+    return (
+      displayDate(start, format) +
+      I18n.get('common-space') +
+      I18n.get('pronote-viescolaire-datefromto', { end: end.format('LT'), start: start.format('LT') })
+    );
+  }
+
+  if (!event.Date) return noInfo();
+  if (event.type === 'Retard' || event.type === 'PassageInfirmerie')
+    return displayDate(event.Date, format) + I18n.get('common-space') + event.Date.format('LT');
+  return displayDate(event.Date, format);
+};
 
 export class PronoteCdbInitError extends Error {}
