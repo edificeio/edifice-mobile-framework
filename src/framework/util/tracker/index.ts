@@ -83,6 +83,21 @@ export abstract class AbstractTracker<OptionsType> {
     }
   }
 
+  // Handle refresh token action
+  protected async _handleRefreshToken() {
+    return false;
+  }
+
+  async handleRefreshToken() {
+    try {
+      if (this.isReady) {
+        await this._handleRefreshToken();
+      }
+    } catch (err) {
+      console.error('handleRefreshToken failed: ', (err as Error).message);
+    }
+  }
+
   // Track event procedure. Override _trackEvent() function to create custom trackers.
   protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
     return false;
@@ -276,35 +291,13 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     this.sendReportQueue();
     return willLog;
   }
+
+  async _handleRefreshToken() {
+    this.lastModulename = undefined;
+    console.debug('[Tracking] Reset lastModuleName');
+    return true;
+  }
 }
-
-/*export class ConcreteAnalyticsTracker extends AbstractTracker<undefined> {
-  protected _properties = {};
-
-  async _setUserId(id: string) {
-    await analytics().setUserId(id);
-    return true;
-  }
-
-  async _setCustomDimension(id: number, name: string, value: string) {
-    this._properties[name] = value;
-    return true;
-  }
-
-  protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
-    analytics().logEvent(`${category}_${action}`.slice(0, 39), { name, value, ...this._properties });
-    return true;
-  }
-
-  async _trackView(path: string[]) {
-    const viewPath = path.join('/');
-    await analytics().logScreenView({
-      screen_class: viewPath,
-      screen_name: viewPath,
-    });
-    return true;
-  }
-}*/
 
 export class ConcreteCrashsTracker extends AbstractTracker<undefined> {
   protected _isDebugTracker(): boolean {
@@ -361,6 +354,10 @@ export class ConcreteTrackerSet {
 
   async init() {
     await Promise.all(this._trackers.map(t => t.init()));
+  }
+
+  async handleRefreshToken() {
+    await Promise.all(this._trackers.map(t => t.handleRefreshToken()));
   }
 
   async setCrashAttribute(attributeName: string, attribute: string) {
@@ -423,7 +420,6 @@ export class ConcreteTrackerSet {
 
 export const Trackers = new ConcreteTrackerSet(
   new ConcreteEntcoreTracker('Entcore', undefined),
-  //new ConcreteAnalyticsTracker('Analytics', undefined),
   new ConcreteCrashsTracker('Crashs', undefined),
 );
 
