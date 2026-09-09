@@ -1,4 +1,4 @@
-import { InvitationResponseDto } from '@edifice.io/community-client-rest-rn';
+import { DiscussionDto, InvitationResponseDto } from '@edifice.io/community-client-rest-rn';
 import {
   CommunityResponseDtoWithThumbnails,
   InvitationResponseDtoWithThumbnails,
@@ -25,12 +25,16 @@ export interface CommunitiesStore {
   allCommunities: (InvitationResponseDtoWithThumbnails | typeof LOADING_ITEM_DATA)[];
   pendingCommunities: (InvitationResponseDtoWithThumbnails | typeof LOADING_ITEM_DATA)[];
   communitiesDetails: Record<number, CommunityDetails>;
+  communitiesDiscussions: Record<number, Record<number, DiscussionDto>>;
   communitiesFoldersMeta: Record<number, Record<number, Pick<FolderItem, 'title'>>>;
 }
 
 export const communitiesActionTypes = {
   LOAD_ALL_COMMUNITIES_PAGE: moduleConfig.namespaceActionType('LOAD_ALL_COMMUNITIES_PAGE') as `${string}_LOAD_ALL_COMMUNITIES_PAGE`,
   LOAD_COMMUNITY_DETAILS: moduleConfig.namespaceActionType('LOAD_COMMUNITY_DETAILS') as `${string}_LOAD_COMMUNITY_DETAILS`,
+  LOAD_COMMUNITY_DISCUSSIONS: moduleConfig.namespaceActionType(
+    'LOAD_COMMUNITY_DISCUSSIONS',
+  ) as `${string}_LOAD_COMMUNITY_DISCUSSIONS`,
   LOAD_COMMUNITY_FOLDERS: moduleConfig.namespaceActionType('LOAD_COMMUNITY_FOLDERS') as `${string}_LOAD_COMMUNITY_FOLDERS`,
   LOAD_PENDING_COMMUNITIES_PAGE: moduleConfig.namespaceActionType(
     'LOAD_PENDING_COMMUNITIES_PAGE',
@@ -49,19 +53,25 @@ export type CommunitiesAction<T> = T extends
         type: typeof communitiesActionTypes.LOAD_COMMUNITY_DETAILS;
         payload: { id: number; data: CommunitiesStore['communitiesDetails'][any] };
       }
-    : {
-        type: typeof communitiesActionTypes.LOAD_COMMUNITY_FOLDERS;
-        payload: { communityId: number; data: CommunitiesStore['communitiesFoldersMeta'][any] };
-      };
+    : T extends typeof communitiesActionTypes.LOAD_COMMUNITY_DISCUSSIONS
+      ? {
+          type: typeof communitiesActionTypes.LOAD_COMMUNITY_DISCUSSIONS;
+          payload: { communityId: number; data: CommunitiesStore['communitiesDiscussions'][any] };
+        }
+      : {
+          type: typeof communitiesActionTypes.LOAD_COMMUNITY_FOLDERS;
+          payload: { communityId: number; data: CommunitiesStore['communitiesFoldersMeta'][any] };
+        };
 
 export const reducer = createSessionReducer<
   CommunitiesStore,
   | CommunitiesAction<typeof communitiesActionTypes.LOAD_ALL_COMMUNITIES_PAGE>
   | CommunitiesAction<typeof communitiesActionTypes.LOAD_PENDING_COMMUNITIES_PAGE>
   | CommunitiesAction<typeof communitiesActionTypes.LOAD_COMMUNITY_DETAILS>
+  | CommunitiesAction<typeof communitiesActionTypes.LOAD_COMMUNITY_DISCUSSIONS>
   | CommunitiesAction<typeof communitiesActionTypes.LOAD_COMMUNITY_FOLDERS>
 >(
-  { allCommunities: [], communitiesDetails: {}, communitiesFoldersMeta: {}, pendingCommunities: [] },
+  { allCommunities: [], communitiesDetails: {}, communitiesDiscussions: {}, communitiesFoldersMeta: {}, pendingCommunities: [] },
   {
     [communitiesActionTypes.LOAD_ALL_COMMUNITIES_PAGE]: (state, _action) => {
       const action = _action as CommunitiesAction<typeof communitiesActionTypes.LOAD_ALL_COMMUNITIES_PAGE>;
@@ -100,6 +110,19 @@ export const reducer = createSessionReducer<
         },
       };
     },
+    [communitiesActionTypes.LOAD_COMMUNITY_DISCUSSIONS]: (state, _action) => {
+      const action = _action as CommunitiesAction<typeof communitiesActionTypes.LOAD_COMMUNITY_DISCUSSIONS>;
+      return {
+        ...state,
+        communitiesDiscussions: {
+          ...state.communitiesDiscussions,
+          [action.payload.communityId]: {
+            ...state.communitiesDiscussions[action.payload.communityId],
+            ...action.payload.data,
+          },
+        },
+      };
+    },
     [communitiesActionTypes.LOAD_COMMUNITY_FOLDERS]: (state, _action) => {
       const action = _action as CommunitiesAction<typeof communitiesActionTypes.LOAD_COMMUNITY_FOLDERS>;
       return {
@@ -122,6 +145,13 @@ export const communitiesActions = {
     payload: { data, id },
     type: communitiesActionTypes.LOAD_COMMUNITY_DETAILS,
   }),
+  loadCommunityDiscussions: (
+    communityId: keyof CommunitiesStore['communitiesDiscussions'],
+    data: CommunitiesStore['communitiesDiscussions'][any],
+  ) => ({
+    payload: { communityId, data },
+    type: communitiesActionTypes.LOAD_COMMUNITY_DISCUSSIONS,
+  }),
   loadCommunityFoldersMeta: (
     communityId: keyof CommunitiesStore['communitiesFoldersMeta'],
     data: CommunitiesStore['communitiesFoldersMeta'][any],
@@ -139,6 +169,10 @@ export const communitiesSelectors = {
   getAllCommunities: (state: IGlobalState) => moduleConfig.getState(state).allCommunities,
   getCommunityDetails: (id: keyof CommunitiesStore['communitiesDetails']) => (state: IGlobalState) =>
     moduleConfig.getState(state).communitiesDetails[id],
+  getCommunityDiscussion:
+    (communityId: keyof CommunitiesStore['communitiesDiscussions'], discussionId: number) =>
+    (state: IGlobalState): DiscussionDto | undefined =>
+      moduleConfig.getState(state).communitiesDiscussions[communityId]?.[discussionId],
   getCommunityFolderMeta:
     (
       communityId: keyof CommunitiesStore['communitiesFoldersMeta'],

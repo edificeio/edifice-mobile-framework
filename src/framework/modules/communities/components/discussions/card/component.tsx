@@ -5,36 +5,19 @@ import { DiscussionIcon } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
 
 import { I18n } from '~/app/i18n';
-import theme, { IShades } from '~/app/theme';
+import theme from '~/app/theme';
 import { AvatarStack } from '~/framework/components/avatar/stack';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Svg, SvgIconName } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
+import { DiscussionStatus } from '~/framework/modules/communities/model';
+import { DISCUSSION_TYPE_CONFIG, getDiscussionStatusIcon } from '~/framework/modules/communities/utils';
 
 import { DiscussionCardState, getCardStyle, styles } from './styles';
-import { DiscussionCardProps, DiscussionCardType } from './types';
+import { DiscussionCardProps } from './types';
 
-type TypeConfig = {
-  color: IShades;
-  icon: SvgIconName;
-};
-
-const TYPE_CONFIG: Record<DiscussionCardType, TypeConfig> = {
-  [DiscussionIcon.DISCUSSION]: { color: theme.palette.complementary.blue, icon: 'ui-conversation' },
-  [DiscussionIcon.EVENT]: { color: theme.palette.complementary.green, icon: 'ui-calendarLight' },
-  [DiscussionIcon.IMPORTANT]: { color: theme.palette.complementary.orange, icon: 'ui-arrow-important' },
-  [DiscussionIcon.OTHER]: { color: theme.palette.complementary.yellow, icon: 'ui-topic-other' },
-  [DiscussionIcon.QUESTION]: { color: theme.palette.complementary.purple, icon: 'ui-question' },
-};
-
-const getStatusIcon = (isHidden?: boolean, isLocked?: boolean): SvgIconName => {
-  if (isHidden) return 'ui-hide';
-  if (isLocked) return 'ui-lock';
-  return 'ui-messageInfo';
-};
-
-const getCardState = (isHidden?: boolean, hasNewContent?: boolean): DiscussionCardState => {
-  if (isHidden) return 'hidden';
+const getCardState = (status?: DiscussionStatus, hasNewContent?: boolean): DiscussionCardState => {
+  if (status === 'hidden') return 'hidden';
   if (hasNewContent) return 'new';
   return 'default';
 };
@@ -53,20 +36,19 @@ const getSubtitle = (hasNewContent: boolean, messagesCount?: number, lastMessage
 const AVATAR_SIZE = 'sm';
 
 export const DiscussionCard = ({
-  isHidden,
-  isLocked,
   lastMessageDate,
   membersDisplayed,
   membersTotal,
   newContent,
   onPress,
   responsesCount,
+  status,
   title,
   type,
 }: Readonly<DiscussionCardProps>) => {
-  const showsNewContent = !!newContent?.hasNewContent && !isHidden;
-  const state = getCardState(isHidden, newContent?.hasNewContent);
-  const typeConfig = TYPE_CONFIG[type ?? DiscussionIcon.DISCUSSION];
+  const showsNewContent = !!newContent?.hasNewContent && status !== 'hidden';
+  const state = getCardState(status, newContent?.hasNewContent);
+  const typeConfig = DISCUSSION_TYPE_CONFIG[type ?? DiscussionIcon.DISCUSSION];
   const cardStyle = React.useMemo(() => [getCardStyle(state)], [state]);
   const subtitle = getSubtitle(showsNewContent, newContent?.messagesCount, lastMessageDate);
 
@@ -96,7 +78,7 @@ export const DiscussionCard = ({
           <Svg
             fill={theme.palette.grey.black}
             height={UI_SIZES.elements.icon.small}
-            name={getStatusIcon(isHidden, isLocked)}
+            name={getDiscussionStatusIcon(status)}
             width={UI_SIZES.elements.icon.small}
           />
           <SmallText style={styles.responseDefault}>

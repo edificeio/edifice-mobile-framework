@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
@@ -12,12 +12,13 @@ import { EmptyContent } from '~/framework/components/empty-screens/base/componen
 import { LOADING_ITEM_DATA, PaginatedFlatListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { HeadingXSText } from '~/framework/components/text';
 import { withSession } from '~/framework/modules/auth/util';
-import DiscussionCard, { DiscussionCardLoader } from '~/framework/modules/communities/components/discussion-card';
+import DiscussionCard, { DiscussionCardLoader } from '~/framework/modules/communities/components/discussions/card';
 import DecoratedPaginatedFlatList from '~/framework/modules/communities/components/list/decorated-paginated-list';
 import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/modules/communities/hooks/use-community-navbar';
+import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { Discussion, getDiscussions } from '~/framework/modules/communities/service/discussions';
-import { communitiesSelectors } from '~/framework/modules/communities/store';
-import { getCommunityBannerImage } from '~/framework/modules/communities/utils';
+import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
+import { getCommunityBannerImage, getDiscussionStatus } from '~/framework/modules/communities/utils';
 import { openUrl } from '~/framework/util/linking';
 
 import styles from './styles';
@@ -46,10 +47,19 @@ export default withSession<CommunitiesDiscussionsScreen.AllProps>(function Discu
   const communityData = useSelector(communitiesSelectors.getCommunityDetails(communityId));
   const [discussions, setDiscussions] = React.useState<(Discussion | typeof LOADING_ITEM_DATA)[]>([]);
 
+  const dispatch = useDispatch();
+  const setCommunityDiscussions = React.useCallback(
+    (newData: Parameters<typeof communitiesActions.loadCommunityDiscussions>[1]) =>
+      dispatch(communitiesActions.loadCommunityDiscussions(communityId, newData)),
+    [communityId, dispatch],
+  );
+
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
       try {
         const { discussions: newDiscussions, total } = await getDiscussions(session, communityId, page, PAGE_SIZE);
+
+        setCommunityDiscussions(newDiscussions.reduce((acc, discussion) => ({ ...acc, [discussion.id]: discussion }), {}));
 
         setDiscussions(prevData =>
           staleOrSplice({
@@ -64,7 +74,7 @@ export default withSession<CommunitiesDiscussionsScreen.AllProps>(function Discu
         console.error('Error while loading community discussions list', e);
       }
     },
-    [communityId, session],
+    [communityId, session, setCommunityDiscussions],
   );
 
   const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<Discussion>['keyExtractor']>>(
@@ -72,10 +82,14 @@ export default withSession<CommunitiesDiscussionsScreen.AllProps>(function Discu
     [],
   );
 
-  // Temporary web redirection until the discussion screens exist
+  const openDiscussion = React.useCallback(
+    (discussionId: number) => navigation.navigate(communitiesRouteNames.discussionDetails, { communityId, discussionId }),
+    [communityId, navigation],
+  );
+
+  // Temporary web redirection until discussion creation exists on mobile
   const platformUrl = session.platform.url;
   const discussionsUrl = `${platformUrl}/communities/id/${communityId}/discussions`;
-  const redirectToWeb = React.useCallback((discussionId: number) => openUrl(`${discussionsUrl}/${discussionId}`), [discussionsUrl]);
   const redirectToDiscussionsWeb = React.useCallback(() => openUrl(discussionsUrl), [discussionsUrl]);
 
   React.useEffect(() => {
@@ -86,20 +100,19 @@ export default withSession<CommunitiesDiscussionsScreen.AllProps>(function Discu
     ({ item }: { item: Discussion }) => (
       <View style={styles.itemContainer}>
         <DiscussionCard
-          isHidden={!!item.hiddenAt}
-          isLocked={!!item.lockedAt}
           lastMessageDate={Temporal.Instant.from(new Date(item.lastMessageTime).toISOString())}
           membersDisplayed={(item.firstUsers ?? []).map(user => user.entId)}
           membersTotal={item.nUsers}
           newContent={{ hasNewContent: item.hasUnreadMessages, messagesCount: item.unreadCount }}
           responsesCount={item.nMessages}
+          status={getDiscussionStatus(item)}
           title={item.title}
           type={item.icon}
-          onPress={() => redirectToWeb(item.id)}
+          onPress={() => openDiscussion(item.id)}
         />
       </View>
     ),
-    [redirectToWeb],
+    [openDiscussion],
   );
 
   const image = React.useMemo(() => getCommunityBannerImage(communityData), [communityData]);

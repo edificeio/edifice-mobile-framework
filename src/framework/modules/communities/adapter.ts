@@ -1,4 +1,5 @@
 import { MediaDto, MediaType as MediaTypeDto } from '@edifice.io/community-client-rest-rn';
+import { Temporal } from '@js-temporal/polyfill';
 
 import {
   AttachmentMedia,
@@ -65,4 +66,11 @@ export const toMedia = (media: MediaDto): Media => {
     src: media.url,
     type: MediaType.LINK,
   } as LinkMedia;
+};
+
+/** The DTOs declare `Date` but the REST client actually yields ISO strings. */
+export const toInstant = (date?: Date | string): Temporal.Instant | undefined => {
+  if (!date) return undefined;
+  const epochMs = new Date(date).getTime();
+  return Number.isNaN(epochMs) ? undefined : Temporal.Instant.fromEpochMilliseconds(epochMs);
 };
