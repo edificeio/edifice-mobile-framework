@@ -4,6 +4,9 @@ import moduleConfig from '~/framework/modules/communities/module-config';
 import CommunitiesDiscussionsScreen, {
   DiscussionsScreenOptions as discussionsNavBar,
 } from '~/framework/modules/communities/screens/discussions';
+import CommunitiesDiscussionDetailsScreen, {
+  DiscussionDetailsScreenOptions as discussionDetailsNavBar,
+} from '~/framework/modules/communities/screens/discussions/details';
 import CommunitiesDocumentsScreen, { computeNavBar as documentsNavBar } from '~/framework/modules/communities/screens/documents';
 import CommunitiesHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/communities/screens/home';
 import CommunitiesJoinConfirmScreen, {
@@ -28,6 +31,12 @@ export default () =>
         name={communitiesRouteNames.discussions}
         component={CommunitiesDiscussionsScreen}
         options={discussionsNavBar}
+        initialParams={{}}
+      />
+      <Stack.Screen
+        name={communitiesRouteNames.discussionDetails}
+        component={CommunitiesDiscussionDetailsScreen}
+        options={discussionDetailsNavBar}
         initialParams={{}}
       />
       <Stack.Screen

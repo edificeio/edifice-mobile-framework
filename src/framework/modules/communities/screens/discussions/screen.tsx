@@ -15,6 +15,7 @@ import { withSession } from '~/framework/modules/auth/util';
 import DiscussionCard, { DiscussionCardLoader } from '~/framework/modules/communities/components/discussions/discussion-card';
 import DecoratedPaginatedFlatList from '~/framework/modules/communities/components/list/decorated-paginated-list';
 import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/modules/communities/hooks/use-community-navbar';
+import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { Discussion, getDiscussions } from '~/framework/modules/communities/service/discussions';
 import { communitiesSelectors } from '~/framework/modules/communities/store';
 import { getCommunityBannerImage } from '~/framework/modules/communities/utils';
@@ -72,10 +73,14 @@ export default withSession<CommunitiesDiscussionsScreen.AllProps>(function Discu
     [],
   );
 
-  // Temporary web redirection until the discussion screens exist
+  const openDiscussion = React.useCallback(
+    (discussionId: number) => navigation.navigate(communitiesRouteNames.discussionDetails, { communityId, discussionId }),
+    [communityId, navigation],
+  );
+
+  // Temporary web redirection until discussion creation exists on mobile
   const platformUrl = session.platform.url;
   const discussionsUrl = `${platformUrl}/communities/id/${communityId}/discussions`;
-  const redirectToWeb = React.useCallback((discussionId: number) => openUrl(`${discussionsUrl}/${discussionId}`), [discussionsUrl]);
   const redirectToDiscussionsWeb = React.useCallback(() => openUrl(discussionsUrl), [discussionsUrl]);
 
   React.useEffect(() => {
@@ -95,11 +100,11 @@ export default withSession<CommunitiesDiscussionsScreen.AllProps>(function Discu
           responsesCount={item.nMessages}
           title={item.title}
           type={item.icon}
-          onPress={() => redirectToWeb(item.id)}
+          onPress={() => openDiscussion(item.id)}
         />
       </View>
     ),
-    [redirectToWeb],
+    [openDiscussion],
   );
 
   const image = React.useMemo(() => getCommunityBannerImage(communityData), [communityData]);
