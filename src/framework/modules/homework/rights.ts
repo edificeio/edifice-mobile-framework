@@ -72,7 +72,10 @@ export default () =>
           }
         },
         appName: moduleConfig.name,
-        icon: 'homework1D',
+        icon: {
+          android: 'ic_homework',
+          ios: 'ic_homework',
+        },
         title: I18n.get('homework-resourcename'),
       }
     );
