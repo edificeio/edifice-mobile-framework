@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import isDisjointFrom from 'set.prototype.isdisjointfrom';
 
-import { SocialResourceViewer } from '~/framework/components/pages/social-resource-viewer/types';
+import { CommentsThread } from '~/framework/components/pages/comments-thread/types';
 import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { Wiki, WikiPage, WikiResourceMetadata } from '~/framework/modules/wiki/model';
@@ -115,16 +115,14 @@ const parseAccountTypesMap = {
   Teacher: AccountType.Teacher,
 } as const;
 
-const hydratePageComments = async (
-  data: API.Wiki.GetPageResponse['comments'] = [],
-): Promise<SocialResourceViewer.Props['data']> => {
+const hydratePageComments = async (data: API.Wiki.GetPageResponse['comments'] = []): Promise<CommentsThread.Props['data']> => {
   // 1. Fetch fucking account type for each author because backend does not provide them by itself.
   const authors = new Set<
     (
-      | SocialResourceViewer.CommentItem
-      | SocialResourceViewer.ResponseItem
-      | SocialResourceViewer.CommentItemDeleted
-      | SocialResourceViewer.ResponseItemDeleted
+      | CommentsThread.CommentItem
+      | CommentsThread.ReplyItem
+      | CommentsThread.CommentDeletedItem
+      | CommentsThread.ReplyDeletedItem
     )['authorId']
   >();
   for (const item of data) {
@@ -144,30 +142,27 @@ const hydratePageComments = async (
 
   // 2. Prepare parsed data arrays.
   const parsedComments: Record<
-    (SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted)['id'],
-    Omit<SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted, 'responses'>
+    (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)['id'],
+    Omit<CommentsThread.CommentItem | CommentsThread.CommentDeletedItem, 'replies'>
   > = {};
-  const parsedResponses: Record<
-    (SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted)['id'],
-    (SocialResourceViewer.ResponseItem | SocialResourceViewer.ResponseItemDeleted)[]
+  const parsedReplies: Record<
+    (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)['id'],
+    (CommentsThread.ReplyItem | CommentsThread.ReplyDeletedItem)[]
   > = {};
 
   // 3. Parse data
   for (const item of data) {
     const ret: Pick<
-      | SocialResourceViewer.CommentItem
-      | SocialResourceViewer.CommentItemDeleted
-      | SocialResourceViewer.ResponseItem
-      | SocialResourceViewer.ResponseItemDeleted,
+      CommentsThread.CommentItem | CommentsThread.CommentDeletedItem | CommentsThread.ReplyItem | CommentsThread.ReplyDeletedItem,
       'id' | 'date'
     > &
       Partial<
         Pick<
-          SocialResourceViewer.CommentItem | SocialResourceViewer.ResponseItem,
+          CommentsThread.CommentItem | CommentsThread.ReplyItem,
           'authorAccountType' | 'authorId' | 'authorName' | 'content' | 'isRichContent'
         >
       > &
-      Partial<Pick<SocialResourceViewer.CommentItemDeleted | SocialResourceViewer.ResponseItemDeleted, 'deleted'>> = {
+      Partial<Pick<CommentsThread.CommentDeletedItem | CommentsThread.ReplyDeletedItem, 'deleted'>> = {
       date: Temporal.Instant.from(item.created.$date),
       id: item._id,
     };
@@ -182,21 +177,21 @@ const hydratePageComments = async (
     }
 
     if ('replyTo' in item) {
-      if (!(item.replyTo in parsedResponses)) parsedResponses[item.replyTo] = [];
-      parsedResponses[item.replyTo].push(ret as SocialResourceViewer.ResponseItem | SocialResourceViewer.ResponseItemDeleted);
+      if (!(item.replyTo in parsedReplies)) parsedReplies[item.replyTo] = [];
+      parsedReplies[item.replyTo].push(ret as CommentsThread.ReplyItem | CommentsThread.ReplyDeletedItem);
     } else {
-      parsedComments[ret.id] = ret as SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted;
+      parsedComments[ret.id] = ret as CommentsThread.CommentItem | CommentsThread.CommentDeletedItem;
     }
   }
 
   // 4. Compose & sort data
   const sortedComments = Object.values(parsedComments).sort((a, b) => Temporal.Instant.compare(b.date, a.date)); // comments are in reverse-ordrer
   for (const comment of sortedComments) {
-    (comment as SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted).responses =
-      comment.id in parsedResponses ? parsedResponses[comment.id].sort((a, b) => Temporal.Instant.compare(a.date, b.date)) : [];
+    (comment as CommentsThread.CommentItem | CommentsThread.CommentDeletedItem).replies =
+      comment.id in parsedReplies ? parsedReplies[comment.id].sort((a, b) => Temporal.Instant.compare(a.date, b.date)) : [];
   }
 
-  return sortedComments as (SocialResourceViewer.CommentItem | SocialResourceViewer.CommentItemDeleted)[];
+  return sortedComments as (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)[];
 };
 
 export default {

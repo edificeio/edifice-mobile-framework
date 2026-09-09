@@ -4,7 +4,7 @@
 
 import { Temporal } from '@js-temporal/polyfill';
 
-import { SocialResourceViewer } from '~/framework/components/pages/social-resource-viewer/types';
+import { CommentsThread } from '~/framework/components/pages/comments-thread/types';
 import { Resource, ResourceHistory } from '~/framework/modules/explorer/model/types';
 
 export type WikiResourceMetadata = Pick<
@@ -32,5 +32,5 @@ export interface WikiPageMetaData {
 export interface WikiPage extends Pick<WikiPageMetaData, 'id' | 'isVisible' | 'title' | 'createdAt'>, ResourceHistory {
   content: string;
   contentVersion: number;
-  comments: SocialResourceViewer.Props['data'];
+  comments: CommentsThread.Props['data'];
 }

@@ -18,17 +18,15 @@ import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import { usePrevious } from '~/framework/hooks/previous';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 
-import { SocialResourceViewerContext, socialResourceViewerContextInitialData, socialResourceViewerContextReducer } from './context';
-import { SocialResourceViewerAddCommentForm } from './form';
-import { DEFAULT_CONFIG, useSocialCommentsData } from './hooks';
-import { SocialResourceViewerItem } from './item';
+import { CommentsThreadContext, commentsThreadContextInitialData, commentsThreadContextReducer } from './context';
+import { CommentsThreadAddForm } from './form';
+import { DEFAULT_CONFIG, useCommentsThreadData } from './hooks';
+import { CommentsThread as CommentsThreadComponents } from './item';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
-import { type SocialResourceViewer, SocialResourceViewerInternals } from './types';
+import { type CommentsThread, CommentsThreadInternals } from './types';
 
-// const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<SocialResourceViewerInternals.Item>);
-
-export function SocialResourceViewer({
-  allowResponses = DEFAULT_CONFIG.allowResponses,
+export function CommentsThreadTemplate({
+  allowReplies = DEFAULT_CONFIG.allowReplies,
   alwaysShowCommentField = false,
   canAddComment: _canAddComment,
   children,
@@ -38,19 +36,19 @@ export function SocialResourceViewer({
   onEdit,
   onSubmit,
   refreshControl,
-  responsesPageSize,
-  responsesStartSize,
-}: SocialResourceViewer.Props) {
+  repliesPageSize,
+  repliesStartSize,
+}: CommentsThread.Props) {
   // User data
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
 
-  const context = React.useReducer(socialResourceViewerContextReducer, socialResourceViewerContextInitialData);
+  const context = React.useReducer(commentsThreadContextReducer, commentsThreadContextInitialData);
 
-  const { flatData, showResponses } = useSocialCommentsData(data, context[0], {
-    allowResponses,
-    responsesPageSize,
-    responsesStartSize,
+  const { flatData, unfoldReplies } = useCommentsThreadData(data, context[0], {
+    allowReplies,
+    repliesPageSize,
+    repliesStartSize,
   });
 
   // Screen layout
@@ -58,7 +56,7 @@ export function SocialResourceViewer({
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   // Component layout
-  const listRef = React.useRef<FlatList<SocialResourceViewerInternals.Item>>(null);
+  const listRef = React.useRef<FlatList<CommentsThreadInternals.Item>>(null);
   const [measuredResourceHeight, setMeasuredResourceHeight] = React.useState(0);
   const [measuredListHeight, setMeasuredListHeight] = React.useState(0);
   const inlineEditRef = React.useRef<TextInput>(null);
@@ -98,7 +96,7 @@ export function SocialResourceViewer({
   }, [measuredListHeight, measuredResourceHeight, newCommentHeight, alwaysShowNewCommentForm, bottomInset]);
 
   const renderScrollComponent = React.useCallback<
-    NonNullable<FlatListProps<SocialResourceViewerInternals.Item>['renderScrollComponent']>
+    NonNullable<FlatListProps<CommentsThreadInternals.Item>['renderScrollComponent']>
   >(
     props => (
       <KeyboardChatScrollView
@@ -154,7 +152,7 @@ export function SocialResourceViewer({
   );
 
   const hasChangesInInlineEditingFrom = React.useCallback(
-    (item: SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem) =>
+    (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem) =>
       context[0].editId !== undefined && context[0].editId !== item.id && context[0].editHasChanges,
     [context],
   );
@@ -183,7 +181,7 @@ export function SocialResourceViewer({
     ]);
   }, []);
 
-  const onPressReply = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressReply']>>(
+  const onPressReply = React.useCallback<NonNullable<CommentsThreadInternals.ItemProps['onPressReply']>>(
     item => {
       const beginReply = () => {
         // ToDo : go to the dedicated screen
@@ -195,7 +193,7 @@ export function SocialResourceViewer({
     [confirmQuitEdit, hasChangesInInlineEditingFrom],
   );
 
-  const onPressEdit = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressEdit']>>(
+  const onPressEdit = React.useCallback<NonNullable<CommentsThreadInternals.ItemProps['onPressEdit']>>(
     item => {
       const beginEdit = () => {
         context[1]({ editHasChanges: false, editId: item.id, editValue: item.content });
@@ -209,7 +207,7 @@ export function SocialResourceViewer({
     [confirmQuitEdit, context, hasChangesInInlineEditingFrom],
   );
 
-  const onPressDelete = React.useCallback<NonNullable<SocialResourceViewerInternals.ItemProps['onPressDelete']>>(
+  const onPressDelete = React.useCallback<NonNullable<CommentsThreadInternals.ItemProps['onPressDelete']>>(
     item => {
       Alert.alert(I18n.get('comment-delete-alert-title'), I18n.get('comment-delete-alert-text'), [
         {
@@ -229,12 +227,12 @@ export function SocialResourceViewer({
     [onDelete],
   );
 
-  const renderItem = React.useCallback<NonNullable<FlatListProps<SocialResourceViewerInternals.Item>['renderItem']>>(
+  const renderItem = React.useCallback<NonNullable<FlatListProps<CommentsThreadInternals.Item>['renderItem']>>(
     info => (
-      <SocialResourceViewerItem
+      <CommentsThreadComponents.Item
         {...info}
-        allowResponses={allowResponses}
-        onShowResponses={showResponses}
+        allowReplies={allowReplies}
+        onUnfoldReplies={unfoldReplies}
         canAddComment={canAddComment}
         onPressReply={onPressReply}
         onPressEdit={onPressEdit}
@@ -244,25 +242,20 @@ export function SocialResourceViewer({
         listRef={listRef}
       />
     ),
-    [allowResponses, canAddComment, onEdit, onPressDelete, onPressEdit, onPressReply, showResponses],
+    [allowReplies, canAddComment, onEdit, onPressDelete, onPressEdit, onPressReply, unfoldReplies],
   );
 
-  const keyExtractor = React.useCallback<NonNullable<FlatListProps<SocialResourceViewerInternals.Item>['keyExtractor']>>(item => {
+  const keyExtractor = React.useCallback<NonNullable<FlatListProps<CommentsThreadInternals.Item>['keyExtractor']>>(item => {
     switch (item.type) {
-      case SocialResourceViewerInternals.ITEM_COMMENT:
-      case SocialResourceViewerInternals.ITEM_COMMENT_DELETED:
-      case SocialResourceViewerInternals.ITEM_RESPONSE:
-      case SocialResourceViewerInternals.ITEM_RESPONSE_DELETED:
+      case CommentsThreadInternals.ITEM_COMMENT:
+      case CommentsThreadInternals.ITEM_COMMENT_DELETED:
+      case CommentsThreadInternals.ITEM_REPLY:
+      case CommentsThreadInternals.ITEM_REPLY_DELETED:
         return item.id;
-      case SocialResourceViewerInternals.ITEM_RESPONSE_ELLIPSIS:
-        return `${SocialResourceViewerInternals.ITEM_RESPONSE_ELLIPSIS.toString()}|${item.inReplyTo}|${item.start}|${item.count}`;
+      case CommentsThreadInternals.ITEM_REPLY_ELLIPSIS:
+        return `${CommentsThreadInternals.ITEM_REPLY_ELLIPSIS.toString()}|${item.inReplyTo}|${item.start}|${item.count}`;
     }
   }, []);
-
-  // const getItemType = React.useCallback<NonNullable<FlatListProps<SocialResourceViewerInternals.Item>['getItemType']>>(
-  //   item => item.type.toString(),
-  //   [],
-  // );
 
   // auto-scroll
   const previousFocusItem = usePrevious(focusItem);
@@ -277,11 +270,10 @@ export function SocialResourceViewer({
       });
   }
 
-  // Need a empty function to FlashLIst to enable `refreshControl`. Seems like an issue for them.
-  const onRefresh = React.useMemo(() => (refreshControl !== undefined ? () => {} : undefined), [refreshControl]);
+  // Note: FlatList is used instead of FlashList because it doesn't unmount clipped input elements, allowing scrolling to current editing item from everwhere.
 
   return (
-    <SocialResourceViewerContext value={context}>
+    <CommentsThreadContext value={context}>
       <Animated.FlatList
         ref={listRef}
         onLayout={onLayout}
@@ -290,26 +282,24 @@ export function SocialResourceViewer({
         renderScrollComponent={renderScrollComponent}
         data={flatData}
         renderItem={renderItem}
-        // getItemType={getItemType}
         keyExtractor={keyExtractor}
         ListHeaderComponent={resourceElement}
         ListFooterComponent={<View style={listFooterStyle} />}
         scrollIndicatorInsets={scrollIndicatorInsets}
         keyboardShouldPersistTaps="handled"
         refreshControl={refreshControl}
-        onRefresh={onRefresh}
-        ListEmptyComponent={<SocialResourceViewerEmpty canAddComment={canAddComment ?? false} />}
+        ListEmptyComponent={<CommentsThreadEmpty canAddComment={canAddComment ?? false} />}
       />
       {canAddComment && !isInlineEditing && (
-        <SocialResourceViewerAddCommentForm onSubmit={onSubmit} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+        <CommentsThreadAddForm onSubmit={onSubmit} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
       )}
-    </SocialResourceViewerContext>
+    </CommentsThreadContext>
   );
 }
 
-export const SocialResourceViewerError = () => <EmptyContentScreen />;
+export const CommentsThreadError = () => <EmptyContentScreen />;
 
-export const SocialResourceViewerEmpty = ({ canAddComment }: Pick<SocialResourceViewer.Props, 'canAddComment'>) =>
+export const CommentsThreadEmpty = ({ canAddComment }: Pick<CommentsThread.Props, 'canAddComment'>) =>
   canAddComment && (
     <View style={styles.emptyWrapper}>
       <Svg

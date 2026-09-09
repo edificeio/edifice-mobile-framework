@@ -17,11 +17,11 @@ import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/t
 import toast from '~/framework/components/toast';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 
-import { SocialResourceViewerContext } from './context';
+import { CommentsThreadContext } from './context';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
-import { type SocialResourceViewer, SocialResourceViewerInternals } from './types';
+import { type CommentsThread, CommentsThreadInternals } from './types';
 
-export const SocialResourceViewerAddCommentForm = ({
+export const CommentsThreadAddForm = ({
   onBlur,
   onFocus,
   onSubmit,
@@ -31,10 +31,10 @@ export const SocialResourceViewerAddCommentForm = ({
   style?: AnimatedStyle<ViewStyle>;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
-  onSubmit?: SocialResourceViewer.Props['onSubmit'];
+  onSubmit?: CommentsThread.Props['onSubmit'];
   ref?: ChatTextAreaProps['ref'];
 }) => {
-  const [{ newCommentValue }, dispatch] = React.useContext(SocialResourceViewerContext);
+  const [{ newCommentValue }, dispatch] = React.useContext(CommentsThreadContext);
   const [isSending, setIsSending] = React.useState(false);
   const navBarHeight = useHeaderHeight();
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -106,7 +106,7 @@ export const SocialResourceViewerAddCommentForm = ({
 
 // ToDo : refacto these components
 
-export const SocialResourceViewerEditCommentForm = ({
+export const CommentsThreadEditForm = ({
   listRef,
   onBlur,
   onFocus,
@@ -118,12 +118,12 @@ export const SocialResourceViewerEditCommentForm = ({
   style?: StyleProp<ViewStyle>;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
-  onSubmit?: SocialResourceViewer.Props['onEdit'];
+  onSubmit?: CommentsThread.Props['onEdit'];
   ref?: ChatTextAreaProps['ref'];
-} & ListRenderItemInfo<SocialResourceViewerInternals.CommentItem | SocialResourceViewerInternals.ResponseItem> &
-  Pick<SocialResourceViewerInternals.ItemProps, 'listRef'>) => {
+} & ListRenderItemInfo<CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem> &
+  Pick<CommentsThreadInternals.ItemProps, 'listRef'>) => {
   const scrollToAllowed = React.useRef(true);
-  const [{ editId, editValue }, dispatch] = React.useContext(SocialResourceViewerContext);
+  const [{ editId, editValue }, dispatch] = React.useContext(CommentsThreadContext);
   const [isSending, setIsSending] = React.useState(false);
   const onPress = React.useCallback(async () => {
     if (!onSubmit || editValue === undefined || editId === undefined) return;
