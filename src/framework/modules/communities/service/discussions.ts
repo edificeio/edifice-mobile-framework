@@ -1,4 +1,4 @@
-import { DiscussionClient, DiscussionDto, UserDto } from '@edifice.io/community-client-rest-rn';
+import { DiscussionClient, DiscussionDto, MessageDto, UserDto } from '@edifice.io/community-client-rest-rn';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/communities/module-config';
@@ -22,18 +22,11 @@ export interface DiscussionsSummary {
   totalDiscussions: number;
 }
 
-/**
- * Le back renvoie les discussions contenant des nouveaux messages en premier
- * on récupère les premières discussions pour savoir si il y a au moins un message non lu, ainsi que le nombre total de discussions
- */
-export const getDiscussionsSummary = async (session: AuthActiveAccount, communityId: number): Promise<DiscussionsSummary> => {
-  const { items, meta } = await accountApi(session, moduleConfig, DiscussionClient).listDiscussions(communityId);
-
-  return {
-    hasUnreadMessages: (items as unknown as DiscussionRuntimeExtras[]).some(discussion => discussion.hasUnreadMessages),
-    totalDiscussions: meta.totalItems,
-  };
-};
+export const getDiscussion = async (
+  session: AuthActiveAccount,
+  communityId: number,
+  discussionId: number,
+): Promise<DiscussionDto> => accountApi(session, moduleConfig, DiscussionClient).getDiscussion(communityId, discussionId);
 
 export const getDiscussions = async (
   session: AuthActiveAccount,
@@ -48,11 +41,7 @@ export const getDiscussions = async (
     (items as unknown as (DiscussionDto & DiscussionRuntimeExtras)[]).map(async discussion => {
       let unreadCount = 0;
       if (discussion.hasUnreadMessages) {
-        const { count } = await client.countMessages(
-          communityId,
-          discussion.id,
-          new Date(discussion.lastVisitedTime).toISOString() as unknown as Date,
-        );
+        const { count } = await client.countMessages(communityId, discussion.id, new Date(discussion.lastVisitedTime));
         unreadCount = count;
       }
       return { ...discussion, unreadCount };
@@ -60,4 +49,28 @@ export const getDiscussions = async (
   );
 
   return { discussions, total: meta.totalItems };
+};
+
+export const getDiscussionsSummary = async (session: AuthActiveAccount, communityId: number): Promise<DiscussionsSummary> => {
+  const { items, meta } = await accountApi(session, moduleConfig, DiscussionClient).listDiscussions(communityId);
+
+  return {
+    hasUnreadMessages: (items as unknown as DiscussionRuntimeExtras[]).some(discussion => discussion.hasUnreadMessages),
+    totalDiscussions: meta.totalItems,
+  };
+};
+
+export const getMessages = async (
+  session: AuthActiveAccount,
+  communityId: number,
+  discussionId: number,
+  page: number,
+  size: number,
+): Promise<{ messages: MessageDto[]; total: number }> => {
+  const { items, meta } = await accountApi(session, moduleConfig, DiscussionClient).listMessages(communityId, discussionId, {
+    page: page + 1,
+    size,
+  });
+
+  return { messages: items, total: meta.totalItems };
 };

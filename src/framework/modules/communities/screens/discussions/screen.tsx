@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
@@ -17,7 +17,7 @@ import DecoratedPaginatedFlatList from '~/framework/modules/communities/componen
 import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/modules/communities/hooks/use-community-navbar';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { Discussion, getDiscussions } from '~/framework/modules/communities/service/discussions';
-import { communitiesSelectors } from '~/framework/modules/communities/store';
+import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getCommunityBannerImage } from '~/framework/modules/communities/utils';
 import { openUrl } from '~/framework/util/linking';
 
@@ -47,10 +47,19 @@ export default withSession<CommunitiesDiscussionsScreen.AllProps>(function Discu
   const communityData = useSelector(communitiesSelectors.getCommunityDetails(communityId));
   const [discussions, setDiscussions] = React.useState<(Discussion | typeof LOADING_ITEM_DATA)[]>([]);
 
+  const dispatch = useDispatch();
+  const setCommunityDiscussions = React.useCallback(
+    (newData: Parameters<typeof communitiesActions.loadCommunityDiscussions>[1]) =>
+      dispatch(communitiesActions.loadCommunityDiscussions(communityId, newData)),
+    [communityId, dispatch],
+  );
+
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
       try {
         const { discussions: newDiscussions, total } = await getDiscussions(session, communityId, page, PAGE_SIZE);
+
+        setCommunityDiscussions(newDiscussions.reduce((acc, discussion) => ({ ...acc, [discussion.id]: discussion }), {}));
 
         setDiscussions(prevData =>
           staleOrSplice({
@@ -65,7 +74,7 @@ export default withSession<CommunitiesDiscussionsScreen.AllProps>(function Discu
         console.error('Error while loading community discussions list', e);
       }
     },
-    [communityId, session],
+    [communityId, session, setCommunityDiscussions],
   );
 
   const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<Discussion>['keyExtractor']>>(
