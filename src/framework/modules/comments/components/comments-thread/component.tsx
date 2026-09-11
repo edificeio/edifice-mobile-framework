@@ -32,6 +32,7 @@ export function CommentsThreadTemplate({
   children,
   data,
   focusItem,
+  navigation,
   onDelete,
   onEdit,
   onSubmit,
@@ -184,13 +185,13 @@ export function CommentsThreadTemplate({
   const onPressReply = React.useCallback<NonNullable<CommentsThreadInternals.ItemProps['onPressReply']>>(
     item => {
       const beginReply = () => {
-        // ToDo : go to the dedicated screen
+        navigation.navigate('comments/reply', { commentId: item.id });
       };
 
       if (hasChangesInInlineEditingFrom(item)) confirmQuitEdit(beginReply);
       else beginReply();
     },
-    [confirmQuitEdit, hasChangesInInlineEditingFrom],
+    [confirmQuitEdit, hasChangesInInlineEditingFrom, navigation],
   );
 
   const onPressEdit = React.useCallback<NonNullable<CommentsThreadInternals.ItemProps['onPressEdit']>>(

@@ -330,6 +330,7 @@
   "carousel-unknown-file": "Désolé, nous n’avons pas pu vous afficher le fichier. Il est inaccessible ou introuvable.",
   "carousel-unviewable-file": "La prévisualisation n’est pas possible pour ce fichier",
   "collaborativewall-tabname": "Mur collaboratif",
+  "comments-reply-title": "Répondre",
   "comment-add-comment": "Ajouter un commentaire...",
   "comment-add-response": "Ajouter une réponse...",
   "comment-read-more-responses": "Lire plus de réponses ({{count}})",
