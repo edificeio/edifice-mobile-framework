@@ -18,7 +18,7 @@ import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/mo
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { Discussion, getDiscussions } from '~/framework/modules/communities/service/discussions';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
-import { getCommunityBannerImage } from '~/framework/modules/communities/utils';
+import { getCommunityBannerImage, getDiscussionStatus } from '~/framework/modules/communities/utils';
 import { openUrl } from '~/framework/util/linking';
 
 import styles from './styles';
@@ -100,13 +100,12 @@ export default withSession<CommunitiesDiscussionsScreen.AllProps>(function Discu
     ({ item }: { item: Discussion }) => (
       <View style={styles.itemContainer}>
         <DiscussionCard
-          isHidden={!!item.hiddenAt}
-          isLocked={!!item.lockedAt}
           lastMessageDate={Temporal.Instant.from(new Date(item.lastMessageTime).toISOString())}
           membersDisplayed={(item.firstUsers ?? []).map(user => user.entId)}
           membersTotal={item.nUsers}
           newContent={{ hasNewContent: item.hasUnreadMessages, messagesCount: item.unreadCount }}
           responsesCount={item.nMessages}
+          status={getDiscussionStatus(item)}
           title={item.title}
           type={item.icon}
           onPress={() => openDiscussion(item.id)}

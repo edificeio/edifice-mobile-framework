@@ -25,6 +25,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.big,
     paddingTop: UI_SIZES.spacing.medium,
   },
+  containerWithStatus: {
+    paddingTop: 0,
+  },
   date: {
     color: theme.palette.grey.graphite,
   },
@@ -46,6 +49,33 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: UI_SIZES.spacing.big,
   },
+  /**
+   * Keep the 4 borders with same width AND color, otherwise Android ignores the dashed border
+   * The tab hangs from the top of the header, so the top border is hidden with statusBarClip
+   */
+  statusTab: {
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: theme.palette.grey.white,
+    borderBottomLeftRadius: UI_SIZES.radius.card,
+    borderBottomRightRadius: UI_SIZES.radius.card,
+    borderWidth: UI_SIZES.border.small,
+    flexDirection: 'row',
+    gap: UI_SIZES.spacing.minor,
+    marginTop: -UI_SIZES.border.small,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.tiny,
+  },
+  statusTabClip: {
+    alignSelf: 'flex-start',
+    overflow: 'hidden',
+  },
+  statusTabHidden: {
+    borderStyle: 'dashed',
+  },
+  statusTabText: {
+    color: theme.palette.grey.graphite,
+  },
 });
 
 /**
@@ -60,9 +90,10 @@ export const TYPE_STYLES = Object.fromEntries(
       {
         container: [styles.container, { backgroundColor: color.pale, borderTopColor: color.light }],
         iconSquare: [styles.iconSquare, { borderColor: color.pale }],
+        statusTab: [styles.statusTab, { borderColor: color.light }],
       },
     ];
   }),
-) as Record<DiscussionIcon, { container: StyleProp<ViewStyle>; iconSquare: StyleProp<ViewStyle> }>;
+) as Record<DiscussionIcon, { container: StyleProp<ViewStyle>; iconSquare: StyleProp<ViewStyle>; statusTab: StyleProp<ViewStyle> }>;
 
 export default styles;

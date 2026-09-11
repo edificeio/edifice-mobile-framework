@@ -8,21 +8,15 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { AvatarStack } from '~/framework/components/avatar/stack';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Svg, SvgIconName } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
-import { DISCUSSION_TYPE_CONFIG } from '~/framework/modules/communities/utils';
+import { DISCUSSION_TYPE_CONFIG, DiscussionStatus, getDiscussionStatusIcon } from '~/framework/modules/communities/utils';
 
 import { DiscussionCardState, getCardStyle, styles } from './styles';
 import { DiscussionCardProps } from './types';
 
-const getStatusIcon = (isHidden?: boolean, isLocked?: boolean): SvgIconName => {
-  if (isHidden) return 'ui-hide';
-  if (isLocked) return 'ui-lock';
-  return 'ui-messageInfo';
-};
-
-const getCardState = (isHidden?: boolean, hasNewContent?: boolean): DiscussionCardState => {
-  if (isHidden) return 'hidden';
+const getCardState = (status?: DiscussionStatus, hasNewContent?: boolean): DiscussionCardState => {
+  if (status === 'hidden') return 'hidden';
   if (hasNewContent) return 'new';
   return 'default';
 };
@@ -41,19 +35,18 @@ const getSubtitle = (hasNewContent: boolean, messagesCount?: number, lastMessage
 const AVATAR_SIZE = 'sm';
 
 export const DiscussionCard = ({
-  isHidden,
-  isLocked,
   lastMessageDate,
   membersDisplayed,
   membersTotal,
   newContent,
   onPress,
   responsesCount,
+  status,
   title,
   type,
 }: Readonly<DiscussionCardProps>) => {
-  const showsNewContent = !!newContent?.hasNewContent && !isHidden;
-  const state = getCardState(isHidden, newContent?.hasNewContent);
+  const showsNewContent = !!newContent?.hasNewContent && status !== 'hidden';
+  const state = getCardState(status, newContent?.hasNewContent);
   const typeConfig = DISCUSSION_TYPE_CONFIG[type ?? DiscussionIcon.DISCUSSION];
   const cardStyle = React.useMemo(() => [getCardStyle(state)], [state]);
   const subtitle = getSubtitle(showsNewContent, newContent?.messagesCount, lastMessageDate);
@@ -84,7 +77,7 @@ export const DiscussionCard = ({
           <Svg
             fill={theme.palette.grey.black}
             height={UI_SIZES.elements.icon.small}
-            name={getStatusIcon(isHidden, isLocked)}
+            name={getDiscussionStatusIcon(status)}
             width={UI_SIZES.elements.icon.small}
           />
           <SmallText style={styles.responseDefault}>

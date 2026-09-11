@@ -1,6 +1,6 @@
 import { ImageURISource, ViewStyle } from 'react-native';
 
-import { DiscussionIcon } from '@edifice.io/community-client-rest-rn';
+import { DiscussionDto, DiscussionIcon } from '@edifice.io/community-client-rest-rn';
 
 import theme, { IShades } from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -36,4 +36,26 @@ export const DISCUSSION_TYPE_CONFIG: Record<DiscussionIcon, DiscussionTypeConfig
   [DiscussionIcon.IMPORTANT]: { color: theme.palette.complementary.orange, icon: 'ui-arrow-important' },
   [DiscussionIcon.OTHER]: { color: theme.palette.complementary.yellow, icon: 'ui-topic-other' },
   [DiscussionIcon.QUESTION]: { color: theme.palette.complementary.purple, icon: 'ui-question' },
+};
+
+export type DiscussionStatus = 'hidden' | 'locked';
+
+export type DiscussionStatusConfig = {
+  i18nKey: string;
+  icon: SvgIconName;
+};
+
+export const DISCUSSION_STATUS_CONFIG: Record<DiscussionStatus, DiscussionStatusConfig> = {
+  hidden: { i18nKey: 'communities-discussion-status-hidden', icon: 'ui-hide' },
+  locked: { i18nKey: 'communities-discussion-status-locked', icon: 'ui-lock' },
+};
+
+export const getDiscussionStatus = (discussion: Pick<DiscussionDto, 'hiddenAt' | 'lockedAt'>): DiscussionStatus | undefined => {
+  if (discussion.hiddenAt) return 'hidden';
+  if (discussion.lockedAt) return 'locked';
+  return undefined;
+};
+
+export const getDiscussionStatusIcon = (status?: DiscussionStatus): SvgIconName => {
+  return status ? DISCUSSION_STATUS_CONFIG[status].icon : 'ui-messageInfo';
 };

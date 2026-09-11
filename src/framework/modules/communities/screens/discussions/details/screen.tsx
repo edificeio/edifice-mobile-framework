@@ -14,6 +14,7 @@ import { toInstant } from '~/framework/modules/communities/adapter';
 import DiscussionHeader from '~/framework/modules/communities/components/discussions/header';
 import { getDiscussion, getMessages } from '~/framework/modules/communities/service/discussions';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
+import { getDiscussionStatus } from '~/framework/modules/communities/utils';
 
 import styles from './styles';
 import { CommunitiesDiscussionDetailsScreen } from './types';
@@ -72,6 +73,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
         authorName={discussion.createdBy.displayName}
         authorProfile={discussion.createdBy.profile as AccountType}
         createdAt={createdAt}
+        status={getDiscussionStatus(discussion)}
         title={discussion.title}
         type={discussion.icon}
       />

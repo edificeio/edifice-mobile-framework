@@ -357,6 +357,8 @@
   "communities-collect-distributed": "Distribué le {{date}}",
   "communities-collect-submitted": "Rendu",
   "communities-collect-unavailable": "Collecte indisponible",
+  "communities-discussion-status-hidden": "Masquée",
+  "communities-discussion-status-locked": "Verrouillée",
   "communities-discussioncard-lastmessage": "Dernier message le {{date}}",
   "communities-discussioncard-newmessage": "{{count}} nouveau message",
   "communities-discussioncard-newmessages": "{{count}} nouveaux messages",
