@@ -4,16 +4,14 @@ import { Action } from 'redux';
 
 import { EntModule } from '~/app/module';
 import theme, { THEME_LEVEL } from '~/app/theme';
-import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 
 import reducer, { type TimelineState } from './reducer';
-import { TimelineFiltersScreen, TimelineFiltersScreenOptions } from './screens/timeline-filters-screen';
 import TimelineScreen, { TimelineScreenOptions } from './screens/timeline-screen';
 import { preferences, storage, TimelinePreferencesData, TimelineStorageData } from './storage';
 
 export default new EntModule<
   'timeline',
-  { 'timeline': { reloadWithNewSettings?: boolean }; 'timeline/filters': undefined },
+  { timeline: { reloadWithNewSettings?: boolean } },
   TimelineState,
   Action,
   TimelineStorageData,
@@ -39,9 +37,6 @@ export default new EntModule<
   Stack => (
     <>
       <Stack.Screen name="timeline" component={TimelineScreen} options={TimelineScreenOptions} initialParams={{}} />
-      <Stack.Screen name="timeline/filters" component={TimelineFiltersScreen} options={TimelineFiltersScreenOptions} />
     </>
   ),
 );
-
-setModalModeForRoutes(['timeline/filters']);
