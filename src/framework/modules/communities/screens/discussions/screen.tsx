@@ -12,7 +12,7 @@ import { EmptyContent } from '~/framework/components/empty-screens/base/componen
 import { LOADING_ITEM_DATA, PaginatedFlatListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { HeadingXSText } from '~/framework/components/text';
 import { withSession } from '~/framework/modules/auth/util';
-import DiscussionCard, { DiscussionCardLoader } from '~/framework/modules/communities/components/discussions/discussion-card';
+import DiscussionCard, { DiscussionCardLoader } from '~/framework/modules/communities/components/discussions/card';
 import DecoratedPaginatedFlatList from '~/framework/modules/communities/components/list/decorated-paginated-list';
 import useCommunityScrollableThumbnail, { communityNavBar } from '~/framework/modules/communities/hooks/use-community-navbar';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
