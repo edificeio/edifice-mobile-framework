@@ -1,66 +1,38 @@
 import { FlatList, FlatListProps, ListRenderItemInfo, StyleProp, ViewStyle } from 'react-native';
 
-import { Temporal } from '@js-temporal/polyfill';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { ChatTextAreaProps } from '~/framework/components/inputs/text2';
-import { AccountType } from '~/framework/modules/auth/model';
+import * as CommentsThread from '~/framework/modules/comments/types';
 
-export namespace CommentsThread {
-  interface CommonItemData {
-    id: string;
-    authorId: string;
-    authorName: string;
-    authorAccountType: AccountType;
-    date: Temporal.Instant;
-  }
-  interface CommonDeletedItemData extends CommonItemData {
-    deleted: true;
-  }
-  interface CommonContentItemData extends CommonItemData {
-    content: string;
-    isRichContent?: boolean;
-  }
-  interface CommentItemData {
-    replies: (ReplyEllipsisItem | ReplyItem | ReplyDeletedItem)[];
-  }
-  interface ReplyItemData {}
+export interface CommentsThreadConfig {
+  repliesStartSize: number;
+  repliesPageSize: number;
+  showDeletedItems: 'always' | 'children' | 'never';
+  allowReplies: boolean;
+}
 
-  export interface ReplyItem extends CommonContentItemData, ReplyItemData {}
-  export interface ReplyDeletedItem extends CommonDeletedItemData, ReplyItemData {}
-  export interface ReplyEllipsisItem {
-    start: number;
-    count: number;
-  }
-  export interface CommentItem extends CommonContentItemData, CommentItemData {}
-  export interface CommentDeletedItem extends CommonDeletedItemData, CommentItemData {}
-
-  export interface Config {
-    repliesStartSize: number;
-    repliesPageSize: number;
-    showDeletedItems: 'always' | 'children' | 'never';
-    allowReplies: boolean;
-  }
-
-  export interface Props
-    extends
-      Pick<NativeStackScreenProps<ParamListBase>, 'navigation'>,
-      React.PropsWithChildren,
-      Partial<Config>,
-      Pick<FlatListProps<CommentsThreadInternals.Item>, 'refreshControl'> {
-    canAddComment: boolean;
-    alwaysShowCommentField?: boolean;
-    style?: StyleProp<ViewStyle>;
-    data: (CommentItem | CommentDeletedItem)[];
-    focusItem?: CommonItemData['id'];
-    onSubmit?: (
-      data: Pick<CommonContentItemData, 'content' | 'isRichContent'>,
-      replyTo?: CommonItemData['id'],
-    ) => Promise<CommonItemData['id']>;
-    onEdit?: (data: Pick<CommonContentItemData, 'content' | 'isRichContent'>, id: CommonItemData['id']) => Promise<void>;
-    onDelete?: (id: CommonItemData['id']) => Promise<void>;
-  }
+export interface CommentsThreadProps
+  extends
+    Pick<NativeStackScreenProps<ParamListBase>, 'navigation'>,
+    React.PropsWithChildren,
+    Partial<CommentsThreadConfig>,
+    Pick<FlatListProps<CommentsThreadInternals.Item>, 'refreshControl'> {
+  canAddComment: boolean;
+  alwaysShowCommentField?: boolean;
+  style?: StyleProp<ViewStyle>;
+  data: (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)[];
+  focusItem?: CommentsThread.AnyActualItem['id'];
+  onSubmit?: (
+    data: Pick<CommentsThread.CommentItem | CommentsThread.ReplyItem, 'content' | 'isRichContent'>,
+    replyTo?: CommentsThread.CommentItem['id'],
+  ) => Promise<CommentsThread.ReplyItem['id']>;
+  onEdit?: (
+    data: Pick<CommentsThread.CommentItem | CommentsThread.ReplyItem, 'content' | 'isRichContent'>,
+    id: (CommentsThread.CommentItem | CommentsThread.ReplyItem)['id'],
+  ) => Promise<void>;
+  onDelete?: (id: (CommentsThread.CommentItem | CommentsThread.ReplyItem)['id']) => Promise<void>;
 }
 
 export namespace CommentsThreadInternals {
@@ -116,11 +88,11 @@ export namespace CommentsThreadInternals {
   export type Context = [ContextState, React.ActionDispatch<[ContextAction]>];
 
   export interface ItemProps
-    extends ListRenderItemInfo<CommentsThreadInternals.Item>, Partial<Pick<CommentsThread.Config, 'allowReplies'>> {
+    extends ListRenderItemInfo<CommentsThreadInternals.Item>, Partial<Pick<CommentsThreadConfig, 'allowReplies'>> {
     onUnfoldReplies?: (id: string, start: number, count: number) => void;
     canAddComment?: boolean;
     onPressReply?: (item: CommentsThreadInternals.CommentItem, index: number) => void;
-    onSendEdit?: CommentsThread.Props['onEdit'];
+    onSendEdit?: CommentsThreadProps['onEdit'];
     inputRef?: ChatTextAreaProps['ref'];
     listRef?: React.RefObject<FlatList<CommentsThreadInternals.Item> | null>;
     onPressEdit?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;

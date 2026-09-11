@@ -5,9 +5,11 @@
 
 import React from 'react';
 
-import { CommentsThread, CommentsThreadInternals } from './types';
+import { CommentDeletedItem, CommentItem, ReplyEllipsisItem } from '~/framework/modules/comments/types';
 
-export const DEFAULT_CONFIG: CommentsThread.Config = {
+import { CommentsThreadConfig, CommentsThreadInternals, CommentsThreadProps } from './types';
+
+export const DEFAULT_CONFIG: CommentsThreadConfig = {
   allowReplies: true,
   repliesPageSize: 10,
   repliesStartSize: 2,
@@ -19,9 +21,9 @@ export const DEFAULT_CONFIG: CommentsThread.Config = {
  * @param data
  */
 export const useCommentsThreadData = (
-  data: CommentsThread.Props['data'],
+  data: CommentsThreadProps['data'],
   editContext: CommentsThreadInternals.ContextState,
-  config?: Partial<CommentsThread.Config>,
+  config?: Partial<CommentsThreadConfig>,
 ) => {
   // By default, all comments are displayed.
   // For each comment, only first 2 repsonses are show. A user can load the further replies 10 by 10.
@@ -35,7 +37,7 @@ export const useCommentsThreadData = (
 
   const [displayedRepliesRangesByComment, setDisplayedRepliesRangesByComment] = React.useState<
     Record<
-      (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)['id'],
+      (CommentItem | CommentDeletedItem)['id'],
       [number, number][] // [start, nb]
     >
   >({});
@@ -84,7 +86,7 @@ export const useCommentsThreadData = (
       replies: _buildReplies(
         comment.replies,
         displayedRepliesRangesByComment[comment.id] ?? getDefaultRepliesRanges(),
-        (gapStart, gapSize) => ({ count: gapSize, start: gapStart }) as CommentsThread.ReplyEllipsisItem,
+        (gapStart, gapSize) => ({ count: gapSize, start: gapStart }) as ReplyEllipsisItem,
       ),
     }));
   }, [filteredData, displayedRepliesRangesByComment, getDefaultRepliesRanges]);

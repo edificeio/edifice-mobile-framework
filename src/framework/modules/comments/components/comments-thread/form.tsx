@@ -19,7 +19,7 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 
 import { CommentsThreadContext } from './context';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
-import { type CommentsThread, CommentsThreadInternals } from './types';
+import { CommentsThreadInternals, CommentsThreadProps } from './types';
 
 export const CommentsThreadAddForm = ({
   onBlur,
@@ -31,7 +31,7 @@ export const CommentsThreadAddForm = ({
   style?: AnimatedStyle<ViewStyle>;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
-  onSubmit?: CommentsThread.Props['onSubmit'];
+  onSubmit?: CommentsThreadProps['onSubmit'];
   ref?: ChatTextAreaProps['ref'];
 }) => {
   const [{ newCommentValue }, dispatch] = React.useContext(CommentsThreadContext);
@@ -118,7 +118,7 @@ export const CommentsThreadEditForm = ({
   style?: StyleProp<ViewStyle>;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
-  onSubmit?: CommentsThread.Props['onEdit'];
+  onSubmit?: CommentsThreadProps['onEdit'];
   ref?: ChatTextAreaProps['ref'];
 } & ListRenderItemInfo<CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem> &
   Pick<CommentsThreadInternals.ItemProps, 'listRef'>) => {

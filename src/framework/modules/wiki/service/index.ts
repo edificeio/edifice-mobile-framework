@@ -1,9 +1,9 @@
 import { Temporal } from '@js-temporal/polyfill';
 import isDisjointFrom from 'set.prototype.isdisjointfrom';
 
-import { CommentsThread } from '~/framework/components/pages/comments-thread/types';
 import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { CommentsThread } from '~/framework/modules/comments/templates/comments-thread/types';
 import { Wiki, WikiPage, WikiResourceMetadata } from '~/framework/modules/wiki/model';
 import { API } from '~/framework/modules/wiki/service/types';
 import { sessionFetch } from '~/framework/util/transport/fetch';

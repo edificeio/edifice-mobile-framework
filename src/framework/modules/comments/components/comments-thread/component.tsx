@@ -23,7 +23,7 @@ import { CommentsThreadAddForm } from './form';
 import { DEFAULT_CONFIG, useCommentsThreadData } from './hooks';
 import { CommentsThread as CommentsThreadComponents } from './item';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
-import { type CommentsThread, CommentsThreadInternals } from './types';
+import { CommentsThreadInternals, CommentsThreadProps } from './types';
 
 export function CommentsThreadTemplate({
   allowReplies = DEFAULT_CONFIG.allowReplies,
@@ -38,7 +38,7 @@ export function CommentsThreadTemplate({
   refreshControl,
   repliesPageSize,
   repliesStartSize,
-}: CommentsThread.Props) {
+}: CommentsThreadProps) {
   // User data
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
@@ -299,7 +299,7 @@ export function CommentsThreadTemplate({
 
 export const CommentsThreadError = () => <EmptyContentScreen />;
 
-export const CommentsThreadEmpty = ({ canAddComment }: Pick<CommentsThread.Props, 'canAddComment'>) =>
+export const CommentsThreadEmpty = ({ canAddComment }: Pick<CommentsThreadProps, 'canAddComment'>) =>
   canAddComment && (
     <View style={styles.emptyWrapper}>
       <Svg

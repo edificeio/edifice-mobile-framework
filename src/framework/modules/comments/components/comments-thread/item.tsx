@@ -14,7 +14,7 @@ import { TemporalTimeText } from '~/framework/util/date';
 import { CommentsThreadContext } from './context';
 import { CommentsThreadEditForm } from './form';
 import styles from './styles';
-import { CommentsThreadInternals, CommentsThread as CommentsThreadTypes } from './types';
+import { CommentsThreadConfig, CommentsThreadInternals, CommentsThreadProps } from './types';
 
 export namespace CommentsThread {
   export const CommentItem = ({
@@ -29,7 +29,7 @@ export namespace CommentsThread {
     onPressReply?: (item: CommentsThreadInternals.CommentItem, index: number) => void;
     onPressEdit?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
     onPressDelete?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
-  } & Partial<Pick<CommentsThreadTypes.Config, 'allowReplies'>>) => {
+  } & Partial<Pick<CommentsThreadConfig, 'allowReplies'>>) => {
     const { item } = info;
     const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
     const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeComment], []);
@@ -156,7 +156,7 @@ export namespace CommentsThread {
     onPressReply?: (item: CommentsThreadInternals.CommentItem, index: number) => void;
     onPressEdit?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
     onPressDelete?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
-  } & Partial<Pick<CommentsThreadTypes.Config, 'allowReplies'>>) => {
+  } & Partial<Pick<CommentsThreadConfig, 'allowReplies'>>) => {
     const { index, item } = info;
     const session = useSelector(selectors.session);
     const isAuthor = session && item.authorId === session.user.id;
@@ -233,7 +233,7 @@ export namespace CommentsThread {
     onSubmit,
     ...info
   }: ListRenderItemInfo<CommentsThreadInternals.CommentItem> & {
-    onSubmit?: CommentsThreadTypes.Props['onEdit'];
+    onSubmit?: CommentsThreadProps['onEdit'];
     inputRef?: CommentsThreadInternals.ItemProps['inputRef'];
   } & Pick<CommentsThreadInternals.ItemProps, 'listRef'>) => {
     const { item } = info;
@@ -261,7 +261,7 @@ export namespace CommentsThread {
     onSubmit,
     ...info
   }: ListRenderItemInfo<CommentsThreadInternals.ReplyItem> & {
-    onSubmit?: CommentsThreadTypes.Props['onEdit'];
+    onSubmit?: CommentsThreadProps['onEdit'];
     inputRef?: CommentsThreadInternals.ItemProps['inputRef'];
   } & Pick<CommentsThreadInternals.ItemProps, 'listRef'>) => {
     const { item } = info;

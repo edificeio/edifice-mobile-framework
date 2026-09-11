@@ -4,7 +4,7 @@
 
 import { Temporal } from '@js-temporal/polyfill';
 
-import { CommentsThread } from '~/framework/components/pages/comments-thread/types';
+import { CommentsThread } from '~/framework/modules/comments/templates/comments-thread';
 import { Resource, ResourceHistory } from '~/framework/modules/explorer/model/types';
 
 export type WikiResourceMetadata = Pick<
