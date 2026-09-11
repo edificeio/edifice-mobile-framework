@@ -7,8 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { SmallBoldText } from '~/framework/components/text';
+import { AccountType } from '~/framework/modules/auth/model';
 import { withSession } from '~/framework/modules/auth/util';
+import { toInstant } from '~/framework/modules/communities/adapter';
+import DiscussionHeader from '~/framework/modules/communities/components/discussions/header';
 import { getDiscussion, getMessages } from '~/framework/modules/communities/service/discussions';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 
@@ -54,22 +57,32 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     })();
   }, [communityId, discussionId, session]);
 
+  const createdAt = React.useMemo(() => toInstant(discussion?.createdAt), [discussion?.createdAt]);
+
   if (!discussion)
     return (
-      <View style={styles.container}>
+      <View style={styles.placeholderContainer}>
         {hasFailed ? <SmallBoldText>{I18n.get('error-error-content-text')}</SmallBoldText> : <LoadingIndicator />}
       </View>
     );
 
   return (
     <View style={styles.container}>
-      <SmallBoldText>{discussion.title}</SmallBoldText>
-      {messages.map(message => (
-        <React.Fragment key={message.id}>
-          <SmallText>{message.createdBy.displayName}</SmallText>
-          <SmallText>{message.htmlContent}</SmallText>
-        </React.Fragment>
-      ))}
+      <DiscussionHeader
+        authorName={discussion.createdBy.displayName}
+        authorProfile={discussion.createdBy.profile as AccountType}
+        createdAt={createdAt}
+        title={discussion.title}
+        type={discussion.icon}
+      />
+      {/* <View style={styles.messages}>
+        {messages.map(message => (
+          <React.Fragment key={message.id}>
+            <SmallText>{message.createdBy.displayName}</SmallText>
+            <SmallText>{message.htmlContent}</SmallText>
+          </React.Fragment>
+        ))}
+      </View> */}
     </View>
   );
 });

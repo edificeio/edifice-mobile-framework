@@ -1,8 +1,9 @@
+import { Temporal } from '@js-temporal/polyfill';
 import moment, { DurationInputArg1, DurationInputArg2, Moment } from 'moment';
 
-import { uppercaseFirstLetter } from './string';
-
 import { I18n } from '~/app/i18n';
+
+import { uppercaseFirstLetter } from './string';
 
 export enum DayOfTheWeek {
   MONDAY = 'monday',
@@ -76,6 +77,46 @@ export const displayPastDate = (pastDate: Moment, longFormat?: boolean) => {
   } else if (/*this year*/ pastDate.isSame(now, 'year')) {
     return pastDate.format('D MMM');
   } /*before this year*/ else return pastDate.format('D MMM YYYY');
+};
+
+const DAYS_IN_WEEK = 7;
+
+const formatConvivialHourless = (date: Temporal.Instant) => {
+  const elapsed = Temporal.Now.instant().since(date);
+  const elapsedMinutes = elapsed.total({ unit: 'minute' });
+  const elapsedHours = elapsed.total({ unit: 'hour' });
+  const pastDate = date.toZonedDateTimeISO(Temporal.Now.timeZoneId()).toPlainDate();
+  const todayDate = Temporal.Now.plainDateISO();
+  const daysAgo = pastDate.until(todayDate, { largestUnit: 'day' }).days;
+  const locale = I18n.getLanguage();
+
+  if (elapsedMinutes < 2) {
+    return I18n.get('date-short-seconds');
+  } else if (elapsedHours < 1) {
+    return I18n.get('date-short-minutes', { count: Math.floor(elapsedMinutes) });
+  } else if (elapsedHours < 2) {
+    return I18n.get('date-short-hour');
+  } else if (daysAgo === 0) {
+    return I18n.get('date-short-hours', { count: Math.floor(elapsedHours) });
+  } else if (daysAgo === 1) {
+    return I18n.get('date-yesterday');
+  } else if (daysAgo < DAYS_IN_WEEK) {
+    return pastDate.toLocaleString(locale, { weekday: 'long' });
+  } else if (pastDate.year === todayDate.year) {
+    return pastDate.toLocaleString(locale, { day: 'numeric', month: 'short' });
+  } /*before this year*/ else {
+    return pastDate.toLocaleString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+};
+
+/**
+ * = spec's "convivial hourless" format. Currently handles past and present only.
+ * A few seconds / X minutes / An hour / X hours (same day) / Yesterday / Weekday / 21 sept. / 25 nov. 2020
+ * @param capitalize uppercase the first letter (default: true)
+ */
+export const formatDateConvivialHourless = (date: Temporal.Instant, capitalize: boolean = true) => {
+  const formatted = formatConvivialHourless(date);
+  return capitalize ? uppercaseFirstLetter(formatted) : formatted;
 };
 
 export const displayDate = (date: Moment, format?: 'short' | 'extraShort', showHours?: boolean) => {
