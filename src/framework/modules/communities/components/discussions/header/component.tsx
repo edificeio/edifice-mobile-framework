@@ -32,9 +32,9 @@ const DiscussionHeader = ({ authorName, authorProfile, createdAt, title, type }:
         <View style={typeStyles.iconSquare}>
           <Svg
             fill={typeConfig.color.regular}
-            height={UI_SIZES.elements.icon.small}
+            height={UI_SIZES.elements.icon.default}
             name={typeConfig.icon}
-            width={UI_SIZES.elements.icon.small}
+            width={UI_SIZES.elements.icon.default}
           />
         </View>
         <SmallItalicText style={styles.date}>
