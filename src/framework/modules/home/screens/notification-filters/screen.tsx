@@ -4,8 +4,9 @@ import { FlashList } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import { I18n } from '~/app/i18n';
-import { ModuleScreenProps } from '~/app/navigation/types';
 import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
 import { modalScreenOptions } from '~/app/navigation/util';
 import CheckboxButton from '~/framework/components/buttons/checkbox';
@@ -13,11 +14,12 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { setFiltersAction } from '~/framework/modules/timeline/actions/notif-settings';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { NotificationFilter } from '~/framework/modules/timeline/reducer/notif-definitions/notif-filters';
+import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { shallowEqual } from '~/framework/util/object';
 
-export interface TimelineFiltersScreenProps extends ModuleScreenProps<'timeline/filters'> {}
+export type NotificationFiltersScreenProps = NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.NotificationFilters>;
 
-export const TimelineFiltersScreenOptions = modalScreenOptions('fullScreenModal', () => ({
+export const NotificationFiltersScreenOptions = modalScreenOptions('fullScreenModal', () => ({
   headerRight: () => <NavBarAction icon="ui-check" disabled />,
   title: I18n.get('timeline-filters-title'),
 }));
@@ -25,7 +27,7 @@ export const TimelineFiltersScreenOptions = modalScreenOptions('fullScreenModal'
 const sortFilters = (a: NotificationFilter, b: NotificationFilter) =>
   I18n.get(a.i18n).localeCompare(I18n.get(b.i18n), I18n.getLanguage());
 
-export function TimelineFiltersScreen({ navigation }: TimelineFiltersScreenProps) {
+export function NotificationFiltersScreen({ navigation }: NotificationFiltersScreenProps) {
   const _allFilters = useSelector(state => moduleConfig.getState(state).notifDefinitions.notifFilters);
   const allFilters = React.useMemo(() => [..._allFilters.data].sort(sortFilters), [_allFilters]);
   const savedFilters = useSelector(state => moduleConfig.getState(state).notifSettings.notifFilterSettings.data);
@@ -39,9 +41,10 @@ export function TimelineFiltersScreen({ navigation }: TimelineFiltersScreenProps
   const hasOneUnchecked = React.useMemo(() => Object.values(selectedFilters).some(value => !value), [selectedFilters]);
 
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  // Saving only saves: whoever shows the notifications reloads them from the settings it watches.
   const saveFilters = React.useCallback(async () => {
     await dispatch(setFiltersAction(selectedFilters));
-    requestAnimationFrame(() => navigation.popTo('timeline', { reloadWithNewSettings: true }));
+    navigation.goBack();
   }, [dispatch, navigation, selectedFilters]);
 
   navigation.setOptions({
