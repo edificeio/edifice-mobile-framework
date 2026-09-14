@@ -1,90 +1,102 @@
 import * as React from 'react';
+import { TouchableOpacity, View } from 'react-native';
 
 import { FlashList } from '@shopify/flash-list';
-import { useDispatch, useSelector } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
-
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
-import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
 import { modalScreenOptions } from '~/app/navigation/util';
-import CheckboxButton from '~/framework/components/buttons/checkbox';
+import theme from '~/app/theme';
+import { Checkbox } from '~/framework/components/checkbox';
+import { UI_SIZES } from '~/framework/components/constants';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
-import { setFiltersAction } from '~/framework/modules/timeline/actions/notif-settings';
-import moduleConfig from '~/framework/modules/timeline/module-config';
-import { NotificationFilter } from '~/framework/modules/timeline/reducer/notif-definitions/notif-filters';
-import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { shallowEqual } from '~/framework/util/object';
+import { Svg } from '~/framework/components/picture';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 
-export type NotificationFiltersScreenProps = NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.NotificationFilters>;
+import { useNotificationFiltersController } from './controller';
+import styles from './styles';
+import { NotificationFilterRowProps, NotificationFiltersScreenProps } from './types';
 
 export const NotificationFiltersScreenOptions = modalScreenOptions('fullScreenModal', () => ({
-  headerRight: () => <NavBarAction icon="ui-check" disabled />,
+  headerRight: () => <NavBarAction icon="ui-check" disabled testID="notification-filters-save" />,
   title: I18n.get('timeline-filters-title'),
 }));
 
-const sortFilters = (a: NotificationFilter, b: NotificationFilter) =>
-  I18n.get(a.i18n).localeCompare(I18n.get(b.i18n), I18n.getLanguage());
-
-export function NotificationFiltersScreen({ navigation }: NotificationFiltersScreenProps) {
-  const _allFilters = useSelector(state => moduleConfig.getState(state).notifDefinitions.notifFilters);
-  const allFilters = React.useMemo(() => [..._allFilters.data].sort(sortFilters), [_allFilters]);
-  const savedFilters = useSelector(state => moduleConfig.getState(state).notifSettings.notifFilterSettings.data);
-
-  const [selectedFilters, setSelectedFilters] = React.useState<typeof savedFilters>(savedFilters);
-
-  const hasChanges = React.useMemo(() => !shallowEqual(savedFilters, selectedFilters), [savedFilters, selectedFilters]);
-  const areAllChecked = React.useMemo(() => Object.values(selectedFilters).every(value => value), [selectedFilters]);
-  const areAllUnchecked = React.useMemo(() => Object.values(selectedFilters).every(value => !value), [selectedFilters]);
-  const hasOneChecked = React.useMemo(() => Object.values(selectedFilters).some(value => value), [selectedFilters]);
-  const hasOneUnchecked = React.useMemo(() => Object.values(selectedFilters).some(value => !value), [selectedFilters]);
-
-  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-  // Saving only saves: whoever shows the notifications reloads them from the settings it watches.
-  const saveFilters = React.useCallback(async () => {
-    await dispatch(setFiltersAction(selectedFilters));
-    navigation.goBack();
-  }, [dispatch, navigation, selectedFilters]);
-
-  navigation.setOptions({
-    headerRight: () => <NavBarAction icon="ui-check" disabled={!hasChanges || areAllUnchecked} onPress={saveFilters} />,
-  });
-
-  const toggleAll = React.useCallback(() => {
-    const newValue = hasOneUnchecked;
-    setSelectedFilters(Object.fromEntries(allFilters.map(({ type }) => [type, newValue])));
-  }, [allFilters, hasOneUnchecked]);
-
-  const toggleOne = React.useCallback((item: NotificationFilter) => {
-    setSelectedFilters(previousSelectedFilters => ({
-      ...previousSelectedFilters,
-      [item.type]: !previousSelectedFilters[item.type],
-    }));
-  }, []);
-
-  const ListHeaderComponent = React.useCallback(
-    () =>
-      allFilters.length < 2 ? null : (
-        <CheckboxButton
-          onPress={toggleAll}
-          title="timeline-filters-all"
-          checked={areAllChecked}
-          partialyChecked={hasOneChecked && hasOneUnchecked}
-        />
-      ),
-    [allFilters.length, areAllChecked, hasOneChecked, hasOneUnchecked, toggleAll],
+const FilterRow = React.memo(({ checked, color, filter, icon, onPress }: Readonly<NotificationFilterRowProps>) => {
+  const handlePress = React.useCallback(() => onPress(filter), [filter, onPress]);
+  const iconColor = checked ? color : theme.palette.grey.black;
+  return (
+    <TouchableOpacity
+      style={[styles.row, checked && styles.rowChecked]}
+      onPress={handlePress}
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked }}
+      testID={`notification-filters-row-${filter.type}`}>
+      {icon ? (
+        <Svg name={icon} fill={iconColor} width={UI_SIZES.elements.icon.default} height={UI_SIZES.elements.icon.default} />
+      ) : null}
+      <SmallText style={styles.rowLabel} numberOfLines={1}>
+        {I18n.get(filter.i18n)}
+      </SmallText>
+      <Checkbox checked={checked} onPress={handlePress} />
+    </TouchableOpacity>
   );
+});
+
+export function NotificationFiltersScreen({ navigation }: Readonly<NotificationFiltersScreenProps>) {
+  const {
+    areAllSelected,
+    canSave,
+    filterItems,
+    isPartiallySelected,
+    saveFilters,
+    selectedCount,
+    selectedFilters,
+    toggleAllFilters,
+    toggleFilter,
+  } = useNotificationFiltersController(navigation);
+
+  const { bottom } = useSafeAreaInsets();
+  const listContentStyle = React.useMemo(() => ({ paddingBottom: UI_SIZES.spacing.big + bottom }), [bottom]);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <NavBarAction icon="ui-check" disabled={!canSave} onPress={saveFilters} testID="notification-filters-save" />
+      ),
+    });
+  }, [canSave, navigation, saveFilters]);
 
   const renderItem = React.useCallback(
-    ({ item }) => <CheckboxButton onPress={() => toggleOne(item)} title={item.i18n} checked={selectedFilters[item.type]} />,
-    [selectedFilters, toggleOne],
+    ({ item }: { item: (typeof filterItems)[number] }) => (
+      <FilterRow {...item} checked={!!selectedFilters[item.filter.type]} onPress={toggleFilter} />
+    ),
+    [selectedFilters, toggleFilter],
   );
 
-  useConfirmRemove(hasChanges, {
-    text: I18n.get('timeline-filters-leavealert-text'),
-    title: I18n.get('timeline-filters-leavealert-title'),
-  });
+  const keyExtractor = React.useCallback((item: (typeof filterItems)[number]) => item.filter.type, []);
+  return (
+    <View style={styles.page}>
+      <View style={styles.selectAllRow}>
+        <TouchableOpacity
+          style={styles.selectAll}
+          onPress={toggleAllFilters}
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: isPartiallySelected ? 'mixed' : areAllSelected }}
+          testID="notification-filters-select-all">
+          <SmallText>{I18n.get('timeline-filters-all')}</SmallText>
+          <Checkbox checked={areAllSelected} partialyChecked={isPartiallySelected} onPress={toggleAllFilters} />
+        </TouchableOpacity>
+        <SmallBoldText>{I18n.get('timeline-filters-selected', { count: selectedCount, total: filterItems.length })}</SmallBoldText>
+      </View>
 
-  return <FlashList data={allFilters} ListHeaderComponent={ListHeaderComponent} renderItem={renderItem} />;
+      <FlashList
+        data={filterItems}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        contentContainerStyle={listContentStyle}
+        showsVerticalScrollIndicator={false}
+      />
+    </View>
+  );
 }
