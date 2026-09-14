@@ -7,12 +7,12 @@ import type { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navi
 export type NotificationFiltersScreenProps = NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.NotificationFilters>;
 
 export interface NotificationFilterItem {
-  checked: boolean;
   color?: string;
   filter: NotificationFilter;
   icon?: SvgIconName;
 }
 
 export interface NotificationFilterRowProps extends NotificationFilterItem {
+  checked: boolean;
   onPress: (filter: NotificationFilter) => void;
 }

@@ -1,15 +1,9 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
-
-export const FILTER_ICON_SIZE = getScaleWidth(24);
+import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  intro: {
-    color: theme.palette.grey.graphite,
-    paddingBottom: UI_SIZES.spacing.small,
-  },
   page: {
     flex: 1,
     paddingHorizontal: UI_SIZES.spacing.medium,
@@ -23,6 +17,7 @@ export default StyleSheet.create({
     borderWidth: UI_SIZES.border.thin,
     flexDirection: 'row',
     gap: UI_SIZES.spacing.minor,
+    marginVertical: UI_SIZES.spacing.tiny,
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
   },
@@ -48,8 +43,5 @@ export default StyleSheet.create({
     flexDirection: 'row',
     gap: UI_SIZES.spacing.small,
     paddingBottom: UI_SIZES.spacing.medium,
-  },
-  separator: {
-    height: UI_SIZES.spacing.minor,
   },
 });
