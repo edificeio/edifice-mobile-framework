@@ -18,32 +18,38 @@ export type CarnetDeBordSkill = ICarnetDeBordCompetencesEvaluation | ICarnetDeBo
 
 const isWithinWindow = (date?: moment.Moment) => !!date?.isAfter(moment().subtract(SUMMARY_WINDOW_DAYS, 'days'));
 
-const byMostRecent = <T>(items: T[], getDate: (item: T) => moment.Moment | undefined) =>
-  items
-    .filter(item => isWithinWindow(getDate(item)))
-    .sort((a, b) => getDate(b)!.diff(getDate(a)!))
-    .at(0);
+const getMostRecent = <T>(items: T[], getDate: (item: T) => moment.Moment | undefined) =>
+  items.reduce<T | undefined>((kept, item) => {
+    const date = getDate(item);
+    if (!isWithinWindow(date)) return kept;
+    const keptDate = kept && getDate(kept);
+    return !keptDate || date!.isAfter(keptDate) ? item : kept;
+  }, undefined);
 
 export const getUnjustifiedDate = (item: CarnetDeBordUnjustified) => (item.type === 'Absence' ? item.DateDebut : item.Date);
 
-export function getUnjustifiedLatenessSummary(data?: ICarnetDeBord) {
+export function getLatestUnjustified(data?: ICarnetDeBord) {
   const events = (data?.PageVieScolaire?.VieScolairePast ?? []).filter(
     (event): event is CarnetDeBordUnjustified => (event.type === 'Absence' || event.type === 'Retard') && !event.Justifie,
   );
-  return byMostRecent(events, getUnjustifiedDate);
+  return getMostRecent(events, getUnjustifiedDate);
 }
 
-export function getNoteSummary(data?: ICarnetDeBord) {
-  return byMostRecent<ICarnetDeBordReleveDeNotesDevoir>(data?.PageReleveDeNotes?.DevoirsPast ?? [], devoir => devoir.Date);
+export function getLatestNote(data?: ICarnetDeBord) {
+  return getMostRecent<ICarnetDeBordReleveDeNotesDevoir>(data?.PageReleveDeNotes?.DevoirsPast ?? [], devoir => devoir.Date);
 }
 
-export function getHomeworkSummary(data?: ICarnetDeBord) {
-  return (data?.PageCahierDeTextes?.TravailAFaireFuture ?? [])
-    .filter((taf): taf is ICarnetDeBordCahierDeTextesTravailAFaire & { PourLe: moment.Moment } => !!taf.PourLe)
-    .sort((a, b) => a.PourLe.diff(b.PourLe))
-    .at(0);
+type CarnetDeBordHomeworkDue = ICarnetDeBordCahierDeTextesTravailAFaire & { PourLe: moment.Moment };
+
+const hasDueDate = (taf: ICarnetDeBordCahierDeTextesTravailAFaire): taf is CarnetDeBordHomeworkDue => !!taf.PourLe;
+
+export function getSoonestHomework(data?: ICarnetDeBord) {
+  return (data?.PageCahierDeTextes?.TravailAFaireFuture ?? []).reduce<CarnetDeBordHomeworkDue | undefined>(
+    (kept, taf) => (hasDueDate(taf) && (!kept || taf.PourLe.isBefore(kept.PourLe)) ? taf : kept),
+    undefined,
+  );
 }
 
-export function getSkillSummary(data?: ICarnetDeBord) {
-  return byMostRecent<CarnetDeBordSkill>(data?.PageCompetences?.CompetencesPast ?? [], skill => skill.Date);
+export function getLatestSkill(data?: ICarnetDeBord) {
+  return getMostRecent<CarnetDeBordSkill>(data?.PageCompetences?.CompetencesPast ?? [], skill => skill.Date);
 }
