@@ -8,20 +8,20 @@ export interface TabLayout {
   x: number;
 }
 
-export interface TabbedPanelRadius {
+export interface PanelRadius {
   corner?: number; //Corners of the panel and of the tab.
   curve?: number; // How wide the tab spreads into the panel where the two meet
 }
 
-export type TabbedPanelProps = PropsWithChildren<{
+export type PanelProps = PropsWithChildren<{
   background: ColorValue;
   border: ColorValue;
   header?: ReactNode; // The row of tabs the panel rises to. Without it, the panel stays a plain rounded rectangle.
-  radius?: TabbedPanelRadius; // Both default to the values of the design. Keep the curve well under the corner.
+  radius?: PanelRadius; // Both default to the values of the design. Keep the curve well under the corner.
   style?: StyleProp<ViewStyle>;
 }>;
 
-export type TabbedPanelPathProps = Pick<TabbedPanelProps, 'radius'> & {
+export type PanelPathProps = Pick<PanelProps, 'radius'> & {
   height: number;
   width: number;
   tab?: TabLayout;

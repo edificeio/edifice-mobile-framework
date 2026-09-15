@@ -2,9 +2,9 @@ import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText } from '~/framework/components/text';
-import { WIDGET_ACTION_ICON_SIZE } from '~/framework/modules/widgets/components/constants';
 
 import styles from './styles';
 import { WidgetCardProps } from './types';
@@ -21,8 +21,8 @@ export function WidgetCard({ children, expandIcon = 'ui-fullScreen', expandTestI
             <Svg
               name={expandIcon}
               fill={theme.palette.secondary.dark}
-              width={WIDGET_ACTION_ICON_SIZE}
-              height={WIDGET_ACTION_ICON_SIZE}
+              width={UI_SIZES.elements.icon.small}
+              height={UI_SIZES.elements.icon.small}
             />
           </TouchableOpacity>
         ) : null}

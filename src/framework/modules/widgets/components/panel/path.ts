@@ -1,9 +1,8 @@
 import { UI_SIZES } from '~/framework/components/constants';
-import { TABBED_PANEL_CURVE_SIZE } from '~/framework/modules/widgets/components/constants';
 
-import type { TabbedPanelPathProps } from './types';
+import type { PanelPathProps } from './types';
 
-export const TABBED_PANEL_STROKE = UI_SIZES.border.thin;
+export const PANEL_STROKE = UI_SIZES.border.thin;
 
 // Corner turning the same way as the path.
 const turn = (r: number, x: number, y: number) => `A ${r} ${r} 0 0 1 ${x} ${y}`;
@@ -17,9 +16,9 @@ const turnIn = (r: number, x: number, y: number) => `A ${r} ${r} 0 0 0 ${x} ${y}
  * It runs clockwise from the left edge. Coordinates are inset by half the stroke, SVG centring it
  * on the path. A tab reaching an edge of the panel simply skips the curve on that side.
  */
-export function buildTabbedPanelPath({ height, radius, tab, width }: TabbedPanelPathProps) {
+export function buildPanelPath({ height, radius, tab, width }: PanelPathProps) {
   const corner = radius?.corner ?? UI_SIZES.radius.mediumPlus;
-  const half = TABBED_PANEL_STROKE / 2;
+  const half = PANEL_STROKE / 2;
   const [left, top, right, bottom] = [half, half, width - half, height - half];
   const path: string[] = [];
 
@@ -36,7 +35,7 @@ export function buildTabbedPanelPath({ height, radius, tab, width }: TabbedPanel
     const start = Math.max(left, tab.x);
     const end = Math.min(right, tab.x + tab.width);
     // Never wider than half the tab, whatever it was asked to be.
-    const curve = Math.min(radius?.curve ?? TABBED_PANEL_CURVE_SIZE, (end - start) / 2);
+    const curve = Math.min(radius?.curve ?? UI_SIZES.radius.medium, (end - start) / 2);
 
     if (start <= left) {
       path.push(`M ${left} ${top + corner}`, turn(corner, left + corner, top));

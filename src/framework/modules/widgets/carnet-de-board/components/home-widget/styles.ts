@@ -2,7 +2,6 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { WIDGET_BORDER_COLOR } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/constants';
 import { SECTION_ICON_SIZE } from '~/framework/modules/widgets/carnet-de-board/model';
 
 export default StyleSheet.create({
@@ -39,7 +38,7 @@ export default StyleSheet.create({
   sectionCard: {
     alignItems: 'center',
     backgroundColor: theme.palette.grey.white,
-    borderColor: WIDGET_BORDER_COLOR,
+    borderColor: theme.palette.complementary.yellow.light,
     borderRadius: UI_SIZES.radius.mediumPlus,
     borderWidth: UI_SIZES.border.thin,
     flexDirection: 'row',

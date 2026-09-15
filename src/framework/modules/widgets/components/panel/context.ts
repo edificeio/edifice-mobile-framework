@@ -2,16 +2,16 @@ import { createContext, useContext } from 'react';
 
 import type { TabLayout } from './types';
 
-export interface TabbedPanelContextValue {
+export interface PanelContextValue {
   setTab: (layout?: TabLayout) => void;
 }
 
-const TabbedPanelContext = createContext<TabbedPanelContextValue | undefined>(undefined);
+const PanelContext = createContext<PanelContextValue | undefined>(undefined);
 
-export const TabbedPanelProvider = TabbedPanelContext.Provider;
+export const PanelProvider = PanelContext.Provider;
 
 /**
  * For a row of tabs to reach the panel it stands on. Undefined outside of one, which is a valid
  * case: the row then simply has no shape to raise.
  */
-export const useTabbedPanel = () => useContext(TabbedPanelContext);
+export const useTabbedPanel = () => useContext(PanelContext);

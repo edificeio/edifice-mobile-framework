@@ -7,7 +7,6 @@ import { getScaleImageSize } from '~/framework/components/constants';
 import { Svg, SvgIconName } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
-import { WIDGET_EMPTY_IMAGE_SIZE } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/constants';
 import { CarnetDeBordWidgetPlaceholder } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/placeholder';
 import { CarnetDeBordSectionCard } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/section-card';
 import { WIDGET_SECTIONS } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/sections';
@@ -16,17 +15,15 @@ import { CarnetDeBordWidgetProps } from '~/framework/modules/widgets/carnet-de-b
 import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks';
 import { CarnetDeBordSection, hasPronoteData } from '~/framework/modules/widgets/carnet-de-board/model';
 import { WidgetCard } from '~/framework/modules/widgets/components/card';
-import { TabbedPanel } from '~/framework/modules/widgets/components/tabbed-panel';
+import { Panel } from '~/framework/modules/widgets/components/panel';
 import { WidgetUserSelector } from '~/framework/modules/widgets/components/user-selector';
+
+const EMPTY_ILLUSTRATION_SIZE = getScaleImageSize(96);
 
 function Message({ illustration, text }: Readonly<{ illustration: SvgIconName; text: string }>) {
   return (
     <View style={styles.empty}>
-      <Svg
-        name={illustration}
-        width={getScaleImageSize(WIDGET_EMPTY_IMAGE_SIZE)}
-        height={getScaleImageSize(WIDGET_EMPTY_IMAGE_SIZE)}
-      />
+      <Svg name={illustration} width={EMPTY_ILLUSTRATION_SIZE} height={EMPTY_ILLUSTRATION_SIZE} />
       <SmallText style={styles.emptyText}>{text}</SmallText>
     </View>
   );
@@ -45,23 +42,9 @@ export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: 
 
   const otherChildrenAction = React.useMemo(() => ({ icon: 'ui-users' as const, testID: 'carnet-de-bord-widget-children' }), []);
 
-  if (loading)
-    return (
-      <WidgetCard title={I18n.get('pronote-widget-title')} onExpand={onOpen} expandTestID="carnet-de-bord-widget-open">
-        <CarnetDeBordWidgetPlaceholder tabs={isRelative} />
-      </WidgetCard>
-    );
+  if (!loading && !error && !selected) return null;
 
-  if (error)
-    return (
-      <WidgetCard title={I18n.get('pronote-widget-title')} onExpand={onOpen} expandTestID="carnet-de-bord-widget-open">
-        <Message illustration="illu-error" text={I18n.get('pronote-widget-error-text')} />
-      </WidgetCard>
-    );
-
-  if (!selected) return null;
-
-  const hasPronote = hasPronoteData(selected);
+  const hasPronote = !!selected && hasPronoteData(selected);
 
   const panel = hasPronote
     ? { background: theme.palette.complementary.yellow.pale, border: theme.palette.complementary.yellow.light }
@@ -82,26 +65,32 @@ export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: 
 
   return (
     <WidgetCard title={I18n.get('pronote-widget-title')} onExpand={onOpen} expandTestID="carnet-de-bord-widget-open">
-      <TabbedPanel style={styles.body} background={panel.background} border={panel.border} header={selector}>
-        {hasPronote ? (
-          <View style={styles.sections}>
-            {WIDGET_SECTIONS.map(block => (
-              <CarnetDeBordSectionCard
-                key={block.section}
-                colors={block.colors}
-                icon={block.icon}
-                title={I18n.get(block.title)}
-                value={block.getValue(selected)}
-                emptyText={I18n.get(block.emptyText)}
-                section={block.section}
-                onPress={openSection}
-              />
-            ))}
-          </View>
-        ) : (
-          <Message illustration="empty-timeline" text={I18n.get('pronote-nodatachild-text')} />
-        )}
-      </TabbedPanel>
+      {loading ? (
+        <CarnetDeBordWidgetPlaceholder tabs={isRelative} />
+      ) : error ? (
+        <Message illustration="illu-error" text={I18n.get('pronote-widget-error-text')} />
+      ) : (
+        <Panel style={styles.body} background={panel.background} border={panel.border} header={selector}>
+          {hasPronote && selected ? (
+            <View style={styles.sections}>
+              {WIDGET_SECTIONS.map(block => (
+                <CarnetDeBordSectionCard
+                  key={block.section}
+                  colors={block.colors}
+                  icon={block.icon}
+                  title={I18n.get(block.title)}
+                  value={block.getValue(selected)}
+                  emptyText={I18n.get(block.emptyText)}
+                  section={block.section}
+                  onPress={openSection}
+                />
+              ))}
+            </View>
+          ) : (
+            <Message illustration="empty-timeline" text={I18n.get('pronote-nodatachild-text')} />
+          )}
+        </Panel>
+      )}
     </WidgetCard>
   );
 }

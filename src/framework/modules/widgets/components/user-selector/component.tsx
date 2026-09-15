@@ -2,21 +2,18 @@ import * as React from 'react';
 import { LayoutChangeEvent, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { MenuAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { Svg } from '~/framework/components/picture';
 import { TextAvatar } from '~/framework/components/textAvatar';
-import {
-  WIDGET_ACTION_ICON_SIZE,
-  WIDGET_USER_SELECTOR_AVATAR_SIZE,
-  WIDGET_USER_SELECTOR_MAX_SHOWN,
-} from '~/framework/modules/widgets/components/constants';
-import { TabLayout, useTabbedPanel } from '~/framework/modules/widgets/components/tabbed-panel';
+import { WIDGET_USER_SELECTOR_AVATAR_SIZE, WIDGET_USER_SELECTOR_MAX_SHOWN } from '~/framework/modules/widgets/components/constants';
+import { TabLayout, useTabbedPanel } from '~/framework/modules/widgets/components/panel';
 
 import styles from './styles';
 import { WidgetUserSelectorItem, WidgetUserSelectorProps, WidgetUserSelectorTabProps } from './types';
 
-function Tab({ item, onMeasure, onSelect, ringColor, selected }: Readonly<WidgetUserSelectorTabProps>) {
+function Tab({ item, onMeasure, onSelect, ringColor, selectable, selected }: Readonly<WidgetUserSelectorTabProps>) {
   const select = React.useCallback(() => onSelect(item.id), [item.id, onSelect]);
   const ringStyle = React.useMemo(() => StyleSheet.flatten([styles.itemAvatarSelected, { borderColor: ringColor }]), [ringColor]);
 
@@ -31,8 +28,9 @@ function Tab({ item, onMeasure, onSelect, ringColor, selected }: Readonly<Widget
       style={styles.item}
       onPress={select}
       onLayout={measure}
+      disabled={!selectable}
       accessibilityRole="tab"
-      accessibilityState={{ selected }}>
+      accessibilityState={{ disabled: !selectable, selected }}>
       <TextAvatar
         text={selected ? item.name : `${item.name.charAt(0)}.`}
         userId={item.userId}
@@ -130,6 +128,7 @@ export function WidgetUserSelector({
           key={item.id}
           item={item}
           selected={item.id === selectedId}
+          selectable={asTabs}
           onSelect={onSelect}
           onMeasure={measureTab}
           ringColor={ringColor}
@@ -142,8 +141,8 @@ export function WidgetUserSelector({
               <Svg
                 name={action.icon}
                 fill={theme.palette.secondary.dark}
-                width={WIDGET_ACTION_ICON_SIZE}
-                height={WIDGET_ACTION_ICON_SIZE}
+                width={UI_SIZES.elements.icon.small}
+                height={UI_SIZES.elements.icon.small}
               />
             </View>
           </PopupMenu>

@@ -3,8 +3,7 @@ import * as React from 'react';
 import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
 import { I18n } from '~/app/i18n';
-import { NavBarAction } from '~/framework/components/navigation';
-import { PageView } from '~/framework/components/page';
+import { headerAction } from '~/app/navigation/util';
 import ScrollView from '~/framework/components/scrollView';
 import { SmallText } from '~/framework/components/text';
 import { withSession } from '~/framework/modules/auth/util';
@@ -14,7 +13,7 @@ import {
   CarnetDeBordSection,
   getDetailItems,
   getPronotePageId,
-  SECTION_TITLE,
+  SECTION_TITLE_I18N,
 } from '~/framework/modules/widgets/carnet-de-board/model';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
@@ -22,16 +21,15 @@ import styles from './styles';
 import { CarnetDeBordDetailsScreenProps } from './types';
 
 export const computeNavBar = ({ navigation, route }: CarnetDeBordDetailsScreenProps): NativeStackNavigationOptions => {
-  const options = navBarOptions({ navigation, route, title: I18n.get(SECTION_TITLE[route.params.type]) });
+  const options = navBarOptions({ navigation, route, title: I18n.get(SECTION_TITLE_I18N[route.params.type]) });
 
   return {
     ...options,
-    // Opened from the home widget, this screen stands alone in the modal, so the stack draws no
+    // Opened from the home widget, this screen stands alone in the modal, so the stack draws no back
     // button. Leaving it then means closing the modal, as on the carnet de bord itself.
     headerLeft: props =>
-      options.headerLeft?.(props) ?? (
-        <NavBarAction icon="ui-close" onPress={navigation.goBack} testID="carnet-de-bord-details-close-button" />
-      ),
+      options.headerLeft?.(props) ??
+      headerAction({ icon: 'ui-close', onPress: navigation.goBack, testID: 'carnet-de-bord-details-close-button' }, props).element,
   };
 };
 
@@ -45,13 +43,11 @@ export const CarnetDeBordDetailsScreen = withSession<CarnetDeBordDetailsScreenPr
   const message = type === CarnetDeBordSection.NOTES ? data.PageReleveDeNotes?.Message : undefined;
 
   return (
-    <PageView>
-      <ScrollView alwaysBounceVertical={false}>
-        {message ? <SmallText style={styles.message}>{message}</SmallText> : null}
-        <CarnetDeBordDetailList items={items} style={styles.list} />
-        <CarnetDeBordPronoteButton address={data.address} pageId={pageId} session={session} />
-      </ScrollView>
-    </PageView>
+    <ScrollView alwaysBounceVertical={false}>
+      {message ? <SmallText style={styles.message}>{message}</SmallText> : null}
+      <CarnetDeBordDetailList items={items} style={styles.list} />
+      <CarnetDeBordPronoteButton address={data.address} pageId={pageId} session={session} />
+    </ScrollView>
   );
 });
 
