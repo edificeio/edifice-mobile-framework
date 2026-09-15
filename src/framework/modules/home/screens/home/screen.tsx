@@ -22,6 +22,8 @@ import { accountTypeInfos } from '~/framework/util/accountType';
 import { styles } from './styles';
 import { HomeScreenProps, HomeTabsParamList } from './types';
 
+const homeTabsScreenOptions = { sceneStyle: { backgroundColor: theme.ui.background.page.toString() } };
+
 export const HomeScreenOptions = screenOptions(({ navigation }) => {
   const profileButton = <NavBarProfileButton onPress={() => navigation.navigate('user')} />;
 
@@ -88,7 +90,7 @@ export const HomeScreen = withSession<HomeScreenProps>(({ navigation, session })
 
   return (
     <HomeReloadProvider value={reloadKey}>
-      <HomeTabs.Navigator style={styles.page} screenOptions={{ sceneStyle: styles.scene }} tabBar={renderTabBar}>
+      <HomeTabs.Navigator style={styles.page} screenOptions={homeTabsScreenOptions} tabBar={renderTabBar}>
         <HomeTabs.Screen name="home/overview" component={HomeOverviewScreen} options={HomeOverviewScreenOptions} />
         <HomeTabs.Screen name="home/notifications" component={HomeNotificationsScreen} options={HomeNotificationsScreenOptions} />
       </HomeTabs.Navigator>

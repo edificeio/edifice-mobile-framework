@@ -5,11 +5,13 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { HeadingSText } from '~/framework/components/text';
+import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { NewsCard } from '~/framework/modules/home/components/news/card';
 import { Carousel } from '~/framework/modules/home/components/news/carousel';
 import { NewsEmpty } from '~/framework/modules/home/components/news/empty';
 import { NewsPlaceholder } from '~/framework/modules/home/components/news/placeholder';
 import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
+import { getNewsRights } from '~/framework/modules/news/rights';
 
 import { CARD_SNAP_INTERVAL } from '../constants';
 import styles from './styles';
@@ -17,7 +19,9 @@ import { NewsSectionProps } from './types';
 
 const keyExtractor = (item: HomeNewsItem) => String(item.news.id);
 
-export const NewsSection = React.memo(({ canView, loading, news, onPressItem, onSeeMore }: NewsSectionProps) => {
+export const hasNews = (session: AuthActiveAccount) => getNewsRights(session).view;
+
+export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore, session }: NewsSectionProps) => {
   const listRef = React.useRef<FlatList<HomeNewsItem>>(null);
   const scrolled = React.useRef<number>(0);
 
@@ -40,7 +44,7 @@ export const NewsSection = React.memo(({ canView, loading, news, onPressItem, on
     [onCardPress],
   );
 
-  if (!canView) return null;
+  if (!hasNews(session)) return null;
 
   return (
     <View style={styles.section}>

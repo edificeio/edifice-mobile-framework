@@ -31,9 +31,4 @@ export const styles = StyleSheet.create({
   page: {
     flex: 1,
   },
-  // react-navigation paints every scene with the card colour of its theme, over the navigator. The
-  // two tabs share the page colour, so it is set here once instead of inside each of them.
-  scene: {
-    backgroundColor: theme.ui.background.page.toString(),
-  },
 });

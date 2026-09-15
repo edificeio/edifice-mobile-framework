@@ -5,9 +5,9 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { FlashMessage } from '~/framework/modules/home/components/flash-message/card';
 import { FlashMessagePlaceholder } from '~/framework/modules/home/components/flash-message/placeholder';
 
-import { FlashMessageListProps } from './types';
+import { FlashMessageSectionProps } from './types';
 
-export const FlashMessageList = React.memo(({ flashMessages, loading, onDismiss }: FlashMessageListProps) => {
+export const FlashMessageSection = React.memo(({ flashMessages, loading, onDismiss }: FlashMessageSectionProps) => {
   if (loading) return <FlashMessagePlaceholder />;
   if (!flashMessages.length) return null;
 
