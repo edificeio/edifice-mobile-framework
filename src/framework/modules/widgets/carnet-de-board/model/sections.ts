@@ -1,13 +1,13 @@
 import type { ColorValue } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleWidth } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import type { SvgIconName } from '~/framework/components/picture';
 
 import { CarnetDeBordSection } from './carnet-de-bord';
 
-export const SECTION_ICON_SIZE = getScaleWidth(36);
-export const SECTION_ICON_INNER_SIZE = getScaleWidth(20);
+export const SECTION_ICON_SIZE = UI_SIZES.elements.icon.xlarge;
+export const SECTION_ICON_INNER_SIZE = UI_SIZES.elements.icon.small;
 
 export interface CarnetDeBordSectionColors {
   background: ColorValue;
@@ -20,7 +20,7 @@ export interface CarnetDeBordSectionStyle {
   icon: SvgIconName;
 }
 
-export const SECTION_TITLE: Record<CarnetDeBordSection, string> = {
+export const SECTION_TITLE_I18N: Record<CarnetDeBordSection, string> = {
   [CarnetDeBordSection.CAHIER_DE_TEXTES]: 'pronote-cahierdetextes-title',
   [CarnetDeBordSection.COMPETENCES]: 'pronote-skills-title',
   [CarnetDeBordSection.NOTES]: 'pronote-transcript-title',

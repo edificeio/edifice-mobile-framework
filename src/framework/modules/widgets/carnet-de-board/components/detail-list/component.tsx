@@ -8,7 +8,7 @@ import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import styles from './styles';
 import { CarnetDeBordDetailListProps, CarnetDeBordDetailRowProps } from './types';
 
-function Row({ item }: Readonly<CarnetDeBordDetailRowProps>) {
+function CarnetDeBordDetailRow({ item }: Readonly<CarnetDeBordDetailRowProps>) {
   return (
     <View style={styles.row}>
       <View style={styles.rowText}>
@@ -36,7 +36,7 @@ export function CarnetDeBordDetailList({ items, style }: Readonly<CarnetDeBordDe
       {items.map((item, index) => (
         <React.Fragment key={item?.date}>
           {index > 0 ? <Separator /> : null}
-          <Row item={item} />
+          <CarnetDeBordDetailRow item={item} />
         </React.Fragment>
       ))}
     </View>

@@ -28,7 +28,7 @@ const getVieScolaireDescription = (event: ICarnetDeBordVieScolaire) => {
   return noInfo();
 };
 
-const DETAIL_ITEMS: Record<CarnetDeBordSection, (data: ICarnetDeBord) => CarnetDeBordDetailItem[]> = {
+const DETAIL_ITEM_BUILDERS: Record<CarnetDeBordSection, (data: ICarnetDeBord) => CarnetDeBordDetailItem[]> = {
   [CarnetDeBordSection.CAHIER_DE_TEXTES]: data =>
     [...(data.PageCahierDeTextes?.TravailAFairePast ?? []), ...(data.PageCahierDeTextes?.TravailAFaireFuture ?? [])].map(taf => ({
       date: I18n.get('pronote-cahierdetextes-pourdate', { date: taf.PourLe ? displayDate(taf.PourLe) : noInfo() }),
@@ -60,13 +60,17 @@ const DETAIL_ITEMS: Record<CarnetDeBordSection, (data: ICarnetDeBord) => CarnetD
     })),
 };
 
-export const getDetailItems = (section: CarnetDeBordSection, data: ICarnetDeBord) => DETAIL_ITEMS[section](data);
+export const getDetailItems = (section: CarnetDeBordSection, data: ICarnetDeBord) => DETAIL_ITEM_BUILDERS[section](data);
 
-const PRONOTE_PAGE: Record<CarnetDeBordSection, keyof NonNullable<ICarnetDeBord['PagePronote']>> = {
+// The French strings below are not labels but keys: Pronote names its pages this way in the payload
+// it sends, and `PagePronote` is indexed by them. They are never displayed, and translating them
+// would break the lookup.
+const PRONOTE_PAGE_BY_SECTION: Record<CarnetDeBordSection, keyof NonNullable<ICarnetDeBord['PagePronote']>> = {
   [CarnetDeBordSection.CAHIER_DE_TEXTES]: 'Travail à faire à la maison',
   [CarnetDeBordSection.COMPETENCES]: 'Évaluations par compétence',
   [CarnetDeBordSection.NOTES]: 'Mon relevé de notes',
   [CarnetDeBordSection.VIE_SCOLAIRE]: 'Récapitulatif des évènements de la vie scolaire',
 };
 
-export const getPronotePageId = (section: CarnetDeBordSection, data: ICarnetDeBord) => data.PagePronote?.[PRONOTE_PAGE[section]];
+export const getPronotePageId = (section: CarnetDeBordSection, data: ICarnetDeBord) =>
+  data.PagePronote?.[PRONOTE_PAGE_BY_SECTION[section]];

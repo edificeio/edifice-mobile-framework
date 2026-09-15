@@ -11,7 +11,7 @@ import {
   ICarnetDeBord,
   noInfo,
 } from './carnet-de-bord';
-import { SECTION_TITLE } from './sections';
+import { SECTION_TITLE_I18N } from './sections';
 
 export interface CarnetDeBordScreenSectionLabels {
   textLabel: string;
@@ -40,7 +40,7 @@ export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
       };
     },
     section: CarnetDeBordSection.CAHIER_DE_TEXTES,
-    title: SECTION_TITLE[CarnetDeBordSection.CAHIER_DE_TEXTES],
+    title: SECTION_TITLE_I18N[CarnetDeBordSection.CAHIER_DE_TEXTES],
   },
   {
     emptyText: 'pronote-transcript-empty',
@@ -54,7 +54,7 @@ export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
       };
     },
     section: CarnetDeBordSection.NOTES,
-    title: SECTION_TITLE[CarnetDeBordSection.NOTES],
+    title: SECTION_TITLE_I18N[CarnetDeBordSection.NOTES],
   },
   {
     emptyText: 'pronote-skills-empty',
@@ -68,7 +68,7 @@ export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
       };
     },
     section: CarnetDeBordSection.COMPETENCES,
-    title: SECTION_TITLE[CarnetDeBordSection.COMPETENCES],
+    title: SECTION_TITLE_I18N[CarnetDeBordSection.COMPETENCES],
   },
   {
     emptyText: 'pronote-viescolaire-empty',
@@ -79,6 +79,6 @@ export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
       return { textLabel: formatCarnetDeBordVieScolaireType(event.type), valueLabel: formatVieScolaireDate(event, 'short') };
     },
     section: CarnetDeBordSection.VIE_SCOLAIRE,
-    title: SECTION_TITLE[CarnetDeBordSection.VIE_SCOLAIRE],
+    title: SECTION_TITLE_I18N[CarnetDeBordSection.VIE_SCOLAIRE],
   },
 ];

@@ -4,11 +4,11 @@ import {
   CarnetDeBordSection,
   type CarnetDeBordSectionColors,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
-  getHomeworkSummary,
-  getNoteSummary,
-  getSkillSummary,
+  getLatestNote,
+  getLatestSkill,
+  getLatestUnjustified,
+  getSoonestHomework,
   getUnjustifiedDate,
-  getUnjustifiedLatenessSummary,
   ICarnetDeBord,
   noInfo,
   SECTION_STYLE,
@@ -29,7 +29,7 @@ export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
     colors: SECTION_STYLE[CarnetDeBordSection.CAHIER_DE_TEXTES].colors,
     emptyText: 'pronote-cahierdetextes-empty',
     getValue: data => {
-      const taf = getHomeworkSummary(data);
+      const taf = getSoonestHomework(data);
 
       return taf
         ? I18n.get('pronote-widget-homework-value', { date: taf.PourLe.format('L'), subject: taf.Matiere || noInfo() })
@@ -43,7 +43,7 @@ export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
     colors: SECTION_STYLE[CarnetDeBordSection.NOTES].colors,
     emptyText: 'pronote-transcript-empty',
     getValue: data => {
-      const devoir = getNoteSummary(data);
+      const devoir = getLatestNote(data);
 
       return devoir
         ? I18n.get('pronote-widget-note-value', {
@@ -62,7 +62,7 @@ export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
     colors: SECTION_STYLE[CarnetDeBordSection.COMPETENCES].colors,
     emptyText: 'pronote-skills-empty',
     getValue: data => {
-      const competence = getSkillSummary(data);
+      const competence = getLatestSkill(data);
 
       return competence
         ? I18n.get('pronote-widget-skill-value', {
@@ -80,7 +80,7 @@ export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
     colors: SECTION_STYLE[CarnetDeBordSection.VIE_SCOLAIRE].colors,
     emptyText: 'pronote-widget-lateness-empty',
     getValue: data => {
-      const event = getUnjustifiedLatenessSummary(data);
+      const event = getLatestUnjustified(data);
       const date = event && getUnjustifiedDate(event);
 
       return date ? I18n.get('pronote-widget-lateness-value', { date: date.format('L'), time: date.format('LT') }) : undefined;
