@@ -88,7 +88,6 @@ target 'appe' do
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
     )
-
     # XCode27 fix
     installer.pods_project.build_configurations.each do |config|
       config.build_settings['__DIAGNOSE_INVALID_DEPLOYMENT_TARGET_AS_ERROR'] = 'NO'
