@@ -1,6 +1,7 @@
 import { ParamListBase } from '@react-navigation/native';
 
 import moduleConfig from '~/framework/modules/communities/module-config';
+import { CommunitiesDiscussionDetailsScreen } from '~/framework/modules/communities/screens/discussions/details/types';
 import { CommunitiesDiscussionsScreen } from '~/framework/modules/communities/screens/discussions/types';
 import { CommunitiesDocumentsScreen } from '~/framework/modules/communities/screens/documents/types';
 import type { CommunitiesHomeScreen } from '~/framework/modules/communities/screens/home';
@@ -10,6 +11,7 @@ import { CommunitiesMembersScreen } from '~/framework/modules/communities/screen
 import { CommunitiesSpotlightedCourseScreen } from '~/framework/modules/communities/screens/spotlighted-course';
 
 export const communitiesRouteNames = {
+  discussionDetails: `${moduleConfig.routeName}/discussions/details` as 'discussionDetails',
   discussions: `${moduleConfig.routeName}/discussions` as 'discussions',
   documents: `${moduleConfig.routeName}/documents` as 'documents',
   home: `${moduleConfig.routeName}/home` as 'home',
@@ -20,6 +22,7 @@ export const communitiesRouteNames = {
 };
 export interface CommunitiesNavigationParams extends ParamListBase {
   discussions: CommunitiesDiscussionsScreen.NavParams;
+  discussionDetails: CommunitiesDiscussionDetailsScreen.NavParams;
   list: CommunitiesListScreen.NavParams;
   home: CommunitiesHomeScreen.NavParams;
   documents: CommunitiesDocumentsScreen.NavParams;

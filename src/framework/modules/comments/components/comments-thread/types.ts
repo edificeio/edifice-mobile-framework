@@ -2,6 +2,7 @@ import { FlatList, FlatListProps, ListRenderItemInfo, StyleProp, ViewStyle } fro
 
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { KeyboardChatScrollViewProps } from 'react-native-keyboard-controller';
 
 import { ChatTextAreaProps } from '~/framework/components/inputs/text2';
 import * as CommentsThread from '~/framework/modules/comments/types';
@@ -18,7 +19,8 @@ export interface CommentsThreadProps
     Pick<NativeStackScreenProps<ParamListBase>, 'navigation' | 'route'>,
     React.PropsWithChildren,
     Partial<CommentsThreadConfig>,
-    Pick<FlatListProps<CommentsThreadInternals.Item>, 'refreshControl'> {
+    Pick<FlatListProps<CommentsThreadInternals.Item>, 'refreshControl'>,
+    Pick<KeyboardChatScrollViewProps, 'ScrollViewComponent'> {
   canAddComment: boolean;
   alwaysShowCommentField?: boolean;
   style?: StyleProp<ViewStyle>;
@@ -33,6 +35,7 @@ export interface CommentsThreadProps
     id: (CommentsThread.CommentItem | CommentsThread.ReplyItem)['id'],
   ) => Promise<void>;
   onDelete?: (id: (CommentsThread.CommentItem | CommentsThread.ReplyItem)['id']) => Promise<void>;
+  ListComponent?: React.Component<FlatListProps<CommentsThreadInternals.Item>>;
 }
 
 export namespace CommentsThreadInternals {
