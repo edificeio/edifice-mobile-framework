@@ -53,6 +53,8 @@ export function CommentsThreadTemplate({
     repliesStartSize,
   });
 
+  console.info('flatData', flatData);
+
   // Screen layout
   const navBarHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight() * (isModalModeOnThisRoute(route.name) ? 0 : 1);
