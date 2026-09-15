@@ -3,7 +3,7 @@ import isDisjointFrom from 'set.prototype.isdisjointfrom';
 
 import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { CommentsThread } from '~/framework/modules/comments/templates/comments-thread/types';
+import * as CommentsThread from '~/framework/modules/comments/types';
 import { Wiki, WikiPage, WikiResourceMetadata } from '~/framework/modules/wiki/model';
 import { API } from '~/framework/modules/wiki/service/types';
 import { sessionFetch } from '~/framework/util/transport/fetch';

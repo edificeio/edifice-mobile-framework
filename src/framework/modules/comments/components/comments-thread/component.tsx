@@ -41,7 +41,7 @@ export function CommentsThreadTemplate({
   repliesPageSize,
   repliesStartSize,
   route,
-}: CommentsThreadProps) {
+}: Readonly<CommentsThreadProps>) {
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
 

@@ -3,12 +3,12 @@ import { PixelRatio, Platform, StyleProp, StyleSheet, TextInput, TextInputProps,
 
 import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
 
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+
 import styles from './styles';
 import { SingleAvatar } from '../avatar';
 import { UI_SIZES, UI_STYLES } from '../constants';
 import { CaptionItalicText, TextSizeStyle } from '../text';
-
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
 
 export interface CommentFormProps {
   initialData?: string;
@@ -143,7 +143,7 @@ export const CommentTextInput = ({ onChange, style: _style, value }: CommentText
           Ajouter un commentaire...
         </CaptionItalicText>
       )}
-      <View style={styles.commentTextShadow}></View>
+      <View style={styles.commentTextShadow} />
     </View>
   );
 };

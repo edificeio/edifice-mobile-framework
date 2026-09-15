@@ -33,7 +33,7 @@ export const CommentsThreadReplyScreen = withSession<ModuleScreenProps<'comments
     [_onSubmit, commentId],
   );
 
-  const data = React.useMemo(() => _data && _data.filter(item => item.id === commentId), [_data, commentId]);
+  const data = React.useMemo(() => _data?.filter(item => item.id === commentId), [_data, commentId]);
 
   if (!data || !resourceId) {
     return <EmptyContentScreen />;

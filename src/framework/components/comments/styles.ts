@@ -1,9 +1,9 @@
-import { PixelRatio, StyleSheet } from 'react-native';
-
-import { TextFontStyle, TextSizeStyle } from '../text';
+import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+
+import { TextFontStyle, TextSizeStyle } from '../text';
 
 export default StyleSheet.create({
   commentContent: {
@@ -51,7 +51,7 @@ export default StyleSheet.create({
     overflow: 'hidden',
   },
   commentTextShadow: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderColor: theme.palette.grey.fog,
     borderRadius: UI_SIZES.radius.mediumPlus - 2,
     borderWidth: 1,
