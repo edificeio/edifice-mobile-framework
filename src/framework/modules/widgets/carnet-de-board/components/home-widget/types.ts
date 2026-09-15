@@ -6,7 +6,7 @@ import type {
   ICarnetDeBord,
 } from '~/framework/modules/widgets/carnet-de-board/model';
 
-export interface CarnetDeBordSectionCardProps {
+export interface CarnetDeBordWidgetSectionCardProps {
   colors: CarnetDeBordSectionColors;
   icon: SvgIconName;
   title: string;

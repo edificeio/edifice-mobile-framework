@@ -4,10 +4,10 @@ import { TouchableOpacity, View } from 'react-native';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import styles from '~/framework/modules/widgets/carnet-de-board/components/home-widget/styles';
-import { CarnetDeBordSectionCardProps } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/types';
+import { CarnetDeBordWidgetSectionCardProps } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/types';
 import { SECTION_ICON_INNER_SIZE } from '~/framework/modules/widgets/carnet-de-board/model';
 
-export function CarnetDeBordSectionCard({
+export function CarnetDeBordWidgetSectionCard({
   colors,
   emptyText,
   icon,
@@ -15,7 +15,7 @@ export function CarnetDeBordSectionCard({
   section,
   title,
   value,
-}: Readonly<CarnetDeBordSectionCardProps>) {
+}: Readonly<CarnetDeBordWidgetSectionCardProps>) {
   const open = React.useCallback(() => onPress(section), [onPress, section]);
   const iconStyle = React.useMemo(
     () => [styles.icon, { backgroundColor: colors.background, borderColor: colors.borders }],

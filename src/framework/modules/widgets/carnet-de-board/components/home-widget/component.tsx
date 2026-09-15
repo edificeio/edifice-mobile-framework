@@ -7,8 +7,7 @@ import { getScaleImageSize } from '~/framework/components/constants';
 import { Svg, SvgIconName } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
-import { CarnetDeBordWidgetPlaceholder } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/placeholder';
-import { CarnetDeBordSectionCard } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/section-card';
+import { CarnetDeBordWidgetSectionCard } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/section-card';
 import { WIDGET_SECTIONS } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/sections';
 import styles from '~/framework/modules/widgets/carnet-de-board/components/home-widget/styles';
 import { CarnetDeBordWidgetProps } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/types';
@@ -17,6 +16,8 @@ import { CarnetDeBordSection, hasPronoteData } from '~/framework/modules/widgets
 import { WidgetCard } from '~/framework/modules/widgets/components/card';
 import { Panel } from '~/framework/modules/widgets/components/panel';
 import { WidgetUserSelector } from '~/framework/modules/widgets/components/user-selector';
+
+import { CarnetDeBordWidgetPlaceholder } from './placeholder';
 
 const EMPTY_ILLUSTRATION_SIZE = getScaleImageSize(96);
 
@@ -74,7 +75,7 @@ export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: 
           {hasPronote && selected ? (
             <View style={styles.sections}>
               {WIDGET_SECTIONS.map(block => (
-                <CarnetDeBordSectionCard
+                <CarnetDeBordWidgetSectionCard
                   key={block.section}
                   colors={block.colors}
                   icon={block.icon}
