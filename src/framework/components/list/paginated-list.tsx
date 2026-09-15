@@ -228,7 +228,8 @@ const usePagination = <TItem, TCustomPlaceholderItem>({
 // # Paginated FlashList Component
 
 export interface PaginatedFlashListProps<TItem, TCustomPlaceholderItem = never>
-  extends CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
+  extends
+    CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
     Omit<
       FlashListProps<PaginatedListItem<TItem, TCustomPlaceholderItem>>,
       | 'onRefresh'
@@ -375,7 +376,8 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
 // # Paginated FlatList Component
 
 export interface PaginatedFlatListProps<TItem, TCustomPlaceholderItem = never>
-  extends CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
+  extends
+    CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
     Omit<
       FlatListProps<PaginatedListItem<TItem>>,
       | 'onRefresh'
@@ -404,6 +406,8 @@ export interface PaginatedFlatListProps<TItem, TCustomPlaceholderItem = never>
    * How many items to render when initial data loading
    */
   placeholderNumberOfRows?: number;
+
+  ListComponent?: React.ComponentType<FlatListProps<TItem | typeof LOADING_ITEM_DATA | TCustomPlaceholderItem>>;
 }
 
 export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never>({
@@ -411,6 +415,7 @@ export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never
   getVisibleItemIndex,
   initialLoadingState,
   keyExtractor: _keyExtractor,
+  ListComponent = FlatList,
   ListFooterComponent: ListFooterComponentCustom,
   ListHeaderComponent: ListHeaderComponentCustom,
   onItemsError,
@@ -476,7 +481,7 @@ export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never
   const renderContent: ContentLoaderProps['renderContent'] = React.useCallback(
     refreshControl => {
       return (
-        <FlatList
+        <ListComponent
           ref={ref}
           key="data"
           data={data}
@@ -493,6 +498,7 @@ export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never
       );
     },
     [
+      ListComponent,
       ListFooterComponent,
       ListHeaderComponent,
       data,
@@ -518,7 +524,7 @@ export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never
 
   const renderLoading: ContentLoaderProps['renderLoading'] = React.useCallback(
     () => (
-      <FlatList
+      <ListComponent
         renderItem={renderPlaceholderItem}
         key="placeholder"
         data={placeholderData}
@@ -531,7 +537,7 @@ export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never
         >)}
       />
     ),
-    [ListFooterComponent, ListHeaderComponent, flatListProps, placeholderData, renderPlaceholderItem],
+    [ListComponent, ListFooterComponent, ListHeaderComponent, flatListProps, placeholderData, renderPlaceholderItem],
   );
 
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(async () => {

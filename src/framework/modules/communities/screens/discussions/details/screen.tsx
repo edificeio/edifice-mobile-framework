@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { FlatListProps, View } from 'react-native';
 
 import { MessageDto } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
-import Animated, { useAnimatedRef, useScrollOffset } from 'react-native-reanimated';
+import Animated, { AnimatedScrollViewProps, useAnimatedRef, useScrollOffset } from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
+import { PaginatedFlatList } from '~/framework/components/list/paginated-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { BodyText, SmallBoldText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
@@ -86,6 +87,18 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
 
   const contentContainerStyle = React.useMemo(() => ({ paddingTop: expandedBandHeight }), [expandedBandHeight]);
 
+  const onPageReached = React.useCallback(async (...args) => {
+    console.info('onPageReached', ...args);
+  }, []);
+
+  const ListComponent = React.useMemo(
+    () =>
+      <TItem extends any>({ ...props }: FlatListProps<TItem>) => (
+        <PaginatedFlatList pageSize={5} ListComponent={Animated.FlatList} {...props} onPageReached={onPageReached} />
+      ),
+    [onPageReached],
+  );
+
   const data = React.useMemo<CommentsThreadProps['data']>(
     () =>
       messages.map(message => {
@@ -107,7 +120,21 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     [messages],
   );
 
-  console.info('data', data);
+  const ScrollViewComponent = React.useCallback(
+    (props: AnimatedScrollViewProps) => {
+      return (
+        <Animated.ScrollView
+          contentContainerStyle={contentContainerStyle}
+          contentInsetAdjustmentBehavior="never"
+          ref={scrollRef}
+          scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
+          style={styles.scroll}
+          {...props}
+        />
+      );
+    },
+    [contentContainerStyle, scrollRef],
+  );
 
   if (!discussion)
     return (
@@ -119,6 +146,8 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
   return (
     <View style={styles.root}>
       <ResourceWithComments
+        // ListComponent={ListComponent}
+        ScrollViewComponent={ScrollViewComponent}
         canAddComment
         route={route}
         navigation={navigation}
@@ -126,16 +155,16 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
         data={data}
         allowReplies={false}>
         <BodyText style={styles.firstMessage}>{discussion.firstMessage}</BodyText>
-        <DiscussionHeader
-          authorName={discussion.createdBy.displayName}
-          authorProfile={discussion.createdBy.profile as AccountType}
-          collapse={collapse}
-          createdAt={createdAt}
-          status={getDiscussionStatus(discussion)}
-          title={discussion.title}
-          type={discussion.icon}
-        />
       </ResourceWithComments>
+      <DiscussionHeader
+        authorName={discussion.createdBy.displayName}
+        authorProfile={discussion.createdBy.profile as AccountType}
+        collapse={collapse}
+        createdAt={createdAt}
+        status={getDiscussionStatus(discussion)}
+        title={discussion.title}
+        type={discussion.icon}
+      />
     </View>
   );
 });

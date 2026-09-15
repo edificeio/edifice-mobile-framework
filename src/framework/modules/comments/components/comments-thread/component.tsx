@@ -33,6 +33,7 @@ export function CommentsThreadTemplate({
   children,
   data,
   focusItem,
+  ListComponent = Animated.FlatList,
   navigation,
   onDelete,
   onEdit,
@@ -41,6 +42,7 @@ export function CommentsThreadTemplate({
   repliesPageSize,
   repliesStartSize,
   route,
+  ScrollViewComponent,
 }: Readonly<CommentsThreadProps>) {
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
@@ -52,8 +54,6 @@ export function CommentsThreadTemplate({
     repliesPageSize,
     repliesStartSize,
   });
-
-  console.info('flatData', flatData);
 
   // Screen layout
   const navBarHeight = useHeaderHeight();
@@ -105,6 +105,7 @@ export function CommentsThreadTemplate({
     props => (
       <KeyboardChatScrollView
         {...props}
+        ScrollViewComponent={ScrollViewComponent}
         keyboardLiftBehavior="whenAtEnd"
         offset={
           navBarHeight -
@@ -114,7 +115,7 @@ export function CommentsThreadTemplate({
         }
       />
     ),
-    [bottomInset, navBarHeight],
+    [ScrollViewComponent, bottomInset, navBarHeight],
   );
 
   const resourceElement = React.useMemo(() => {
@@ -289,7 +290,7 @@ export function CommentsThreadTemplate({
 
   return (
     <CommentsThreadContext value={context}>
-      <Animated.FlatList
+      <ListComponent
         ref={listRef}
         onLayout={onLayout}
         keyboardDismissMode="interactive"
