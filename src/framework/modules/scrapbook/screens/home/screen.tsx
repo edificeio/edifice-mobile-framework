@@ -39,7 +39,7 @@ export default sessionScreen<ScrapbookHomeScreenProps>(function ScrapbookHomeScr
     item => {
       navigation.navigate(scrapbookRouteNames.details, {
         headerHeight,
-        resourceUri: `/scrapbook#/view-scrapbook/${item.resourceEntId}`,
+        resourceUri: `/scrapbook#/view-scrapbook/${item.resourceId}`,
       });
     },
     [headerHeight, navigation],

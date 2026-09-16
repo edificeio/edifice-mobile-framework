@@ -1,8 +1,8 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
 
+import { FileMedia } from '~/framework/modules/media';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { FileMedia } from '~/framework/util/media';
 
 import { SignedMediaSource } from './util';
 

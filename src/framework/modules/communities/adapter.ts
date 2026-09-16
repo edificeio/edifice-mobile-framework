@@ -9,7 +9,7 @@ import {
   Media,
   MediaType,
   VideoMedia,
-} from '~/framework/util/media';
+} from '~/framework/modules/media';
 
 export const COMMUNITY_DEFAULT_THUMBNAIL_IMAGE_SIZE = {
   height: 130,

@@ -6,7 +6,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import Toast from '~/framework/components/toast';
-import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 
@@ -21,11 +21,11 @@ export const modifyHomeworkEntryResourceRight = 'fr-wseduc-homeworks-controllers
 export const viewHomeworkResourceRight = 'fr.wseduc.homeworks.controllers.HomeworksController|view';
 export const createHomeworkResourceRight = 'fr.wseduc.homeworks.controllers.HomeworksController|createHomework';
 
-export const hasPermissionManager = (homework: IHomeworkDiary, right: string, session: AuthLoggedAccount) => {
+export const hasPermissionManager = (homework: IHomeworkDiary, right: string, session: AuthActiveAccount) => {
   return homework && (homework.owner.userId === session.user.id || resourceHasRight(homework, right, session));
 };
 
-export const getHomeworkWorkflowInformation = (session: AuthLoggedAccount) => {
+export const getHomeworkWorkflowInformation = (session: AuthActiveAccount) => {
   const userType = session?.user.type;
   const isRelativeOrStudent = userType === AccountType.Relative || userType === AccountType.Student;
 

@@ -1,5 +1,10 @@
 import { Moment } from 'moment';
 
+import { I18n } from '~/app/i18n';
+import { toURISource } from '~/framework/modules/media';
+import { IDistantFileWithId } from '~/framework/util/fileHandler';
+import { sessionURISource } from '~/framework/util/transport';
+
 import {
   IMailsFolder,
   IMailsMailAttachment,
@@ -11,11 +16,6 @@ import {
   MailsVisible,
   MailsVisibleType,
 } from './model';
-
-import { I18n } from '~/app/i18n';
-import { IDistantFileWithId } from '~/framework/util/fileHandler';
-import { toURISource } from '~/framework/util/media';
-import { sessionURISource } from '~/framework/util/transport';
 
 export const MailsRecipientPrefixsI18n = {
   [MailsRecipientsType.TO]: {

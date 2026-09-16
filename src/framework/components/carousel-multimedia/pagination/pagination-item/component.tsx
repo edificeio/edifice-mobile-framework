@@ -8,7 +8,7 @@ import styles from './styles';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, Svg } from '~/framework/components/picture';
-import { FileMedia, isAudioContent, isImageContent, isVideoContent } from '~/framework/util/media';
+import { FileMedia, isAudioContent, isImageContent, isVideoContent } from '~/framework/modules/media';
 
 interface PaginationItemProps {
   item: FileMedia;

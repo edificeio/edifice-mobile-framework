@@ -84,5 +84,6 @@ export interface AvatarStackProps extends Omit<CommonSingleAvatarProps, 'style'>
   style?: ViewProps['style'];
   avatarItemStyle?: CommonSingleAvatarProps['style'];
   items: (string | SingleAvatarOnlySpecificProps)[];
+  overlayI18nKey?: string;
   total?: number;
 }

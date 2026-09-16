@@ -1,6 +1,8 @@
-import type { EntAppNameOrSynonym } from '~/app/intents';
-import type { DocumentItemEntApp, FolderItem } from '~/framework/components/list/paginated-document-list/types';
+import type { OldEntAppNameOrSynonym } from '~/app/intents';
+import type { DocumentItem, FolderItem } from '~/framework/components/list/paginated-document-list/types';
 import { PaginatedListItem } from '~/framework/components/list/paginated-list';
+
+import { ResourceMedia } from '../../media';
 
 export const enum RootFolderId {
   ROOT = 'default',
@@ -9,7 +11,7 @@ export const enum RootFolderId {
 export type UserFolderId = string;
 export type FolderId = RootFolderId | UserFolderId;
 
-export type ExplorerAppTypes = Exclude<EntAppNameOrSynonym, 'workspace'>;
+export type ExplorerAppTypes = Exclude<OldEntAppNameOrSynonym, 'workspace'>;
 export type ExplorerResourceIdType = string;
 
 export interface ExplorerPageData {
@@ -19,10 +21,10 @@ export interface ExplorerPageData {
     total: number;
   };
   folders: FolderItem<FolderId>[];
-  resources: DocumentItemEntApp<ExplorerAppTypes, ExplorerResourceIdType>[];
+  resources: DocumentItem<ExplorerResourceIdType, ResourceMedia>[];
 }
 
 export interface ExplorerFolderContent {
   folders: FolderItem<FolderId>[];
-  resources: PaginatedListItem<DocumentItemEntApp<ExplorerAppTypes, ExplorerResourceIdType>>[];
+  resources: PaginatedListItem<DocumentItem<ExplorerResourceIdType, ResourceMedia>>[];
 }

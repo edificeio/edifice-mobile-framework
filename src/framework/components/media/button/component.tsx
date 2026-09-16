@@ -15,7 +15,7 @@ import { openMediaPlayer } from '~/framework/components/media/player';
 import { MediaPlayerParams } from '~/framework/components/media/player/types';
 import { Svg } from '~/framework/components/picture';
 import { SmallItalicText } from '~/framework/components/text';
-import { MediaType } from '~/framework/util/media';
+import { MediaType } from '~/framework/modules/media';
 import { Image } from '~/framework/util/media-deprecated';
 import { sessionURISource } from '~/framework/util/transport';
 

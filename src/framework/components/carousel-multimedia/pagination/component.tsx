@@ -7,7 +7,7 @@ import { Pagination } from 'react-native-reanimated-carousel';
 import { PAGINATION_ANIMATION_OFFSET } from '~/framework/components/carousel-multimedia/screen';
 import { getSignedPosterSource } from '~/framework/components/carousel-multimedia/util';
 import { UI_SIZES } from '~/framework/components/constants';
-import { FileMedia, isImageContent, isPlayableMedia } from '~/framework/util/media';
+import { FileMedia, isImageContent, isPlayableMedia } from '~/framework/modules/media';
 
 import PaginationBackground from './pagination-background/component';
 import PaginationItem from './pagination-item/component';

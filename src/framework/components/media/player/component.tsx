@@ -18,7 +18,7 @@ import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
 import { markViewAudience } from '~/framework/modules/audience';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { MediaType } from '~/framework/util/media';
+import { MediaType } from '~/framework/modules/media';
 import { sessionURISource } from '~/framework/util/transport';
 
 import styles from './styles';

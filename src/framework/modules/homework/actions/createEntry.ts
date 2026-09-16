@@ -2,7 +2,7 @@
 //  * Diary entry creation actions
 //  */
 
-import { Moment } from 'moment';
+import { Temporal } from '@js-temporal/polyfill';
 import { ThunkDispatch } from 'redux-thunk';
 
 import homeworkConfig from '~/framework/modules/homework/module-config';
@@ -54,7 +54,7 @@ export function uploadHomeworkDiaryEntryImages(images: LocalFile[]) {
  */
 export function createHomeworkDiaryEntry(
   diaryId: string,
-  date: Moment,
+  date: Temporal.PlainDate,
   title: string,
   content: string,
   uploadedImages?: IDistantFile[],
@@ -79,7 +79,7 @@ export function createHomeworkDiaryEntry(
 
       await sessionFetch(`/homeworks/${diaryId}/entry`, {
         body: JSON.stringify({
-          date: date?.format('YYYY-MM-DD'),
+          date: date.toString(), // YYYY-MM-DD
           entryid: entryId,
           title,
           value: contentHtml,

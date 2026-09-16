@@ -11,12 +11,12 @@ import DeviceInfo from 'react-native-device-info';
 import { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
-import { openDocument } from './actions';
-
 import { I18n } from '~/app/i18n';
 import { ImagePicked } from '~/framework/components/menus/actions';
 import toast from '~/framework/components/toast';
 import { assertPermissions } from '~/framework/util/permissions';
+
+import { openDocument } from './actions';
 
 export interface IPickOptions {
   source: 'documents' | 'galery' | 'camera';

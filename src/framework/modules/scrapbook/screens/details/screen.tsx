@@ -6,8 +6,8 @@ import { ScrapbookDetailsScreenProps } from './types';
 
 import WebResourceViewer, { computeWebResourceViewerNavbar } from '~/framework/components/pages/web-resource-viewer';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
+import { toURISource } from '~/framework/modules/media';
 import { scrapbookService } from '~/framework/modules/scrapbook/service';
-import { toURISource } from '~/framework/util/media';
 import { platformURISource } from '~/framework/util/transport';
 
 export const computeNavBar = computeWebResourceViewerNavbar;

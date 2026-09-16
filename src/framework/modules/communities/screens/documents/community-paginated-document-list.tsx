@@ -1,9 +1,6 @@
 import React from 'react';
 import { RefreshControl } from 'react-native';
 
-import { createDecoratedArrayProxy } from './proxy';
-import { CommunitiesDocumentAppName, CommunitiesDocumentId } from './types';
-
 import { useDocumentPagination } from '~/framework/components/list/paginated-document-list/component';
 import {
   PaginatedDocumentFlatListProps,
@@ -18,21 +15,25 @@ import {
 } from '~/framework/components/list/paginated-list';
 import ScrollView from '~/framework/components/scrollView';
 import { LoadingState } from '~/framework/hooks/loader';
+import { Media } from '~/framework/modules/media';
 
-export type DecoratedDocumentListItem =
-  | PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId>
+import { createDecoratedArrayProxy } from './proxy';
+import { CommunitiesDocumentId } from './types';
+
+export type DecoratedDocumentListItem<MediaT extends Media> =
+  | PaginatedDocumentListItem<CommunitiesDocumentId, MediaT>
   | React.ReactElement;
 
-export interface DecoratedDocumentFlatListProps extends Omit<
-  PaginatedDocumentFlatListProps<CommunitiesDocumentAppName, CommunitiesDocumentId>,
+export interface DecoratedDocumentFlatListProps<MediaT extends Media> extends Omit<
+  PaginatedDocumentFlatListProps<CommunitiesDocumentId, MediaT>,
   'CellRendererComponent'
 > {
   decorations?: React.ReactElement[];
   placeholderDecorations?: React.ReactElement[];
-  CellRendererComponent?: PaginatedFlatListProps<DecoratedDocumentListItem>['CellRendererComponent'];
+  CellRendererComponent?: PaginatedFlatListProps<DecoratedDocumentListItem<MediaT>>['CellRendererComponent'];
 }
 
-export const DecoratedDocumentFlatList = ({
+export const DecoratedDocumentFlatList = <MediaT extends Media = Media>({
   decorations = [],
   documents,
   folders,
@@ -48,7 +49,7 @@ export const DecoratedDocumentFlatList = ({
   onPageReached: _onPageReached,
   alwaysShowAppIcon = true,
   ...props
-}: Readonly<DecoratedDocumentFlatListProps>) => {
+}: Readonly<DecoratedDocumentFlatListProps<MediaT>>) => {
   const {
     data: _data,
     getVisibleItemIndex,
@@ -68,7 +69,7 @@ export const DecoratedDocumentFlatList = ({
   const [loadingState, setLoadingState] = React.useState<LoadingState>(LoadingState.PRISTINE);
   // Override onPageReached to have a first loaded boolean value.
   // No need to do the same with onItemsReached because it'll be called twice.
-  const onPageReached = React.useCallback<NonNullable<PaginatedFlatListProps<DecoratedDocumentListItem>['onPageReached']>>(
+  const onPageReached = React.useCallback<NonNullable<PaginatedFlatListProps<DecoratedDocumentListItem<MediaT>>['onPageReached']>>(
     async (page, reloadAll) => {
       await _onPageReached?.(page, reloadAll);
       setLoadingState(LoadingState.DONE);
@@ -91,7 +92,7 @@ export const DecoratedDocumentFlatList = ({
     }, [_placeholderData, numColumns, placeholderDecorations, totalPlaceholderItem]),
   );
 
-  const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<DecoratedDocumentListItem>['keyExtractor']>>(
+  const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<DecoratedDocumentListItem<MediaT>>['keyExtractor']>>(
     (item, index) => {
       return index < stickyItemsPadding
         ? `decoration-${index}`
@@ -100,7 +101,7 @@ export const DecoratedDocumentFlatList = ({
     [_keyExtractor, stickyItemsPadding],
   );
 
-  const renderItem = React.useCallback<NonNullable<PaginatedFlatListProps<DecoratedDocumentListItem>['renderItem']>>(
+  const renderItem = React.useCallback<NonNullable<PaginatedFlatListProps<DecoratedDocumentListItem<MediaT>>['renderItem']>>(
     ({ index, item, ...rest }) => {
       return index < stickyItemsPadding
         ? (item as Extract<typeof item, React.ReactElement>)
@@ -127,17 +128,14 @@ export const DecoratedDocumentFlatList = ({
     [_renderPlaceholderItem, placeholderItemsPadding],
   );
 
-  const getItemLayout = React.useMemo<PaginatedFlatListProps<DecoratedDocumentListItem>['getItemLayout']>(
+  const getItemLayout = React.useMemo<PaginatedFlatListProps<DecoratedDocumentListItem<MediaT>>['getItemLayout']>(
     () =>
       _getItemLayout
         ? (d, index) => {
             return index < stickyItemsPadding
               ? { index: index - stickyItemsPadding, length: 0, offset: 0 }
               : _getItemLayout(
-                  d as
-                    | ArrayLike<PaginatedListItem<PaginatedDocumentListItem<CommunitiesDocumentAppName, CommunitiesDocumentId>>>
-                    | null
-                    | undefined,
+                  d as ArrayLike<PaginatedListItem<PaginatedDocumentListItem<CommunitiesDocumentId, MediaT>>> | null | undefined,
                   index - stickyItemsPadding,
                 );
           }

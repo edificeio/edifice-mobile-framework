@@ -7,14 +7,14 @@
 import * as React from 'react';
 import { ColorValue, TextStyle, View, ViewStyle } from 'react-native';
 
-import styles from './styles';
-
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
 import { PageViewStyle } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { HeadingSText, SmallText } from '~/framework/components/text';
+
+import styles from './styles';
 
 const EmptyScreen = ({
   buttonAction,
@@ -58,7 +58,13 @@ const EmptyScreen = ({
         },
         customStyle,
       ]}>
-      <Svg style={styles.icon} name={svgImage} width={imageWidth} height={imageHeight} fill={svgFillColor} />
+      <Svg
+        style={styles.icon}
+        name={svgImage}
+        width={imageWidth}
+        height={imageHeight}
+        {...(svgFillColor ? { fill: svgFillColor } : null)}
+      />
       {title ? (
         <HeadingSText
           numberOfLines={2}

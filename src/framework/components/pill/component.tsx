@@ -2,27 +2,50 @@ import React from 'react';
 import { PixelRatio, StyleSheet, TextProps, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import {
   BodyBoldText,
   BodyItalicText,
+  BodyText,
   CaptionBoldText,
   CaptionItalicText,
+  CaptionText,
   SmallBoldText,
   SmallItalicText,
+  SmallText,
   TextSizeStyle,
 } from '~/framework/components/text';
 
 import { PillProps } from './types';
 
+const DOT_SIZE = getScaleWidth(6);
+
 const styles = StyleSheet.create({
+  container: {
+    maxWidth: '100%',
+  },
+  containerWithDot: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: UI_SIZES.spacing.tiny,
+    justifyContent: 'center',
+  },
+  dot: {
+    borderRadius: DOT_SIZE / 2,
+    height: DOT_SIZE,
+    width: DOT_SIZE,
+  },
   text: {
     color: theme.ui.text.inverse,
     margin: 'auto',
   },
+  textWithDot: {
+    color: theme.ui.text.inverse,
+    flexShrink: 1,
+  },
 });
 
-const TextComponents: Record<NonNullable<PillProps['size']>, React.ComponentType<TextProps>> = {
+const BoldTextComponents: Record<NonNullable<PillProps['size']>, React.ComponentType<TextProps>> = {
   large: BodyBoldText,
   normal: SmallBoldText,
   small: CaptionBoldText,
@@ -32,6 +55,12 @@ const ItalicTextComponents: Record<NonNullable<PillProps['size']>, React.Compone
   large: BodyItalicText,
   normal: SmallItalicText,
   small: CaptionItalicText,
+};
+
+const RegularTextComponents: Record<NonNullable<PillProps['size']>, React.ComponentType<TextProps>> = {
+  large: BodyText,
+  normal: SmallText,
+  small: CaptionText,
 };
 
 const stylesBySize: Record<NonNullable<PillProps['size']>, ViewStyle> = {
@@ -52,13 +81,24 @@ const stylesBySize: Record<NonNullable<PillProps['size']>, ViewStyle> = {
   },
 };
 
-export function Pill({ color, italic, size = 'small', text, textColor }: Readonly<PillProps>) {
-  const TextComponent = italic ? ItalicTextComponents[size] : TextComponents[size];
-  const textStyle = React.useMemo(() => [styles.text, { color: textColor ?? theme.ui.text.inverse }], [textColor]);
+export function Pill({ bold, color, dot, italic, size = 'small', text, textColor }: Readonly<PillProps>) {
+  const TextComponent = italic ? ItalicTextComponents[size] : bold ? BoldTextComponents[size] : RegularTextComponents[size];
+  const textStyle = React.useMemo(
+    () => [dot ? styles.textWithDot : styles.text, { color: textColor ?? theme.ui.text.inverse }],
+    [dot, textColor],
+  );
+  const containerStyle = React.useMemo(
+    () => [{ backgroundColor: color }, stylesBySize[size], styles.container, dot ? styles.containerWithDot : undefined],
+    [color, dot, size],
+  );
+  const dotStyle = React.useMemo(() => [styles.dot, { backgroundColor: dot }], [dot]);
 
   return (
-    <View style={React.useMemo(() => [{ backgroundColor: color }, stylesBySize[size]], [color, size])}>
-      <TextComponent style={textStyle}>{text}</TextComponent>
+    <View style={containerStyle}>
+      <TextComponent numberOfLines={1} style={textStyle}>
+        {text}
+      </TextComponent>
+      {dot ? <View style={dotStyle} /> : null}
     </View>
   );
 }

@@ -1,5 +1,5 @@
 import { svgExists } from '~/framework/components/picture';
-import { toURISource } from '~/framework/util/media';
+import { toURISource } from '~/framework/modules/media';
 import { sessionImageSource } from '~/framework/util/transport';
 
 import { AppIcon } from './types';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { PixelRatio } from 'react-native';
 
-import { MembershipClient, MembershipResponseDto, PaginationQueryDto } from '@edifice.io/community-client-rest-rn';
+import { MembershipClient, MembershipResponseDto, SearchMembershipQueryDto } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { I18n } from '~/app/i18n';
@@ -60,7 +60,7 @@ export default sessionScreen<Readonly<CommunitiesMembersScreen.AllProps>>(functi
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
       try {
-        const baseQueryParams: PaginationQueryDto = {
+        const baseQueryParams: SearchMembershipQueryDto = {
           includePending: true,
           page: page + 1,
           size: PAGE_SIZE,

@@ -2,15 +2,13 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import {
-  AnnouncementClient,
+  AnnouncementType,
   CommunityClient,
   CommunitySection,
   InvitationClient,
   InvitationResponseDto,
   MembershipClient,
-  SearchAnnouncementDto,
 } from '@edifice.io/community-client-rest-rn';
-import { Temporal } from '@js-temporal/polyfill';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,7 +16,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
-import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
 import { LOADING_ITEM_DATA, PaginatedFlatListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
@@ -27,18 +24,13 @@ import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
-import { usePrevious } from '~/framework/hooks/previous';
-import { audienceService } from '~/framework/modules/audience/service';
-import { toMedia } from '~/framework/modules/communities/adapter';
 import AnnouncementListItem from '~/framework/modules/communities/components/announcements/list/item/';
+import { getCollectionStatus } from '~/framework/modules/communities/components/announcements/list/item/collection';
 import PostDetailsLoader from '~/framework/modules/communities/components/announcements/post/details/loader';
-import { PostDetailsProps } from '~/framework/modules/communities/components/announcements/post/details/types';
 import CommunityInfoBottomSheet from '~/framework/modules/communities/components/community-info-bottom-sheet';
 import CommunityWelcomeBottomSheetModal from '~/framework/modules/communities/components/community-welcome-bottomsheet';
-import ConversationTile, {
-  ConversationTileLoader,
-} from '~/framework/modules/communities/components/home-screen-tiles/conversation';
 import CoursesTile, { CoursesTileLoader } from '~/framework/modules/communities/components/home-screen-tiles/courses';
+import DiscussionsTile, { DiscussionsTileLoader } from '~/framework/modules/communities/components/home-screen-tiles/discussions';
 import DocumentsTile, { DocumentsTileLoader } from '~/framework/modules/communities/components/home-screen-tiles/documents';
 import MembersTile, { MembersTileLoader } from '~/framework/modules/communities/components/home-screen-tiles/members';
 import DecoratedPaginatedFlatList from '~/framework/modules/communities/components/list/decorated-paginated-list';
@@ -49,21 +41,17 @@ import {
 import { BANNER_BASE_HEIGHT } from '~/framework/modules/communities/hooks/use-community-navbar/community-navbar/styles';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
+import { AnnouncementDetails, getAnnouncementsDetails } from '~/framework/modules/communities/service/announcements';
+import { DiscussionsSummary, getDiscussionsSummary } from '~/framework/modules/communities/service/discussions';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
-import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
-import { toURISource } from '~/framework/util/media';
+import { getCommunityBannerImage, getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { accountApi, sessionApi } from '~/framework/util/transport';
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';
 
 const ANNOUNCEMENTS_PAGE_SIZE = 20;
-
-const SCROLL_INDICATOR_INSETS = {
-  bottom: 0,
-  right: 0.001,
-  top: BANNER_BASE_HEIGHT - UI_SIZES.spacing.medium * 2,
-};
+const EMPTY_DISCUSSIONS_SUMMARY: DiscussionsSummary = { hasUnreadMessages: false, totalDiscussions: 0 };
 
 const BannerLoader = () => {
   const { top: statusBarHeight } = useSafeAreaInsets();
@@ -84,6 +72,7 @@ export const computeNavBar = (
 ): NativeStackNavigationOptions => communityNavBar(props, () => {});
 
 export const CommunitiesHomeScreenLoaded = function ({
+  discussionsSummary,
   image,
   membersId,
   navigation,
@@ -121,34 +110,32 @@ export const CommunitiesHomeScreenLoaded = function ({
     navigation.setOptions(communityNavBar({ navigation, route }, openInfoModal));
   }, [navigation, openInfoModal, route]);
 
-  const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<PostDetailsProps<number>>['keyExtractor']>>(
+  const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<AnnouncementDetails<number>>['keyExtractor']>>(
     item => item.resourceId.toString(),
     [],
   );
 
-  const [announcements, setAnnouncements] = React.useState<(PostDetailsProps<number> | typeof LOADING_ITEM_DATA)[]>([]);
+  const [announcements, setAnnouncements] = React.useState<(AnnouncementDetails<number> | typeof LOADING_ITEM_DATA)[]>([]);
 
   const renderItem = React.useCallback(
-    ({ index, item }: { index: number; item: PostDetailsProps<number> }) => {
+    ({ index, item }: { index: number; item: AnnouncementDetails<number> }) => {
       const itemSeparator = getItemSeparatorStyle(index, announcements.length, styles.itemSeparator);
-      const itemStyle = [styles.itemContainer, itemSeparator];
+      const separatorColor =
+        itemSeparator && item.type === AnnouncementType.COLLECT
+          ? { borderBottomColor: getCollectionStatus(item, role).colors.light }
+          : undefined;
+      const itemStyle = [styles.itemContainer, itemSeparator, separatorColor];
 
-      return <AnnouncementListItem announcement={item} style={itemStyle} />;
+      return <AnnouncementListItem announcement={item} session={session} style={itemStyle} userRole={role} />;
     },
-    [announcements.length],
+    [announcements.length, role, session],
   );
 
-  const [scrollElements, statusBar, scrollViewProps] = useCommunityScrollableThumbnail({
+  const [scrollElements, scrollViewProps] = useCommunityScrollableThumbnail({
     image,
+    navigation,
     title,
   });
-
-  const previousStatusBar = usePrevious(statusBar);
-  if (previousStatusBar !== statusBar) {
-    navigation.setOptions({
-      statusBarStyle: statusBar,
-    });
-  }
 
   const stickyElements = React.useMemo(
     () => [
@@ -169,58 +156,41 @@ export const CommunitiesHomeScreenLoaded = function ({
                 spotlightedCourseId={spotlightedCourseId}
                 userRole={role}
               />
-              <ConversationTile />
+              <DiscussionsTile
+                communityId={communityId}
+                navigation={navigation}
+                hasUnreadMessages={discussionsSummary.hasUnreadMessages}
+                totalDiscussions={discussionsSummary.totalDiscussions}
+                userRole={role}
+              />
             </View>
           </View>
         </View>
         <HeadingXSText style={styles.announcementTitle}>{I18n.get('communities-announcements-title')}</HeadingXSText>
       </View>,
     ],
-    [scrollElements, title, communityId, navigation, membersId, totalMembers, platformUrl, spotlightedCourseId, role],
-  );
-
-  const audienceReferer = React.useMemo(
-    () => ({
-      module: moduleConfig.name,
-      resourceType: 'announcement',
-    }),
-    [],
+    [
+      scrollElements,
+      title,
+      communityId,
+      navigation,
+      membersId,
+      totalMembers,
+      platformUrl,
+      spotlightedCourseId,
+      role,
+      discussionsSummary,
+    ],
   );
 
   const loadData = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
       try {
-        const baseQueryParams: SearchAnnouncementDto = {
-          page: page + 1,
-          size: ANNOUNCEMENTS_PAGE_SIZE,
-        };
-
-        const items = await sessionApi(moduleConfig, AnnouncementClient).getAnnouncements(communityId, baseQueryParams);
-        const itemsIds = items.items.map(i => i.id.toString());
-        const reactions = await audienceService.reaction.getSummary(audienceReferer.module, audienceReferer.resourceType, itemsIds);
-
-        const newAnnouncements: PostDetailsProps<number>[] = items.items.map(e => ({
-          audience: {
-            infosReactions: {
-              total: reactions.reactionsByResource[e.id].totalReactionsCounter,
-              types: reactions.reactionsByResource[e.id].reactionTypes,
-              userReaction: reactions.reactionsByResource[e.id].userReaction,
-            },
-            referer: {
-              ...audienceReferer,
-              resourceId: e.id.toString(),
-            },
-            session,
-          },
-          author: {
-            userId: e.author.entId,
-            username: e.author.displayName,
-          },
-          content: e.content,
-          date: Temporal.Instant.from((e.modificationDate ?? e.publicationDate) as unknown as string),
-          media: e.media && e.media.map(toMedia),
-          resourceId: e.id,
-        }));
+        const { announcements: newAnnouncements, total } = await getAnnouncementsDetails(
+          communityId,
+          page,
+          ANNOUNCEMENTS_PAGE_SIZE,
+        );
 
         setAnnouncements(prevData => {
           return staleOrSplice({
@@ -228,14 +198,14 @@ export const CommunitiesHomeScreenLoaded = function ({
             previousData: prevData,
             reloadAll,
             start: page * ANNOUNCEMENTS_PAGE_SIZE,
-            total: items.meta.totalItems,
+            total,
           });
         });
       } catch (e) {
-        console.error('Error while loading community members list', e);
+        console.error('Error while loading community announcements list', e);
       }
     },
-    [audienceReferer, communityId, session],
+    [communityId],
   );
 
   useFocusEffect(
@@ -262,7 +232,6 @@ export const CommunitiesHomeScreenLoaded = function ({
         pageSize={ANNOUNCEMENTS_PAGE_SIZE}
         renderItem={renderItem}
         renderPlaceholderItem={PostDetailsLoader}
-        scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
         decorations={stickyElements}
         {...scrollViewProps}
       />
@@ -293,7 +262,7 @@ export const CommunitiesHomeScreenPlaceholder = () => (
             </View>
             <View style={styles.tilesCol}>
               <CoursesTileLoader />
-              <ConversationTileLoader />
+              <DiscussionsTileLoader />
             </View>
           </View>
         </View>
@@ -322,12 +291,17 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
     [dispatch, communityId],
   );
   const [invitationId, setInvitationId] = React.useState<number | undefined>(undefined);
+  const [discussionsSummary, setDiscussionsSummary] = React.useState<DiscussionsSummary>(EMPTY_DISCUSSIONS_SUMMARY);
 
   const loadContent = React.useCallback(async () => {
-    const [community, invitations, userInvitation] = await Promise.all([
+    const [community, invitations, userInvitation, fetchedDiscussionsSummary] = await Promise.all([
       accountApi(session, moduleConfig, CommunityClient).getCommunity(communityId),
       accountApi(session, moduleConfig, MembershipClient).getMembers(communityId, { includePending: true, page: 1, size: 20 }),
       accountApi(session, moduleConfig, InvitationClient).getUserInvitations({ communityId }),
+      getDiscussionsSummary(session, communityId).catch(e => {
+        console.error('Error while loading community discussions summary', e);
+        return EMPTY_DISCUSSIONS_SUMMARY;
+      }),
     ]);
 
     setData({
@@ -336,17 +310,10 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
       totalMembers: invitations.meta.totalItems,
     });
     setInvitationId(userInvitation.items.at(0)?.id);
+    setDiscussionsSummary(fetchedDiscussionsSummary);
   }, [communityId, session, setData]);
 
-  const image = React.useMemo(
-    () =>
-      data
-        ? data.mobileThumbnails?.length
-          ? data.mobileThumbnails.map(src => ({ ...src, height: 130, width: 440 }))
-          : [toURISource(data.image!)]
-        : undefined,
-    [data],
-  );
+  const image = React.useMemo(() => (data ? getCommunityBannerImage(data) : undefined), [data]);
 
   const spotlightedCourseId = React.useMemo(() => (data ? data.courseEntId : undefined), [data]);
 
@@ -360,14 +327,17 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
           route={realRoute}
           refreshControl={refreshControl}
           {...data}
+          discussionsSummary={discussionsSummary}
           image={image!}
+          membersId={data.membersId ?? []}
           session={session}
           spotlightedCourseId={spotlightedCourseId}
+          totalMembers={data.totalMembers ?? 0}
         />
       ) : (
         <EmptyContentScreen />
       ),
-    [data, navigation, realRoute, image, session, spotlightedCourseId],
+    [data, navigation, realRoute, discussionsSummary, image, session, spotlightedCourseId],
   );
 
   return <ContentLoader loadContent={loadContent} renderLoading={CommunitiesHomeScreenPlaceholder} renderContent={renderContent} />;

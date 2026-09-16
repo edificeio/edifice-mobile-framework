@@ -6,6 +6,7 @@ import FileViewer from 'react-native-file-viewer';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { openMediaPlayer } from '~/framework/components/media/player';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
+import { MediaType, toURISource } from '~/framework/modules/media';
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler/models';
 import fileTransferService, {
   IDownloadCallbaks,
@@ -13,7 +14,6 @@ import fileTransferService, {
   IUploadCallbaks,
   IUploadParams,
 } from '~/framework/util/fileHandler/service';
-import { MediaType, toURISource } from '~/framework/util/media';
 import type { IMedia } from '~/framework/util/media-deprecated';
 import { sessionURISource } from '~/framework/util/transport';
 

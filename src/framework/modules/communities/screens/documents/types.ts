@@ -3,6 +3,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { DocumentItem } from '~/framework/components/list/paginated-document-list/types';
 import type { CommunitiesNavigationParams } from '~/framework/modules/communities/navigation';
+import { Media } from '~/framework/modules/media';
 
 export namespace CommunitiesDocumentsScreen {
   export interface NavParams {
@@ -16,4 +17,4 @@ export namespace CommunitiesDocumentsScreen {
 export type CommunitiesDocumentId = CommunityResponseDto['id'];
 export type CommunitiesDocumentAppName = AppName;
 
-export type CommunitiesDocumentItem = DocumentItem<CommunitiesDocumentAppName, CommunitiesDocumentId>;
+export type CommunitiesDocumentItem = DocumentItem<CommunitiesDocumentId, Media>;

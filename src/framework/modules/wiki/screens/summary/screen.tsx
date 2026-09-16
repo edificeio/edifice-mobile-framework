@@ -6,9 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Placeholder, PlaceholderLine } from 'rn-placeholder';
 
-import styles from './styles';
-import type { WikiSummaryScreen } from './types';
-
 import { I18n } from '~/app/i18n';
 import { getStore, IGlobalState } from '~/app/store';
 import { getScaleImageSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
@@ -17,6 +14,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import { HeadingMText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { toURISource } from '~/framework/modules/media';
 import { PageList } from '~/framework/modules/wiki/components/page-list';
 import { PageListProps } from '~/framework/modules/wiki/components/page-list/types';
 import ResourceHeader from '~/framework/modules/wiki/components/resource-header';
@@ -26,8 +24,10 @@ import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/n
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction } from '~/framework/modules/wiki/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { toURISource } from '~/framework/util/media';
 import { sessionImageSource } from '~/framework/util/transport';
+
+import styles from './styles';
+import type { WikiSummaryScreen } from './types';
 
 const TITLE_PLACEHOLDER_HEIGHT = getScaleWidth(30);
 const LINE_PLACEHOLDER_HEIGHT = getScaleWidth(48);

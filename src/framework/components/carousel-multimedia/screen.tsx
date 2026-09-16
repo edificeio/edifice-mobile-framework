@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { I18n } from '~/app/i18n';
 import { ModuleScreenProps } from '~/app/navigation/types';
 import { UI_SIZES } from '~/framework/components/constants';
-import { FileMedia, isPlayableMedia } from '~/framework/util/media';
+import { FileMedia, isPlayableMedia } from '~/framework/modules/media';
 
 import CarouselItem from './component';
 import { useCarouselFileHandler, useCarouselOrientation, useTogglePagination } from './hooks';

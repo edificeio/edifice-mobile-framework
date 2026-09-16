@@ -9,8 +9,8 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { showPrivacyAlert } from '~/framework/components/carousel-multimedia/util';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { FileMedia } from '~/framework/modules/media';
 import { IModalsNavigationParams } from '~/framework/navigation/modals';
-import { FileMedia } from '~/framework/util/media';
 
 import styles from './styles';
 

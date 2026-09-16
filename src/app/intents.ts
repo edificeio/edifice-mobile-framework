@@ -2,7 +2,7 @@ import { openUrl } from '~/framework/util/linking';
 
 import { navigationRef } from './navigation';
 
-export type EntAppName =
+export type OldEntAppName =
   | 'appointments'
   | 'archive'
   | 'blog'
@@ -41,16 +41,25 @@ export type EntAppName =
   | 'wiki'
   | 'workspace';
 
+export type NewEntAppName = 'Blog' | 'Cahier Multimédia' | 'Wiki' | 'Cahier de texte';
+
+export const newEntAppNameFromOldMap: Partial<Record<OldEntAppName, NewEntAppName>> = {
+  blog: 'Blog',
+  homeworks: 'Cahier de texte',
+  scrapbook: 'Cahier Multimédia',
+  wiki: 'Wiki',
+};
+
 /**
  * Some apps have various names depending of the context :/
  */
 export const entAppNameSynonyms = {
   form: 'formulaire',
-} satisfies Record<string, EntAppName>;
+} satisfies Record<string, OldEntAppName>;
 
-export type EntAppNameOrSynonym = EntAppName | keyof typeof entAppNameSynonyms;
+export type OldEntAppNameOrSynonym = OldEntAppName | keyof typeof entAppNameSynonyms;
 
-export const getEntAppName = (name: EntAppNameOrSynonym) => (entAppNameSynonyms[name] ?? name) as EntAppName;
+export const getEntAppName = (name: OldEntAppNameOrSynonym) => (entAppNameSynonyms[name] ?? name) as OldEntAppName;
 
 export enum INTENT_TYPE {
   OPEN_RESOURCE = 'OPEN_RESOURCE',
@@ -71,10 +80,10 @@ const defaultIntentCallbacks = {
   },
 };
 
-const intents: Partial<Record<EntAppName, Partial<Record<INTENT_TYPE, IntentCallback<INTENT_TYPE>>>>> = {};
+const intents: Partial<Record<OldEntAppName, Partial<Record<INTENT_TYPE, IntentCallback<INTENT_TYPE>>>>> = {};
 
-export function registerIntent<AppName extends EntAppName, IntentType extends INTENT_TYPE>(
-  appName: AppName,
+export function registerIntent<IntentType extends INTENT_TYPE>(
+  appName: string,
   type: IntentType,
   callback: IntentCallback<IntentType>,
 ) {
@@ -85,16 +94,15 @@ export function registerIntent<AppName extends EntAppName, IntentType extends IN
   intents[appName][type] = callback as IntentCallback<INTENT_TYPE>;
 }
 
-export function openIntent<AppName extends EntAppNameOrSynonym, IntentType extends INTENT_TYPE>(
-  appName: AppName,
+export function openIntent<IntentType extends INTENT_TYPE>(
+  appName: string,
   type: IntentType,
   params: Parameters<IntentCallback<IntentType>>[0],
   navigation: typeof navigationRef = navigationRef,
 ) {
-  const realAppName = getEntAppName(appName);
-  if (intents[realAppName]?.[type] === undefined) {
+  if (intents[appName]?.[type] === undefined) {
     defaultIntentCallbacks[type]?.(params);
   } else {
-    intents[realAppName]?.[type]?.(params, navigation);
+    intents[appName]?.[type]?.(params, navigation);
   }
 }

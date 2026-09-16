@@ -1,8 +1,13 @@
 import { ViewProps } from 'react-native';
 
-import { PostDetailsProps } from '~/framework/modules/communities/components/announcements/post/details/types';
+import { MembershipRole } from '@edifice.io/community-client-rest-rn';
+
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { AnnouncementDetails } from '~/framework/modules/communities/service/announcements';
 
 export interface AnnouncementListItemProps {
-  announcement: PostDetailsProps<number>;
+  announcement: AnnouncementDetails<number>;
+  session: AuthActiveAccount;
   style?: ViewProps['style'];
+  userRole?: MembershipRole;
 }

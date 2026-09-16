@@ -26,7 +26,7 @@ export function useAppTheme(appName: string): IAppThemeInfo {
 /**
  * Default app theme to use as fallback
  */
-function getDefaultAppTheme(): IAppThemeInfo {
+export function getDefaultAppTheme(): IAppThemeInfo {
   const theme = require('~/app/theme').default;
 
   return {

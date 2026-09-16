@@ -21,7 +21,7 @@ import Toast from '~/framework/components/toast';
 import { LegalUrls } from '~/framework/modules/auth/model';
 import { getPlatformLegalUrls } from '~/framework/modules/auth/redux/reducer';
 import { logoutAction, revalidateTermsAction } from '~/framework/modules/auth/thunks';
-import { MediaType } from '~/framework/util/media';
+import { MediaType } from '~/framework/modules/media';
 import { tryAction } from '~/framework/util/redux/actions';
 
 // TYPES ==========================================================================================

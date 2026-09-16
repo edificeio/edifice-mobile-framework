@@ -4,24 +4,27 @@ import {
   InvitationResponseDtoWithThumbnails,
 } from '@edifice.io/community-client-rest-rn/utils';
 
-import moduleConfig from './module-config';
-
 import { IGlobalState } from '~/app/store';
 import { FolderItem } from '~/framework/components/list/paginated-document-list/types';
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 
+import moduleConfig from './module-config';
+
+/**
+ * Details of a community, shared by every screen of the module.
+ * Members are optional: screens that only need the community itself (banner image, title…) can load it without them.
+ */
+export type CommunityDetails = Pick<CommunityResponseDtoWithThumbnails, 'title' | 'image' | 'mobileThumbnails'> & {
+  courseEntId?: string;
+  totalMembers?: number;
+  membersId?: string[];
+};
+
 export interface CommunitiesStore {
   allCommunities: (InvitationResponseDtoWithThumbnails | typeof LOADING_ITEM_DATA)[];
   pendingCommunities: (InvitationResponseDtoWithThumbnails | typeof LOADING_ITEM_DATA)[];
-  communitiesDetails: Record<
-    number,
-    Pick<CommunityResponseDtoWithThumbnails, 'title' | 'image' | 'mobileThumbnails'> & {
-      courseEntId?: string;
-      totalMembers: number;
-      membersId: string[];
-    }
-  >;
+  communitiesDetails: Record<number, CommunityDetails>;
   communitiesFoldersMeta: Record<number, Record<number, Pick<FolderItem, 'title'>>>;
 }
 
@@ -88,7 +91,14 @@ export const reducer = createSessionReducer<
     },
     [communitiesActionTypes.LOAD_COMMUNITY_DETAILS]: (state, _action) => {
       const action = _action as CommunitiesAction<typeof communitiesActionTypes.LOAD_COMMUNITY_DETAILS>;
-      return { ...state, communitiesDetails: { ...state.communitiesDetails, [action.payload.id]: action.payload.data } };
+      return {
+        ...state,
+        communitiesDetails: {
+          ...state.communitiesDetails,
+          // Merged, not replaced: a screen loading only the community itself must not drop the members loaded by another one.
+          [action.payload.id]: { ...state.communitiesDetails[action.payload.id], ...action.payload.data },
+        },
+      };
     },
     [communitiesActionTypes.LOAD_COMMUNITY_FOLDERS]: (state, _action) => {
       const action = _action as CommunitiesAction<typeof communitiesActionTypes.LOAD_COMMUNITY_FOLDERS>;

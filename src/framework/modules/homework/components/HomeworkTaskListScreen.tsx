@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { useIsFocused } from '@react-navigation/native';
+import { StackActions, useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
@@ -196,7 +196,10 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
 
   addEntry = () => {
     const { navigation } = this.props;
-    navigation.navigate(homeworkRouteNames.homeworkCreate, { sourceRoute: homeworkRouteNames.homeworkTaskList });
+    navigation.navigate(homeworkRouteNames.homeworkCreate, {
+      diaryId: this.props.diaryId!,
+      navActionOnSuccess: StackActions.pop(),
+    });
     Trackers.trackEvent('Homework', 'GO TO', 'Create');
   };
 

@@ -1,87 +1,55 @@
 import { TouchableOpacityProps } from 'react-native';
 
-import { Temporal } from '@js-temporal/polyfill';
+import type { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
+import { Media } from '~/framework/modules/media';
+import { IAppBadgeInfo } from '~/framework/util/moduleTool';
 
 import type { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './component';
-
-import { EntAppNameOrSynonym } from '~/app/intents';
-import type { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
-import { IMedia } from '~/framework/util/media-deprecated';
-import { IAppBadgeInfo } from '~/framework/util/moduleTool';
 
 export type AppBadge = {
   icon: string | IAppBadgeInfo['icon'];
   color?: IAppBadgeInfo['color'];
 };
 
-interface DocumentItemBase<IdType> {
-  title: string;
+export type DocumentItem<IdType, MediaT extends Media> = MediaT & {
   id: IdType;
-  thumbnail?: string;
-  date: Temporal.Instant;
-  url: string;
-  resourceEntId: string;
-  testID?: string;
-}
-
-export interface DocumentItemEntApp<AppTypes extends EntAppNameOrSynonym, IdType> extends DocumentItemBase<IdType> {
-  appName: Exclude<AppTypes, 'workspace'>;
-}
-
-export interface DocumentItemWorkspaceBase<IdType> extends DocumentItemBase<IdType> {
-  appName: 'workspace';
-}
-
-export interface DocumentItemWorkspaceMedia<IdType> extends DocumentItemWorkspaceBase<IdType> {
-  type: Exclude<IMedia['type'], 'document'>;
-}
-
-export interface DocumentItemWorkspaceDocumentMedia<IdType> extends DocumentItemWorkspaceBase<IdType> {
-  type: Extract<IMedia['type'], 'document'>;
-  extension?: string;
-}
-
-export type DocumentItemWorkspace<IdType> = DocumentItemWorkspaceMedia<IdType> | DocumentItemWorkspaceDocumentMedia<IdType>;
-
-export type DocumentItem<AppTypes extends EntAppNameOrSynonym, IdType> =
-  | DocumentItemEntApp<AppTypes, IdType>
-  | DocumentItemWorkspace<IdType>;
+};
 
 export interface FolderItem<IdType> {
   title: string;
   id: IdType;
 }
 
-export type PaginatedDocumentListItem<AppTypes extends EntAppNameOrSynonym, IdType> =
-  | DocumentItem<AppTypes, IdType>
+export type PaginatedDocumentListItem<IdType, MediaT extends Media> =
+  | DocumentItem<IdType, MediaT>
   | FolderItem<IdType>
   | typeof FOLDER_SPACER_ITEM_DATA
   | typeof DOCUMENT_SPACER_ITEM_DATA;
 
-export interface CommonPaginatedDocumentListProps<AppTypes extends EntAppNameOrSynonym, IdType> {
-  documents: PaginatedFlashListProps<DocumentItem<AppTypes, IdType>>['data'];
+export interface CommonPaginatedDocumentListProps<IdType, MediaT extends Media> {
+  documents: PaginatedFlashListProps<DocumentItem<IdType, MediaT>>['data'];
   folders: PaginatedFlashListProps<FolderItem<IdType>>['data'];
-  overrideItemLayout?: PaginatedFlashListProps<PaginatedDocumentListItem<AppTypes, IdType>>['overrideItemLayout'];
+  overrideItemLayout?: PaginatedFlashListProps<PaginatedDocumentListItem<IdType, MediaT>>['overrideItemLayout'];
   onPressFolder?: (folder: FolderItem<IdType>, event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0]) => void;
   onPressDocument?: (
-    document: DocumentItem<AppTypes, IdType>,
+    document: DocumentItem<IdType, MediaT>,
     event: Parameters<NonNullable<TouchableOpacityProps['onPress']>>[0],
   ) => void;
   alwaysShowAppIcon?: boolean;
 }
 
-export interface PaginatedDocumentFlashListProps<AppTypes extends EntAppNameOrSynonym, IdType>
+export interface PaginatedDocumentFlashListProps<IdType, MediaT extends Media>
   extends
     Omit<
-      PaginatedFlashListProps<DocumentItem<AppTypes, IdType> | FolderItem<IdType>>,
+      PaginatedFlashListProps<DocumentItem<IdType, MediaT> | FolderItem<IdType>>,
       'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
     >,
-    CommonPaginatedDocumentListProps<AppTypes, IdType> {}
+    CommonPaginatedDocumentListProps<IdType, MediaT> {}
 
-export interface PaginatedDocumentFlatListProps<AppTypes extends EntAppNameOrSynonym, IdType>
+export interface PaginatedDocumentFlatListProps<IdType, MediaT extends Media>
   extends
     Omit<
-      PaginatedFlatListProps<PaginatedDocumentListItem<AppTypes, IdType>>,
+      PaginatedFlatListProps<PaginatedDocumentListItem<IdType, MediaT>>,
       'data' | 'keyExtractor' | 'getItemType' | 'overrideItemLayout' | 'renderItem' | 'renderPlaceholderItem'
     >,
-    CommonPaginatedDocumentListProps<AppTypes, IdType> {}
+    CommonPaginatedDocumentListProps<IdType, MediaT> {}

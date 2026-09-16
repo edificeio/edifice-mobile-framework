@@ -6,10 +6,10 @@ import { ReactVideoSourceProperties } from 'react-native-video';
 
 import { I18n } from '~/app/i18n';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { FileMedia, isPdfContent, MediaType, toURISource } from '~/framework/modules/media';
 import { IFile } from '~/framework/modules/workspace/reducer';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { extractVideoResolution } from '~/framework/util/htmlParser/content';
-import { FileMedia, isPdfContent, MediaType, toURISource } from '~/framework/util/media';
 import { INotificationMedia } from '~/framework/util/notifications';
 import { OldStorageFunctions } from '~/framework/util/storage';
 import { sessionURISource } from '~/framework/util/transport/source';

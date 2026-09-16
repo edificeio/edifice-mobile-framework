@@ -25,10 +25,10 @@ import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IAppThemeInfo, IEntcoreAp
 
 type BadgeOverridesType = Record<string, { color?: string; icon?: string }>;
 
-const resolveAppColor = (appColor?: string) =>
+export const resolveAppColor = (appColor?: string) =>
   appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor].regular : undefined;
 
-const resolveAppShades = (appColor?: string) =>
+export const resolveAppShades = (appColor?: string) =>
   appColor && theme.palette.complementary[appColor] ? theme.palette.complementary[appColor] : theme.palette.grey;
 
 const MYAPPS_FILTERS_CATEGORY_MAP: Record<string, MyAppsCategory> = {
@@ -54,7 +54,7 @@ const NOTIF_TYPE_BADGE_OVERRIDES: BadgeOverridesType = {
   'TIMELINE.NOTIFY-REPORT': { color: 'yellow', icon: 'report' },
 };
 
-const FALLBACK_BADGE: IAppBadgeInfo = {
+export const FALLBACK_BADGE: IAppBadgeInfo = {
   color: theme.palette.grey.cloudy,
   icon: 'ui-infoCircle',
 };
