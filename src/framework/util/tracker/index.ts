@@ -82,6 +82,21 @@ export abstract class AbstractTracker<OptionsType> {
     }
   }
 
+  // Handle refresh token action
+  protected async _handleRefreshToken() {
+    return false;
+  }
+
+  async handleRefreshToken() {
+    try {
+      if (this.isReady) {
+        await this._handleRefreshToken();
+      }
+    } catch (err) {
+      console.error('handleRefreshToken failed: ', (err as Error).message);
+    }
+  }
+
   // Track event procedure. Override _trackEvent() function to create custom trackers.
   protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
     return false;
@@ -275,6 +290,12 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     this.sendReportQueue();
     return willLog;
   }
+
+  async _handleRefreshToken() {
+    this.lastModulename = undefined;
+    console.debug('[Tracking] Reset lastModuleName');
+    return true;
+  }
 }
 
 export class ConcreteCrashsTracker extends AbstractTracker<undefined> {
@@ -334,6 +355,10 @@ export class ConcreteTrackerSet {
 
   async init() {
     await Promise.all(this._trackers.map(t => t.init()));
+  }
+
+  async handleRefreshToken() {
+    await Promise.all(this._trackers.map(t => t.handleRefreshToken()));
   }
 
   async setCrashAttribute(attributeName: string, attribute: string) {
@@ -396,7 +421,6 @@ export class ConcreteTrackerSet {
 
 export const Trackers = new ConcreteTrackerSet(
   new ConcreteEntcoreTracker('Entcore', undefined),
-  //new ConcreteAnalyticsTracker('Analytics', undefined),
   new ConcreteCrashsTracker('Crashs', undefined),
 );
 
