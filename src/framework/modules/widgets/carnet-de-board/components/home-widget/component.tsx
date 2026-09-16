@@ -21,6 +21,8 @@ import { CarnetDeBordWidgetPlaceholder } from './placeholder';
 
 const EMPTY_ILLUSTRATION_SIZE = getScaleImageSize(96);
 
+const OTHER_CHILDREN_ACTION = { icon: 'ui-users' as const, testID: 'carnet-de-bord-widget-children' };
+
 function Message({ illustration, text }: Readonly<{ illustration: SvgIconName; text: string }>) {
   return (
     <View style={styles.empty}>
@@ -41,57 +43,67 @@ export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: 
     [onOpenSection, selected],
   );
 
-  const otherChildrenAction = React.useMemo(() => ({ icon: 'ui-users' as const, testID: 'carnet-de-bord-widget-children' }), []);
-
   if (!loading && !error && !selected) return null;
 
   const hasPronote = !!selected && hasPronoteData(selected);
 
-  const panel = hasPronote
-    ? { background: theme.palette.complementary.yellow.pale, border: theme.palette.complementary.yellow.light }
-    : { background: theme.palette.grey.white, border: theme.palette.grey.cloudy };
+  const renderLoading = () => <CarnetDeBordWidgetPlaceholder tabs={isRelative} />;
 
-  // A pupil is alone in his own dashboard: no tabs at all, and the panel is then a plain rounded
-  // rectangle. A parent keeps his row, one tab even for an only child.
-  const selector =
-    isRelative && children.length ? (
-      <WidgetUserSelector
-        items={children}
-        selectedId={selectedId}
-        onSelect={select}
-        action={otherChildrenAction}
-        ringColor={theme.palette.complementary.yellow.regular}
-      />
-    ) : null;
+  const renderError = () => <Message illustration="illu-error" text={I18n.get('pronote-widget-error-text')} />;
+
+  const renderEmptyChildContent = () => <Message illustration="empty-timeline" text={I18n.get('pronote-nodatachild-text')} />;
+
+  const renderSections = () => (
+    <View style={styles.sections}>
+      {WIDGET_SECTIONS.map(block => (
+        <CarnetDeBordWidgetSectionCard
+          key={block.section}
+          colors={block.colors}
+          icon={block.icon}
+          title={I18n.get(block.title)}
+          value={block.getValue(selected)}
+          emptyText={I18n.get(block.emptyText)}
+          section={block.section}
+          onPress={openSection}
+        />
+      ))}
+    </View>
+  );
+
+  const renderLoaded = () => {
+    const panel = hasPronote
+      ? { background: theme.palette.complementary.yellow.pale, border: theme.palette.complementary.yellow.light }
+      : { background: theme.palette.grey.white, border: theme.palette.grey.cloudy };
+
+    // A pupil is alone in his own dashboard: no tabs at all, and the panel is then a plain rounded
+    // rectangle. A parent keeps his row, one tab even for an only child.
+    const selector =
+      isRelative && children.length ? (
+        <WidgetUserSelector
+          items={children}
+          selectedId={selectedId}
+          onSelect={select}
+          action={OTHER_CHILDREN_ACTION}
+          ringColor={theme.palette.complementary.yellow.regular}
+        />
+      ) : null;
+
+    return (
+      <Panel style={styles.body} background={panel.background} border={panel.border} header={selector}>
+        {hasPronote && selected ? renderSections() : renderEmptyChildContent()}
+      </Panel>
+    );
+  };
+
+  const renderContent = () => {
+    if (loading) return renderLoading();
+    if (error) return renderError();
+    return renderLoaded();
+  };
 
   return (
     <WidgetCard title={I18n.get('pronote-widget-title')} onExpand={onOpen} expandTestID="carnet-de-bord-widget-open">
-      {loading ? (
-        <CarnetDeBordWidgetPlaceholder tabs={isRelative} />
-      ) : error ? (
-        <Message illustration="illu-error" text={I18n.get('pronote-widget-error-text')} />
-      ) : (
-        <Panel style={styles.body} background={panel.background} border={panel.border} header={selector}>
-          {hasPronote && selected ? (
-            <View style={styles.sections}>
-              {WIDGET_SECTIONS.map(block => (
-                <CarnetDeBordWidgetSectionCard
-                  key={block.section}
-                  colors={block.colors}
-                  icon={block.icon}
-                  title={I18n.get(block.title)}
-                  value={block.getValue(selected)}
-                  emptyText={I18n.get(block.emptyText)}
-                  section={block.section}
-                  onPress={openSection}
-                />
-              ))}
-            </View>
-          ) : (
-            <Message illustration="empty-timeline" text={I18n.get('pronote-nodatachild-text')} />
-          )}
-        </Panel>
-      )}
+      {renderContent()}
     </WidgetCard>
   );
 }
