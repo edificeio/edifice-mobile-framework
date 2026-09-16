@@ -21,7 +21,7 @@
   "audience-reactions-empty": "No reactions yet",
   "audience-reactions-title": "Reactions",
   "audience-views-title": "Audience",
-  "audience-views-uniqueviews": "People saw the post",
+  "audience-views-uniqueviews": "People have seen the resource",
   "audience-views-views": "Total views",
   "audio-read-permissionblocked-text": "{{appName}} cannot access audio files. You can authorize access via the application settings in the phone settings.",
   "audio-read-permissionblocked-title": "Access to audio files denied",

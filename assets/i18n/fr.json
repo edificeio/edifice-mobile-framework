@@ -21,7 +21,7 @@
   "audience-reactions-empty": "Pas encore de réactions",
   "audience-reactions-title": "Réactions",
   "audience-views-title": "Audience",
-  "audience-views-uniqueviews": "Personnes ont vu le billet",
+  "audience-views-uniqueviews": "Personnes ont vu la ressource",
   "audience-views-views": "Vues au total",
   "audio-read-permissionblocked-text": "{{appName}} ne peut pas accéder aux fichiers audio. Vous pouvez autoriser l'accès via les réglages de l'application dans les paramètres du téléphone.",
   "audio-read-permissionblocked-title": "Accès aux fichiers audio refusé",
