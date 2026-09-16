@@ -58,10 +58,14 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
   const filterSettings = useSelector(state => timelineConfig.getState(state).notifSettings.notifFilterSettings.data);
   const knownFilterSettings = React.useRef(filterSettings);
 
+  const [applyingFilters, setApplyingFilters] = React.useState<boolean>(false);
+
   React.useEffect(() => {
     if (knownFilterSettings.current === filterSettings) return;
     knownFilterSettings.current = filterSettings;
-    reload();
+
+    setApplyingFilters(true);
+    reload().finally(() => setApplyingFilters(false));
   }, [filterSettings, reload]);
 
   const { onRefresh, refreshing } = useRefresh(reload);
@@ -151,6 +155,10 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
 
   const openFilters = React.useCallback(() => navParent.navigate(ModalsRouteNames.NotificationFilters), [navParent]);
 
+  const isListLoading = notifications.isPristine || reloading || applyingFilters;
+
+  const isLoadingNextPage = notifications.isFetching && !refreshing && !isListLoading;
+
   return (
     <View style={UI_STYLES.flex1}>
       <View style={styles.filterBar}>
@@ -167,8 +175,8 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
       </View>
       <NotificationList
         notifications={notifications.data}
-        loading={notifications.isPristine || reloading}
-        loadingMore={notifications.isFetching && !notifications.isPristine && !refreshing && !reloading}
+        loading={isListLoading}
+        loadingMore={isLoadingNextPage}
         refreshing={refreshing}
         onRefresh={onRefresh}
         onEndReached={onEndReached}
