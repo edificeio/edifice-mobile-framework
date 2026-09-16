@@ -294,10 +294,10 @@ export function CommentsThread({
       closed: -formInset,
       opened: Platform.select({
         default: COMMENT_FORM_OVERSCROLL_SIZE - 3 * formInset, // Seriously I don't know but it works
-        ios: navBarHeight - styles.stickyCommentWrapper.paddingBottom + COMMENT_FORM_OVERSCROLL_SIZE - bottomInset,
+        ios: navBarHeight - styles.stickyCommentWrapper.paddingBottom + COMMENT_FORM_OVERSCROLL_SIZE - formInset,
       }),
     }),
-    [bottomInset, formInset, navBarHeight],
+    [formInset, navBarHeight],
   );
 
   return (
