@@ -1,8 +1,7 @@
 import { getScaleWidth } from '~/framework/components/constants';
 
-// These are not icons, spacing, or radii: they define an avatar, a round container,
-// and skeleton widths. Matching `UI_SIZES` values are coincidental; reusing them
-// would create an unnecessary dependency on that scale.
+// Sizes of the selector itself, not icons or spacings. Where one matches a `UI_SIZES` value, it is
+// a coincidence, and following it would tie this row to a scale it does not belong to.
 export const WIDGET_USER_SELECTOR_HEIGHT = getScaleWidth(38);
 export const WIDGET_USER_SELECTOR_AVATAR_SIZE = getScaleWidth(24);
 export const WIDGET_USER_SELECTOR_ITEM_MAX_WIDTH = getScaleWidth(120);
