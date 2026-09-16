@@ -5,7 +5,7 @@ import { ModuleScreenProps } from '~/app/navigation/types';
 import { modalScreenOptions } from '~/app/navigation/util';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { withSession } from '~/framework/modules/auth/util';
-import CommentsThreadTemplate, { CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
+import CommentsThread, { CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
 import { useCommentsThreadStore } from '~/framework/modules/comments/store';
 
 export const CommentsThreadReplyScreenOptions = modalScreenOptions<'comments/reply'>('modal', () => ({
@@ -21,7 +21,6 @@ export const CommentsThreadReplyScreen = withSession<ModuleScreenProps<'comments
   // Setup zustand store for reply screen
   const _data = useCommentsThreadStore(s => s.data);
   const refreshControl = useCommentsThreadStore(s => s.refreshControl);
-  const resourceId = useCommentsThreadStore(s => s.resourceId);
   const _onSubmit = useCommentsThreadStore(s => s.onSubmit);
   const onEdit = useCommentsThreadStore(s => s.onEdit);
   const onDelete = useCommentsThreadStore(s => s.onDelete);
@@ -35,12 +34,12 @@ export const CommentsThreadReplyScreen = withSession<ModuleScreenProps<'comments
 
   const data = React.useMemo(() => _data?.filter(item => item.id === commentId), [_data, commentId]);
 
-  if (!data || !resourceId) {
+  if (!data) {
     return <EmptyContentScreen />;
   }
 
   return (
-    <CommentsThreadTemplate
+    <CommentsThread
       allowReplies={false}
       navigation={navigation}
       route={route}

@@ -4,7 +4,7 @@ import { Alert, FlatList, Platform, TextInput, View } from 'react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { KeyboardChatScrollView, useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
-import Animated, { useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Animated, { isSharedValue, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
@@ -26,13 +26,13 @@ import { CommentsThread as CommentsThreadComponents } from './item';
 import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
 import { CommentsThreadInternals, CommentsThreadProps } from './types';
 
-export function CommentsThreadTemplate({
+export function CommentsThread({
   allowReplies = DEFAULT_CONFIG.allowReplies,
   alwaysShowCommentField = false,
   canAddComment: _canAddComment,
-  children,
   data,
   focusItem,
+  ListHeaderComponent: UserListHeaderComponent,
   navigation,
   onDelete,
   onEdit,
@@ -115,20 +115,26 @@ export function CommentsThreadTemplate({
     [bottomInset, navBarHeight],
   );
 
-  const resourceElement = React.useMemo(() => {
-    return (
-      <View
-        onLayout={({
-          nativeEvent: {
-            layout: { height },
-          },
-        }) => {
-          setMeasuredResourceHeight(height);
-        }}>
-        {children}
-      </View>
-    );
-  }, [children]);
+  const ListHeaderComponent = React.useCallback<React.ComponentType & NonNullable<CommentsThreadProps['ListHeaderComponent']>>(
+    (headerProps: any) => {
+      const Resolved = isSharedValue<FlatListProps<CommentsThreadInternals.Item>['ListHeaderComponent']>(UserListHeaderComponent)
+        ? UserListHeaderComponent.value
+        : UserListHeaderComponent;
+      return (
+        <View
+          onLayout={({
+            nativeEvent: {
+              layout: { height },
+            },
+          }) => {
+            setMeasuredResourceHeight(height);
+          }}>
+          {!!Resolved && (React.isValidElement(Resolved) ? Resolved : <Resolved {...headerProps} />)}
+        </View>
+      );
+    },
+    [UserListHeaderComponent],
+  );
 
   const onFocus = React.useCallback(() => {
     setNewCommentIsFocused(true);
@@ -296,7 +302,7 @@ export function CommentsThreadTemplate({
         data={flatData}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
-        ListHeaderComponent={resourceElement}
+        ListHeaderComponent={ListHeaderComponent}
         ListFooterComponent={<View style={listFooterStyle} />}
         scrollIndicatorInsets={scrollIndicatorInsets}
         keyboardShouldPersistTaps="handled"

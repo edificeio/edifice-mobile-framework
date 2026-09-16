@@ -1,7 +1,9 @@
-import { FlatList, FlatListProps, ListRenderItemInfo, StyleProp, ViewStyle } from 'react-native';
+import { ComponentProps } from 'react';
+import { FlatList, ListRenderItemInfo, StyleProp, ViewStyle } from 'react-native';
 
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import Animated from 'react-native-reanimated';
 
 import { ChatTextAreaProps } from '~/framework/components/inputs/text2';
 import * as CommentsThread from '~/framework/modules/comments/types';
@@ -13,12 +15,10 @@ export interface CommentsThreadConfig {
   allowReplies: boolean;
 }
 
+interface InheritedListProps extends Omit<ComponentProps<Animated.FlatList<CommentsThreadInternals.Item>>, 'data' | 'renderItem'> {}
+
 export interface CommentsThreadProps
-  extends
-    Pick<NativeStackScreenProps<ParamListBase>, 'navigation' | 'route'>,
-    React.PropsWithChildren,
-    Partial<CommentsThreadConfig>,
-    Pick<FlatListProps<CommentsThreadInternals.Item>, 'refreshControl'> {
+  extends Pick<NativeStackScreenProps<ParamListBase>, 'navigation' | 'route'>, Partial<CommentsThreadConfig>, InheritedListProps {
   canAddComment: boolean;
   alwaysShowCommentField?: boolean;
   style?: StyleProp<ViewStyle>;

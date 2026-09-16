@@ -19,4 +19,4 @@ export default new CoreModule<'comments', { 'comments/reply': { id: CommentItem[
 
 setModalModeForRoutes(['comments/reply']);
 
-export { ResourceWithComments } from './templates/resource-with-comments';
+export * from './templates/resource-with-comments';
