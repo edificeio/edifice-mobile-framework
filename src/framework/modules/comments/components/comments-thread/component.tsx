@@ -1,10 +1,16 @@
 import * as React from 'react';
-import { Alert, FlatList, Platform, TextInput, View } from 'react-native';
+import { Alert, Platform, TextInput, View } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { KeyboardChatScrollView, useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
-import Animated, { isSharedValue, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedRef,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useComposedEventHandler,
+  useSharedValue,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
@@ -16,8 +22,10 @@ import { FlatListProps } from '~/framework/components/list/flat-list';
 import { Svg } from '~/framework/components/picture';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import { usePrevious } from '~/framework/hooks/previous';
+import { useSyncRef } from '~/framework/hooks/ref';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
+import { unwrapAnimatedProp } from '~/framework/util/reanimated';
 
 import { CommentsThreadContext, commentsThreadContextInitialData, commentsThreadContextReducer } from './context';
 import { CommentsThreadAddForm } from './form';
@@ -36,7 +44,9 @@ export function CommentsThread({
   navigation,
   onDelete,
   onEdit,
+  onScroll: _onScroll,
   onSubmit,
+  ref,
   refreshControl,
   repliesPageSize,
   repliesStartSize,
@@ -62,7 +72,7 @@ export function CommentsThread({
   const [measuredListHeight, setMeasuredListHeight] = React.useState(0);
 
   // Refs
-  const listRef = React.useRef<FlatList<CommentsThreadInternals.Item>>(null);
+  const listRef = useAnimatedRef<Animated.FlatList<CommentsThreadInternals.Item>>();
   const inlineEditRef = React.useRef<TextInput>(null);
 
   // Add comment Input state
@@ -73,9 +83,10 @@ export function CommentsThread({
   // Scroll animation
   const { height: animatedKeyboardHeight } = useReanimatedKeyboardAnimation();
   const animatedScrollOffset = useSharedValue(0);
-  const scrollHandler = useAnimatedScrollHandler(event => {
+  const onScrollInternal = useAnimatedScrollHandler(event => {
     animatedScrollOffset.value = event.contentOffset.y;
   });
+  const onScroll = useComposedEventHandler([onScrollInternal, unwrapAnimatedProp(_onScroll) ?? null]);
   const inputStyle = useAnimatedStyle(() => {
     const translateValue =
       -animatedScrollOffset.value -
@@ -117,9 +128,7 @@ export function CommentsThread({
 
   const ListHeaderComponent = React.useCallback<React.ComponentType & NonNullable<CommentsThreadProps['ListHeaderComponent']>>(
     (headerProps: any) => {
-      const Resolved = isSharedValue<FlatListProps<CommentsThreadInternals.Item>['ListHeaderComponent']>(UserListHeaderComponent)
-        ? UserListHeaderComponent.value
-        : UserListHeaderComponent;
+      const Resolved = unwrapAnimatedProp(UserListHeaderComponent);
       return (
         <View
           onLayout={({
@@ -250,7 +259,7 @@ export function CommentsThread({
         listRef={listRef}
       />
     ),
-    [allowReplies, canAddComment, onEdit, onPressDelete, onPressEdit, onPressReply, unfoldReplies],
+    [allowReplies, canAddComment, listRef, onEdit, onPressDelete, onPressEdit, onPressReply, unfoldReplies],
   );
 
   const keyExtractor = React.useCallback<NonNullable<FlatListProps<CommentsThreadInternals.Item>['keyExtractor']>>(item => {
@@ -294,10 +303,10 @@ export function CommentsThread({
   return (
     <CommentsThreadContext value={context}>
       <Animated.FlatList
-        ref={listRef}
+        ref={useSyncRef(listRef, ref)}
         onLayout={onLayout}
         keyboardDismissMode="interactive"
-        onScroll={scrollHandler}
+        onScroll={onScroll}
         renderScrollComponent={renderScrollComponent}
         data={flatData}
         renderItem={renderItem}

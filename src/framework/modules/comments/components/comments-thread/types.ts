@@ -3,7 +3,7 @@ import { FlatList, ListRenderItemInfo, StyleProp, ViewStyle } from 'react-native
 
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Animated from 'react-native-reanimated';
+import Animated, { AnimatedRef, ScrollHandlerProcessed, SharedValue } from 'react-native-reanimated';
 
 import { ChatTextAreaProps } from '~/framework/components/inputs/text2';
 import * as CommentsThread from '~/framework/modules/comments/types';
@@ -15,7 +15,16 @@ export interface CommentsThreadConfig {
   allowReplies: boolean;
 }
 
-interface InheritedListProps extends Omit<ComponentProps<Animated.FlatList<CommentsThreadInternals.Item>>, 'data' | 'renderItem'> {}
+interface InheritedListProps extends Omit<
+  ComponentProps<Animated.FlatList<CommentsThreadInternals.Item>>,
+  'data' | 'renderItem' | 'onScroll'
+> {
+  // Kept explicit (rather than inherited as-is) so the intent is clear: this is what `useAnimatedScrollHandler`
+  // returns, i.e. what any caller will naturally pass. Reanimated types it with a plain `NativeSyntheticEvent`
+  // for JSX-assignment compatibility, even though it actually receives a `ReanimatedScrollEvent` at runtime —
+  // CommentsThread casts back to the honest shape internally, right where it invokes it with the real event.
+  onScroll?: ScrollHandlerProcessed | SharedValue<ScrollHandlerProcessed | undefined>;
+}
 
 export interface CommentsThreadProps
   extends Pick<NativeStackScreenProps<ParamListBase>, 'navigation' | 'route'>, Partial<CommentsThreadConfig>, InheritedListProps {
@@ -94,7 +103,7 @@ export namespace CommentsThreadInternals {
     onPressReply?: (item: CommentsThreadInternals.CommentItem, index: number) => void;
     onSendEdit?: CommentsThreadProps['onEdit'];
     inputRef?: ChatTextAreaProps['ref'];
-    listRef?: React.RefObject<FlatList<CommentsThreadInternals.Item> | null>;
+    listRef?: AnimatedRef<Animated.FlatList<CommentsThreadInternals.Item>>;
     onPressEdit?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
     onPressDelete?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
   }

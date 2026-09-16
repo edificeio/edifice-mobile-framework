@@ -4,6 +4,13 @@ import { LayoutChangeEvent, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashListProps } from '@shopify/flash-list';
 import { FlatList } from 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedRef,
+  useAnimatedScrollHandler,
+  useDerivedValue,
+  useScrollOffset,
+  useSharedValue,
+} from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
