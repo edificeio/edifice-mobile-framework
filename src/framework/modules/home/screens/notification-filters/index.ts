@@ -1,5 +1,2 @@
-import { NotificationFiltersScreen } from './screen';
-
-export default NotificationFiltersScreen;
-export { NotificationFiltersScreen, NotificationFiltersScreenOptions } from './screen';
+export { NotificationFiltersScreen, NotificationFiltersScreen as default, NotificationFiltersScreenOptions } from './screen';
 export type { NotificationFiltersScreenProps } from './types';

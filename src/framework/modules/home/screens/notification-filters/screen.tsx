@@ -17,8 +17,16 @@ import { useNotificationFiltersController } from './controller';
 import styles from './styles';
 import { NotificationFilterRowProps, NotificationFiltersScreenProps } from './types';
 
+const SaveFiltersAction = ({ disabled, onPress }: Readonly<{ disabled: boolean; onPress?: () => void }>) => (
+  <NavBarAction icon="ui-check" disabled={disabled} onPress={onPress} testID="notification-filters-save" />
+);
+
+const saveFiltersAction = (disabled: boolean, onPress?: () => void) => () => (
+  <SaveFiltersAction disabled={disabled} onPress={onPress} />
+);
+
 export const NotificationFiltersScreenOptions = modalScreenOptions('fullScreenModal', () => ({
-  headerRight: () => <NavBarAction icon="ui-check" disabled testID="notification-filters-save" />,
+  headerRight: saveFiltersAction(true),
   title: I18n.get('timeline-filters-title'),
 }));
 
@@ -60,11 +68,7 @@ export function NotificationFiltersScreen({ navigation }: Readonly<NotificationF
   const listContentStyle = React.useMemo(() => ({ paddingBottom: UI_SIZES.spacing.big + bottom }), [bottom]);
 
   React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <NavBarAction icon="ui-check" disabled={!canSave} onPress={saveFilters} testID="notification-filters-save" />
-      ),
-    });
+    navigation.setOptions({ headerRight: saveFiltersAction(!canSave, saveFilters) });
   }, [canSave, navigation, saveFilters]);
 
   const renderItem = React.useCallback(
