@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-09-07 15:32:24",
-  "notes": "update(stack): yarn cache update\nupdate(stack): yarn cache update\nrelease: 1.17.6-rc.2(1170607)",
-  "version": "1.17.6-rc.3(1170608)",
+  "last": "2026-09-16 11:50:16",
+  "notes": "update(stack): yarn cache update\nUpdated translations from Phrase (332)\nrelease: 1.17.6-rc.3(1170608)",
+  "version": "1.17.6-rc.4(1170609)",
   "track": "1.17.6",
-  "order": "rc.3"
+  "order": "rc.4"
 }
