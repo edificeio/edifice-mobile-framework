@@ -6,6 +6,7 @@ import {
   InvitationClient,
   InvitationFields,
   InvitationStatus,
+  InvitationTargetType,
   SearchInvitationDto,
 } from '@edifice.io/community-client-rest-rn';
 import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
@@ -109,6 +110,7 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
         fields: INVITATION_FIELDS,
         page: page + 1,
         size: PAGE_SIZE,
+        targetType: InvitationTargetType.ALL,
       };
 
       const [allRes, pendingRes, totalPending] = await Promise.all([
@@ -124,6 +126,7 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
         accountApi(session, moduleConfig, InvitationClient).getUserInvitations({
           size: 1,
           status: InvitationStatus.PENDING,
+          targetType: InvitationTargetType.ALL,
         }),
       ]);
 
