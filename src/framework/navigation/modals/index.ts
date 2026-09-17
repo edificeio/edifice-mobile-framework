@@ -31,6 +31,7 @@ export enum ModalsRouteNames {
   RichTextEditor = 'rich-editor',
   SplashAds = 'splashads',
   FavoritesManagement = 'favorites-management',
+  NotificationFilters = 'notification-filters',
 }
 
 export interface IModalsNavigationParams extends ParamListBase {
@@ -46,4 +47,5 @@ export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.RichTextEditor]: RichEditorFormReduxNavParams;
   [ModalsRouteNames.SplashAds]: SplashadsScreenNavParams;
   [ModalsRouteNames.FavoritesManagement]: undefined;
+  [ModalsRouteNames.NotificationFilters]: undefined;
 }

@@ -4,6 +4,7 @@ import { RefreshControl } from 'react-native';
 import { MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
 
 import { I18n } from '~/app/i18n';
+import { UI_STYLES } from '~/framework/components/constants';
 import ScrollView from '~/framework/components/scrollView';
 import { withSession } from '~/framework/modules/auth/util';
 import { FlashMessageList, NewsSection } from '~/framework/modules/home/components';
@@ -46,7 +47,11 @@ export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ naviga
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.content} refreshControl={refreshControl} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={UI_STYLES.flex1}
+      contentContainerStyle={styles.content}
+      refreshControl={refreshControl}
+      showsVerticalScrollIndicator={false}>
       <FlashMessageList
         flashMessages={flashMessages}
         loading={pristine || refreshing || reloading}
