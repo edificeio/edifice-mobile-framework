@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-09-16 17:56:47",
-  "notes": "Merge remote-tracking branch 'origin/dev/1.17.7' into dev/peda\nfeat(communities): PEDAGO-2901, PEDAGO-4154 adding discussion header\nfix: mishandling keyboard height in comments-thread\nMerge remote-tracking branch 'origin/dev/1.17.7' into dev/peda\nfix: integrate comments-thread with reanimated props\nSquashed commit of the following:\nfix(build): iOS 27 && Xcode 27 stuff\nchore: expose list props over comments-thread\nchore(i18n): change phrase sync branch\nfix: sonarqube audit\nbuild: fix build for xcode 27\nfeat: PEDAGO-2200 textinput + comments + integration in wiki\nfix(build): iOS 27 && Xcode 27 stuff\nchore: ENABLING-583 rename avatar sizes to the one used in the web\nfix(blog): PEDAGO-4294 adding fallback for dateless resources\nfeat(datas): ENABLING-1197, reset lastModuleName on refresh token\nMerge branch 'dev/1.17.6' into dev/1.17.7\nfeat(communities): PEDAGO-4062 adding filters on announcements list\nrelease: 1.17.6-rc.3(1170608)\nupdate(stack): yarn cache update",
-  "version": "1.17.7-peda.2(1170702)",
+  "last": "2026-09-17 15:43:51",
+  "notes": "fix(communities): PEDAGO-4325 refresh communities list on focus\nfix(comments): better handling input position over keyboard\nfix(communities): PEDAGO-4326 pending invitations for groups\nMerge remote-tracking branch 'origin/dev/1.17.7' into dev/peda\nchore(debug): enable android studio avd debugging\nrelease: 1.17.7-peda.2(1170702)",
+  "version": "1.17.7-peda.3(1170703)",
   "track": "1.17.7",
-  "order": "peda.2"
+  "order": "peda.3"
 }
