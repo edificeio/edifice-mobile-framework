@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Alert, Platform, TextInput, View } from 'react-native';
+import { Alert, TextInput, View } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { useHeaderHeight } from '@react-navigation/elements';
-import { KeyboardChatScrollView, useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
+import { KeyboardChatScrollView } from 'react-native-keyboard-controller';
 import Animated, {
   FlatListPropsWithLayout,
   useAnimatedRef,
@@ -32,7 +31,7 @@ import { CommentsThreadContext, commentsThreadContextInitialData, commentsThread
 import { CommentsThreadAddForm } from './form';
 import { DEFAULT_CONFIG, useCommentsThreadData } from './hooks';
 import { CommentsThread as CommentsThreadComponents } from './item';
-import styles, { COMMENT_FORM_OVERSCROLL_SIZE } from './styles';
+import styles from './styles';
 import { CommentsThreadInternals, CommentsThreadProps } from './types';
 
 export function CommentsThread({
@@ -67,10 +66,9 @@ export function CommentsThread({
   });
 
   // Screen layout
-  const navBarHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight() * (isModalModeOnThisRoute(route.name) ? 0 : 1);
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const formInset = Math.max(bottomInset - tabBarHeight, 0);
+  const formBottomInset = Math.max(bottomInset - tabBarHeight, 0);
   const [measuredResourceHeight, setMeasuredResourceHeight] = React.useState(0);
   const [measuredListHeight, setMeasuredListHeight] = React.useState(0);
 
@@ -84,20 +82,13 @@ export function CommentsThread({
   const alwaysShowNewCommentForm = alwaysShowCommentField || isNewCommentFocused || newCommentValue.length > 0;
 
   // Scroll animation
-  const { height: animatedKeyboardHeight } = useReanimatedKeyboardAnimation();
   const animatedScrollOffset = useSharedValue(0);
   const onScrollInternal = useAnimatedScrollHandler(event => {
     animatedScrollOffset.value = event.contentOffset.y;
   });
   const onScroll = useComposedEventHandler([onScrollInternal, unwrapAnimatedProp(_onScroll) ?? null]);
   const inputStyle = useAnimatedStyle(() => {
-    const translateValue =
-      -animatedScrollOffset.value -
-      measuredListHeight +
-      measuredResourceHeight +
-      newCommentHeight +
-      Math.max(-animatedKeyboardHeight.value, tabBarHeight) -
-      tabBarHeight;
+    const translateValue = -animatedScrollOffset.value - measuredListHeight + measuredResourceHeight + newCommentHeight;
     return {
       bottom: 0,
       left: 0,
@@ -109,24 +100,23 @@ export function CommentsThread({
         },
       ],
     };
-  }, [measuredListHeight, measuredResourceHeight, newCommentHeight, alwaysShowNewCommentForm, bottomInset]);
+  }, [measuredListHeight, measuredResourceHeight, newCommentHeight, alwaysShowNewCommentForm]);
+
+  const stickyViewOffset = React.useMemo(
+    () => ({
+      closed: -formBottomInset,
+      opened: tabBarHeight,
+    }),
+    [tabBarHeight, formBottomInset],
+  );
 
   const renderScrollComponent = React.useCallback<
     NonNullable<FlatListProps<CommentsThreadInternals.Item>['renderScrollComponent']>
   >(
     scrollProps => (
-      <KeyboardChatScrollView
-        {...scrollProps}
-        keyboardLiftBehavior="whenAtEnd"
-        offset={
-          navBarHeight -
-          styles.stickyCommentWrapper.paddingBottom +
-          COMMENT_FORM_OVERSCROLL_SIZE -
-          (Platform.OS === 'android' ? bottomInset : 0)
-        }
-      />
+      <KeyboardChatScrollView {...scrollProps} keyboardLiftBehavior="whenAtEnd" offset={tabBarHeight + formBottomInset} />
     ),
-    [bottomInset, navBarHeight],
+    [tabBarHeight, formBottomInset],
   );
 
   const ListHeaderComponent = React.useCallback<React.ComponentType & NonNullable<CommentsThreadProps['ListHeaderComponent']>>(
@@ -166,9 +156,9 @@ export function CommentsThread({
 
   const listFooterStyle = React.useMemo(
     () => ({
-      height: newCommentHeight + formInset,
+      height: newCommentHeight + formBottomInset,
     }),
-    [formInset, newCommentHeight],
+    [formBottomInset, newCommentHeight],
   );
 
   const ListFooterComponent = React.useCallback<React.ComponentType & NonNullable<CommentsThreadProps['ListFooterComponent']>>(
@@ -304,17 +294,6 @@ export function CommentsThread({
   }
 
   // Note: FlatList is used instead of FlashList because it doesn't unmount clipped input elements, allowing scrolling to current editing item from everwhere.
-
-  const stickyViewOffset = React.useMemo(
-    () => ({
-      closed: -formInset,
-      opened: Platform.select({
-        default: COMMENT_FORM_OVERSCROLL_SIZE - 3 * formInset, // Seriously I don't know but it works
-        ios: navBarHeight - styles.stickyCommentWrapper.paddingBottom + COMMENT_FORM_OVERSCROLL_SIZE - formInset,
-      }),
-    }),
-    [formInset, navBarHeight],
-  );
 
   return (
     <CommentsThreadContext value={context}>

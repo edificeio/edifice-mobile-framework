@@ -4,8 +4,6 @@ import theme from '~/app/theme';
 import { AvatarSizes } from '~/framework/components/avatar/styles';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
-export const COMMENT_FORM_OVERSCROLL_SIZE = UI_SIZES.spacing.huge;
-
 export default StyleSheet.create({
   buttonCancel: {
     color: theme.palette.grey.black,
@@ -181,9 +179,11 @@ export default StyleSheet.create({
     flex: 0,
     flexDirection: 'row',
     gap: UI_SIZES.spacing.minor,
-    marginBottom: -COMMENT_FORM_OVERSCROLL_SIZE,
-    paddingBottom: UI_SIZES.spacing.medium + COMMENT_FORM_OVERSCROLL_SIZE,
+    paddingBottom: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingTop: UI_SIZES.spacing.medium,
+  },
+  stickyOverscroll: {
+    backgroundColor: theme.ui.background.card,
   },
 });

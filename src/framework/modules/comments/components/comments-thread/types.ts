@@ -1,5 +1,5 @@
 import { ComponentProps } from 'react';
-import { FlatList, ListRenderItemInfo, StyleProp, ViewStyle } from 'react-native';
+import { ListRenderItemInfo, StyleProp, ViewStyle } from 'react-native';
 
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';

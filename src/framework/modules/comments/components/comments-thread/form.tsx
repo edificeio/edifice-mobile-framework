@@ -4,6 +4,7 @@ import { ListRenderItemInfo, StyleProp, View, ViewStyle } from 'react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { KeyboardStickyView, KeyboardStickyViewProps, useKeyboardState } from 'react-native-keyboard-controller';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -36,6 +37,7 @@ export const CommentsThreadAddForm = ({
 }) => {
   const [{ newCommentValue }, dispatch] = React.useContext(CommentsThreadContext);
   const [isSending, setIsSending] = React.useState(false);
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const onPress = React.useCallback(async () => {
     if (!onSubmit) return;
     try {
@@ -50,6 +52,12 @@ export const CommentsThreadAddForm = ({
   }, [dispatch, newCommentValue, onSubmit]);
   const session = useSelector(selectors.session);
 
+  const overscrollSize = useKeyboardState(s => s.height) + bottomInset;
+  const stickyOverscrollStyle = React.useMemo(
+    () => [styles.stickyOverscroll, { marginBottom: -overscrollSize, paddingBottom: overscrollSize }],
+    [overscrollSize],
+  );
+
   return (
     <Animated.View
       style={style}
@@ -59,7 +67,7 @@ export const CommentsThreadAddForm = ({
         },
         [dispatch],
       )}>
-      <KeyboardStickyView offset={stickyOffset}>
+      <KeyboardStickyView offset={stickyOffset} style={stickyOverscrollStyle}>
         <View style={styles.stickyCommentWrapper}>
           <SingleAvatar size="md" userId={session?.user.id} />
           <ChatTextArea
