@@ -45,6 +45,7 @@
 		F0625946264574A4001AE555 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F062593E26454B14001AE555 /* InfoPlist.strings */; };
 		F069BA6F2E86F29D00B3BA52 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0551DBC2E86CC62002F1F4E /* AppDelegate.swift */; };
 		F07FC1AF2F7A8FC300E5AE51 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F07FC1AE2F7A8FC300E5AE51 /* LaunchScreen.storyboard */; };
+		F0815D0530597481009E13A5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0815D0430597481009E13A5 /* SceneDelegate.swift */; };
 		F0AC1B422BDAA6A900563199 /* help_center_article_style.css in Resources */ = {isa = PBXBuildFile; fileRef = F0AC1B412BDAA6A900563199 /* help_center_article_style.css */; };
 		F0B3BE252F782D95009E69F9 /* ZendeskUnified.mm in Sources */ = {isa = PBXBuildFile; fileRef = F0B3BE232F782D95009E69F9 /* ZendeskUnified.mm */; };
 		F0B3BE272F782D95009E69F9 /* BuildInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = F0B3BE222F782D95009E69F9 /* BuildInfo.mm */; };
@@ -115,6 +116,7 @@
 		F062593F26454B17001AE555 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062594026454B18001AE555 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F07FC1AE2F7A8FC300E5AE51 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = appe/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F0815D0430597481009E13A5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = appe/SceneDelegate.swift; sourceTree = "<group>"; };
 		F0AC1B412BDAA6A900563199 /* help_center_article_style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = help_center_article_style.css; path = appe/help_center_article_style.css; sourceTree = "<group>"; };
 		F0B3BE222F782D95009E69F9 /* BuildInfo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = BuildInfo.mm; path = appe/BuildInfo.mm; sourceTree = "<group>"; };
 		F0B3BE232F782D95009E69F9 /* ZendeskUnified.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = ZendeskUnified.mm; path = appe/ZendeskUnified.mm; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 		13B07FAE1A68108700A75B9A /* appe */ = {
 			isa = PBXGroup;
 			children = (
+				F0815D0430597481009E13A5 /* SceneDelegate.swift */,
 				F0551DBC2E86CC62002F1F4E /* AppDelegate.swift */,
 				745D891922DE0F770038F1FA /* appe.entitlements */,
 				74660EAB247BE64B00F74D20 /* appe-Bridging-Header.h */,
@@ -612,6 +615,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0815D0530597481009E13A5 /* SceneDelegate.swift in Sources */,
 				F0B3BE252F782D95009E69F9 /* ZendeskUnified.mm in Sources */,
 				F014BC672F7865EB003559F5 /* ZendeskUnifiedImpl.swift in Sources */,
 				F0B3BE272F782D95009E69F9 /* BuildInfo.mm in Sources */,
@@ -725,6 +729,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+				__DIAGNOSE_INVALID_DEPLOYMENT_TARGET_AS_ERROR = NO;
 			};
 			name = Debug;
 		};
@@ -815,6 +820,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "appe-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+				__DIAGNOSE_INVALID_DEPLOYMENT_TARGET_AS_ERROR = NO;
 			};
 			name = Release;
 		};
