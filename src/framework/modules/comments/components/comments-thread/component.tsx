@@ -21,7 +21,6 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { FlatListProps } from '~/framework/components/list/flat-list';
 import { Svg } from '~/framework/components/picture';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
-import { usePrevious } from '~/framework/hooks/previous';
 import { useSyncRef } from '~/framework/hooks/ref';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
@@ -33,6 +32,9 @@ import { DEFAULT_CONFIG, useCommentsThreadData } from './hooks';
 import { CommentsThread as CommentsThreadComponents } from './item';
 import styles from './styles';
 import { CommentsThreadInternals, CommentsThreadProps } from './types';
+
+/** Bounded so that a target which never gets laid out can't have the auto-scroll spin frame after frame. */
+const MAX_FOCUS_SCROLL_ATTEMPTS = 3;
 
 export function CommentsThread({
   allowReplies = DEFAULT_CONFIG.allowReplies,
@@ -46,6 +48,7 @@ export function CommentsThread({
   onDelete,
   onEdit,
   onScroll: _onScroll,
+  onScrollToIndexFailed: _onScrollToIndexFailed,
   onSubmit,
   ref,
   refreshControl,
@@ -281,17 +284,43 @@ export function CommentsThread({
   }, []);
 
   // auto-scroll
-  const previousFocusItem = usePrevious(focusItem);
-  if (focusItem && previousFocusItem !== focusItem) {
-    const scrollToIndex = flatData.findIndex(e => 'id' in e && e.id === focusItem);
-    scrollToIndex !== -1 &&
-      listRef.current?.scrollToIndex({
-        animated: true,
-        index: scrollToIndex,
-        viewOffset: newCommentHeight,
-        viewPosition: 1,
-      });
-  }
+  const scrolledFocusItemRef = React.useRef<CommentsThreadProps['focusItem']>(undefined);
+  const scrollToIndexFailedRef = React.useRef(false);
+
+  /**
+   * `scrollToIndex` calls it synchronously when the target cell isn't laid out yet : it doubles as the "did the
+   * scroll actually happen ?" signal, and its mere presence keeps `VirtualizedList` from throwing.
+   */
+  const onScrollToIndexFailed = React.useCallback<
+    NonNullable<FlatListProps<CommentsThreadInternals.Item>['onScrollToIndexFailed']>
+  >(
+    info => {
+      scrollToIndexFailedRef.current = true;
+      unwrapAnimatedProp(_onScrollToIndexFailed)?.(info);
+    },
+    [_onScrollToIndexFailed],
+  );
+
+  React.useEffect(() => {
+    if (!focusItem || scrolledFocusItemRef.current === focusItem) return;
+    const index = flatData.findIndex(e => 'id' in e && e.id === focusItem);
+    if (index === -1) return; // Not in the list (yet) : a further render will retry.
+
+    // Scrolling from a frame callback rather than from the render phase lets the list commit the item first,
+    // otherwise its index is out of the range the list knows about, and lay it out, otherwise it can't be reached.
+    let attempts = 0;
+    let frame: number;
+    const scroll = () => {
+      attempts += 1;
+      scrollToIndexFailedRef.current = false;
+      listRef.current?.scrollToIndex({ animated: true, index, viewOffset: newCommentHeight, viewPosition: 1 });
+      // The item is marked as focused once the scroll stuck, so that a missed one is retried instead of lost.
+      if (scrollToIndexFailedRef.current && attempts < MAX_FOCUS_SCROLL_ATTEMPTS) frame = requestAnimationFrame(scroll);
+      else scrolledFocusItemRef.current = focusItem;
+    };
+    frame = requestAnimationFrame(scroll);
+    return () => cancelAnimationFrame(frame);
+  }, [flatData, focusItem, listRef, newCommentHeight]);
 
   // Note: FlatList is used instead of FlashList because it doesn't unmount clipped input elements, allowing scrolling to current editing item from everwhere.
 
@@ -303,6 +332,7 @@ export function CommentsThread({
         onLayout={onLayout}
         keyboardDismissMode="interactive"
         onScroll={onScroll}
+        onScrollToIndexFailed={onScrollToIndexFailed}
         renderScrollComponent={renderScrollComponent}
         data={flatData}
         renderItem={renderItem}

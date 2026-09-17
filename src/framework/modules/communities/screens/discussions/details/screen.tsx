@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { screenOptions } from '~/app/navigation/util';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { BodyText } from '~/framework/components/text';
+import toast from '~/framework/components/toast';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
 import { withSession } from '~/framework/modules/auth/util';
@@ -16,7 +17,13 @@ import { CommentsThreadInternals, CommentsThreadProps } from '~/framework/module
 import { toInstant } from '~/framework/modules/communities/adapter';
 import DiscussionHeader from '~/framework/modules/communities/components/discussions/header';
 import { useCollapsibleDiscussionHeader } from '~/framework/modules/communities/hooks/use-collapsible-discussion-header';
-import { getDiscussion, getMessages } from '~/framework/modules/communities/service/discussions';
+import {
+  createMessage,
+  deleteMessage,
+  getDiscussion,
+  getMessages,
+  updateMessage,
+} from '~/framework/modules/communities/service/discussions';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getDiscussionStatus } from '~/framework/modules/communities/utils';
 
@@ -49,6 +56,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
   const [messages, setMessages] = React.useState<MessageDto[]>([]);
   const [totalMessages, setTotalMessages] = React.useState<number>();
   const [isLoadingMore, setIsLoadingMore] = React.useState(false);
+  const [focusItem, setFocusItem] = React.useState<CommentsThreadProps['focusItem']>();
   /** Pages already loaded or in flight, to avoid firing the same request twice on fast scrolls. */
   const requestedPagesRef = React.useRef<Set<number>>(new Set());
 
@@ -89,8 +97,43 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
 
   const onEndReached = React.useCallback(() => {
     if (totalMessages === undefined || messages.length >= totalMessages) return;
-    loadNextPage(Math.floor(messages.length / PAGE_SIZE));
+    // Based on the number of loaded pages rather than on `messages.length`, which locally-added messages shift.
+    loadNextPage(requestedPagesRef.current.size);
   }, [loadNextPage, messages.length, totalMessages]);
+
+  const onSubmit = React.useCallback<NonNullable<CommentsThreadProps['onSubmit']>>(
+    async data => {
+      const created = await createMessage(session, communityId, discussionId, data.content);
+      setMessages(previous => [...previous, created]);
+      setTotalMessages(total => (total ?? 0) + 1);
+      setFocusItem(created.id.toString());
+      return created.id.toString();
+    },
+    [communityId, discussionId, session],
+  );
+
+  const onEdit = React.useCallback<NonNullable<CommentsThreadProps['onEdit']>>(
+    async (data, id) => {
+      const updated = await updateMessage(session, communityId, discussionId, Number(id), data.content);
+      setMessages(previous => previous.map(message => (message.id === updated.id ? updated : message)));
+    },
+    [communityId, discussionId, session],
+  );
+
+  /** Unlike submit and edit, delete is fired without `await` by the thread's confirm alert : it has to handle its own errors. */
+  const onDelete = React.useCallback<NonNullable<CommentsThreadProps['onDelete']>>(
+    async id => {
+      const messageId = Number(id);
+      try {
+        await deleteMessage(session, communityId, discussionId, messageId);
+        setMessages(previous => previous.map(message => (message.id === messageId ? { ...message, deleted: true } : message)));
+      } catch (e) {
+        console.error('Error while deleting community discussion message', e);
+        toast.showError();
+      }
+    },
+    [communityId, discussionId, session],
+  );
 
   const createdAt = React.useMemo(() => toInstant(discussion?.createdAt), [discussion?.createdAt]);
 
@@ -149,6 +192,10 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
             contentInsetAdjustmentBehavior="never"
             onEndReached={onEndReached}
             onEndReachedThreshold={END_REACHED_THRESHOLD}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onSubmit={onSubmit}
+            focusItem={focusItem}
             ListHeaderComponent={listHeader}
             ListFooterComponent={listFooter}
             ref={scrollRef}
@@ -165,7 +212,22 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
         </View>
       );
     },
-    [collapse, createdAt, data, discussion, listFooter, listHeader, navigation, onEndReached, route, scrollRef],
+    [
+      collapse,
+      createdAt,
+      data,
+      discussion,
+      focusItem,
+      listFooter,
+      listHeader,
+      navigation,
+      onDelete,
+      onEdit,
+      onEndReached,
+      onSubmit,
+      route,
+      scrollRef,
+    ],
   );
 
   return <ContentLoader loadContent={loadContent} renderContent={renderContent} refreshControlProps={refreshControlProps} />;
