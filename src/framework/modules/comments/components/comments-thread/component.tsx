@@ -40,7 +40,6 @@ export function CommentsThread({
   canAddComment: _canAddComment,
   data,
   focusItem,
-  ListFooterComponent: UserListFooterComponent,
   ListHeaderComponent: UserListHeaderComponent,
   navigation,
   onDelete,
@@ -123,13 +122,23 @@ export function CommentsThread({
     [tabBarHeight, formBottomInset],
   );
 
+  const extraContentPadding = useSharedValue(0);
+  React.useLayoutEffect(() => {
+    extraContentPadding.value = newCommentHeight + formBottomInset;
+  }, [extraContentPadding, formBottomInset, newCommentHeight]);
+
   const renderScrollComponent = React.useCallback<
     NonNullable<FlatListProps<CommentsThreadInternals.Item>['renderScrollComponent']>
   >(
     scrollProps => (
-      <KeyboardChatScrollView {...scrollProps} keyboardLiftBehavior="whenAtEnd" offset={tabBarHeight + formBottomInset} />
+      <KeyboardChatScrollView
+        {...scrollProps}
+        keyboardLiftBehavior="whenAtEnd"
+        offset={tabBarHeight + formBottomInset}
+        extraContentPadding={extraContentPadding}
+      />
     ),
-    [tabBarHeight, formBottomInset],
+    [tabBarHeight, formBottomInset, extraContentPadding],
   );
 
   const ListHeaderComponent = React.useCallback<React.ComponentType & NonNullable<CommentsThreadProps['ListHeaderComponent']>>(
@@ -162,29 +171,9 @@ export function CommentsThread({
   }, []);
   const scrollIndicatorInsets = React.useMemo(
     () => ({
-      bottom: newCommentHeight,
+      bottom: -formBottomInset,
     }),
-    [newCommentHeight],
-  );
-
-  const listFooterStyle = React.useMemo(
-    () => ({
-      height: newCommentHeight + formBottomInset,
-    }),
-    [formBottomInset, newCommentHeight],
-  );
-
-  const ListFooterComponent = React.useCallback<React.ComponentType & NonNullable<CommentsThreadProps['ListFooterComponent']>>(
-    (headerProps: any) => {
-      const Resolved = unwrapAnimatedProp(UserListFooterComponent);
-      return (
-        <>
-          {!!Resolved && (React.isValidElement(Resolved) ? Resolved : <Resolved {...headerProps} />)}
-          <View style={listFooterStyle} />
-        </>
-      );
-    },
-    [UserListFooterComponent, listFooterStyle],
+    [formBottomInset],
   );
 
   const hasChangesInInlineEditingFrom = React.useCallback(
@@ -321,7 +310,6 @@ export function CommentsThread({
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ListHeaderComponent={ListHeaderComponent}
-        ListFooterComponent={ListFooterComponent}
         scrollIndicatorInsets={scrollIndicatorInsets}
         keyboardShouldPersistTaps="handled"
         refreshControl={refreshControl}
