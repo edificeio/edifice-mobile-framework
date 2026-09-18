@@ -59,16 +59,16 @@ export const CommentsThreadAddForm = ({
   );
 
   return (
-    <Animated.View
-      style={style}
-      onLayout={React.useCallback(
-        ({ nativeEvent: { layout } }) => {
-          dispatch({ newCommentHeight: layout.height });
-        },
-        [dispatch],
-      )}>
+    <Animated.View pointerEvents="box-none" style={style}>
       <KeyboardStickyView offset={stickyOffset} style={stickyOverscrollStyle}>
-        <View style={styles.stickyCommentWrapper}>
+        <View
+          style={styles.stickyCommentWrapper}
+          onLayout={React.useCallback(
+            ({ nativeEvent: { layout } }) => {
+              dispatch({ newCommentHeight: layout.height });
+            },
+            [dispatch],
+          )}>
           <SingleAvatar size="md" userId={session?.user.id} />
           <ChatTextArea
             ref={ref}

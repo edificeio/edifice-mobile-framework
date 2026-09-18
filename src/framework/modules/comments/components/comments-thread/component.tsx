@@ -90,10 +90,23 @@ export function CommentsThread({
   const inputStyle = useAnimatedStyle(() => {
     const translateValue = -animatedScrollOffset.value - measuredListHeight + measuredResourceHeight + newCommentHeight;
     return {
+      /**
+       * @see https://github.com/facebook/react-native/issues/54659
+       * `top: 0` (instead of an intrinsic height) makes this absolutely-positioned wrapper span the
+       * whole available height, so its native layout bounds always cover the range the sticky form
+       * can be translated across (safe-area/keyboard offsets). Without this, Android rejects touches
+       * on the sticky form whenever it is translated outside this wrapper's own (untransformed) frame.
+       * This seems to be caused by the behaviour of new architecture on Android.
+       * @see https://github.com/facebook/react-native/issues/44768
+       * This fix also doesn't cause regression on iOS so there no need to separate logic form different platforms.
+       * `justifyContent: 'flex-end'` allow to maintain the view at the bottom despite the presence of `top: 0` & `bottom: 0`.
+       */
       bottom: 0,
+      justifyContent: 'flex-end',
       left: 0,
       position: 'absolute',
       right: 0,
+      top: 0,
       transform: [
         {
           translateY: alwaysShowNewCommentForm ? 0 : Math.max(0, translateValue),
