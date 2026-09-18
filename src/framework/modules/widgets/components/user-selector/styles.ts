@@ -29,11 +29,9 @@ export default StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
-    maxWidth: WIDGET_USER_SELECTOR_ITEM_MAX_WIDTH,
+    justifyContent: 'flex-start',
     paddingHorizontal: UI_SIZES.spacing.small,
   },
-
   itemAvatarSelected: {
     borderRadius: '50%',
     borderWidth: UI_SIZES.border.small,
@@ -41,6 +39,11 @@ export default StyleSheet.create({
     left: 0,
     right: 0,
     top: 0,
+  },
+
+  itemTab: {
+    justifyContent: 'center',
+    maxWidth: WIDGET_USER_SELECTOR_ITEM_MAX_WIDTH,
   },
   itemText: {
     ...TextFontStyle.Bold,

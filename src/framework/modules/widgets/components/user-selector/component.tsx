@@ -13,6 +13,8 @@ import { TabLayout, useTabbedPanel } from '~/framework/modules/widgets/component
 import styles from './styles';
 import { WidgetUserSelectorItem, WidgetUserSelectorProps, WidgetUserSelectorTabProps } from './types';
 
+const TAB_STYLE = [styles.item, styles.itemTab];
+
 function Tab({ item, onMeasure, onSelect, ringColor, selectable, selected }: Readonly<WidgetUserSelectorTabProps>) {
   const select = React.useCallback(() => onSelect(item.id), [item.id, onSelect]);
   const ringStyle = React.useMemo(() => StyleSheet.flatten([styles.itemAvatarSelected, { borderColor: ringColor }]), [ringColor]);
@@ -25,7 +27,7 @@ function Tab({ item, onMeasure, onSelect, ringColor, selectable, selected }: Rea
 
   return (
     <TouchableOpacity
-      style={styles.item}
+      style={selectable ? TAB_STYLE : styles.item}
       onPress={select}
       onLayout={measure}
       disabled={!selectable}
