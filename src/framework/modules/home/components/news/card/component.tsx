@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { SvgIconName } from '~/framework/components/picture';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import { MediaPreview } from '~/framework/modules/home/components/media-preview';
@@ -12,7 +13,7 @@ import type { NewsThreadItemReduce } from '~/framework/modules/news/screens/home
 import { extractMediaFromHtml, extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { sessionImageSource } from '~/framework/util/transport';
 
-import { getTextLines, NEWS_BACKGROUNDS, THUMBNAIL_ICON_SIZE, TITLE_LINES } from '../constants';
+import { getTextLines, NEWS_BACKGROUNDS, TITLE_LINES } from '../constants';
 import styles from './styles';
 import { NewsCardProps } from './types';
 
@@ -26,7 +27,7 @@ const ThreadThumbnail = React.memo(({ icon }: { icon: NewsThreadItemReduce['icon
   );
   return (
     <View style={styles.thumbnail}>
-      <Image source={source} fallback={fallback} iconSize={THUMBNAIL_ICON_SIZE} style={styles.thumbnailImage} />
+      <Image source={source} fallback={fallback} iconSize={UI_SIZES.elements.icon.xsmall} style={styles.thumbnailImage} />
     </View>
   );
 });

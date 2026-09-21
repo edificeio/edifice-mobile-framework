@@ -11,8 +11,7 @@ export const TITLE_LINES = 2;
 const TEXT_LINE_HEIGHT = TextSizeStyle.Normal.lineHeight;
 const TITLE_LINE_HEIGHT = TextSizeStyle.Medium.lineHeight;
 
-export const THUMBNAIL_SIZE = getScaleWidth(24);
-export const THUMBNAIL_ICON_SIZE = getScaleWidth(16);
+export const THUMBNAIL_SIZE = UI_SIZES.elements.icon.default;
 
 const NEXT_CARD_PEEK = UI_SIZES.spacing.big;
 

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { getScaleImageSize } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Svg, SvgIconName } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
@@ -19,7 +19,7 @@ import { WidgetUserSelector } from '~/framework/modules/widgets/components/user-
 
 import { CarnetDeBordWidgetPlaceholder } from './placeholder';
 
-const EMPTY_ILLUSTRATION_SIZE = getScaleImageSize(96);
+const EMPTY_ILLUSTRATION_SIZE = UI_SIZES.elements.icon.xxxlarge;
 
 const OTHER_CHILDREN_ACTION = { icon: 'ui-users' as const, testID: 'carnet-de-bord-widget-children' };
 
