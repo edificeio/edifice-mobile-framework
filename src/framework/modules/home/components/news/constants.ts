@@ -2,7 +2,7 @@ import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 import { MEDIA_HEIGHT } from '~/framework/modules/home/components/media-preview/constants';
-import { CAROUSEL_EDGE_INSET, CAROUSEL_GAP } from '~/framework/modules/home/components/news/carousel/constants';
+import { NEWS_PAGER_EDGE_INSET, NEWS_PAGER_GAP } from '~/framework/modules/home/components/news/pager/constants';
 
 export const NEWS_COUNT = 6;
 
@@ -16,11 +16,11 @@ export const THUMBNAIL_ICON_SIZE = getScaleWidth(16);
 
 const NEXT_CARD_PEEK = UI_SIZES.spacing.big;
 
-export const CARD_WIDTH = UI_SIZES.screen.width - 2 * CAROUSEL_EDGE_INSET - CAROUSEL_GAP - NEXT_CARD_PEEK;
+export const CARD_WIDTH = UI_SIZES.screen.width - 2 * NEWS_PAGER_EDGE_INSET - NEWS_PAGER_GAP - NEXT_CARD_PEEK;
 
 export const CARD_HEIGHT = getScaleWidth(223);
 
-export const CARD_SNAP_INTERVAL = CARD_WIDTH + CAROUSEL_GAP;
+export const CARD_SNAP_INTERVAL = CARD_WIDTH + NEWS_PAGER_GAP;
 
 export const EMPTY_IMAGE_SIZE = getScaleWidth(75);
 

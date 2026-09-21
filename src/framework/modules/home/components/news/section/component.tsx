@@ -7,8 +7,8 @@ import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { HeadingSText } from '~/framework/components/text';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { NewsCard } from '~/framework/modules/home/components/news/card';
-import { Carousel } from '~/framework/modules/home/components/news/carousel';
 import { NewsEmpty } from '~/framework/modules/home/components/news/empty';
+import { NewsPager } from '~/framework/modules/home/components/news/pager';
 import { NewsPlaceholder } from '~/framework/modules/home/components/news/placeholder';
 import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
 import { getNewsRights } from '~/framework/modules/news/rights';
@@ -60,7 +60,7 @@ export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore, 
       {loading ? (
         <NewsPlaceholder />
       ) : news.length ? (
-        <Carousel
+        <NewsPager
           listRef={listRef}
           data={news}
           keyExtractor={keyExtractor}

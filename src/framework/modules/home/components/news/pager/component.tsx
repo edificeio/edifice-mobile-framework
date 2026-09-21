@@ -5,8 +5,8 @@ import { ScrollView as GestureScrollView } from 'react-native-gesture-handler';
 
 import HorizontalList, { HorizontalListProps } from '~/framework/components/list/horizontal';
 
-import { CAROUSEL_EDGE_INSET, CAROUSEL_GAP } from './constants';
-import { CarouselProps } from './types';
+import { NEWS_PAGER_EDGE_INSET, NEWS_PAGER_GAP } from './constants';
+import { NewsPagerProps } from './types';
 
 // `HorizontalList` loses the type of its items through `forwardRef`. This alias gives it back, so
 const TypedHorizontalList = HorizontalList as unknown as <ItemT>(
@@ -25,12 +25,12 @@ const renderScrollComponent = (props: ScrollViewProps) => <GestureScrollView {..
  * of the page so an item scrolls past it, then gives that padding back to its content so the first
  * item still starts where the rest of the page does.
  */
-export function Carousel<ItemT>({
-  edgeInset = CAROUSEL_EDGE_INSET,
-  gap = CAROUSEL_GAP,
+export function NewsPager<ItemT>({
+  edgeInset = NEWS_PAGER_EDGE_INSET,
+  gap = NEWS_PAGER_GAP,
   listRef,
   ...listProps
-}: CarouselProps<ItemT>) {
+}: NewsPagerProps<ItemT>) {
   const contentContainerStyle = React.useMemo(() => ({ gap, paddingHorizontal: edgeInset }), [edgeInset, gap]);
   const style = React.useMemo(() => ({ marginHorizontal: -edgeInset }), [edgeInset]);
 
