@@ -16,18 +16,18 @@ import {
 
 export interface CarnetDeBordWidgetSection {
   colors: CarnetDeBordSectionColors;
-  emptyText: string;
+  emptyTextI18n: string;
   // the one line the block shows, or nothing when the child has no such event.
   getValue: (data?: ICarnetDeBord) => string | undefined;
   icon: SvgIconName;
   section: CarnetDeBordSection;
-  title: string;
+  titleI18n: string;
 }
 
 export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
   {
     colors: SECTION_STYLE[CarnetDeBordSection.CAHIER_DE_TEXTES].colors,
-    emptyText: 'pronote-cahierdetextes-empty',
+    emptyTextI18n: 'pronote-cahierdetextes-empty',
     getValue: data => {
       const taf = getSoonestHomework(data);
 
@@ -37,11 +37,11 @@ export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
     },
     icon: SECTION_STYLE[CarnetDeBordSection.CAHIER_DE_TEXTES].icon,
     section: CarnetDeBordSection.CAHIER_DE_TEXTES,
-    title: 'pronote-cahierdetextes-title',
+    titleI18n: 'pronote-cahierdetextes-title',
   },
   {
     colors: SECTION_STYLE[CarnetDeBordSection.NOTES].colors,
-    emptyText: 'pronote-transcript-empty',
+    emptyTextI18n: 'pronote-transcript-empty',
     getValue: data => {
       const devoir = getLatestNote(data);
 
@@ -55,12 +55,12 @@ export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
     },
     icon: SECTION_STYLE[CarnetDeBordSection.NOTES].icon,
     section: CarnetDeBordSection.NOTES,
-    title: 'pronote-transcript-title',
+    titleI18n: 'pronote-transcript-title',
   },
 
   {
     colors: SECTION_STYLE[CarnetDeBordSection.COMPETENCES].colors,
-    emptyText: 'pronote-skills-empty',
+    emptyTextI18n: 'pronote-skills-empty',
     getValue: data => {
       const competence = getLatestSkill(data);
 
@@ -74,11 +74,11 @@ export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
     },
     icon: SECTION_STYLE[CarnetDeBordSection.COMPETENCES].icon,
     section: CarnetDeBordSection.COMPETENCES,
-    title: 'pronote-widget-skills-title',
+    titleI18n: 'pronote-widget-skills-title',
   },
   {
     colors: SECTION_STYLE[CarnetDeBordSection.VIE_SCOLAIRE].colors,
-    emptyText: 'pronote-widget-lateness-empty',
+    emptyTextI18n: 'pronote-widget-lateness-empty',
     getValue: data => {
       const event = getLatestUnjustified(data);
       const date = event && getUnjustifiedDate(event);
@@ -87,6 +87,6 @@ export const WIDGET_SECTIONS: CarnetDeBordWidgetSection[] = [
     },
     icon: SECTION_STYLE[CarnetDeBordSection.VIE_SCOLAIRE].icon,
     section: CarnetDeBordSection.VIE_SCOLAIRE,
-    title: 'pronote-widget-lateness-title',
+    titleI18n: 'pronote-widget-lateness-title',
   },
 ];

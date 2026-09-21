@@ -19,15 +19,15 @@ export interface CarnetDeBordScreenSectionLabels {
 }
 
 export interface CarnetDeBordScreenSection {
-  emptyText: string;
+  emptyTextI18n: string;
   getLabels: (data: ICarnetDeBord) => CarnetDeBordScreenSectionLabels | undefined;
   section: CarnetDeBordSection;
-  title: string;
+  titleI18n: string;
 }
 
 export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
   {
-    emptyText: 'pronote-cahierdetextes-empty',
+    emptyTextI18n: 'pronote-cahierdetextes-empty',
     getLabels: data => {
       const taf = getSummaryItem(data.PageCahierDeTextes?.TravailAFairePast, data.PageCahierDeTextes?.TravailAFaireFuture);
       if (!taf) return undefined;
@@ -40,10 +40,10 @@ export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
       };
     },
     section: CarnetDeBordSection.CAHIER_DE_TEXTES,
-    title: SECTION_TITLE_I18N[CarnetDeBordSection.CAHIER_DE_TEXTES],
+    titleI18n: SECTION_TITLE_I18N[CarnetDeBordSection.CAHIER_DE_TEXTES],
   },
   {
-    emptyText: 'pronote-transcript-empty',
+    emptyTextI18n: 'pronote-transcript-empty',
     getLabels: data => {
       const note = getSummaryItem(data.PageReleveDeNotes?.DevoirsPast, data.PageReleveDeNotes?.DevoirsFuture);
       if (!note) return undefined;
@@ -54,10 +54,10 @@ export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
       };
     },
     section: CarnetDeBordSection.NOTES,
-    title: SECTION_TITLE_I18N[CarnetDeBordSection.NOTES],
+    titleI18n: SECTION_TITLE_I18N[CarnetDeBordSection.NOTES],
   },
   {
-    emptyText: 'pronote-skills-empty',
+    emptyTextI18n: 'pronote-skills-empty',
     getLabels: data => {
       const skill = getSummaryItem(data.PageCompetences?.CompetencesPast, data.PageCompetences?.CompetencesFuture);
       if (!skill) return undefined;
@@ -68,10 +68,10 @@ export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
       };
     },
     section: CarnetDeBordSection.COMPETENCES,
-    title: SECTION_TITLE_I18N[CarnetDeBordSection.COMPETENCES],
+    titleI18n: SECTION_TITLE_I18N[CarnetDeBordSection.COMPETENCES],
   },
   {
-    emptyText: 'pronote-viescolaire-empty',
+    emptyTextI18n: 'pronote-viescolaire-empty',
     getLabels: data => {
       const event = getSummaryItem(data.PageVieScolaire?.VieScolairePast, data.PageVieScolaire?.VieScolaireFuture);
       if (!event) return undefined;
@@ -79,6 +79,6 @@ export const SCREEN_SECTIONS: CarnetDeBordScreenSection[] = [
       return { textLabel: formatCarnetDeBordVieScolaireType(event.type), valueLabel: formatVieScolaireDate(event, 'short') };
     },
     section: CarnetDeBordSection.VIE_SCOLAIRE,
-    title: SECTION_TITLE_I18N[CarnetDeBordSection.VIE_SCOLAIRE],
+    titleI18n: SECTION_TITLE_I18N[CarnetDeBordSection.VIE_SCOLAIRE],
   },
 ];

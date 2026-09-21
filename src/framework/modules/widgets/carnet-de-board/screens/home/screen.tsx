@@ -77,11 +77,11 @@ export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ naviga
             {SCREEN_SECTIONS.map(section => (
               <CarnetDeBordSectionCard
                 key={section.section}
-                emptyText={I18n.get(section.emptyText)}
+                emptyText={I18n.get(section.emptyTextI18n)}
                 labels={section.getLabels(selected)}
                 onPress={openSection}
                 section={section.section}
-                title={I18n.get(section.title)}
+                title={I18n.get(section.titleI18n)}
               />
             ))}
             <CarnetDeBordPronoteButton address={selected.address} session={session} />

@@ -60,9 +60,9 @@ export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: 
           key={block.section}
           colors={block.colors}
           icon={block.icon}
-          title={I18n.get(block.title)}
+          title={I18n.get(block.titleI18n)}
           value={block.getValue(selected)}
-          emptyText={I18n.get(block.emptyText)}
+          emptyText={I18n.get(block.emptyTextI18n)}
           section={block.section}
           onPress={openSection}
         />
