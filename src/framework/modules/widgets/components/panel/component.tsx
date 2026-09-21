@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import RNSvg, { Path } from 'react-native-svg';
 
@@ -18,13 +18,19 @@ import { TabLayout, WidgetPanelProps } from './types';
  * `useTabbedPanel`. The shape is painted first, so everything given is drawn on top of it.
  */
 export function WidgetPanel({ background, border, children, header, radius, style }: WidgetPanelProps) {
+  const panelRef = React.useRef<View>(null);
   const [size, setSize] = React.useState<{ height: number; width: number }>();
   const [tab, setTab] = React.useState<TabLayout>();
 
-  const measurePanel = React.useCallback(
-    ({ nativeEvent: { layout } }: LayoutChangeEvent) => setSize({ height: layout.height, width: layout.width }),
-    [],
-  );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useLayoutEffect(() => {
+    const rect = panelRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    setSize(previous =>
+      previous?.height === rect.height && previous?.width === rect.width ? previous : { height: rect.height, width: rect.width },
+    );
+  });
 
   const contextValue = React.useMemo(() => ({ setTab }), []);
 
@@ -34,7 +40,7 @@ export function WidgetPanel({ background, border, children, header, radius, styl
   );
 
   return (
-    <View style={style} onLayout={measurePanel}>
+    <View ref={panelRef} style={style}>
       {path && size ? (
         <RNSvg style={StyleSheet.absoluteFill} width={size.width} height={size.height} pointerEvents="none">
           <Path d={path} fill={background} stroke={border} strokeWidth={PANEL_STROKE} />

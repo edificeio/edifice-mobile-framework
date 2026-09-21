@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LayoutChangeEvent, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -8,28 +8,22 @@ import PopupMenu from '~/framework/components/menus/popup';
 import { Svg } from '~/framework/components/picture';
 import { TextAvatar } from '~/framework/components/textAvatar';
 import { WIDGET_USER_SELECTOR_AVATAR_SIZE, WIDGET_USER_SELECTOR_MAX_SHOWN } from '~/framework/modules/widgets/components/constants';
-import { TabLayout, useTabbedPanel } from '~/framework/modules/widgets/components/panel';
+import { useTabbedPanel } from '~/framework/modules/widgets/components/panel';
 
 import styles from './styles';
 import { WidgetUserSelectorItem, WidgetUserSelectorProps, WidgetUserSelectorTabProps } from './types';
 
 const TAB_STYLE = [styles.item, styles.itemTab];
 
-function Tab({ item, onMeasure, onSelect, ringColor, selectable, selected }: Readonly<WidgetUserSelectorTabProps>) {
+function Tab({ item, onSelect, ref, ringColor, selectable, selected }: Readonly<WidgetUserSelectorTabProps>) {
   const select = React.useCallback(() => onSelect(item.id), [item.id, onSelect]);
   const ringStyle = React.useMemo(() => StyleSheet.flatten([styles.itemAvatarSelected, { borderColor: ringColor }]), [ringColor]);
 
-  const measure = React.useCallback(
-    ({ nativeEvent: { layout } }: LayoutChangeEvent) =>
-      onMeasure(item.id, { height: layout.height, width: layout.width, x: layout.x }),
-    [item.id, onMeasure],
-  );
-
   return (
     <TouchableOpacity
+      ref={ref}
       style={selectable ? TAB_STYLE : styles.item}
       onPress={select}
-      onLayout={measure}
       disabled={!selectable}
       accessibilityRole="tab"
       accessibilityState={{ disabled: !selectable, selected }}>
@@ -107,32 +101,34 @@ export function WidgetUserSelector({
     [hidden, selectFromMenu],
   );
 
-  // All of them are kept, though the panel only ever wants the selected one: a tab reports itself
-  // once and never again, its box being the same whether it is picked or not.
-  const tabLayouts = React.useRef<Record<string, TabLayout>>({});
+  const rowRef = React.useRef<View>(null);
+  const selectedTabRef = React.useRef<View>(null);
 
-  const measureTab = React.useCallback(
-    (id: string, layout: TabLayout) => {
-      tabLayouts.current[id] = layout;
-      if (asTabs && id === selectedId) panel?.setTab(layout);
-    },
-    [asTabs, panel, selectedId],
-  );
+  // both boxes are read in the same frame: what the panel wants is
+  // where the tab sits in the row, so the row's own origin is taken back out.
+  React.useLayoutEffect(() => {
+    if (!asTabs || !selectedId) {
+      panel?.setTab(undefined);
+      return;
+    }
 
-  React.useEffect(() => {
-    panel?.setTab(asTabs && selectedId ? tabLayouts.current[selectedId] : undefined);
-  }, [asTabs, panel, selectedId]);
+    const row = rowRef.current?.getBoundingClientRect();
+    const tab = selectedTabRef.current?.getBoundingClientRect();
+    if (!row || !tab) return;
+
+    panel?.setTab({ height: tab.height, width: tab.width, x: tab.x - row.x });
+  }, [asTabs, panel, selectedId, shown]);
 
   return (
-    <View style={styles.row} accessibilityRole="tablist">
+    <View ref={rowRef} style={styles.row} accessibilityRole="tablist">
       {shown.map(item => (
         <Tab
           key={item.id}
+          ref={item.id === selectedId ? selectedTabRef : undefined}
           item={item}
           selected={item.id === selectedId}
           selectable={asTabs}
           onSelect={onSelect}
-          onMeasure={measureTab}
           ringColor={ringColor}
         />
       ))}
