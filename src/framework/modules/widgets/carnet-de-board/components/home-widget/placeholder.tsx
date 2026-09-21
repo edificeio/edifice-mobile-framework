@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { WIDGET_SECTIONS } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/sections';
 import styles from '~/framework/modules/widgets/carnet-de-board/components/home-widget/styles';
 import { CarnetDeBordWidgetPlaceholderProps } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/types';
-import { Panel } from '~/framework/modules/widgets/components/panel';
+import { WidgetPanel } from '~/framework/modules/widgets/components/panel';
 import { WidgetUserSelectorPlaceholder } from '~/framework/modules/widgets/components/user-selector';
 
 const PLACEHOLDER_CARD_STYLE = [styles.sectionCard, styles.placeholderCard];
@@ -17,7 +17,7 @@ const PLACEHOLDER_LINES_STYLE = [styles.sectionCardText, styles.placeholderLines
 export function CarnetDeBordWidgetPlaceholder({ tabs }: Readonly<CarnetDeBordWidgetPlaceholderProps>) {
   return (
     <Placeholder Animation={Fade}>
-      <Panel
+      <WidgetPanel
         style={styles.body}
         background={theme.palette.grey.pearl}
         border={theme.palette.grey.cloudy}
@@ -33,7 +33,7 @@ export function CarnetDeBordWidgetPlaceholder({ tabs }: Readonly<CarnetDeBordWid
             </View>
           ))}
         </View>
-      </Panel>
+      </WidgetPanel>
     </Placeholder>
   );
 }

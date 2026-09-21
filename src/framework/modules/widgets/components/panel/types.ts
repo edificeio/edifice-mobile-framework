@@ -13,7 +13,7 @@ export interface PanelRadius {
   curve?: number; // How wide the tab spreads into the panel where the two meet
 }
 
-export type PanelProps = PropsWithChildren<{
+export type WidgetPanelProps = PropsWithChildren<{
   background: ColorValue;
   border: ColorValue;
   header?: ReactNode; // The row of tabs the panel rises to. Without it, the panel stays a plain rounded rectangle.
@@ -21,7 +21,7 @@ export type PanelProps = PropsWithChildren<{
   style?: StyleProp<ViewStyle>;
 }>;
 
-export type PanelPathProps = Pick<PanelProps, 'radius'> & {
+export type PanelPathProps = Pick<WidgetPanelProps, 'radius'> & {
   height: number;
   width: number;
   tab?: TabLayout;

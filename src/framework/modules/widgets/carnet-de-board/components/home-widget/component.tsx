@@ -14,7 +14,7 @@ import { CarnetDeBordWidgetProps } from '~/framework/modules/widgets/carnet-de-b
 import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks';
 import { CarnetDeBordSection, hasPronoteData } from '~/framework/modules/widgets/carnet-de-board/model';
 import { WidgetCard } from '~/framework/modules/widgets/components/card';
-import { Panel } from '~/framework/modules/widgets/components/panel';
+import { WidgetPanel } from '~/framework/modules/widgets/components/panel';
 import { WidgetUserSelector } from '~/framework/modules/widgets/components/user-selector';
 
 import { CarnetDeBordWidgetPlaceholder } from './placeholder';
@@ -71,7 +71,7 @@ export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: 
   );
 
   const renderLoaded = () => {
-    const panel = hasPronote
+    const panelColors = hasPronote
       ? { background: theme.palette.complementary.yellow.pale, border: theme.palette.complementary.yellow.light }
       : { background: theme.palette.grey.white, border: theme.palette.grey.cloudy };
 
@@ -89,9 +89,9 @@ export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: 
       ) : null;
 
     return (
-      <Panel style={styles.body} background={panel.background} border={panel.border} header={selector}>
+      <WidgetPanel style={styles.body} background={panelColors.background} border={panelColors.border} header={selector}>
         {hasPronote && selected ? renderSections() : renderEmptyChildContent()}
-      </Panel>
+      </WidgetPanel>
     );
   };
 

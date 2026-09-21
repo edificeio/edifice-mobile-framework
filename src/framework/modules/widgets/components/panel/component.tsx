@@ -5,7 +5,7 @@ import RNSvg, { Path } from 'react-native-svg';
 
 import { PanelProvider } from './context';
 import { buildPanelPath, PANEL_STROKE } from './path';
-import { PanelProps, TabLayout } from './types';
+import { TabLayout, WidgetPanelProps } from './types';
 
 /**
  * A panel painted behind its content, as a single shape.
@@ -17,7 +17,7 @@ import { PanelProps, TabLayout } from './types';
  * Nothing else to wire: the row reports where its selected tab landed on its own, through
  * `useTabbedPanel`. The shape is painted first, so everything given is drawn on top of it.
  */
-export function Panel({ background, border, children, header, radius, style }: PanelProps) {
+export function WidgetPanel({ background, border, children, header, radius, style }: WidgetPanelProps) {
   const [size, setSize] = React.useState<{ height: number; width: number }>();
   const [tab, setTab] = React.useState<TabLayout>();
 
