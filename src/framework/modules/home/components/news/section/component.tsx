@@ -23,16 +23,16 @@ export const hasNews = (session: AuthActiveAccount) => getNewsRights(session).vi
 
 export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore, session }: NewsSectionProps) => {
   const listRef = React.useRef<FlatList<HomeNewsItem>>(null);
-  const scrolled = React.useRef<number>(0);
+  const scrollOffsetX = React.useRef<number>(0);
 
   const onScroll = React.useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    scrolled.current = event.nativeEvent.contentOffset.x;
+    scrollOffsetX.current = event.nativeEvent.contentOffset.x;
   }, []);
 
   const onCardPress = React.useCallback(
     (item: HomeNewsItem) => {
       const index = news.indexOf(item);
-      if (index === Math.round(scrolled.current / CARD_SNAP_INTERVAL)) return onPressItem(item);
+      if (index === Math.round(scrollOffsetX.current / CARD_SNAP_INTERVAL)) return onPressItem(item);
 
       listRef.current?.scrollToOffset({ animated: true, offset: index * CARD_SNAP_INTERVAL });
     },
