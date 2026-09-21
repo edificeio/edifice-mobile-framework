@@ -15,7 +15,7 @@ export function useCarnetDeBord() {
   const state = useSelector(getCarnetDeBordState);
   const data = state.data;
 
-  const { select, selected, selectedId } = useSelectedChild(data);
+  const { select, selected } = useSelectedChild(data);
 
   const load = React.useCallback(() => dispatch(loadCarnetDeBordAction()), [dispatch]);
 
@@ -35,6 +35,5 @@ export function useCarnetDeBord() {
     loading: state.isFetching || (state.isPristine && !state.error),
     select,
     selected,
-    selectedId,
   };
 }

@@ -12,7 +12,7 @@ import { WIDGET_SECTIONS } from '~/framework/modules/widgets/carnet-de-board/com
 import styles from '~/framework/modules/widgets/carnet-de-board/components/home-widget/styles';
 import { CarnetDeBordWidgetProps } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/types';
 import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks';
-import { CarnetDeBordSection, hasPronoteData } from '~/framework/modules/widgets/carnet-de-board/model';
+import { CarnetDeBordSection, getChildId, hasPronoteData } from '~/framework/modules/widgets/carnet-de-board/model';
 import { WidgetCard } from '~/framework/modules/widgets/components/card';
 import { WidgetPanel } from '~/framework/modules/widgets/components/panel';
 import { WidgetUserSelector } from '~/framework/modules/widgets/components/user-selector';
@@ -33,7 +33,7 @@ function Message({ illustration, text }: Readonly<{ illustration: SvgIconName; t
 }
 
 export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: Readonly<CarnetDeBordWidgetProps>) {
-  const { children, error, select, selected, selectedId } = useCarnetDeBord();
+  const { children, error, select, selected } = useCarnetDeBord();
   const isRelative = session.user.type === AccountType.Relative;
 
   const openSection = React.useCallback(
@@ -81,7 +81,7 @@ export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: 
       isRelative && children.length ? (
         <WidgetUserSelector
           items={children}
-          selectedId={selectedId}
+          selectedId={selected && getChildId(selected)}
           onSelect={select}
           action={OTHER_CHILDREN_ACTION}
           ringColor={theme.palette.complementary.yellow.regular}

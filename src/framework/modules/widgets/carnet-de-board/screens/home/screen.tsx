@@ -40,7 +40,7 @@ export const computeNavBar = ({ navigation, route }: CarnetDeBordScreenProps): N
 
 export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ navigation, session }) => {
   const { data, error, load } = useCarnetDeBord();
-  const { select, selected, selectedId } = useSelectedChild<ICarnetDeBord>(data);
+  const { select, selected } = useSelectedChild<ICarnetDeBord>(data);
 
   // The home page has just loaded this data, so the screen shows it at once instead of a spinner.
   // Frozen on mount: the loader only ever reads this state when it initialises.
@@ -69,7 +69,14 @@ export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ naviga
     (refreshControl: ScrollViewProps['refreshControl']) => (
       <ScrollView refreshControl={refreshControl}>
         {users.length > 1 ? (
-          <UserList horizontal data={users} style={styles.users} selectedId={selectedId} onSelect={select} bottomInset={false} />
+          <UserList
+            horizontal
+            data={users}
+            style={styles.users}
+            selectedId={selected && getChildId(selected)}
+            onSelect={select}
+            bottomInset={false}
+          />
         ) : null}
         {structureName ? <SmallBoldText style={styles.structure}>{structureName}</SmallBoldText> : null}
         {hasPronoteData(selected) ? (
@@ -95,7 +102,7 @@ export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ naviga
         )}
       </ScrollView>
     ),
-    [openSection, select, selected, selectedId, session, structureName, users],
+    [openSection, select, selected, session, structureName, users],
   );
 
   const renderLoading = React.useCallback(() => <CarnetDeBordSectionPlaceholder style={styles.sections} />, []);
