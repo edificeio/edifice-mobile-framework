@@ -19,4 +19,8 @@ export default new CoreModule<'comments', { 'comments/reply': { id: CommentItem[
 
 setModalModeForRoutes(['comments/reply']);
 
+export const config = {
+  maxLength: 800,
+};
+
 export * from './templates/resource-with-comments';

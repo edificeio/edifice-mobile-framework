@@ -15,6 +15,7 @@ import { UI_STYLES } from '~/framework/components/constants';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
 import toast from '~/framework/components/toast';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
+import { config } from '~/framework/modules/comments';
 
 import { CommentsThreadContext } from './context';
 import styles from './styles';
@@ -72,7 +73,7 @@ export const CommentsThreadAddForm = ({
           <SingleAvatar size="md" userId={session?.user.id} />
           <ChatTextArea
             ref={ref}
-            maxLength={80}
+            maxLength={config.maxLength}
             wrapperStyle={[UI_STYLES.flex1]}
             value={newCommentValue}
             onChangeText={React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
@@ -165,7 +166,7 @@ export const CommentsThreadEditForm = ({
       <View style={style}>
         <ChatTextArea
           ref={ref}
-          maxLength={80}
+          maxLength={config.maxLength}
           wrapperStyle={UI_STYLES.flex1}
           value={editValue}
           onChangeText={onChangeText}
