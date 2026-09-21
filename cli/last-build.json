@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-09-16 11:50:16",
-  "notes": "update(stack): yarn cache update\nUpdated translations from Phrase (332)\nrelease: 1.17.6-rc.3(1170608)",
-  "version": "1.17.6-rc.4(1170609)",
-  "track": "1.17.6",
-  "order": "rc.4"
+  "last": "2026-09-21 14:17:01",
+  "notes": "fix(communities): PEDAGO-4325 refresh communities list on focus\nfix(communities): PEDAGO-4326 pending invitations for groups\nchore(debug): enable android studio avd debugging\nSquashed commit of the following:",
+  "version": "1.17.7-alpha.1(1170701)",
+  "track": "1.17.7",
+  "order": "alpha.1"
 }
