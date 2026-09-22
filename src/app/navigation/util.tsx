@@ -45,13 +45,8 @@ const defaultNavBarOptions = <T extends keyof AllModulesNavigationParams = keyof
             <></>
           )
       : undefined,
-  headerTitle: title
-    ? titleProps => (
-        <HeaderTitle {...titleProps} testID="header-title">
-          {title}
-        </HeaderTitle>
-      )
-    : undefined,
+  headerTitle: titleProps => <HeaderTitle {...titleProps} testID="header-title" />,
+  title,
   unstable_headerLeftItems:
     Platform.OS === 'ios'
       ? ({ canGoBack, tintColor }) =>

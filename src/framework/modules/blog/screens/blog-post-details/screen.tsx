@@ -7,12 +7,13 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import { BottomSheet } from '~/framework/components/BottomSheet';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
@@ -59,6 +60,8 @@ import {
   BlogPostDetailsScreenProps,
   BlogPostDetailsScreenState,
 } from './types';
+
+export const BlogPostDetailsScreenOptions = screenOptions(() => ({ title: '' }));
 
 export const computeNavBar = ({
   navigation,
@@ -426,10 +429,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         : [];
 
     this.props.navigation.setOptions({
-      ...navBarOptions({
-        navigation,
-        route,
-      }),
       title: blogPostData?.title,
       ...(menuData.length
         ? {

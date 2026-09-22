@@ -1,4 +1,4 @@
-import BlogPostDetailsScreen, { computeNavBar } from './screen';
+import BlogPostDetailsScreen, { BlogPostDetailsScreenOptions } from './screen';
 
-export { computeNavBar };
+export { BlogPostDetailsScreenOptions };
 export default BlogPostDetailsScreen;
