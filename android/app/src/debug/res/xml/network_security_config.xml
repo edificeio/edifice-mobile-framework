@@ -10,6 +10,7 @@
         <domain includeSubdomains="true">extranet.ac-reims.fr</domain>
         <domain includeSubdomains="true">moncompte.ac-nantes.fr</domain>
         <domain includeSubdomains="true">extranet.ac-versailles.fr</domain>
+        <domain includeSubdomains="true">portail.ac-reunion.fr</domain>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">ent-ecoles.ac-reims.fr</domain>
