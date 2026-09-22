@@ -2,6 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
+import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
 
@@ -75,6 +76,20 @@ export default withSession<CommunitiesDiscussionsScreen.AllProps>(function Discu
       }
     },
     [communityId, session, setCommunityDiscussions],
+  );
+
+  const loadDataRef = React.useRef(loadData);
+  loadDataRef.current = loadData;
+  const isFirstFocusRef = React.useRef(true);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (isFirstFocusRef.current) {
+        isFirstFocusRef.current = false;
+        return;
+      }
+      loadDataRef.current(0, true);
+    }, []),
   );
 
   const keyExtractor = React.useCallback<NonNullable<PaginatedFlatListProps<Discussion>['keyExtractor']>>(
