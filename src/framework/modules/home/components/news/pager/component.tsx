@@ -34,7 +34,7 @@ export function NewsPager<ItemT>({
   scrollEventThrottle = 16,
   snapToInterval,
   ...listProps
-}: NewsPagerProps<ItemT>) {
+}: Readonly<NewsPagerProps<ItemT>>) {
   const contentContainerStyle = React.useMemo(() => ({ gap, paddingHorizontal: edgeInset }), [edgeInset, gap]);
   const style = React.useMemo(() => ({ marginHorizontal: -edgeInset }), [edgeInset]);
 

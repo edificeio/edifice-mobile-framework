@@ -42,6 +42,31 @@ export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore, 
 
   if (!hasNews(session)) return null;
 
+  const renderLoading = () => <NewsPlaceholder />;
+
+  const renderEmpty = () => <NewsEmpty />;
+
+  const renderNews = () => (
+    <NewsPager
+      listRef={listRef}
+      pagerRef={pagerRef}
+      data={news}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
+      // The row stops on a card, one per drag, instead of wherever the finger left it.
+      snapToInterval={CARD_SNAP_INTERVAL}
+      snapToAlignment="start"
+      decelerationRate="fast"
+      disableIntervalMomentum
+    />
+  );
+
+  const renderContent = () => {
+    if (loading) return renderLoading();
+    if (!news.length) return renderEmpty();
+    return renderNews();
+  };
+
   return (
     <View style={styles.section}>
       <View style={styles.header}>
@@ -53,24 +78,7 @@ export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore, 
           action={onSeeMore}
         />
       </View>
-      {loading ? (
-        <NewsPlaceholder />
-      ) : news.length ? (
-        <NewsPager
-          listRef={listRef}
-          pagerRef={pagerRef}
-          data={news}
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
-          // The row stops on a card, one per drag, instead of wherever the finger left it.
-          snapToInterval={CARD_SNAP_INTERVAL}
-          snapToAlignment="start"
-          decelerationRate="fast"
-          disableIntervalMomentum
-        />
-      ) : (
-        <NewsEmpty />
-      )}
+      {renderContent()}
     </View>
   );
 });
