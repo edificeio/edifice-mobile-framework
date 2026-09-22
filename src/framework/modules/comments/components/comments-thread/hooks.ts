@@ -20,11 +20,7 @@ export const DEFAULT_CONFIG: CommentsThreadConfig = {
  * Returns only a portion of the full data to display.
  * @param data
  */
-export const useCommentsThreadData = (
-  data: CommentsThreadProps['data'],
-  editContext: CommentsThreadInternals.ContextState,
-  config?: Partial<CommentsThreadConfig>,
-) => {
+export const useCommentsThreadData = (data: CommentsThreadProps['data'], config?: Partial<CommentsThreadConfig>) => {
   // By default, all comments are displayed.
   // For each comment, only first 2 repsonses are show. A user can load the further replies 10 by 10.
   // When posting a new reponse, it will be shown directly, after the others (visible or not).

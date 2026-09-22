@@ -58,7 +58,7 @@ export function CommentsThread({
 
   const context = React.useReducer(commentsThreadContextReducer, commentsThreadContextInitialData);
 
-  const { flatData, unfoldReplies } = useCommentsThreadData(data, context[0], {
+  const { flatData, unfoldReplies } = useCommentsThreadData(data, {
     allowReplies,
     repliesPageSize,
     repliesStartSize,
