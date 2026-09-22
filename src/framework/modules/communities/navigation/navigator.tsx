@@ -1,12 +1,12 @@
 import * as React from 'react';
 
 import moduleConfig from '~/framework/modules/communities/module-config';
-import CommunitiesDiscussionsScreen, {
-  DiscussionsScreenOptions as discussionsNavBar,
-} from '~/framework/modules/communities/screens/discussions';
 import CommunitiesDiscussionDetailsScreen, {
   DiscussionDetailsScreenOptions as discussionDetailsNavBar,
-} from '~/framework/modules/communities/screens/discussions/details';
+} from '~/framework/modules/communities/screens/discussions-details';
+import CommunitiesDiscussionsScreen, {
+  DiscussionsScreenOptions as discussionsNavBar,
+} from '~/framework/modules/communities/screens/discussions-list';
 import CommunitiesDocumentsScreen, { computeNavBar as documentsNavBar } from '~/framework/modules/communities/screens/documents';
 import CommunitiesHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/communities/screens/home';
 import CommunitiesJoinConfirmScreen, {
