@@ -3,7 +3,6 @@ import { StyleSheet } from 'react-native';
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
-const FILTER_BUTTON_HEIGHT = getScaleWidth(38);
 const FILTER_BUTTON_MIN_WIDTH = getScaleWidth(102);
 
 export default StyleSheet.create({
@@ -23,7 +22,7 @@ export default StyleSheet.create({
   filterButton: {
     backgroundColor: theme.palette.primary.pale,
     borderRadius: UI_SIZES.radius.input,
-    height: FILTER_BUTTON_HEIGHT,
+    height: getScaleWidth(UI_SIZES.dimensions.height.huge),
     minWidth: FILTER_BUTTON_MIN_WIDTH,
   },
 });
