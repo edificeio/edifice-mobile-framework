@@ -4,6 +4,7 @@ import { LayoutChangeEvent, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashListProps } from '@shopify/flash-list';
 import { FlatList } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
@@ -21,6 +22,7 @@ import { BodyBoldText, HeadingMText, SmallText, TextSizeStyle } from '~/framewor
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import { useAudience } from '~/framework/modules/audience';
 import { ResourceWithCommentsTemplate } from '~/framework/modules/comments';
+import { CommentsThreadInternals } from '~/framework/modules/comments/components/comments-thread';
 import PageHeader from '~/framework/modules/wiki/components/page-header';
 import { PageHeaderPlaceholder } from '~/framework/modules/wiki/components/page-header/component';
 import { HeaderStatus } from '~/framework/modules/wiki/components/page-header/types';
@@ -31,6 +33,7 @@ import { wikiAudienceConfig } from '~/framework/modules/wiki/module-config';
 import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction, WikiPageAction } from '~/framework/modules/wiki/store';
+import { AnimatedFlatListProps } from '~/framework/util/reanimated';
 
 import styles from './styles';
 import type { WikiReaderScreen } from './types';
@@ -280,6 +283,7 @@ export function WikiReaderScreenLoaded({
   return (
     <>
       <ResourceWithCommentsTemplate
+        AnimatedListComponent={CustomAnimatedList}
         navigation={navigation}
         route={route}
         canAddComment={canAddComment}
@@ -326,3 +330,7 @@ export default function WikiReaderScreen({
 
   return <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={WikiReaderScreenPlaceholder} />;
 }
+
+export const CustomAnimatedList = ({ ...props }: AnimatedFlatListProps<CommentsThreadInternals.Item>) => {
+  return <Animated.FlatList {...props} />;
+};

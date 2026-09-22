@@ -1,4 +1,6 @@
-import { isSharedValue, SharedValue } from 'react-native-reanimated';
+import { FlatList } from 'react-native';
+
+import { FlatListPropsWithLayout, isSharedValue, SharedValue } from 'react-native-reanimated';
 
 // Reanimated types many non-style component props as `T | SharedValue<T>` (see `AnimatedProps`), letting callers
 // pass either a plain value or one wrapped for UI-thread updates. `'worklet'` lets this run from both a worklet
@@ -7,3 +9,7 @@ export function unwrapAnimatedProp<T>(value: T | SharedValue<T> | null | undefin
   'worklet';
   return isSharedValue<T>(value) ? value.value : value;
 }
+
+export type AnimatedFlatListProps<T> = FlatListPropsWithLayout<T> & {
+  ref?: React.Ref<FlatList<T> | null>;
+};

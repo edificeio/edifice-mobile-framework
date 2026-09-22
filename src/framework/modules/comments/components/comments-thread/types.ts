@@ -1,12 +1,9 @@
-import { ComponentProps } from 'react';
-import { ListRenderItemInfo, StyleProp, ViewStyle } from 'react-native';
-
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Animated, { AnimatedRef, ScrollHandlerProcessed, SharedValue } from 'react-native-reanimated';
+import { ComponentType } from 'react';
+import { FlatList, ListRenderItemInfo } from 'react-native';
 
 import { ChatTextAreaProps } from '~/framework/components/inputs/text2';
 import * as CommentsThread from '~/framework/modules/comments/types';
+import { AnimatedFlatListProps } from '~/framework/util/reanimated';
 
 export interface CommentsThreadConfig {
   repliesStartSize: number;
@@ -15,24 +12,7 @@ export interface CommentsThreadConfig {
   allowReplies: boolean;
 }
 
-interface InheritedListProps extends Omit<
-  ComponentProps<Animated.FlatList<CommentsThreadInternals.Item>>,
-  'data' | 'renderItem' | 'onScroll'
-> {
-  // Kept explicit (rather than inherited as-is) so the intent is clear: this is what `useAnimatedScrollHandler`
-  // returns, i.e. what any caller will naturally pass. Reanimated types it with a plain `NativeSyntheticEvent`
-  // for JSX-assignment compatibility, even though it actually receives a `ReanimatedScrollEvent` at runtime —
-  // CommentsThread casts back to the honest shape internally, right where it invokes it with the real event.
-  onScroll?: ScrollHandlerProcessed | SharedValue<ScrollHandlerProcessed | undefined>;
-}
-
-export interface CommentsThreadProps
-  extends Pick<NativeStackScreenProps<ParamListBase>, 'navigation' | 'route'>, Partial<CommentsThreadConfig>, InheritedListProps {
-  canAddComment: boolean;
-  alwaysShowCommentField?: boolean;
-  style?: StyleProp<ViewStyle>;
-  data: (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)[];
-  focusItem?: CommentsThread.AnyActualItem['id'];
+interface CommentsThreadEvents {
   onSubmit?: (
     data: Pick<CommentsThread.CommentItem | CommentsThread.ReplyItem, 'content' | 'isRichContent'>,
     replyTo?: CommentsThread.CommentItem['id'],
@@ -42,7 +22,20 @@ export interface CommentsThreadProps
     id: (CommentsThread.CommentItem | CommentsThread.ReplyItem)['id'],
   ) => Promise<void>;
   onDelete?: (id: (CommentsThread.CommentItem | CommentsThread.ReplyItem)['id']) => Promise<void>;
+  onReply?: (id: CommentsThread.CommentItem['id']) => Promise<void>;
 }
+
+export type CommentsThreadProps<
+  CustomListProps extends AnimatedFlatListProps<CommentsThreadInternals.Item> = AnimatedFlatListProps<CommentsThreadInternals.Item>,
+> = Omit<CustomListProps, 'data'> &
+  Partial<CommentsThreadConfig> &
+  CommentsThreadEvents & {
+    AnimatedListComponent?: ComponentType<CustomListProps>;
+    canAddComment: boolean;
+    alwaysShowCommentField?: boolean;
+    data: (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)[];
+    focusItem?: CommentsThread.AnyActualItem['id'];
+  };
 
 export namespace CommentsThreadInternals {
   export const ITEM_COMMENT = Symbol('ITEM_COMMENT');
@@ -103,7 +96,7 @@ export namespace CommentsThreadInternals {
     onPressReply?: (item: CommentsThreadInternals.CommentItem, index: number) => void;
     onSendEdit?: CommentsThreadProps['onEdit'];
     inputRef?: ChatTextAreaProps['ref'];
-    listRef?: AnimatedRef<Animated.FlatList<CommentsThreadInternals.Item>>;
+    listRef?: React.RefObject<FlatList<CommentsThreadInternals.Item> | null>;
     onPressEdit?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
     onPressDelete?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
   }

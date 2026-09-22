@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Alert, TextInput, View } from 'react-native';
+import { Alert, FlatList, TextInput, View } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useRoute } from '@react-navigation/native';
 import { KeyboardChatScrollView } from 'react-native-keyboard-controller';
 import Animated, {
   FlatListPropsWithLayout,
-  useAnimatedRef,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useComposedEventHandler,
@@ -34,23 +34,25 @@ import { CommentsThread as CommentsThreadComponents } from './item';
 import styles from './styles';
 import { CommentsThreadInternals, CommentsThreadProps } from './types';
 
+export const DefaultAnimatedListComponent = Animated.FlatList<CommentsThreadInternals.Item>;
+
 export function CommentsThread({
   allowReplies = DEFAULT_CONFIG.allowReplies,
   alwaysShowCommentField = false,
+  AnimatedListComponent = DefaultAnimatedListComponent,
   canAddComment: _canAddComment,
   data,
   focusItem,
   ListHeaderComponent: _ListHeaderComponent,
-  navigation,
   onDelete,
   onEdit,
+  onReply,
   onScroll: _onScroll,
   onSubmit,
   ref,
   refreshControl,
   repliesPageSize,
   repliesStartSize,
-  route,
   ...props
 }: Readonly<CommentsThreadProps>) {
   const session = useSelector(selectors.session);
@@ -65,6 +67,7 @@ export function CommentsThread({
   });
 
   // Screen layout
+  const route = useRoute();
   const tabBarHeight = useBottomTabBarHeight() * (isModalModeOnThisRoute(route.name) ? 0 : 1);
   const { bottom: bottomInset } = useSafeAreaInsets();
   const formBottomInset = Math.max(bottomInset - tabBarHeight, 0);
@@ -72,7 +75,7 @@ export function CommentsThread({
   const [measuredListHeight, setMeasuredListHeight] = React.useState(0);
 
   // Refs
-  const listRef = useAnimatedRef<Animated.FlatList<CommentsThreadInternals.Item>>();
+  const listRef = React.useRef<FlatList<CommentsThreadInternals.Item>>(null);
   const inlineEditRef = React.useRef<TextInput>(null);
 
   // Add comment Input state
@@ -205,13 +208,12 @@ export function CommentsThread({
   const onPressReply = React.useCallback<NonNullable<CommentsThreadInternals.ItemProps['onPressReply']>>(
     item => {
       const beginReply = () => {
-        navigation.navigate('comments/reply', { commentId: item.id });
+        onReply?.(item.id);
       };
-
       if (hasChangesInInlineEditingFrom(item)) confirmQuitEdit(beginReply);
       else beginReply();
     },
-    [confirmQuitEdit, hasChangesInInlineEditingFrom, navigation],
+    [confirmQuitEdit, hasChangesInInlineEditingFrom, onReply],
   );
 
   const onPressEdit = React.useCallback<NonNullable<CommentsThreadInternals.ItemProps['onPressEdit']>>(
@@ -291,10 +293,11 @@ export function CommentsThread({
   }
 
   // Note: FlatList is used instead of FlashList because it doesn't unmount clipped input elements, allowing scrolling to current editing item from everwhere.
+  //
 
   return (
     <CommentsThreadContext value={context}>
-      <Animated.FlatList
+      <AnimatedListComponent
         {...(props as FlatListPropsWithLayout<CommentsThreadInternals.Item>)}
         ref={useSyncRef(listRef, ref)}
         onLayout={onLayout}
