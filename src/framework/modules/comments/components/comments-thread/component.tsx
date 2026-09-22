@@ -40,7 +40,7 @@ export function CommentsThread({
   canAddComment: _canAddComment,
   data,
   focusItem,
-  ListHeaderComponent: UserListHeaderComponent,
+  ListHeaderComponent: _ListHeaderComponent,
   navigation,
   onDelete,
   onEdit,
@@ -141,23 +141,19 @@ export function CommentsThread({
     [tabBarHeight, formBottomInset, extraContentPadding],
   );
 
-  const ListHeaderComponent = React.useCallback<React.ComponentType & NonNullable<CommentsThreadProps['ListHeaderComponent']>>(
-    (headerProps: any) => {
-      const Resolved = unwrapAnimatedProp(UserListHeaderComponent);
-      return (
-        <View
-          onLayout={({
-            nativeEvent: {
-              layout: { height },
-            },
-          }) => {
-            setMeasuredResourceHeight(height);
-          }}>
-          {!!Resolved && (React.isValidElement(Resolved) ? Resolved : <Resolved {...headerProps} />)}
-        </View>
-      );
-    },
-    [UserListHeaderComponent],
+  const UnwrappedListHeaderComponent = unwrapAnimatedProp(_ListHeaderComponent);
+
+  const ListHeaderComponent = (
+    <CommentsThreadHeaderComponent
+      onMeasure={React.useCallback(rect => {
+        setMeasuredResourceHeight(rect.height);
+      }, [])}>
+      {!UnwrappedListHeaderComponent || React.isValidElement(UnwrappedListHeaderComponent) ? (
+        UnwrappedListHeaderComponent
+      ) : (
+        <UnwrappedListHeaderComponent />
+      )}
+    </CommentsThreadHeaderComponent>
   );
 
   const onFocus = React.useCallback(() => {
@@ -290,8 +286,7 @@ export function CommentsThread({
       listRef.current?.scrollToIndex({
         animated: true,
         index: scrollToIndex,
-        viewOffset: newCommentHeight,
-        viewPosition: 1,
+        viewPosition: 0,
       });
   }
 
@@ -356,3 +351,16 @@ export const CommentsThreadEmpty = ({ canAddComment }: Pick<CommentsThreadProps,
       </View>
     </View>
   );
+
+const CommentsThreadHeaderComponent = ({
+  children,
+  onMeasure,
+}: React.PropsWithChildren<{ onMeasure?: (rect: DOMRect) => void }>) => {
+  const ref = React.useRef<View>(null);
+  React.useLayoutEffect(() => {
+    const rect = ref.current?.getBoundingClientRect();
+    rect && onMeasure?.(rect);
+  }, [onMeasure]);
+
+  return <View ref={ref}>{children}</View>;
+};
