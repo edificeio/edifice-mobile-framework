@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FlatList, ListRenderItemInfo, NativeScrollEvent, NativeSyntheticEvent, View } from 'react-native';
+import { FlatList, ListRenderItemInfo, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -8,7 +8,7 @@ import { HeadingSText } from '~/framework/components/text';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { NewsCard } from '~/framework/modules/home/components/news/card';
 import { NewsEmpty } from '~/framework/modules/home/components/news/empty';
-import { NewsPager } from '~/framework/modules/home/components/news/pager';
+import { NewsPager, NewsPagerHandle } from '~/framework/modules/home/components/news/pager';
 import { NewsPlaceholder } from '~/framework/modules/home/components/news/placeholder';
 import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
 import { getNewsRights } from '~/framework/modules/news/rights';
@@ -23,16 +23,12 @@ export const hasNews = (session: AuthActiveAccount) => getNewsRights(session).vi
 
 export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore, session }: NewsSectionProps) => {
   const listRef = React.useRef<FlatList<HomeNewsItem>>(null);
-  const scrollOffsetX = React.useRef<number>(0);
-
-  const onScroll = React.useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    scrollOffsetX.current = event.nativeEvent.contentOffset.x;
-  }, []);
+  const pagerRef = React.useRef<NewsPagerHandle>(null);
 
   const onCardPress = React.useCallback(
     (item: HomeNewsItem) => {
       const index = news.indexOf(item);
-      if (index === Math.round(scrollOffsetX.current / CARD_SNAP_INTERVAL)) return onPressItem(item);
+      if (index === pagerRef.current?.getSnappedIndex()) return onPressItem(item);
 
       listRef.current?.scrollToOffset({ animated: true, offset: index * CARD_SNAP_INTERVAL });
     },
@@ -62,11 +58,10 @@ export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore, 
       ) : news.length ? (
         <NewsPager
           listRef={listRef}
+          pagerRef={pagerRef}
           data={news}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
-          onScroll={onScroll}
-          scrollEventThrottle={16}
           // The row stops on a card, one per drag, instead of wherever the finger left it.
           snapToInterval={CARD_SNAP_INTERVAL}
           snapToAlignment="start"

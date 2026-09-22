@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FlatList as RNFlatList, ScrollViewProps } from 'react-native';
+import { NativeScrollEvent, NativeSyntheticEvent, FlatList as RNFlatList, ScrollViewProps } from 'react-native';
 
 import { ScrollView as GestureScrollView } from 'react-native-gesture-handler';
 
@@ -29,15 +29,38 @@ export function NewsPager<ItemT>({
   edgeInset = NEWS_PAGER_EDGE_INSET,
   gap = NEWS_PAGER_GAP,
   listRef,
+  onScroll,
+  pagerRef,
+  scrollEventThrottle = 16,
+  snapToInterval,
   ...listProps
 }: NewsPagerProps<ItemT>) {
   const contentContainerStyle = React.useMemo(() => ({ gap, paddingHorizontal: edgeInset }), [edgeInset, gap]);
   const style = React.useMemo(() => ({ marginHorizontal: -edgeInset }), [edgeInset]);
 
+  const scrollOffsetX = React.useRef<number>(0);
+
+  const handleScroll = React.useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      scrollOffsetX.current = event.nativeEvent.contentOffset.x;
+      onScroll?.(event);
+    },
+    [onScroll],
+  );
+
+  React.useImperativeHandle(
+    pagerRef,
+    () => ({ getSnappedIndex: () => (snapToInterval ? Math.round(scrollOffsetX.current / snapToInterval) : 0) }),
+    [snapToInterval],
+  );
+
   return (
     <TypedHorizontalList
       {...listProps}
       ref={listRef}
+      onScroll={handleScroll}
+      scrollEventThrottle={scrollEventThrottle}
+      snapToInterval={snapToInterval}
       renderScrollComponent={renderScrollComponent}
       contentContainerStyle={contentContainerStyle}
       style={style}
