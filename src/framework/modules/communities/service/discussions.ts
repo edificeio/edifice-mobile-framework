@@ -1,4 +1,4 @@
-import { DiscussionClient, DiscussionDto, MessageDto, UserDto } from '@edifice.io/community-client-rest-rn';
+import { ContentType, DiscussionClient, DiscussionDto, MessageDto, UserDto } from '@edifice.io/community-client-rest-rn';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/communities/module-config';
@@ -74,3 +74,33 @@ export const getMessages = async (
 
   return { messages: items, total: meta.totalItems };
 };
+
+export const createMessage = async (
+  session: AuthActiveAccount,
+  communityId: number,
+  discussionId: number,
+  content: string,
+): Promise<MessageDto> =>
+  accountApi(session, moduleConfig, DiscussionClient).createMessage(communityId, discussionId, {
+    content,
+    contentType: ContentType.HTML,
+  });
+
+export const updateMessage = async (
+  session: AuthActiveAccount,
+  communityId: number,
+  discussionId: number,
+  messageId: number,
+  content: string,
+): Promise<MessageDto> =>
+  accountApi(session, moduleConfig, DiscussionClient).updateMessage(communityId, discussionId, messageId, {
+    content,
+    contentType: ContentType.HTML,
+  });
+
+export const deleteMessage = async (
+  session: AuthActiveAccount,
+  communityId: number,
+  discussionId: number,
+  messageId: number,
+): Promise<void> => accountApi(session, moduleConfig, DiscussionClient).deleteMessage(communityId, discussionId, messageId);

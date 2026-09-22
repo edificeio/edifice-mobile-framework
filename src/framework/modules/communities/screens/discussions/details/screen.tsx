@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { screenOptions } from '~/app/navigation/util';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { BodyText } from '~/framework/components/text';
+import toast from '~/framework/components/toast';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
 import { withSession } from '~/framework/modules/auth/util';
@@ -16,7 +17,13 @@ import { CommentsThreadInternals, CommentsThreadProps } from '~/framework/module
 import { toInstant } from '~/framework/modules/communities/adapter';
 import DiscussionHeader from '~/framework/modules/communities/components/discussions/header';
 import { useCollapsibleDiscussionHeader } from '~/framework/modules/communities/hooks/use-collapsible-discussion-header';
-import { getDiscussion, getMessages } from '~/framework/modules/communities/service/discussions';
+import {
+  createMessage,
+  deleteMessage,
+  getDiscussion,
+  getMessages,
+  updateMessage,
+} from '~/framework/modules/communities/service/discussions';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getDiscussionStatus } from '~/framework/modules/communities/utils';
 
@@ -49,48 +56,74 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
   const [messages, setMessages] = React.useState<MessageDto[]>([]);
   const [totalMessages, setTotalMessages] = React.useState<number>();
   const [isLoadingMore, setIsLoadingMore] = React.useState(false);
-  /** Pages already loaded or in flight, to avoid firing the same request twice on fast scrolls. */
-  const requestedPagesRef = React.useRef<Set<number>>(new Set());
-
   const scrollRef = useAnimatedRef<Animated.FlatList<CommentsThreadInternals.Item>>();
   const scrollOffset = useScrollOffset(scrollRef);
   const { collapse, expandedBandHeight } = useCollapsibleDiscussionHeader(scrollOffset);
 
-  const loadContent = React.useCallback<ContentLoaderProps['loadContent']>(async () => {
-    requestedPagesRef.current.clear();
-    const [loaded, firstPage] = await Promise.all([
-      getDiscussion(session, communityId, discussionId),
-      getMessages(session, communityId, discussionId, 0, PAGE_SIZE),
-    ]);
-    dispatch(communitiesActions.loadCommunityDiscussions(communityId, { [loaded.id]: loaded }));
-    requestedPagesRef.current.add(0);
-    setTotalMessages(firstPage.total);
-    setMessages(firstPage.messages);
-  }, [communityId, discussionId, dispatch, session]);
-
-  const loadNextPage = React.useCallback(
-    async (page: number) => {
-      if (requestedPagesRef.current.has(page)) return;
-      requestedPagesRef.current.add(page);
-      setIsLoadingMore(true);
-      try {
-        const { messages: loadedMessages, total } = await getMessages(session, communityId, discussionId, page, PAGE_SIZE);
-        setTotalMessages(total);
-        setMessages(previous => [...previous, ...loadedMessages]);
-      } catch (e) {
-        requestedPagesRef.current.delete(page);
-        console.error('Error while loading community discussion messages', e);
-      } finally {
-        setIsLoadingMore(false);
-      }
+  const loadMessages = React.useCallback(
+    async (size: number) => {
+      const { messages: loadedMessages, total } = await getMessages(session, communityId, discussionId, 0, size);
+      setTotalMessages(total);
+      setMessages(loadedMessages);
     },
     [communityId, discussionId, session],
   );
 
-  const onEndReached = React.useCallback(() => {
-    if (totalMessages === undefined || messages.length >= totalMessages) return;
-    loadNextPage(Math.floor(messages.length / PAGE_SIZE));
-  }, [loadNextPage, messages.length, totalMessages]);
+  const loadContent = React.useCallback<ContentLoaderProps['loadContent']>(async () => {
+    const [loaded] = await Promise.all([getDiscussion(session, communityId, discussionId), loadMessages(PAGE_SIZE)]);
+    dispatch(communitiesActions.loadCommunityDiscussions(communityId, { [loaded.id]: loaded }));
+  }, [communityId, discussionId, dispatch, loadMessages, session]);
+
+  const loadNextPage = React.useCallback(async () => {
+    if (isLoadingMore || messages.length >= (totalMessages ?? 0)) return;
+    setIsLoadingMore(true);
+    try {
+      const { messages: loadedMessages, total } = await getMessages(
+        session,
+        communityId,
+        discussionId,
+        Math.floor(messages.length / PAGE_SIZE),
+        PAGE_SIZE,
+      );
+      setTotalMessages(total);
+      setMessages(previous => [...previous, ...loadedMessages]);
+    } catch (e) {
+      console.error('Error while loading community discussion messages', e);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [communityId, discussionId, isLoadingMore, messages.length, session, totalMessages]);
+
+  const onSubmit = React.useCallback<NonNullable<CommentsThreadProps['onSubmit']>>(
+    async data => {
+      const created = await createMessage(session, communityId, discussionId, data.content);
+      await loadMessages((totalMessages ?? 0) + 1);
+      return created.id.toString();
+    },
+    [communityId, discussionId, loadMessages, session, totalMessages],
+  );
+
+  const onEdit = React.useCallback<NonNullable<CommentsThreadProps['onEdit']>>(
+    async (data, id) => {
+      const updated = await updateMessage(session, communityId, discussionId, Number(id), data.content);
+      setMessages(previous => previous.map(message => (message.id === updated.id ? updated : message)));
+    },
+    [communityId, discussionId, session],
+  );
+
+  const onDelete = React.useCallback<NonNullable<CommentsThreadProps['onDelete']>>(
+    async id => {
+      const messageId = Number(id);
+      try {
+        await deleteMessage(session, communityId, discussionId, messageId);
+        setMessages(previous => previous.map(message => (message.id === messageId ? { ...message, deleted: true } : message)));
+      } catch (e) {
+        console.error('Error while deleting community discussion message', e);
+        toast.showError();
+      }
+    },
+    [communityId, discussionId, session],
+  );
 
   const createdAt = React.useMemo(() => toInstant(discussion?.createdAt), [discussion?.createdAt]);
 
@@ -147,8 +180,11 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
             allowReplies={false}
             scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
             contentInsetAdjustmentBehavior="never"
-            onEndReached={onEndReached}
+            onEndReached={loadNextPage}
             onEndReachedThreshold={END_REACHED_THRESHOLD}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onSubmit={onSubmit}
             ListHeaderComponent={listHeader}
             ListFooterComponent={listFooter}
             ref={scrollRef}
@@ -165,7 +201,21 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
         </View>
       );
     },
-    [collapse, createdAt, data, discussion, listFooter, listHeader, navigation, onEndReached, route, scrollRef],
+    [
+      collapse,
+      createdAt,
+      data,
+      discussion,
+      listFooter,
+      listHeader,
+      navigation,
+      onDelete,
+      onEdit,
+      loadNextPage,
+      onSubmit,
+      route,
+      scrollRef,
+    ],
   );
 
   return <ContentLoader loadContent={loadContent} renderContent={renderContent} refreshControlProps={refreshControlProps} />;
