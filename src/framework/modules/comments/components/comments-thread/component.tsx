@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, FlatList, TextInput, View } from 'react-native';
+import { Alert, FlatList, LayoutRectangle, TextInput, View } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useRoute } from '@react-navigation/native';
@@ -300,7 +300,7 @@ export function CommentsThread({
       <AnimatedListComponent
         {...(props as FlatListPropsWithLayout<CommentsThreadInternals.Item>)}
         ref={useSyncRef(listRef, ref)}
-        onLayout={onLayout}
+        onLayout={onLayout} // Note: must use onLayout instead of useLayoutEffect + getBoundingClientRect here because webviews with dynamic height changes layout without re-rendering parents.
         keyboardDismissMode="interactive"
         onScroll={onScroll}
         renderScrollComponent={renderScrollComponent}
@@ -358,12 +358,17 @@ export const CommentsThreadEmpty = ({ canAddComment }: Pick<CommentsThreadProps,
 const CommentsThreadHeaderComponent = ({
   children,
   onMeasure,
-}: React.PropsWithChildren<{ onMeasure?: (rect: DOMRect) => void }>) => {
-  const ref = React.useRef<View>(null);
-  React.useLayoutEffect(() => {
-    const rect = ref.current?.getBoundingClientRect();
-    rect && onMeasure?.(rect);
-  }, [onMeasure]);
-
-  return <View ref={ref}>{children}</View>;
+}: React.PropsWithChildren<{ onMeasure?: (rect: LayoutRectangle) => void }>) => {
+  return (
+    <View
+      // Note: must use onLayout instead of useLayoutEffect + getBoundingClientRect here because webviews with dynamic height changes layout without re-rendering parents.
+      onLayout={React.useCallback(
+        ({ nativeEvent: { layout } }) => {
+          onMeasure?.(layout);
+        },
+        [onMeasure],
+      )}>
+      {children}
+    </View>
+  );
 };
