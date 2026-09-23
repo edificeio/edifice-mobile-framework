@@ -4,12 +4,12 @@
 import deepmerge from 'deepmerge';
 import queryString from 'query-string';
 
-import { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
-import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
+import { IEntcoreFlashMessage } from '~/framework/modules/home/reducer/flash-messages';
+import { IEntcoreNotificationType } from '~/framework/modules/home/reducer/notif-definitions/notif-types';
 import {
   IPushNotifsSettings,
   PushNotifsSettingsStateData,
-} from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
+} from '~/framework/modules/home/reducer/notif-settings/push-notifs-settings';
 import { IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from '~/framework/util/notifications';
 import { sessionFetch } from '~/framework/util/transport';
 

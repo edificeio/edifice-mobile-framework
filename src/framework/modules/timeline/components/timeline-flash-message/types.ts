@@ -1,4 +1,4 @@
-import { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
+import { IEntcoreFlashMessage } from '~/framework/modules/home/reducer/flash-messages';
 
 export interface ITimelineFlashMessageProps {
   flashMessage: IEntcoreFlashMessage;

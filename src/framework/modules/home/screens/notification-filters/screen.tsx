@@ -5,14 +5,14 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { modalScreenOptions } from '~/app/navigation/util';
+import { setFiltersAction } from '~/framework/modules/home/actions/notif-settings';
+import moduleConfig from '~/framework/modules/home/module-config';
+import { registeredNotificationTypesData } from '~/framework/modules/home/reducer/notif-definitions/selectors';
 import NotificationFiltersTemplate, {
   NotificationFilterSelection,
   saveFiltersAction,
 } from '~/framework/modules/home/templates/notification-filters';
 import { selectAggregatedApps } from '~/framework/modules/myapps/reducer';
-import { setFiltersAction } from '~/framework/modules/timeline/actions/notif-settings';
-import moduleConfig from '~/framework/modules/timeline/module-config';
-import { registeredNotificationTypesData } from '~/framework/modules/timeline/reducer/notif-definitions/selectors';
 
 import { buildFilterItems } from './items';
 import { NotificationFiltersScreenProps } from './types';

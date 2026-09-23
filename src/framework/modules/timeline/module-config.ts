@@ -1,8 +1,6 @@
 import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import type { TimelineState } from './reducer';
-
-export default new NavigableModuleConfig<'timeline', TimelineState>({
+export default new NavigableModuleConfig<'timeline', undefined>({
   displayAs: ModuleType.TAB_MODULE,
   displayOrder: 0,
   displayPictureBlur: { name: 'nouveautes-off', type: 'Icon' },

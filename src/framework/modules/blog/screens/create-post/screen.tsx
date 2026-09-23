@@ -23,7 +23,7 @@ import {
   publishBlogPostResourceRight,
   submitBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
-import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
+import { startLoadNotificationsAction } from '~/framework/modules/home/actions';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Trackers } from '~/framework/util/tracker';

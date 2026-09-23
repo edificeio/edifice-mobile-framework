@@ -1,11 +1,11 @@
 import { I18n } from '~/app/i18n';
 import { svgExists, SvgIconName } from '~/framework/components/picture';
+import { NotificationFilter } from '~/framework/modules/home/reducer/notif-definitions/notif-filters';
+import type { IEntcoreNotificationType } from '~/framework/modules/home/reducer/notif-definitions/notif-types';
 import type { NotificationFilterItem } from '~/framework/modules/home/templates/notification-filters';
 import { getAppLookupMap } from '~/framework/modules/myapps/hooks/lookup';
 import { resolveAppColor } from '~/framework/modules/myapps/reducer';
 import type { AppsInfoAggregated } from '~/framework/modules/myapps/types';
-import { NotificationFilter } from '~/framework/modules/timeline/reducer/notif-definitions/notif-filters';
-import type { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 
 interface NotificationFamilyOverride {
   app?: string;

@@ -14,17 +14,17 @@ import { UI_STYLES } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { withSession } from '~/framework/modules/auth/util';
-import { NotificationList } from '~/framework/modules/home/components';
-import { isUserbookNotification } from '~/framework/modules/home/components/notification/util';
-import { useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
 import {
   deleteNotificationAction,
   loadNotificationsPageAction,
   startLoadNotificationsAction,
-} from '~/framework/modules/timeline/actions';
-import timelineConfig from '~/framework/modules/timeline/module-config';
+} from '~/framework/modules/home/actions';
+import { NotificationList } from '~/framework/modules/home/components';
+import { isUserbookNotification } from '~/framework/modules/home/components/notification/util';
+import { useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
+import timelineConfig from '~/framework/modules/home/module-config';
+import { notificationsService } from '~/framework/modules/home/service';
 import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
-import { notificationsService } from '~/framework/modules/timeline/service';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import type { ITimelineNotification } from '~/framework/util/notifications';

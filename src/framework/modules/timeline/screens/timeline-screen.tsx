@@ -24,22 +24,22 @@ import { HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import {
   dismissFlashMessageAction,
   loadNotificationsPageAction,
   startLoadNotificationsAction,
-} from '~/framework/modules/timeline/actions';
+} from '~/framework/modules/home/actions';
+import moduleConfig from '~/framework/modules/home/module-config';
+import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/home/reducer/flash-messages';
+import { INotifFilterSettings } from '~/framework/modules/home/reducer/notif-settings/notif-filter-settings';
+import { NotificationsState } from '~/framework/modules/home/reducer/notifications';
+import { notificationsService } from '~/framework/modules/home/service';
+import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import TimelineNotification from '~/framework/modules/timeline/components/notification';
 import TimelineSpace from '~/framework/modules/timeline/components/space';
 import TimelineFlashMessage from '~/framework/modules/timeline/components/timeline-flash-message';
 import { WidgetChip } from '~/framework/modules/timeline/components/widget-chip';
-import moduleConfig from '~/framework/modules/timeline/module-config';
-import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
-import { INotifFilterSettings } from '~/framework/modules/timeline/reducer/notif-settings/notif-filter-settings';
-import { NotificationsState } from '~/framework/modules/timeline/reducer/notifications';
 import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
-import { notificationsService } from '~/framework/modules/timeline/service';
 import { getTimelineWorkflows, timelineWidgets } from '~/framework/modules/timeline/timeline-modules';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
