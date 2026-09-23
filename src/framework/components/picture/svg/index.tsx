@@ -112,6 +112,7 @@ const imports = {
   'homework1D': async () => import('ASSETS/icons/moduleIcons/homework1D.svg'),
   'homework2D': async () => import('ASSETS/icons/moduleIcons/homework2D.svg'),
   'homeworkAssistance': async () => import('ASSETS/icons/moduleIcons/homeworkAssistance.svg'),
+  'illu-error': async () => import('ASSETS/icons/uiIcons/illu-error.svg'),
   'image-not-found': async () => import('ASSETS/images/empty-screen/image-not-found.svg'),
   'itopstore': async () => import('ASSETS/icons/moduleIcons/itopstore.svg'),
   'kne': async () => import('ASSETS/icons/moduleIcons/kne.svg'),

@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { FlatList, ListRenderItemInfo, NativeScrollEvent, NativeSyntheticEvent, View } from 'react-native';
+import { FlatList, ListRenderItemInfo, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { HeadingSText } from '~/framework/components/text';
+import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { NewsCard } from '~/framework/modules/home/components/news/card';
-import { Carousel } from '~/framework/modules/home/components/news/carousel';
 import { NewsEmpty } from '~/framework/modules/home/components/news/empty';
+import { NewsPager, NewsPagerHandle } from '~/framework/modules/home/components/news/pager';
 import { NewsPlaceholder } from '~/framework/modules/home/components/news/placeholder';
 import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
+import { getNewsRights } from '~/framework/modules/news/rights';
 
 import { CARD_SNAP_INTERVAL } from '../constants';
 import styles from './styles';
@@ -17,18 +19,16 @@ import { NewsSectionProps } from './types';
 
 const keyExtractor = (item: HomeNewsItem) => String(item.news.id);
 
-export const NewsSection = React.memo(({ canView, loading, news, onPressItem, onSeeMore }: NewsSectionProps) => {
-  const listRef = React.useRef<FlatList<HomeNewsItem>>(null);
-  const scrolled = React.useRef<number>(0);
+export const hasNews = (session: AuthActiveAccount) => getNewsRights(session).view;
 
-  const onScroll = React.useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    scrolled.current = event.nativeEvent.contentOffset.x;
-  }, []);
+export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore, session }: NewsSectionProps) => {
+  const listRef = React.useRef<FlatList<HomeNewsItem>>(null);
+  const pagerRef = React.useRef<NewsPagerHandle>(null);
 
   const onCardPress = React.useCallback(
     (item: HomeNewsItem) => {
       const index = news.indexOf(item);
-      if (index === Math.round(scrolled.current / CARD_SNAP_INTERVAL)) return onPressItem(item);
+      if (index === pagerRef.current?.getSnappedIndex()) return onPressItem(item);
 
       listRef.current?.scrollToOffset({ animated: true, offset: index * CARD_SNAP_INTERVAL });
     },
@@ -40,7 +40,32 @@ export const NewsSection = React.memo(({ canView, loading, news, onPressItem, on
     [onCardPress],
   );
 
-  if (!canView) return null;
+  if (!hasNews(session)) return null;
+
+  const renderLoading = () => <NewsPlaceholder />;
+
+  const renderEmpty = () => <NewsEmpty />;
+
+  const renderNews = () => (
+    <NewsPager
+      listRef={listRef}
+      pagerRef={pagerRef}
+      data={news}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
+      // The row stops on a card, one per drag, instead of wherever the finger left it.
+      snapToInterval={CARD_SNAP_INTERVAL}
+      snapToAlignment="start"
+      decelerationRate="fast"
+      disableIntervalMomentum
+    />
+  );
+
+  const renderContent = () => {
+    if (loading) return renderLoading();
+    if (!news.length) return renderEmpty();
+    return renderNews();
+  };
 
   return (
     <View style={styles.section}>
@@ -53,25 +78,7 @@ export const NewsSection = React.memo(({ canView, loading, news, onPressItem, on
           action={onSeeMore}
         />
       </View>
-      {loading ? (
-        <NewsPlaceholder />
-      ) : news.length ? (
-        <Carousel
-          listRef={listRef}
-          data={news}
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
-          onScroll={onScroll}
-          scrollEventThrottle={16}
-          // The row stops on a card, one per drag, instead of wherever the finger left it.
-          snapToInterval={CARD_SNAP_INTERVAL}
-          snapToAlignment="start"
-          decelerationRate="fast"
-          disableIntervalMomentum
-        />
-      ) : (
-        <NewsEmpty />
-      )}
+      {renderContent()}
     </View>
   );
 });
