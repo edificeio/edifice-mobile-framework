@@ -1,8 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 import moment from 'moment';
 
-import { ICarnetDeBordBackend } from './types';
-
 import { UserChildrenFlattened } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import {
@@ -20,7 +18,9 @@ import {
   ICarnetDeBordVieScolaireSanction,
   IPronoteConnectorInfo,
   sortCarnetDeBordItems,
-} from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+} from '~/framework/modules/widgets/carnet-de-board/model';
+
+import { ICarnetDeBordBackend } from './types';
 
 const parseCompetencesItem = (itemTag, item) => {
   if (Object.hasOwn(itemTag, 'Date')) {
