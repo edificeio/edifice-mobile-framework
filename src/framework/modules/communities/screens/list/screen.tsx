@@ -1,66 +1,76 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 
-import {
-  CommunityType,
-  InvitationClient,
-  InvitationFields,
-  InvitationStatus,
-  InvitationTargetType,
-  SearchInvitationDto,
-} from '@edifice.io/community-client-rest-rn';
+import { CommunityType, InvitationStatus } from '@edifice.io/community-client-rest-rn';
 import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
-import { useFocusEffect } from '@react-navigation/native';
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { FlashListRef } from '@shopify/flash-list';
-import { useDispatch, useSelector } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
+import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
-import { IGlobalState } from '~/app/store';
+import { screenOptions } from '~/app/navigation/util';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LOADING_ITEM_DATA, PaginatedFlashList, PaginatedFlashListProps } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { sessionScreen } from '~/framework/components/screen';
 import { SegmentedControlLoader } from '~/framework/components/segmented-control';
+import toast from '~/framework/components/toast';
 import CommunityCardSmall from '~/framework/modules/communities/components/community-card-small';
 import CommunityCardSmallLoader from '~/framework/modules/communities/components/community-card-small/community-card-small-loader';
 import CommunityListFilters, { styles as filtersStyles } from '~/framework/modules/communities/components/community-list-filters';
 import { CommunityListFilterButtonLoader } from '~/framework/modules/communities/components/community-list-filters/community-list-filter-button';
 import ListFiltersBottomSheet from '~/framework/modules/communities/components/community-list-filters/list-filters-bottom-sheet';
-import moduleConfig from '~/framework/modules/communities/module-config';
-import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
-import {
-  CommunitiesAction,
-  communitiesActions,
-  communitiesActionTypes,
-  communitiesSelectors,
-} from '~/framework/modules/communities/store';
+import useCommunitiesList from '~/framework/modules/communities/hooks/use-communities-list';
+import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
+import { isFirstCommunityVisit } from '~/framework/modules/communities/service/memberships';
+import { communitiesSelectors } from '~/framework/modules/communities/store';
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { toURISource } from '~/framework/modules/media';
-import { navBarOptions } from '~/framework/navigation/navBar';
-import { accountApi } from '~/framework/util/transport';
 
 import styles from './styles';
 import type { CommunitiesListScreen } from './types';
 
 export const AVAILABLE_FILTERS = [CommunityType.CLASS, CommunityType.FREE];
-const INVITATION_FIELDS: InvitationFields[] = ['stats', 'community'];
 const PAGE_SIZE = 48;
+const DISPLAYED_STATUSES = new Set<InvitationStatus>([
+  InvitationStatus.PENDING,
+  InvitationStatus.ACCEPTED,
+  InvitationStatus.REQUEST_ACCEPTED,
+]);
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<CommunitiesNavigationParams, typeof communitiesRouteNames.list>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('communities-list-title'),
-  }),
-  // headerRight: () => <NavBarAction icon="ui-user-join" />,
-});
+export const CommunitiesListScreenOptions = screenOptions(() => ({
+  title: I18n.get('communities-list-title'),
+}));
 
 const emptyData = [];
+
+const CommunityListItem = React.memo(function CommunityListItemComponent({
+  item,
+  itemSeparatorStyle,
+  onOpen,
+}: Readonly<{
+  item: InvitationResponseDtoWithThumbnails;
+  itemSeparatorStyle?: ViewStyle;
+  onOpen: (item: InvitationResponseDtoWithThumbnails) => void;
+}>) {
+  const { community } = item;
+  const image = React.useMemo(() => {
+    if (!community) return undefined;
+    return community.mobileThumbnails?.length ? community.mobileThumbnails : toURISource(community.image!);
+  }, [community]);
+  const onPress = React.useCallback(() => onOpen(item), [item, onOpen]);
+
+  if (!community) return null;
+  return (
+    <CommunityCardSmall
+      title={community.title}
+      image={image}
+      invitationStatus={item.status}
+      itemSeparatorStyle={itemSeparatorStyle}
+      membersCount={item.communityStats?.totalMembers}
+      onPress={onPress}
+    />
+  );
+});
 
 export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function CommunitiesListScreen({
   navigation,
@@ -71,25 +81,22 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
 }) {
   const allCommunities = useSelector(communitiesSelectors.getAllCommunities);
   const pendingCommunities = useSelector(communitiesSelectors.getPendingCommunities);
-  const dispatch =
-    useDispatch<
-      ThunkDispatch<
-        IGlobalState,
-        any,
-        | CommunitiesAction<typeof communitiesActionTypes.LOAD_ALL_COMMUNITIES_PAGE>
-        | CommunitiesAction<typeof communitiesActionTypes.LOAD_PENDING_COMMUNITIES_PAGE>
-      >
-    >();
-
-  const [totalPendingInvitations, setTotalPendingInvitations] = React.useState<number>(pendingCommunities.length);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
-
+  const { isLoading, loadData, totalPendingInvitations } = useCommunitiesList({ filters, pageSize: PAGE_SIZE, session });
   const paginatedListRef = React.useRef<FlashListRef<InvitationResponseDtoWithThumbnails | typeof LOADING_ITEM_DATA>>(null);
   const filtersListBottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
+  const isNavigatingRef = React.useRef(false);
 
   const activeFiltersCount = filters.length;
 
-  const displayedCommunities = pending ? pendingCommunities : allCommunities;
+  // Undesired statuses (REQUEST, REJECTED…) are filtered at display time only.
+  // Loading placeholders (unloaded pages) must be kept: the list relies on them to fetch the next pages.
+  const displayedCommunities = React.useMemo(
+    () =>
+      pending
+        ? pendingCommunities
+        : allCommunities.filter(item => item === LOADING_ITEM_DATA || DISPLAYED_STATUSES.has(item.status)),
+    [allCommunities, pending, pendingCommunities],
+  );
 
   const applyFilters = React.useCallback(
     (newFilters: typeof filters) => {
@@ -105,60 +112,6 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
     [navigation],
   );
 
-  const loadData = React.useCallback(
-    async (page: number, reloadAll?: boolean) => {
-      const baseQueryParams: SearchInvitationDto = {
-        fields: INVITATION_FIELDS,
-        page: page + 1,
-        size: PAGE_SIZE,
-        targetType: InvitationTargetType.ALL,
-      };
-
-      const [allRes, pendingRes, totalPending] = await Promise.all([
-        accountApi(session, moduleConfig, InvitationClient).getUserInvitations({
-          ...baseQueryParams,
-          communityType: filters.length === 1 ? filters[0] : undefined,
-        }),
-        accountApi(session, moduleConfig, InvitationClient).getUserInvitations({
-          ...baseQueryParams,
-          communityType: filters.length === 1 ? filters[0] : undefined,
-          status: InvitationStatus.PENDING,
-        }),
-        accountApi(session, moduleConfig, InvitationClient).getUserInvitations({
-          size: 1,
-          status: InvitationStatus.PENDING,
-          targetType: InvitationTargetType.ALL,
-        }),
-      ]);
-
-      dispatch(
-        communitiesActions.loadAllCommunitiesPage(
-          {
-            from: page * PAGE_SIZE,
-            items: allRes.items,
-            total: allRes.meta.totalItems,
-          },
-          reloadAll,
-        ),
-      );
-
-      dispatch(
-        communitiesActions.loadPendingCommunitiesPage(
-          {
-            from: page * PAGE_SIZE,
-            items: pendingRes.items,
-            total: pendingRes.meta.totalItems,
-          },
-          reloadAll,
-        ),
-      );
-
-      setTotalPendingInvitations(totalPending.meta.totalItems);
-      setIsLoading(false);
-    },
-    [dispatch, filters, session],
-  );
-
   const openFiltersBottomSheet = React.useCallback(() => {
     filtersListBottomSheetRef.current?.present();
   }, []);
@@ -168,32 +121,51 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
     [],
   );
 
-  const renderItem = React.useCallback(
-    ({ index, item }: { item: InvitationResponseDtoWithThumbnails; index: number }) => {
-      if (!item.community) return null;
-      const itemSeparator = getItemSeparatorStyle(index, displayedCommunities.length, styles.itemSeparator);
+  const openCommunity = React.useCallback(
+    async (item: InvitationResponseDtoWithThumbnails) => {
+      // Ensures the async call fires only once
+      if (isNavigatingRef.current) return;
+      isNavigatingRef.current = true;
+      try {
+        const hasJoinedWithCode = item.status === InvitationStatus.REQUEST_ACCEPTED;
+        const showJoinConfirm = hasJoinedWithCode
+          ? await isFirstCommunityVisit(session, item.communityId).catch(e => {
+              console.error('Error while checking community first visit', e);
+              toast.showError();
 
-      const image = item.community.mobileThumbnails?.length ? item.community.mobileThumbnails : toURISource(item.community.image!);
+              return false;
+            })
+          : item.status !== InvitationStatus.ACCEPTED;
 
-      return (
-        <CommunityCardSmall
-          key={item.id}
-          title={item.community.title}
-          image={image}
-          invitationStatus={item.status}
-          itemSeparatorStyle={itemSeparator}
-          membersCount={item.communityStats?.totalMembers}
-          onPress={() => {
-            if (item.status === InvitationStatus.ACCEPTED || item.status === InvitationStatus.REQUEST_ACCEPTED) {
-              navigation.navigate(communitiesRouteNames.home, { communityId: item.communityId, invitationId: item.id });
-            } else {
-              navigation.navigate(communitiesRouteNames.joinConfirm, { communityId: item.communityId, invitationId: item.id });
-            }
-          }}
-        />
-      );
+        if (showJoinConfirm) {
+          navigation.navigate(communitiesRouteNames.joinConfirm, { communityId: item.communityId, invitationId: item.id });
+        } else {
+          navigation.navigate(communitiesRouteNames.home, {
+            communityId: item.communityId,
+            hasJoinedWithCode: hasJoinedWithCode,
+            invitationId: item.id,
+          });
+        }
+      } catch (e) {
+        console.error('Error while opening community', e);
+        toast.showError();
+      } finally {
+        isNavigatingRef.current = false;
+      }
     },
-    [displayedCommunities.length, navigation],
+    [navigation, session],
+  );
+
+  const renderItem = React.useCallback(
+    ({ index, item }: { item: InvitationResponseDtoWithThumbnails; index: number }) => (
+      <CommunityListItem
+        key={item.id}
+        item={item}
+        itemSeparatorStyle={getItemSeparatorStyle(index, displayedCommunities.length, styles.itemSeparator)}
+        onOpen={openCommunity}
+      />
+    ),
+    [displayedCommunities.length, openCommunity],
   );
 
   const renderPlaceholderItem = React.useCallback(
@@ -205,42 +177,12 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
     [displayedCommunities.length],
   );
 
-  // Skip the effect on first mount, already handled by ContentLoader
-  const isFirstFiltersRunRef = React.useRef(true);
-
-  // Reload data on filters change
-  React.useEffect(() => {
-    if (isFirstFiltersRunRef.current) {
-      isFirstFiltersRunRef.current = false;
-      return;
-    }
-    loadData(0, true).catch(e => console.error('Error while reloading communities list', e));
-  }, [loadData]);
-
+  // Scroll back to top on filters change (loadData changes with filters)
   React.useEffect(() => {
     if (paginatedListRef.current) {
       paginatedListRef.current.scrollToOffset({ animated: false, offset: 0 });
     }
   }, [loadData]);
-
-  // loadData is read through a ref: the focus effect keeps empty deps so it doesn't re-run on
-  // every filters change, and the ref keeps it from calling a stale loadData (old filters).
-  const loadDataRef = React.useRef(loadData);
-  loadDataRef.current = loadData;
-
-  // Skip the first focus, already handled by ContentLoader
-  const isFirstFocusRef = React.useRef(true);
-
-  // Reload the list when coming back to this screen
-  useFocusEffect(
-    React.useCallback(() => {
-      if (isFirstFocusRef.current) {
-        isFirstFocusRef.current = false;
-        return;
-      }
-      loadDataRef.current(0, true).catch(e => console.error('Error while refreshing communities list', e));
-    }, []),
-  );
 
   return (
     <>
