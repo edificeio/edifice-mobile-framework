@@ -51,7 +51,6 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
   route,
   session,
 }) {
-  const { top } = useSafeAreaInsets();
   const onValidate = React.useCallback(async () => {
     try {
       await accountApi(session, moduleConfig, InvitationClient).updateInvitationStatus(invitationId, {
@@ -70,8 +69,6 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
   const data = useSelector(communitiesSelectors.getPendingCommunities).find(
     invitation => invitation !== LOADING_ITEM_DATA && invitation.id === invitationId,
   ) as InvitationResponseDtoWithThumbnails | undefined;
-
-  // const insets = useSafeAreaInsets();
 
   const headerHeight = Platform.select({ default: 0, ios: useHeaderHeight() });
   const insets = useSafeAreaInsets();
