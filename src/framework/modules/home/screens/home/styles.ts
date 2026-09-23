@@ -29,7 +29,6 @@ export const styles = StyleSheet.create({
     lineHeight: getScaleFontSize(16),
   },
   page: {
-    backgroundColor: theme.ui.background.page.toString(),
     flex: 1,
   },
 });
