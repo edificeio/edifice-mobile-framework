@@ -9,7 +9,7 @@ import type { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 
 interface NotificationFamilyOverride {
   app?: string;
-  color?: AppsInfoAggregated['color'];
+  color?: NonNullable<AppsInfoAggregated['color']>;
   icon?: SvgIconName;
 }
 
