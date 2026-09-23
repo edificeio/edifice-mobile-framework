@@ -1,7 +1,12 @@
+import { Temporal } from '@js-temporal/polyfill';
 import moment from 'moment';
 
-import { Blog, BlogFolder, BlogPost, BlogPostComment, BlogPostComments } from '~/framework/modules/blog/reducer';
+import { AccountType } from '~/framework/modules/auth/model';
+import { Blog, BlogFolder, BlogPost } from '~/framework/modules/blog/reducer';
+import { CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
+import * as CommentsThread from '~/framework/modules/comments/types';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
+import { sessionFetch } from '~/framework/util/transport';
 
 import { IEntcoreBlog, IEntcoreBlogFolder, IEntcoreBlogPost, IEntcoreBlogPostBaseAuthor, IEntcoreBlogPostComments } from './types';
 
@@ -44,23 +49,10 @@ export const blogAdapter = (blog: IEntcoreBlog) => {
   return ret as Blog;
 };
 
-export const blogPostCommentsAdapter = (blogPostComments: IEntcoreBlogPostComments) => {
-  const ret = blogPostComments.map(blogPostComment => {
-    const adaptedBlogPostComment: BlogPostComment = {
-      ...blogPostComment,
-      created: moment(blogPostComment.created.$date),
-      modified: blogPostComment.modified ? moment(blogPostComment.modified.$date) : undefined,
-    };
-    return adaptedBlogPostComment;
-  });
-  return ret as BlogPostComments;
-};
-
 export const blogPostAdapter = (blogPost: IEntcoreBlogPost) => {
   const ret = {
     _id: blogPost._id,
     author: mapBlogPostAuthor(blogPost.author),
-    comments: blogPost.comments && blogPostCommentsAdapter(blogPost.comments),
     content: blogPost.content,
     created: moment(blogPost.created.$date),
     firstPublishDate: blogPost.firstPublishDate && moment(blogPost.firstPublishDate.$date),
@@ -97,4 +89,92 @@ export const blogUriCaptureFunction: IResourceUriCaptureFunction<{ blogId: strin
 };
 export const blogPostGenerateResourceUriFunction = ({ blogId, postId }: { blogId: string; postId: string }) => {
   return `/blog#/detail/${blogId}/${postId}`;
+};
+
+const parseAccountTypesMap = {
+  External: AccountType.External,
+  Guest: AccountType.Guest,
+  Personnel: AccountType.Personnel,
+  Relative: AccountType.Relative,
+  Student: AccountType.Student,
+  Teacher: AccountType.Teacher,
+} as const;
+
+export const hydratePostComments = async (data: IEntcoreBlogPostComments = []): Promise<CommentsThreadProps['data']> => {
+  // 1. Fetch fucking account type for each author because backend does not provide them by itself.
+  const authors = new Set<
+    (
+      | CommentsThread.CommentItem
+      | CommentsThread.ReplyItem
+      | CommentsThread.CommentDeletedItem
+      | CommentsThread.ReplyDeletedItem
+    )['authorId']
+  >();
+  for (const item of data) {
+    if ('author' in item) authors.add(item.author.userId);
+  }
+  const userTypes = Object.fromEntries(
+    await Promise.all(
+      [...authors].map(async authorId => {
+        const userData = await sessionFetch.json<{
+          status: 'ok';
+          result: Record<string, { type: (keyof typeof parseAccountTypesMap)[] }>;
+        }>(`/userbook/api/person?id=${authorId}`);
+        return [authorId, parseAccountTypesMap[userData.result[0]?.type[0]] ?? undefined] as const;
+      }),
+    ),
+  );
+
+  // 2. Prepare parsed data arrays.
+  const parsedComments: Record<
+    (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)['id'],
+    Omit<CommentsThread.CommentItem | CommentsThread.CommentDeletedItem, 'replies'>
+  > = {};
+  const parsedReplies: Record<
+    (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)['id'],
+    (CommentsThread.ReplyItem | CommentsThread.ReplyDeletedItem)[]
+  > = {};
+
+  // 3. Parse data
+  for (const item of data) {
+    const ret: Pick<
+      CommentsThread.CommentItem | CommentsThread.CommentDeletedItem | CommentsThread.ReplyItem | CommentsThread.ReplyDeletedItem,
+      'id' | 'date'
+    > &
+      Partial<
+        Pick<
+          CommentsThread.CommentItem | CommentsThread.ReplyItem,
+          'authorAccountType' | 'authorId' | 'authorName' | 'content' | 'isRichContent'
+        >
+      > &
+      Partial<Pick<CommentsThread.CommentDeletedItem | CommentsThread.ReplyDeletedItem, 'deleted'>> = {
+      date: Temporal.Instant.from(item.created.$date),
+      id: item.id,
+    };
+    if (!('deleted' in item)) {
+      ret.authorId = item.author.userId;
+      ret.authorName = item.author.username;
+      ret.authorAccountType = userTypes[item.author.userId] ?? AccountType.Guest; // use guest if user is not found... Don't known what to do.
+      ret.content = item.comment;
+      ret.isRichContent = false;
+    } else {
+      ret.deleted = true;
+    }
+
+    if ('replyTo' in item && item.replyTo) {
+      if (!(item.replyTo in parsedReplies)) parsedReplies[item.replyTo] = [];
+      parsedReplies[item.replyTo].push(ret as CommentsThread.ReplyItem | CommentsThread.ReplyDeletedItem);
+    } else {
+      parsedComments[ret.id] = ret as CommentsThread.CommentItem | CommentsThread.CommentDeletedItem;
+    }
+  }
+
+  // 4. Compose & sort data
+  const sortedComments = Object.values(parsedComments).sort((a, b) => Temporal.Instant.compare(b.date, a.date)); // comments are in reverse-ordrer
+  for (const comment of sortedComments) {
+    (comment as CommentsThread.CommentItem | CommentsThread.CommentDeletedItem).replies =
+      comment.id in parsedReplies ? parsedReplies[comment.id].sort((a, b) => Temporal.Instant.compare(a.date, b.date)) : [];
+  }
+
+  return sortedComments as (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)[];
 };

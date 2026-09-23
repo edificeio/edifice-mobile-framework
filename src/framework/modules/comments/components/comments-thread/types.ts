@@ -16,7 +16,7 @@ interface CommentsThreadEvents {
   onSubmit?: (
     data: Pick<CommentsThread.CommentItem | CommentsThread.ReplyItem, 'content' | 'isRichContent'>,
     replyTo?: CommentsThread.CommentItem['id'],
-  ) => Promise<CommentsThread.ReplyItem['id']>;
+  ) => Promise<void>;
   onEdit?: (
     data: Pick<CommentsThread.CommentItem | CommentsThread.ReplyItem, 'content' | 'isRichContent'>,
     id: (CommentsThread.CommentItem | CommentsThread.ReplyItem)['id'],

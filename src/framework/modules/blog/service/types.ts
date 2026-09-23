@@ -26,7 +26,7 @@ export interface IEntcoreBlogPostBaseAuthor {
 }
 interface IEntcoreBlogPostBase {
   author: IEntcoreBlogPostBaseAuthor;
-  comments?: IEntcoreBlogPostComments;
+  comments: IEntcoreBlogPostComments;
   content: string;
   created: { $date: number };
   modified: { $date: number };
@@ -60,11 +60,12 @@ export interface IEntcoreBlogPostComment {
     username: string;
   };
   comment: string;
-  created: { $date: number };
+  created: { $date: string };
   id: string;
   modified?: { $date: number };
   state: string;
   deleted?: boolean;
+  replyTo?: string;
 }
 
 export type IEntcoreBlogPostComments = IEntcoreBlogPostComment[];

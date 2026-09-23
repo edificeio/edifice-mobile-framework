@@ -3,6 +3,7 @@ import isDisjointFrom from 'set.prototype.isdisjointfrom';
 
 import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
 import * as CommentsThread from '~/framework/modules/comments/types';
 import { Wiki, WikiPage, WikiResourceMetadata } from '~/framework/modules/wiki/model';
 import { API } from '~/framework/modules/wiki/service/types';
@@ -115,7 +116,7 @@ const parseAccountTypesMap = {
   Teacher: AccountType.Teacher,
 } as const;
 
-const hydratePageComments = async (data: API.Wiki.GetPageResponse['comments'] = []): Promise<CommentsThread.Props['data']> => {
+const hydratePageComments = async (data: API.Wiki.GetPageResponse['comments'] = []): Promise<CommentsThreadProps['data']> => {
   // 1. Fetch fucking account type for each author because backend does not provide them by itself.
   const authors = new Set<
     (

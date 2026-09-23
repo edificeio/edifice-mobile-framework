@@ -1,20 +1,16 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { InfoCommentField } from '~/framework/components/commentField';
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { Blog, BlogPost, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
-import { IResourceUriNotification } from '~/framework/util/notifications';
+import { BlogPost } from '~/framework/modules/blog/reducer';
 
-import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
-
-export interface BlogPostDetailsScreenDataProps {
-  session?: AuthLoggedAccount;
-}
 export interface BlogPostDetailsScreenEventProps {
   handleGetBlogPostDetails(blogPostId: { blogId: string; postId: string }, blogPostState?: string): Promise<BlogPost | undefined>;
-  handlePublishBlogPostComment(blogPostId: { blogId: string; postId: string }, comment: string): Promise<number | undefined>;
+  handlePublishBlogPostComment(
+    blogPostId: { blogId: string; postId: string },
+    comment: string,
+    replyTo?: string,
+  ): Promise<number | undefined>;
   handleUpdateBlogPostComment(
     blogPostCommentId: { blogId: string; postId: string; commentId: string },
     comment: string,
@@ -29,14 +25,10 @@ export interface BlogPostDetailsScreenEventProps {
   dispatch: ThunkDispatch<any, any, any>;
 }
 export interface BlogPostDetailsScreenNavParams {
-  notification?: IResourceUriNotification;
-  blogPost?: BlogPostWithAudience;
-  blogId?: string;
-  blog?: DisplayedBlog;
-  useNotification?: boolean;
+  postId: string;
+  blogId: string;
 }
-export type BlogPostDetailsScreenProps = BlogPostDetailsScreenDataProps &
-  BlogPostDetailsScreenEventProps &
+export type BlogPostDetailsScreenProps = BlogPostDetailsScreenEventProps &
   NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogPostDetails>;
 
 export enum BlogPostDetailsLoadingState {
@@ -49,15 +41,4 @@ export enum BlogPostCommentLoadingState {
   PRISTINE,
   PUBLISH,
   DONE,
-}
-export interface BlogPostDetailsScreenState {
-  loadingState: BlogPostDetailsLoadingState;
-  publishCommentLoadingState: BlogPostCommentLoadingState;
-  updateCommentLoadingState: BlogPostCommentLoadingState;
-  blogInfos: DisplayedBlog | Blog | undefined;
-  blogPostData: BlogPostWithAudience | undefined;
-  errorState: boolean;
-  isCommentFieldFocused: boolean;
-  infoComment: InfoCommentField;
-  richContentReady: boolean;
 }

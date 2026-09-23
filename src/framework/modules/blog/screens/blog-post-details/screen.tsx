@@ -1,32 +1,24 @@
 import * as React from 'react';
-import { Alert, EmitterSubscription, Keyboard, Platform, RefreshControl, View } from 'react-native';
+import { Alert, FlatListProps } from 'react-native';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Viewport } from '@skele/components';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
-import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import { BottomSheet } from '~/framework/components/BottomSheet';
-import CommentField, { InfoCommentField } from '~/framework/components/commentField';
-import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
-import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { NavBarAction } from '~/framework/components/navigation';
-import { KeyboardPageView } from '~/framework/components/page';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/prevent-back';
-import { markViewAudience } from '~/framework/modules/audience';
+import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { useAudience } from '~/framework/modules/audience';
 import { audienceService } from '~/framework/modules/audience/service';
-import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/thunks';
+import { withSession } from '~/framework/modules/auth/util';
 import {
   deleteBlogPostAction,
   deleteBlogPostCommentAction,
@@ -37,365 +29,117 @@ import {
 } from '~/framework/modules/blog/actions';
 import BlogPostDetails from '~/framework/modules/blog/components/blog-post-details';
 import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
-import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { BlogPostComment, BlogPostComments, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
-import {
-  commentBlogPostResourceRight,
-  deleteCommentBlogPostResourceRight,
-  hasPermissionManager,
-  publishBlogPostResourceRight,
-  updateCommentBlogPostResourceRight,
-} from '~/framework/modules/blog/rights';
+import { blogRouteNames } from '~/framework/modules/blog/navigation';
+import { Blog, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
+import { hasPermissionManager, publishBlogPostResourceRight } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
-import { blogPostGenerateResourceUriFunction, blogUriCaptureFunction } from '~/framework/modules/blog/service/adapters';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { ResourceWithCommentsTemplate } from '~/framework/modules/comments';
+import { CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 
 import styles from './styles';
-import {
-  BlogPostCommentLoadingState,
-  BlogPostDetailsLoadingState,
-  BlogPostDetailsScreenDataProps,
-  BlogPostDetailsScreenEventProps,
-  BlogPostDetailsScreenProps,
-  BlogPostDetailsScreenState,
-} from './types';
+import { BlogPostDetailsScreenEventProps, BlogPostDetailsScreenProps } from './types';
 
 export const BlogPostDetailsScreenOptions = screenOptions(() => ({ title: '' }));
 
-export const computeNavBar = ({
+const BlogPostDetailsScreenLoaded = withSession<
+  BlogPostDetailsScreenProps & {
+    refreshControl: FlatListProps<any>['refreshControl'];
+    blogData: Blog;
+    postData: BlogPostWithAudience;
+    refresh: () => Promise<BlogPostWithAudience>;
+  }
+>(function ({
+  blogData,
+  handleDeleteBlogPost,
+  handleDeleteBlogPostComment,
+  handleGetBlogPostDetails,
+  handlePublishBlogPost,
+  handlePublishBlogPostComment,
+  handleUpdateBlogPostComment,
   navigation,
+  postData,
+  refresh,
+  refreshControl,
   route,
-}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogPostDetails>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: '',
-  }),
-});
-
-function PreventBack(props: { infoComment: InfoCommentField }) {
-  const { infoComment } = props;
-  usePreventBack({
-    showAlert: infoComment.changed,
-    text: I18n.get(
-      `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
-    ),
-    title: I18n.get(
-      infoComment.isPublication
-        ? 'blog-postdetails-confirmation-unsaved-publication'
-        : 'blog-postdetails-confirmation-unsaved-modification',
-    ),
-  });
-  return null;
-}
-
-const PAGE_SIZE = 20;
-
-function BlogPostDetailsFlatList(props: {
-  contentSetRef;
-  // initialNumToRender;
-  data;
-  blogInfos;
-  blogPostData;
-  onReady;
-  renderItem;
-  onRefresh;
-  loadingState;
-  onContentSizeChange;
-  onLayout;
-  footer;
-  session;
+  route: {
+    params: { blogId, postId },
+  },
+  session,
 }) {
-  const [commentsMax, setCommentsMax] = React.useState(PAGE_SIZE);
-  const dataSlice = React.useMemo(() => (props.data as BlogPostComments).slice(0, commentsMax), [props.data, commentsMax]);
+  const [autoScrollItem, setAutoScrollItem] = React.useState<
+    ArrayElement<React.ComponentProps<typeof ResourceWithCommentsTemplate>['data']>['id'] | undefined
+  >(undefined);
 
-  return (
-    <Viewport.Tracker>
-      <>
-        <FlatList
-          ref={props.contentSetRef}
-          // initialNumToRender={props.initialNumToRender}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={styles.content}
-          data={dataSlice}
-          keyExtractor={BlogPostDetailsScreen.contentKeyExtractor}
-          ListHeaderComponent={
-            props.blogInfos && props.blogPostData ? (
-              <BlogPostDetails blog={props.blogInfos} post={props.blogPostData} onReady={props.onReady} session={props.session} />
-            ) : null
-          }
-          removeClippedSubviews={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(props.loadingState)}
-              onRefresh={props.onRefresh}
-            />
-          }
-          renderItem={props.renderItem}
-          style={styles.contentStyle2}
-          onContentSizeChange={props.onContentSizeChange}
-          onLayout={props.onLayout}
-          onEndReached={() => setCommentsMax(commentsMax + PAGE_SIZE)}
-          onEndReachedThreshold={1}
-        />
-        {props.footer}
-      </>
-    </Viewport.Tracker>
-  );
-}
-
-export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsScreenProps, BlogPostDetailsScreenState> {
-  flatListRef = React.createRef<FlatList | null>();
-
-  commentFieldRefs = [];
-
-  editedCommentId?: string = undefined;
-
-  bottomEditorSheetRef: { current: any } = React.createRef();
-
-  event: string | null = null;
-
-  showSubscription: EmitterSubscription | undefined;
-
-  hideSubscription: EmitterSubscription | undefined;
-
-  cleanupFocusSubscription: (() => void) | undefined;
-
-  editorOffsetRef = React.createRef<number | null>() as React.MutableRefObject<number | null>;
-
-  state: BlogPostDetailsScreenState = {
-    blogInfos: undefined,
-    blogPostData: undefined,
-    errorState: false,
-    infoComment: {
-      changed: false,
-      isPublication: false,
-      type: '',
-      value: '',
-    },
-    isCommentFieldFocused: false,
-    loadingState: BlogPostDetailsLoadingState.PRISTINE,
-    publishCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
-    updateCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
-  };
-
-  listHeight = 0;
-
-  loaderRef = React.createRef<View>();
-
-  async doInit() {
+  const deletePost = React.useCallback(async () => {
     try {
-      const { dispatch, session } = this.props;
-      this.setState({ loadingState: BlogPostDetailsLoadingState.INIT });
-      await dispatch(refreshSessionIdForAccountAction(session!));
-      await this.doGetBlogPostDetails();
-      await this.doGetBlogInfos();
-    } finally {
-      this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
-      if (this.state.blogPostData?._id)
-        markViewAudience({ module: 'blog', resourceId: this.state.blogPostData._id, resourceType: 'post' });
-      else {
-        console.warn(`[Audience] cannot recieve blog post id.`);
-      }
-    }
-  }
-
-  async doRefresh() {
-    try {
-      await this.doGetBlogPostDetails();
-    } finally {
-      this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
-    }
-  }
-
-  async doRefreshSilent() {
-    try {
-      await this.doGetBlogPostDetails();
-    } finally {
-      this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
-    }
-  }
-
-  async doCreateComment(comment: string, commentId?: string) {
-    try {
-      if (commentId) {
-        this.setState({ updateCommentLoadingState: BlogPostCommentLoadingState.PUBLISH });
-      } else {
-        this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.PUBLISH });
-      }
-      await this.doCreateBlogPostComment(comment, commentId);
-      await this.doGetBlogPostDetails();
-      // Note #1: setTimeout is used to wait for the FlatList height to update (after a comment is added).
-      // Note #2: scrollToEnd seems to become less precise once there is lots of data.
-      if (!commentId) {
-        this.bottomEditorSheetRef?.current?.clearCommentField();
-        setTimeout(() => {
-          (this.flatListRef.current as FlatList)?.scrollToOffset({
-            offset: this.listHeight,
-          });
-        }, 50);
-      } else this.commentFieldRefs[commentId]?.setIsEditingFalse();
-    } finally {
-      if (commentId) {
-        this.setState({ updateCommentLoadingState: BlogPostCommentLoadingState.DONE });
-      } else {
-        this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.DONE });
-      }
-    }
-  }
-
-  async doDeleteComment(commentId: string) {
-    await this.doDeleteBlogPostComment(commentId);
-    await this.doGetBlogPostDetails();
-  }
-
-  async doGetAudienceInfos() {
-    try {
-      const blogPostId = this.state.blogPostData?._id!;
-      const views = await audienceService.view.getSummary('blog', 'post', [blogPostId]);
-      const reactions = await audienceService.reaction.getSummary('blog', 'post', [blogPostId]);
-      const newBlogPostData = {
-        ...this.state.blogPostData,
-        audience: {
-          reactions: {
-            total: reactions.reactionsByResource[blogPostId].totalReactionsCounter ?? 0,
-            types: reactions.reactionsByResource[blogPostId].reactionTypes,
-            userReaction: reactions.reactionsByResource[blogPostId].userReaction ?? null,
-          },
-          views: views[blogPostId],
+      await handleDeleteBlogPost({ blogId, postId });
+      navigation.navigate(
+        blogRouteNames.blogPostList,
+        {
+          blogId,
+          forceReload: true,
         },
-      } as BlogPostWithAudience;
-      this.setState(prevState => ({ ...prevState, blogPostData: newBlogPostData }));
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async doGetBlogPostDetails() {
-    try {
-      const { handleGetBlogPostDetails, route } = this.props;
-      const notification = route.params.notification;
-      const useNotification = route.params.useNotification ?? true;
-      const ids = this.getBlogPostIds();
-      let blogPostState: string | undefined;
-      if (notification && useNotification && notification['event-type'] === 'SUBMIT-POST') {
-        blogPostState = undefined; // Will be got by an additional request to api
-      } else blogPostState = route.params.blogPost?.state;
-      const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
-      if (!blogPostData) throw new Error('blogPostData is undefined');
-      this.setState({ blogPostData });
-      this.doGetAudienceInfos();
-    } catch {
-      // ToDo: Error handling
-      this.setState({ errorState: true });
-      this.removePlaceholder();
-    }
-  }
-
-  async doCreateBlogPostComment(comment: string, commentId?: string) {
-    try {
-      const { handlePublishBlogPostComment, handleUpdateBlogPostComment } = this.props;
-      const ids = this.getBlogPostIds();
-      if (commentId) {
-        ids.commentId = commentId;
-        await handleUpdateBlogPostComment(ids, comment);
-      } else await handlePublishBlogPostComment(ids, comment);
-    } catch {
-      // ToDo: Error handling
-      Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
-    }
-  }
-
-  async doDeleteBlogPostComment(commentId: string) {
-    try {
-      const { handleDeleteBlogPostComment } = this.props;
-      if (!commentId) {
-        throw new Error('failed to call api (commentId is undefined)');
-      }
-      const ids = this.getBlogPostIds();
-      ids.commentId = commentId;
-      await handleDeleteBlogPostComment(ids);
-    } catch {
-      // ToDo: Error handling
-      Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
-    }
-  }
-
-  async doDeleteBlogPost(postId: string) {
-    try {
-      const { handleDeleteBlogPost } = this.props;
-      if (!postId) {
-        throw new Error('failed to call api (commentId is undefined)');
-      }
-      const ids = this.getBlogPostIds();
-      ids.postID = postId;
-
-      await handleDeleteBlogPost(ids);
+        { pop: true },
+      );
     } catch {
       Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
     }
-  }
+  }, [blogId, handleDeleteBlogPost, navigation, postId]);
 
-  async doGetBlogInfos() {
-    try {
-      const { session } = this.props;
-      if (!session) throw new Error('BlogPostDetailsScreen.doGetBlogInfos: no session');
-      const ids = this.getBlogPostIds();
-      const blogId = ids?.blogId;
-      const blogInfos = await blogService.get(session, blogId);
-      this.setState({ blogInfos });
-    } catch {
-      // ToDo: Error handling
-    }
-  }
-
-  getBlogPostIds() {
-    const { route } = this.props;
-    const notification = route.params.notification;
-    const useNotification = route.params.useNotification ?? true;
-    let ids;
-    if (notification && useNotification) {
-      const resourceUri = notification?.resource.uri;
-      if (!resourceUri) {
-        throw new Error('failed to call api (resourceUri is undefined)');
+  const submitComment = React.useCallback<NonNullable<CommentsThreadProps['onSubmit']>>(
+    async (comment, replyTo) => {
+      try {
+        handlePublishBlogPostComment({ blogId, postId }, comment.content, replyTo);
+        const newData = await refresh();
+        if (newData.comments.length > 0) setAutoScrollItem(newData.comments[0].id);
+      } catch {
+        Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
       }
-      ids = blogUriCaptureFunction(resourceUri) as Required<ReturnType<typeof blogUriCaptureFunction>>;
-      if (!ids.blogId || !ids.postId) {
-        throw new Error(`failed to capture resourceUri "${resourceUri}": ${ids}`);
-      }
-    } else {
-      const blogId = route.params.blog?.id;
-      const postId = route.params.blogPost?._id;
-      if (!blogId || !postId) {
-        throw new Error(`missing blogId or postId : ${{ blogId, postId }}`);
-      }
-      ids = { blogId, postId };
-    }
-    return ids;
-  }
+    },
+    [handlePublishBlogPostComment, blogId, postId, refresh],
+  );
 
-  setActionNavbar = () => {
-    const { navigation, route, session } = this.props;
-    const { blogInfos, blogPostData, errorState } = this.state;
-    const notification = (route.params.useNotification ?? true) && route.params.notification;
-    const blogId = route.params.blog?.id;
-    let resourceUri = notification && notification?.resource.uri;
-    if (!resourceUri && blogPostData && blogId) {
-      resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
-    }
+  const updateComment = React.useCallback<NonNullable<CommentsThreadProps['onEdit']>>(
+    async (comment, commentId) => {
+      try {
+        await handleUpdateBlogPostComment({ blogId, commentId, postId }, comment.content);
+        await refresh();
+      } catch {
+        Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
+      }
+    },
+    [handleUpdateBlogPostComment, blogId, postId, refresh],
+  );
 
+  const deleteComment = React.useCallback<NonNullable<CommentsThreadProps['onDelete']>>(
+    async commentId => {
+      try {
+        await handleDeleteBlogPostComment({ blogId, commentId, postId });
+        await refresh();
+      } catch {
+        Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
+      }
+    },
+    [handleDeleteBlogPostComment, blogId, postId, refresh],
+  );
+
+  // Silent refresh on focus
+  React.useEffect(() => navigation.addListener('focus', refresh), [refresh, navigation]);
+
+  // Navbar actions
+  React.useEffect(() => {
     const menuData =
-      session && (hasPermissionManager(blogInfos!, session) || blogPostData?.author.userId === session.user.id)
+      blogData && postData && (hasPermissionManager(blogData, session) || postData.author.userId === session.user.id)
         ? [
             {
               action: () =>
                 navigation.navigate(blogRouteNames.blogEditPost, {
-                  blog: this.state.blogInfos,
-                  content: this.state.blogPostData?.content,
-                  postId: this.state.blogPostData?._id,
-                  postState: this.state.blogPostData?.state,
-                  title: this.state.blogPostData.title,
+                  blog: blogData,
+                  content: postData.content,
+                  postId: postData._id,
+                  postState: postData.state,
+                  title: postData.title,
                 }),
               icon: {
                 android: 'ic_edit',
@@ -411,14 +155,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
                     text: I18n.get('common-cancel'),
                   },
                   {
-                    onPress: () => {
-                      this.doDeleteBlogPost(blogPostData!._id).then(() => {
-                        navigation.navigate(blogRouteNames.blogPostList, {
-                          blogId,
-                          forceReload: true,
-                        });
-                      });
-                    },
+                    onPress: deletePost,
                     style: 'destructive',
                     text: I18n.get('common-delete'),
                   },
@@ -428,12 +165,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           ]
         : [];
 
-    this.props.navigation.setOptions({
-      title: blogPostData?.title,
+    navigation.setOptions({
+      title: postData?.title,
       ...(menuData.length
         ? {
             headerRight: () =>
-              resourceUri && !errorState ? (
+              menuData.length > 0 ? (
                 <PopupMenu actions={menuData}>
                   <NavBarAction icon="ui-options" />
                 </PopupMenu>
@@ -441,190 +178,29 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           }
         : undefined),
     });
-  };
+  }, [blogData, postData, deletePost, navigation, session]);
 
-  async componentDidMount() {
-    const { dispatch, route, session } = this.props;
-    const blogPost = route.params.blogPost;
-    const blog = route.params.blog;
-    const notification = (route.params.useNotification ?? true) && route.params.notification;
-
-    if (blog && blogPost) {
-      await dispatch(refreshSessionIdForAccountAction(session!));
-      this.setState({
-        blogInfos: blog,
-        blogPostData: blogPost,
-        loadingState: BlogPostDetailsLoadingState.DONE,
+  const publishPost = React.useCallback(async () => {
+    try {
+      if (!blogData || !postData) return;
+      await handlePublishBlogPost({ blogId: blogData.id, postId: postData._id });
+      await handleGetBlogPostDetails({
+        blogId: blogData.id,
+        postId: postData._id,
       });
-      markViewAudience({ module: 'blog', resourceId: blogPost._id, resourceType: 'post' });
-      this.doGetAudienceInfos();
-    } else this.doInit();
-
-    // Update notification event if any
-    this.event = notification ? notification['event-type'] : null;
-
-    this.cleanupFocusSubscription = this.props.navigation.addListener('focus', () => {
-      this.doRefreshSilent();
-    });
-  }
-
-  componentDidUpdate(prevProps: BlogPostDetailsScreenProps, prevState: BlogPostDetailsScreenState) {
-    const { blogPostData } = this.state;
-    if (this.state.loadingState === BlogPostDetailsLoadingState.DONE && !this.state.errorState) this.setActionNavbar();
-    if (prevState.blogPostData !== blogPostData) {
-      this.showSubscription?.remove();
-      this.showSubscription = Keyboard.addListener(
-        Platform.select({ android: 'keyboardDidShow', ios: 'keyboardDidShow' })!,
-        event => {
-          if (this.editedCommentId && this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
-            this.setState({ isCommentFieldFocused: true });
-          setTimeout(() => {
-            if (!this.editedCommentId) return;
-            const commentIndex = blogPostData?.comments?.findIndex(c => c.id === this.editedCommentId);
-            if (commentIndex !== undefined && commentIndex > -1) {
-              if (Platform.OS === 'ios') {
-                (this.flatListRef.current as FlatList)?.scrollToIndex({
-                  index: commentIndex,
-                  viewPosition: 1,
-                });
-              } else {
-                (this.flatListRef.current as FlatList)?.scrollToIndex({
-                  index: commentIndex,
-                  viewOffset:
-                    UI_SIZES.screen.height -
-                    UI_SIZES.elements.navbarHeight -
-                    event.endCoordinates.height -
-                    (this.editorOffsetRef.current ?? 0),
-                  viewPosition: 0,
-                });
-              }
-            }
-          }, 50);
-        },
-      );
-
-      this.hideSubscription = Keyboard.addListener(
-        Platform.select({ android: 'keyboardDidHide', ios: 'keyboardWillHide' })!,
-        () => {
-          if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
-            this.setState({ isCommentFieldFocused: false });
-        },
-      );
+      await refresh();
+      Toast.showSuccess(I18n.get('blog-postdetails-publish-success'));
+    } catch {
+      Toast.showError(I18n.get('blog-postdetails-error-text'));
     }
-  }
+  }, [blogData, postData, handlePublishBlogPost, handleGetBlogPostDetails, refresh]);
 
-  componentWillUnmount() {
-    this.showSubscription?.remove();
-    this.hideSubscription?.remove();
-    this.cleanupFocusSubscription?.();
-  }
+  const renderFooter = () => {
+    const hasPublishBlogPostRight = session && blogData && resourceHasRight(blogData, publishBlogPostResourceRight, session);
 
-  renderError() {
-    return <EmptyConnectionScreen />;
-  }
-
-  static contentKeyExtractor(item: BlogPostComment) {
-    return item.id.toString();
-  }
-
-  contentSetRef(node: any) {
-    this.flatListRef.current = node;
-  }
-
-  contentRenderItem({ index, item }) {
-    return this.renderComment(item, index);
-  }
-
-  contentSizeChange(width, height) {
-    this.listHeight = height;
-  }
-
-  contentOnLayout() {
-    // Scroll to last comment if coming from blog spot comment notification
-    if (this.flatListRef.current && this.event === 'PUBLISH-COMMENT')
-      setTimeout(() => {
-        (this.flatListRef.current as FlatList)?.scrollToEnd();
-        this.event = null;
-      }, 50);
-  }
-
-  constructor(props) {
-    super(props);
-    this.contentSetRef = this.contentSetRef.bind(this);
-    this.contentRenderItem = this.contentRenderItem.bind(this);
-    this.contentSizeChange = this.contentSizeChange.bind(this);
-    this.contentOnLayout = this.contentOnLayout.bind(this);
-    this.doRefresh = this.doRefresh.bind(this);
-    this.doRefreshSilent = this.doRefreshSilent.bind(this);
-    this.removePlaceholder = this.removePlaceholder.bind(this);
-  }
-
-  renderContent() {
-    const { session } = this.props;
-    const { blogInfos, blogPostData, loadingState, publishCommentLoadingState } = this.state;
-    const blogPostComments = blogPostData?.comments;
-    const isPublishingComment = publishCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
-    const hasCommentBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
-    const hasPublishBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, publishBlogPostResourceRight, session);
-
-    const footer = this.renderFooter(isPublishingComment, hasCommentBlogPostRight ?? false, hasPublishBlogPostRight ?? false);
-
-    return (
-      <>
-        <BlogPostDetailsFlatList
-          data={blogPostComments}
-          blogInfos={blogInfos}
-          blogPostData={blogPostData}
-          onReady={this.removePlaceholder}
-          contentSetRef={this.contentSetRef}
-          renderItem={this.contentRenderItem}
-          onRefresh={this.doRefresh}
-          loadingState={loadingState}
-          onContentSizeChange={this.contentSizeChange}
-          onLayout={this.contentOnLayout}
-          footer={footer}
-          session={this.props.session!}
-        />
-      </>
-    );
-  }
-
-  renderFooter(isPublishingComment: boolean, hasCommentBlogPostRight: boolean, hasPublishBlogPostRight: boolean) {
-    const { blogInfos, blogPostData, isCommentFieldFocused } = this.state;
-    return blogPostData?.state === 'PUBLISHED' ? (
-      hasCommentBlogPostRight && !isCommentFieldFocused ? (
-        <BottomEditorSheet
-          ref={this.bottomEditorSheetRef}
-          onPublishComment={(comment, commentId) => this.doCreateComment(comment, commentId)}
-          isPublishingComment={isPublishingComment}
-          onChangeText={data => this.setState({ infoComment: data })}
-        />
-      ) : (
-        <View style={styles.footerNoComment} />
-      )
-    ) : blogPostData?.state === 'SUBMITTED' ? (
+    return postData?.state === 'SUBMITTED' ? (
       hasPublishBlogPostRight ? (
-        <BottomButtonSheet
-          text={I18n.get('blog-postdetails-publish')}
-          action={async () => {
-            try {
-              await this.props.handlePublishBlogPost({ blogId: blogInfos!.id, postId: blogPostData._id });
-              const newBlogPostData = await this.props.handleGetBlogPostDetails({
-                blogId: blogInfos!.id,
-                postId: blogPostData._id,
-              });
-              if (newBlogPostData) {
-                this.setState({ blogPostData: newBlogPostData });
-                this.props.navigation.setParams({
-                  blogPost: newBlogPostData,
-                });
-              }
-              Toast.showSuccess(I18n.get('blog-postdetails-publish-success'));
-            } catch {
-              Toast.showError(I18n.get('blog-postdetails-error-text'));
-            }
-          }}
-        />
+        <BottomButtonSheet text={I18n.get('blog-postdetails-publish')} action={publishPost} />
       ) : (
         <BottomSheet
           content={
@@ -633,112 +209,31 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         />
       )
     ) : null;
-  }
+  };
 
-  removePlaceholder() {
-    this.loaderRef.current?.setNativeProps({
-      style: { opacity: 0 },
-    });
-  }
+  const canAddComment = React.useMemo<boolean>(() => true, []);
 
-  renderComment(blogPostComment: BlogPostComment, index: number) {
-    const { session } = this.props;
-    const { blogInfos, blogPostData, updateCommentLoadingState } = this.state;
-
-    if (blogPostComment.deleted === true) {
-      return null;
-    }
-
-    const isUpdatingComment = updateCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
-    const hasUpdateCommentBlogPostRight =
-      session && blogInfos && resourceHasRight(blogInfos, updateCommentBlogPostResourceRight, session);
-    const hasDeleteCommentBlogPostRight =
-      session && blogInfos && resourceHasRight(blogInfos, deleteCommentBlogPostResourceRight, session);
-    return (
-      <CommentField
-        ref={element => (this.commentFieldRefs[blogPostComment.id] = element)}
-        index={index}
-        isPublishingComment={isUpdatingComment}
-        onPublishComment={
-          hasUpdateCommentBlogPostRight ? (comment, commentId) => this.doCreateComment(comment, commentId) : undefined
-        }
-        onDeleteComment={
-          hasDeleteCommentBlogPostRight || (session && hasPermissionManager(blogInfos!, session))
-            ? () => {
-                Alert.alert(I18n.get('blog-postdetails-deletion'), I18n.get('blog-postdetails-deleteconfirmation'), [
-                  {
-                    style: 'default',
-                    text: I18n.get('common-cancel'),
-                  },
-                  {
-                    onPress: () => this.doDeleteComment(blogPostComment.id),
-                    style: 'destructive',
-                    text: I18n.get('common-delete'),
-                  },
-                ]);
-              }
-            : undefined
-        }
-        onChangeText={data => this.setState({ infoComment: data })}
-        editCommentCallback={() => {
-          const blogPostComments = blogPostData?.comments;
-          const otherBlogPostComments = blogPostComments?.filter(comment => comment.id !== blogPostComment.id);
-          this.editedCommentId = blogPostComment.id;
-          otherBlogPostComments?.forEach(otherBlogPostComment => {
-            this.commentFieldRefs[otherBlogPostComment.id]?.setIsEditingFalse();
-          });
-        }}
-        comment={blogPostComment.comment}
-        commentId={blogPostComment.id}
-        commentAuthorId={blogPostComment.author.userId}
-        commentAuthor={blogPostComment.author.username}
-        commentDate={blogPostComment.created}
-        onEditableLayoutHeight={val => {
-          this.editorOffsetRef.current = val;
-        }}
-        isManager={session && hasPermissionManager(blogInfos!, session)}
-      />
-    );
-  }
-
-  render() {
-    const { route } = this.props;
-    const { blogInfos, blogPostData, errorState, loadingState } = this.state;
-
-    const blogId = blogInfos?.id;
-    const notification = (route.params.useNotification ?? true) && route.params.notification;
-    let resourceUri = notification && notification?.resource.uri;
-    if (!resourceUri && blogPostData && blogId) {
-      resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
-    }
-
-    return (
-      <>
-        <PreventBack infoComment={this.state.infoComment} />
-        <KeyboardPageView safeArea={false}>
-          {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState)
-            ? null
-            : errorState
-              ? this.renderError()
-              : this.renderContent()}
-
-          <View ref={this.loaderRef} style={styles.loader}>
-            <BlogPlaceholderDetails />
-          </View>
-        </KeyboardPageView>
-      </>
-    );
-  }
-}
-
-const mapStateToProps: (s: IGlobalState) => BlogPostDetailsScreenDataProps = s => ({
-  session: getSession(),
+  return (
+    <ResourceWithCommentsTemplate
+      navigation={navigation}
+      route={route}
+      canAddComment={canAddComment}
+      data={postData.comments}
+      onSubmit={submitComment}
+      onEdit={updateComment}
+      focusItem={autoScrollItem}
+      onDelete={deleteComment}
+      refreshControl={refreshControl}
+      ListHeaderComponent={<BlogPostDetails blog={blogData} post={postData} session={session} />}
+      ListFooterComponent={renderFooter}
+    />
+  );
 });
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
   getState: () => IGlobalState,
-) => BlogPostDetailsScreenEventProps = (dispatch, getState) => ({
+) => BlogPostDetailsScreenEventProps = dispatch => ({
   dispatch,
 
   // TS BUG: dispatch mishandled
@@ -761,8 +256,8 @@ const mapDispatchToProps: (
   },
 
   // TS BUG: dispatch mishandled
-  handlePublishBlogPostComment: async (blogPostId: { blogId: string; postId: string }, comment: string) => {
-    return (await dispatch(publishBlogPostCommentAction(blogPostId, comment))) as unknown as number | undefined;
+  handlePublishBlogPostComment: async (blogPostId: { blogId: string; postId: string }, comment: string, replyTo?: string) => {
+    return (await dispatch(publishBlogPostCommentAction(blogPostId, comment, replyTo))) as unknown as number | undefined;
   },
 
   // TS BUG: dispatch mishandled
@@ -774,5 +269,80 @@ const mapDispatchToProps: (
   },
 });
 
-const BlogPostDetailsScreenConnected = connect(mapStateToProps, mapDispatchToProps)(BlogPostDetailsScreen);
-export default BlogPostDetailsScreenConnected;
+export const BlogPostDetailsScreen = connect(
+  undefined,
+  mapDispatchToProps,
+)(
+  withSession<BlogPostDetailsScreenProps>(function ({
+    handleGetBlogPostDetails,
+    navigation,
+    route,
+    route: {
+      params: { blogId, postId },
+    },
+    session,
+    ...props
+  }) {
+    const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+    const [blogData, setBlogData] = React.useState<Blog | undefined>(undefined);
+    const [postData, setPostData] = React.useState<BlogPostWithAudience | undefined>(undefined);
+    const audience = useAudience({ module: 'blog', resourceId: postId, resourceType: 'post' });
+
+    const loadAudienceData = React.useCallback(async () => {
+      try {
+        const views = await audienceService.view.getSummary('blog', 'post', [postId]);
+        const reactions = await audienceService.reaction.getSummary('blog', 'post', [postId]);
+        setPostData(
+          prevBlogPostData =>
+            ({
+              ...prevBlogPostData,
+              audience: {
+                reactions: {
+                  total: reactions.reactionsByResource[postId].totalReactionsCounter ?? 0,
+                  types: reactions.reactionsByResource[postId].reactionTypes,
+                  userReaction: reactions.reactionsByResource[postId].userReaction ?? null,
+                },
+                views: views[postId],
+              },
+            }) as BlogPostWithAudience,
+        );
+      } catch (e) {
+        console.error(e);
+      }
+    }, [postId]);
+
+    const loadContent = React.useCallback(async () => {
+      await dispatch(refreshSessionIdForAccountAction(session));
+      setBlogData(await blogService.get(session, blogId));
+      let blogPostState: string | undefined;
+      const newBlogPostData = (await handleGetBlogPostDetails({ blogId, postId }, blogPostState)) as
+        | BlogPostWithAudience
+        | undefined;
+      if (!newBlogPostData) throw new Error('blogPostData is undefined');
+      setPostData(newBlogPostData);
+      await loadAudienceData();
+      audience.markView();
+      return newBlogPostData;
+    }, [audience, blogId, dispatch, loadAudienceData, handleGetBlogPostDetails, postId, session]);
+
+    const renderContent = React.useCallback<NonNullable<ContentLoaderProps['renderContent']>>(
+      refreshControl => (
+        <BlogPostDetailsScreenLoaded
+          navigation={navigation}
+          route={route}
+          refreshControl={refreshControl}
+          handleGetBlogPostDetails={handleGetBlogPostDetails}
+          blogData={blogData!}
+          postData={postData!}
+          refresh={loadContent}
+          {...props}
+        />
+      ),
+      [blogData, handleGetBlogPostDetails, loadContent, navigation, postData, props, route],
+    );
+
+    return <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={BlogPlaceholderDetails} />;
+  }),
+);
+
+export default BlogPostDetailsScreen;

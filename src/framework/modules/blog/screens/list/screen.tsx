@@ -45,8 +45,8 @@ const BlogPostListItem = ({
   const totalComments = React.useMemo(() => countComments(item), [item]);
   const onOpen = React.useCallback(() => {
     navigation.navigate(blogRouteNames.blogPostDetails, {
-      blog,
-      blogPost: item,
+      blogId: blog.id,
+      postId: item._id,
     });
   }, [blog, item, navigation]);
   return (
