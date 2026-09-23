@@ -31,7 +31,7 @@ import BlogPostDetails from '~/framework/modules/blog/components/blog-post-detai
 import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
 import { blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
-import { hasPermissionManager, publishBlogPostResourceRight } from '~/framework/modules/blog/rights';
+import { computeCanComment, hasPermissionManager, publishBlogPostResourceRight } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
 import { ResourceWithCommentsTemplate } from '~/framework/modules/comments';
 import { CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
@@ -211,12 +211,13 @@ const BlogPostDetailsScreenLoaded = withSession<
     ) : null;
   };
 
-  const canAddComment = React.useMemo<boolean>(() => true, []);
+  const canAddComment = React.useMemo<boolean>(() => computeCanComment(blogData, session), [blogData, session]);
 
   return (
     <ResourceWithCommentsTemplate
       navigation={navigation}
       route={route}
+      allowReplies={blogData.allowReplies}
       canAddComment={canAddComment}
       data={postData.comments}
       onSubmit={submitComment}

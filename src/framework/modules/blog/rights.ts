@@ -3,9 +3,9 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import Toast from '~/framework/components/toast';
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
-import { resourceHasRight } from '~/framework/util/resourceRights';
+import { computeRights, resourceHasRight } from '~/framework/util/resourceRights';
 
 import { getPublishableBlogListAction } from './actions';
 import { blogRouteNames } from './navigation';
@@ -14,7 +14,7 @@ import { Blog } from './reducer';
 export const createBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|create';
 export const submitBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|submit';
 export const publishBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|publish';
-export const commentBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|comment';
+export const addCommentBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|comment';
 export const updateCommentBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|updateComment';
 export const deleteCommentBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|deleteComment';
 
@@ -85,3 +85,9 @@ export default () =>
       }
     );
   });
+
+const rightsThatCanComment = new Set(['creator', 'manager', 'comment']); // Business rule here. Need to be implemented into the backend.
+export const computeCanComment = (blogData: Pick<Blog, 'rights'>, session: AuthActiveAccount) => {
+  const actualRights = computeRights(blogData, session);
+  return !rightsThatCanComment.isDisjointFrom(new Set(actualRights));
+};

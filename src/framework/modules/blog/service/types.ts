@@ -1,4 +1,5 @@
 export interface IEntcoreBlog {
+  'allowReplies': boolean;
   '_id': string;
   'visibility': string;
   'title': string;
@@ -10,6 +11,7 @@ export interface IEntcoreBlog {
   'created': { $date: number };
   'modified': { $date: number };
   'author': IEntcoreBlogPostBaseAuthor;
+  'rights': string[];
   'shared'?: ({
     [key: string]: boolean | string | undefined;
   } & {

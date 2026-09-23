@@ -7,6 +7,7 @@ import { CommentsThreadProps } from '~/framework/modules/comments/components/com
 import * as CommentsThread from '~/framework/modules/comments/types';
 import { Wiki, WikiPage, WikiResourceMetadata } from '~/framework/modules/wiki/model';
 import { API } from '~/framework/modules/wiki/service/types';
+import { computeRights } from '~/framework/util/resourceRights';
 import { sessionFetch } from '~/framework/util/transport/fetch';
 import { ArrayElement } from '~/utils/types';
 
@@ -19,25 +20,6 @@ const hydrateWikiResourceInfo = (data: API.Wiki.ListPagesResponse): WikiResource
   thumbnail: data.thumbnail,
   updatedAt: Temporal.Instant.from(data.modified.$date),
 });
-
-const computeRights = (data: Pick<API.Wiki.ListPagesResponse, 'rights'>, session: AuthActiveAccount) => {
-  const rights: Set<string> = new Set();
-  for (const rightStr of data.rights) {
-    const right = rightStr.split(':'); // 0: target, 1: id, 2: right if not creator
-    switch (right[0]) {
-      case 'creator':
-        if (right[1] === session.user.id) rights.add(right[0]);
-        break;
-      case 'user':
-        if (right[1] === session.user.id) rights.add(right[2]);
-        break;
-      case 'group':
-        if (session.user.groups.includes(right[1])) rights.add(right[2]);
-        break;
-    }
-  }
-  return [...rights];
-};
 
 const rightsThatSeeHiddenPages = new Set(['creator', 'manager']); // Business rule here. Need to be implemented into the backend.
 

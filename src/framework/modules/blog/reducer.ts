@@ -19,6 +19,7 @@ import { CommentDeletedItem, CommentItem } from '../comments/types';
 // Types
 
 export interface Blog {
+  'allowReplies': boolean;
   'id': string;
   'visibility': string;
   'title': string;
@@ -28,6 +29,7 @@ export interface Blog {
   'publish-type': string;
   'description'?: string;
   'created': Moment;
+  'rights': string[];
   'modified': Moment;
   'author': { userId: string; username: string; login: string };
   'shared'?: ({
@@ -35,7 +37,7 @@ export interface Blog {
   } & {
     [key in 'userId' | 'groupId']: string;
   })[];
-  'fetchPosts': Omit<BlogPost, 'content'>[];
+  'fetchPosts'?: Omit<BlogPost, 'content'>[];
 }
 export type BlogList = Blog[];
 

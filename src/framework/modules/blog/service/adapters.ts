@@ -30,8 +30,9 @@ export const blogFetchPostAdapter = (blogPost: Omit<IEntcoreBlogPost, 'content'>
   return ret as Omit<BlogPost, 'content'>;
 };
 
-export const blogAdapter = (blog: IEntcoreBlog) => {
+export const blogAdapter = (blog: IEntcoreBlog): Blog => {
   const ret = {
+    'allowReplies': blog.allowReplies,
     'author': mapBlogPostAuthor(blog.author),
     'comment-type': blog['comment-type'],
     'created': moment(blog.created.$date),
@@ -40,13 +41,14 @@ export const blogAdapter = (blog: IEntcoreBlog) => {
     'id': blog._id,
     'modified': moment(blog.modified.$date),
     'publish-type': blog['publish-type'],
+    'rights': blog.rights,
     'shared': blog.shared,
     'thumbnail': blog.thumbnail,
     'title': blog.title,
     'trashed': blog.trashed,
     'visibility': blog.visibility,
   };
-  return ret as Blog;
+  return ret;
 };
 
 export const blogPostAdapter = (blogPost: IEntcoreBlogPost) => {
