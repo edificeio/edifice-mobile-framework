@@ -12,7 +12,7 @@ import CommunitiesHomeScreen, { computeNavBar as homeNavBar } from '~/framework/
 import CommunitiesJoinConfirmScreen, {
   computeNavBar as joinConfirmNavBar,
 } from '~/framework/modules/communities/screens/join-confirm';
-import CommunitiesListScreen, { computeNavBar as listNavBar } from '~/framework/modules/communities/screens/list';
+import CommunitiesListScreen, { CommunitiesListScreenOptions } from '~/framework/modules/communities/screens/list';
 import CommunitiesMembersScreen, { computeNavBar as membersNavBar } from '~/framework/modules/communities/screens/members';
 import CommunitiesSpotlightedCourseScreen, {
   SpotlightedCourseScreenOptions as spotlightedCourseNavBar,
@@ -25,7 +25,12 @@ import { CommunitiesNavigationParams, communitiesRouteNames } from '.';
 export default () =>
   createModuleNavigator<CommunitiesNavigationParams>(moduleConfig.name, Stack => (
     <>
-      <Stack.Screen name={communitiesRouteNames.list} component={CommunitiesListScreen} options={listNavBar} initialParams={{}} />
+      <Stack.Screen
+        name={communitiesRouteNames.list}
+        component={CommunitiesListScreen}
+        options={CommunitiesListScreenOptions}
+        initialParams={{}}
+      />
       <Stack.Screen name={communitiesRouteNames.home} component={CommunitiesHomeScreen} options={homeNavBar} initialParams={{}} />
       <Stack.Screen
         name={communitiesRouteNames.discussions}

@@ -109,7 +109,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   navigation,
   route,
   route: {
-    params: { communityId, invitationId, showWelcome = false },
+    params: { communityId, hasJoinedWithCode = false, invitationId, showWelcome = false },
   },
   session,
   spotlightedCourseId,
@@ -351,7 +351,7 @@ export const CommunitiesHomeScreenLoaded = function ({
       {canShowInfoModal ? (
         <CommunityInfoBottomSheet
           ref={infoModalRef}
-          data={{ image, role, senderId, senderName, title, totalMembers, welcomeNote }}
+          data={{ hasJoinedWithCode, image, role, senderId, senderName, title, totalMembers, welcomeNote }}
         />
       ) : (
         <EmptyContentScreen />

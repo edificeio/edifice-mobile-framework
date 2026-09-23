@@ -51,13 +51,24 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
   route,
   session,
 }) {
-  const { top } = useSafeAreaInsets();
+  // This modal shows up after accepting a pending invitation, or after joining a community with a code
+  const pendingCommunities = useSelector(communitiesSelectors.getPendingCommunities);
+  const allCommunities = useSelector(communitiesSelectors.getAllCommunities);
+  const isCurrentInvitation = (invitation: (typeof allCommunities)[number]) =>
+    invitation !== LOADING_ITEM_DATA && invitation.id === invitationId;
+  const data = (pendingCommunities.find(isCurrentInvitation) ?? allCommunities.find(isCurrentInvitation)) as
+    | InvitationResponseDtoWithThumbnails
+    | undefined;
+  const hasJoinedWithCode = data?.status === InvitationStatus.REQUEST_ACCEPTED;
+
   const onValidate = React.useCallback(async () => {
     try {
-      await accountApi(session, moduleConfig, InvitationClient).updateInvitationStatus(invitationId, {
-        status: InvitationStatus.ACCEPTED,
-      });
-      navigation.replace(communitiesRouteNames.home, { communityId, invitationId, showWelcome: true });
+      if (!hasJoinedWithCode) {
+        await accountApi(session, moduleConfig, InvitationClient).updateInvitationStatus(invitationId, {
+          status: InvitationStatus.ACCEPTED,
+        });
+      }
+      navigation.replace(communitiesRouteNames.home, { communityId, hasJoinedWithCode, invitationId, showWelcome: true });
     } catch (e) {
       console.error(e);
       if (e instanceof HTTPError) {
@@ -65,13 +76,7 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
       }
       toast.showError(I18n.get('communities-invitation-accept-error'));
     }
-  }, [communityId, invitationId, navigation, session]);
-
-  const data = useSelector(communitiesSelectors.getPendingCommunities).find(
-    invitation => invitation !== LOADING_ITEM_DATA && invitation.id === invitationId,
-  ) as InvitationResponseDtoWithThumbnails | undefined;
-
-  // const insets = useSafeAreaInsets();
+  }, [communityId, hasJoinedWithCode, invitationId, navigation, session]);
 
   const headerHeight = Platform.select({ default: 0, ios: useHeaderHeight() });
   const insets = useSafeAreaInsets();
@@ -125,6 +130,7 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
       <ScrollView style={styles.page}>
         <SafeAreaView style={containerStyle} edges={edges}>
           <CommunityCardLarge
+            hasJoinedWithCode={hasJoinedWithCode}
             title={data.community?.title}
             image={image}
             membersCount={data.communityStats?.totalMembers}
