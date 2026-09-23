@@ -5,8 +5,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PLACEHOLDER_LINE_HEIGHT } from '~/framework/modules/home/components/constants';
 import { MEDIA_GAP, MEDIA_HEIGHT } from '~/framework/modules/home/components/media-preview/constants';
 
-import { CAROUSEL_EDGE_INSET, CAROUSEL_GAP } from '../carousel/constants';
 import { CARD_HEIGHT, CARD_WIDTH, THUMBNAIL_SIZE } from '../constants';
+import { NEWS_PAGER_EDGE_INSET, NEWS_PAGER_GAP } from '../pager/constants';
 
 export default StyleSheet.create({
   body: {
@@ -35,9 +35,9 @@ export default StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    gap: CAROUSEL_GAP,
+    gap: NEWS_PAGER_GAP,
     // Reaches the edge of the screen like the real row, so the second card is cut there.
-    marginRight: -CAROUSEL_EDGE_INSET,
+    marginRight: -NEWS_PAGER_EDGE_INSET,
     overflow: 'hidden',
   },
   threadTitle: {
