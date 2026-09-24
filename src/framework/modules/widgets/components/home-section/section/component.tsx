@@ -12,23 +12,16 @@ import { WidgetsSectionProps } from './types';
 
 export const hasWidgets = (session: AuthActiveAccount) => canSeeCarnetDeBordWidget(session);
 
-export const WidgetsSection = React.memo(
-  ({ carnetDeBordLoading, onOpenCarnetDeBord, onOpenCarnetDeBordSection, session }: WidgetsSectionProps) => {
-    if (!hasWidgets(session)) return null;
+export const WidgetsSection = React.memo(({ session }: WidgetsSectionProps) => {
+  if (!hasWidgets(session)) return null;
 
-    return (
-      <View style={styles.section}>
-        <HeadingSText>{I18n.get('home-widgets-title')}</HeadingSText>
-        <CarnetDeBordWidget
-          session={session}
-          loading={carnetDeBordLoading}
-          onOpen={onOpenCarnetDeBord}
-          onOpenSection={onOpenCarnetDeBordSection}
-        />
-      </View>
-    );
-  },
-);
+  return (
+    <View style={styles.section}>
+      <HeadingSText>{I18n.get('home-widgets-title')}</HeadingSText>
+      <CarnetDeBordWidget session={session} />
+    </View>
+  );
+});
 
 const styles = StyleSheet.create({
   section: {

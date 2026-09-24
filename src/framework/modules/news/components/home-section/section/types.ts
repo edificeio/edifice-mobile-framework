@@ -1,10 +1,5 @@
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
-import type { HomeNewsItem } from '~/framework/modules/news/components/home-section/types';
 
-export interface NewsSectionProps {
-  news: HomeNewsItem[];
-  loading: boolean;
+export interface NewsHomeSectionProps {
   session: AuthActiveAccount;
-  onPressItem: (item: HomeNewsItem) => void;
-  onSeeMore: () => void;
 }

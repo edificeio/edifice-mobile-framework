@@ -1,18 +1,23 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
+import { useNavigation } from '@react-navigation/native';
+import type { NavigationProp, ParamListBase } from '@react-navigation/native';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg, SvgIconName } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
+import { useHomeReload } from '~/framework/modules/home/hooks';
 import { CarnetDeBordWidgetSectionCard } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/section-card';
 import { WIDGET_SECTIONS } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/sections';
 import styles from '~/framework/modules/widgets/carnet-de-board/components/home-widget/styles';
 import { CarnetDeBordWidgetProps } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/types';
 import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks';
 import { CarnetDeBordSection, getChildId, hasPronoteData } from '~/framework/modules/widgets/carnet-de-board/model';
+import { pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
 import { WidgetCard } from '~/framework/modules/widgets/components/card';
 import { WidgetPanel } from '~/framework/modules/widgets/components/panel';
 import { WidgetUserSelector } from '~/framework/modules/widgets/components/user-selector';
@@ -32,15 +37,26 @@ function Message({ illustration, text }: Readonly<{ illustration: SvgIconName; t
   );
 }
 
-export function CarnetDeBordWidget({ loading, onOpen, onOpenSection, session }: Readonly<CarnetDeBordWidgetProps>) {
-  const { children, error, select, selected } = useCarnetDeBord();
+export function CarnetDeBordWidget({ session }: Readonly<CarnetDeBordWidgetProps>) {
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const { children, error, load, loading, select, selected } = useCarnetDeBord();
   const isRelative = session.user.type === AccountType.Relative;
+
+  // Loads on mount, then every time the home is opened again or pulled down.
+  useHomeReload(load);
+
+  const onOpen = React.useCallback(() => navigation.navigate(pronoteRouteNames.carnetDeBordModal), [navigation]);
 
   const openSection = React.useCallback(
     (section: CarnetDeBordSection) => {
-      if (selected) onOpenSection(section, selected);
+      if (!selected) return;
+
+      navigation.navigate(pronoteRouteNames.carnetDeBordModal, {
+        params: { data: selected, type: section },
+        screen: pronoteRouteNames.carnetDeBordDetails,
+      });
     },
-    [onOpenSection, selected],
+    [navigation, selected],
   );
 
   if (!loading && !error && !selected) return null;
