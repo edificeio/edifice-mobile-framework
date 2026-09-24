@@ -1,6 +1,6 @@
+import type { IEntcoreNotificationType } from '~/framework/modules/home/reducer/notif-definitions/notif-types';
 import { buildAppLookupMap, buildNotifTypeLookupMap } from '~/framework/modules/myapps/reducer';
 import type { AppsInfoAggregated } from '~/framework/modules/myapps/types';
-import type { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 
 // Keeps the result of the last call, and computes again only when the data given changes.
 const cacheLastResult = <Input, Output>(compute: (input: Input) => Output) => {

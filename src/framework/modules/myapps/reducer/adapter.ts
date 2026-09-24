@@ -1,6 +1,7 @@
 import AllModules from '~/app/modules';
 import theme from '~/app/theme';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { IEntcoreNotificationType } from '~/framework/modules/home/reducer/notif-definitions/notif-types';
 import { createMyAppsServiceWithTokenFetch, myAppsService } from '~/framework/modules/myapps/service';
 import {
   AppBookmarks,
@@ -20,7 +21,6 @@ import {
   normalizeIconName,
   normalizeString,
 } from '~/framework/modules/myapps/utils';
-import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 import { AnyModule, AnyNavigableModule, IAppBadgeInfo, IAppThemeInfo, IEntcoreApp } from '~/framework/util/moduleTool';
 
 type BadgeOverridesType = Record<string, { color?: string; icon?: string }>;
