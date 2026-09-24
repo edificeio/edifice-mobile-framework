@@ -22,14 +22,10 @@ import { PageView } from '~/framework/components/page';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { updatePushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notif-settings';
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
-import {
-  getDefaultPushNotifsSettingsByType,
-  getPushNotifsSettingsByType,
-  TimelineState,
-} from '~/framework/modules/timeline/reducer';
-import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
+import { updatePushNotifsSettingsAction } from '~/framework/modules/home/actions/notif-settings';
+import timelineModuleConfig from '~/framework/modules/home/module-config';
+import { getDefaultPushNotifsSettingsByType, getPushNotifsSettingsByType, TimelineState } from '~/framework/modules/home/reducer';
+import { IPushNotifsSettings } from '~/framework/modules/home/reducer/notif-settings/push-notifs-settings';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Notifier from '~/framework/util/notifier';

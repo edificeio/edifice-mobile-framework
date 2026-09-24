@@ -22,15 +22,15 @@ import { Icon } from '~/framework/components/picture';
 import { SmallActionText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { loadPushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notif-settings';
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
+import { loadPushNotifsSettingsAction } from '~/framework/modules/home/actions/notif-settings';
+import timelineModuleConfig from '~/framework/modules/home/module-config';
 import {
   getDefaultPushNotifsSettingsByType,
   getPushNotifsSettingsByType,
   IPushNotifsSettingsByType,
   TimelineState,
-} from '~/framework/modules/timeline/reducer';
-import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
+} from '~/framework/modules/home/reducer';
+import { IPushNotifsSettings } from '~/framework/modules/home/reducer/notif-settings/push-notifs-settings';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Notifier from '~/framework/util/notifier';
