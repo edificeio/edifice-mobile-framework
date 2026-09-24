@@ -21,6 +21,7 @@ import { BodyBoldText, HeadingMText, SmallText, TextSizeStyle } from '~/framewor
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import { useAudience } from '~/framework/modules/audience';
 import { ResourceWithCommentsTemplate } from '~/framework/modules/comments';
+import { CommentsTreeProps } from '~/framework/modules/comments/components/comments-tree';
 import PageHeader from '~/framework/modules/wiki/components/page-header';
 import { PageHeaderPlaceholder } from '~/framework/modules/wiki/components/page-header/component';
 import { HeaderStatus } from '~/framework/modules/wiki/components/page-header/types';
@@ -241,9 +242,7 @@ export function WikiReaderScreenLoaded({
   );
   const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, WikiAction | WikiPageAction>>();
 
-  const [autoScrollItem, setAutoScrollItem] = React.useState<
-    ArrayElement<React.ComponentProps<typeof ResourceWithCommentsTemplate>['data']>['id'] | undefined
-  >(undefined);
+  const [autoScrollItem, setAutoScrollItem] = React.useState<ArrayElement<CommentsTreeProps['data']>['id'] | undefined>(undefined);
 
   const refreshPage = React.useCallback(async () => {
     const newPageData = await service.page.get({ id: resourceId, pageId: pageId });
@@ -251,7 +250,7 @@ export function WikiReaderScreenLoaded({
   }, [dispatch, pageId, resourceId]);
 
   const canAddComment = wiki.rights.findIndex(e => e === 'comment' || e === 'creator') !== -1;
-  const onSubmit = React.useCallback<NonNullable<React.ComponentProps<typeof ResourceWithCommentsTemplate>['onSubmit']>>(
+  const onSubmit = React.useCallback<NonNullable<CommentsTreeProps['onSubmit']>>(
     async (data, replyTo) => {
       const { _id: newCommentId } = await service.page.postComment({ id: wiki.assetId, pageId: page.id }, data.content, replyTo);
       await refreshPage();
@@ -260,7 +259,7 @@ export function WikiReaderScreenLoaded({
     [page.id, refreshPage, wiki.assetId],
   );
 
-  const onEdit = React.useCallback<NonNullable<React.ComponentProps<typeof ResourceWithCommentsTemplate>['onEdit']>>(
+  const onEdit = React.useCallback<NonNullable<CommentsTreeProps['onEdit']>>(
     async (data, id) => {
       await service.page.editComment({ id: wiki.assetId, pageId: page.id }, id, data.content);
       await refreshPage();
@@ -268,7 +267,7 @@ export function WikiReaderScreenLoaded({
     [page.id, refreshPage, wiki.assetId],
   );
 
-  const onDelete = React.useCallback<NonNullable<React.ComponentProps<typeof ResourceWithCommentsTemplate>['onDelete']>>(
+  const onDelete = React.useCallback<NonNullable<CommentsTreeProps['onDelete']>>(
     async id => {
       await service.page.deleteComment({ id: wiki.assetId, pageId: page.id }, id);
       await refreshPage();
@@ -282,6 +281,7 @@ export function WikiReaderScreenLoaded({
         navigation={navigation}
         route={route}
         canAddComment={canAddComment}
+        canAddReply
         data={page.comments}
         onSubmit={onSubmit}
         onEdit={onEdit}

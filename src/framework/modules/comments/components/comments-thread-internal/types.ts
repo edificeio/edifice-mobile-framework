@@ -9,10 +9,10 @@ export interface CommentsThreadConfig {
   repliesStartSize: number;
   repliesPageSize: number;
   showDeletedItems: 'always' | 'children' | 'never';
-  allowReplies: boolean;
+  showReplies: boolean;
 }
 
-interface CommentsThreadEvents {
+export interface CommentsThreadEvents {
   onSubmit?: (
     data: Pick<CommentsThread.CommentItem | CommentsThread.ReplyItem, 'content' | 'isRichContent'>,
     replyTo?: CommentsThread.CommentItem['id'],
@@ -25,16 +25,27 @@ interface CommentsThreadEvents {
   onReply?: (id: CommentsThread.CommentItem['id']) => Promise<void>;
 }
 
-export type CommentsThreadProps<
+export type CommentsThreadInternalProps<
   CustomListProps extends AnimatedFlatListProps<CommentsThreadInternals.Item> = AnimatedFlatListProps<CommentsThreadInternals.Item>,
-> = Omit<CustomListProps, 'data'> &
-  Partial<CommentsThreadConfig> &
+> = Omit<
+  CustomListProps,
+  | 'data'
+  | 'renderScrollComponent'
+  | 'renderItem'
+  | 'keyExtractor'
+  | 'keyboardShouldPersistTaps'
+  | 'ListEmptyComponent'
+  | 'keyboardDismissMode'
+  | 'onLayout'
+> &
   CommentsThreadEvents & {
     AnimatedListComponent?: ComponentType<CustomListProps>;
     canAddComment: boolean;
+    canAddReply: boolean;
     alwaysShowCommentField?: boolean;
-    data: (CommentsThread.CommentItem | CommentsThread.CommentDeletedItem)[];
+    data: CommentsThreadInternals.Item[];
     focusItem?: CommentsThread.AnyActualItem['id'];
+    onUnfoldReplies?: (id: string, start: number, count: number) => void;
   };
 
 export namespace CommentsThreadInternals {
@@ -89,12 +100,12 @@ export namespace CommentsThreadInternals {
   export type ContextReducer = (state: ContextState, newValues: ContextAction) => ContextState;
   export type Context = [ContextState, React.ActionDispatch<[ContextAction]>];
 
-  export interface ItemProps
-    extends ListRenderItemInfo<CommentsThreadInternals.Item>, Partial<Pick<CommentsThreadConfig, 'allowReplies'>> {
+  export interface ItemProps extends ListRenderItemInfo<CommentsThreadInternals.Item> {
     onUnfoldReplies?: (id: string, start: number, count: number) => void;
     canAddComment?: boolean;
+    canAddReply?: boolean;
     onPressReply?: (item: CommentsThreadInternals.CommentItem, index: number) => void;
-    onSendEdit?: CommentsThreadProps['onEdit'];
+    onSendEdit?: CommentsThreadInternalProps['onEdit'];
     inputRef?: ChatTextAreaProps['ref'];
     listRef?: React.RefObject<FlatList<CommentsThreadInternals.Item> | null>;
     onPressEdit?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;

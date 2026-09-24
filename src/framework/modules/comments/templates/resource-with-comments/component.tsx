@@ -3,7 +3,7 @@ import React from 'react';
 import { ExtractState } from 'zustand';
 
 import { AllModulesNavigationParams, ModuleScreenProps } from '~/app/navigation/types';
-import CommentsThread, { CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
+import { CommentsTree, CommentsTreeProps } from '~/framework/modules/comments/components/comments-tree';
 import { useCommentsThreadStore } from '~/framework/modules/comments/store';
 
 export function ResourceWithCommentsTemplate<ScreenName extends keyof AllModulesNavigationParams>({
@@ -14,7 +14,7 @@ export function ResourceWithCommentsTemplate<ScreenName extends keyof AllModules
   onSubmit,
   refreshControl,
   ...props
-}: CommentsThreadProps & Pick<ExtractState<typeof useCommentsThreadStore>, 'refreshControl'> & ModuleScreenProps<ScreenName>) {
+}: CommentsTreeProps & Pick<ExtractState<typeof useCommentsThreadStore>, 'refreshControl'> & ModuleScreenProps<ScreenName>) {
   // Setup zustand store for reply screen
   const setData = useCommentsThreadStore(s => s.setData);
   const setRefreshControl = useCommentsThreadStore(s => s.setRefreshControl);
@@ -26,7 +26,7 @@ export function ResourceWithCommentsTemplate<ScreenName extends keyof AllModules
     // No need to cleanup stored data : resourceId serves as key to check that it belongs to the right screen
   }, [data, onDelete, onEdit, onSubmit, refreshControl, setCallbacks, setData, setRefreshControl]);
 
-  const onReply = React.useCallback<NonNullable<CommentsThreadProps['onReply']>>(
+  const onReply = React.useCallback<NonNullable<CommentsTreeProps['onReply']>>(
     async commentId => {
       navigation.navigate('comments/reply', { commentId });
     },
@@ -34,7 +34,7 @@ export function ResourceWithCommentsTemplate<ScreenName extends keyof AllModules
   );
 
   return (
-    <CommentsThread
+    <CommentsTree
       data={data}
       refreshControl={refreshControl}
       onSubmit={onSubmit}

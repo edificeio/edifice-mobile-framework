@@ -5,15 +5,13 @@ import { ModuleScreenProps } from '~/app/navigation/types';
 import { modalScreenOptions } from '~/app/navigation/util';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { withSession } from '~/framework/modules/auth/util';
-import CommentsThread, { CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
+import { CommentsTree, CommentsTreeProps } from '~/framework/modules/comments/components/comments-tree';
 import { useCommentsThreadStore } from '~/framework/modules/comments/store';
 
 export const CommentsThreadReplyScreenOptions = modalScreenOptions<'comments/reply'>('modal', () => ({
   title: I18n.get('comments-reply-title'),
 }));
 export const CommentsThreadReplyScreen = withSession<ModuleScreenProps<'comments/reply'>>(function ({
-  navigation,
-  route,
   route: {
     params: { commentId },
   },
@@ -24,7 +22,7 @@ export const CommentsThreadReplyScreen = withSession<ModuleScreenProps<'comments
   const _onSubmit = useCommentsThreadStore(s => s.onSubmit);
   const onEdit = useCommentsThreadStore(s => s.onEdit);
   const onDelete = useCommentsThreadStore(s => s.onDelete);
-  const onSubmit = React.useCallback<NonNullable<CommentsThreadProps['onSubmit']>>(
+  const onSubmit = React.useCallback<NonNullable<CommentsTreeProps['onSubmit']>>(
     data => {
       if (!_onSubmit) throw new Error('[CommentsThread] No onSubmit callback provided.');
       return _onSubmit?.(data, commentId);
@@ -39,14 +37,12 @@ export const CommentsThreadReplyScreen = withSession<ModuleScreenProps<'comments
   }
 
   return (
-    <CommentsThread
-      allowReplies={false}
-      navigation={navigation}
-      route={route}
+    <CommentsTree
       onSubmit={onSubmit}
       onEdit={onEdit}
       onDelete={onDelete}
       canAddComment
+      canAddReply
       data={data}
       refreshControl={refreshControl}
     />

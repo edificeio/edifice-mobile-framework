@@ -5,22 +5,25 @@
 
 import React from 'react';
 
+import {
+  CommentsThreadConfig,
+  CommentsThreadInternals,
+} from '~/framework/modules/comments/components/comments-thread-internal/types';
+import { CommentsTreeProps } from '~/framework/modules/comments/components/comments-tree/types';
 import { CommentDeletedItem, CommentItem, ReplyEllipsisItem } from '~/framework/modules/comments/types';
 
-import { CommentsThreadConfig, CommentsThreadInternals, CommentsThreadProps } from './types';
-
 export const DEFAULT_CONFIG: CommentsThreadConfig = {
-  allowReplies: true,
   repliesPageSize: 10,
   repliesStartSize: 2,
   showDeletedItems: 'children',
+  showReplies: true,
 };
 
 /**
  * Returns only a portion of the full data to display.
  * @param data
  */
-export const useCommentsThreadData = (data: CommentsThreadProps['data'], config?: Partial<CommentsThreadConfig>) => {
+export const useCommentsThreadData = (data: CommentsTreeProps['data'], config?: Partial<CommentsThreadConfig>) => {
   // By default, all comments are displayed.
   // For each comment, only first 2 repsonses are show. A user can load the further replies 10 by 10.
   // When posting a new reponse, it will be shown directly, after the others (visible or not).

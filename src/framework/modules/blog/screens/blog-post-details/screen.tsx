@@ -34,7 +34,7 @@ import { Blog, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
 import { computeCanComment, hasPermissionManager, publishBlogPostResourceRight } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
 import { ResourceWithCommentsTemplate } from '~/framework/modules/comments';
-import { CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
+import { CommentsTreeProps } from '~/framework/modules/comments/components/comments-tree';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 
 import styles from './styles';
@@ -87,7 +87,7 @@ const BlogPostDetailsScreenLoaded = withSession<
     }
   }, [blogId, handleDeleteBlogPost, navigation, postId]);
 
-  const submitComment = React.useCallback<NonNullable<CommentsThreadProps['onSubmit']>>(
+  const submitComment = React.useCallback<NonNullable<CommentsTreeProps['onSubmit']>>(
     async (comment, replyTo) => {
       try {
         handlePublishBlogPostComment({ blogId, postId }, comment.content, replyTo);
@@ -100,7 +100,7 @@ const BlogPostDetailsScreenLoaded = withSession<
     [handlePublishBlogPostComment, blogId, postId, refresh],
   );
 
-  const updateComment = React.useCallback<NonNullable<CommentsThreadProps['onEdit']>>(
+  const updateComment = React.useCallback<NonNullable<CommentsTreeProps['onEdit']>>(
     async (comment, commentId) => {
       try {
         await handleUpdateBlogPostComment({ blogId, commentId, postId }, comment.content);
@@ -112,7 +112,7 @@ const BlogPostDetailsScreenLoaded = withSession<
     [handleUpdateBlogPostComment, blogId, postId, refresh],
   );
 
-  const deleteComment = React.useCallback<NonNullable<CommentsThreadProps['onDelete']>>(
+  const deleteComment = React.useCallback<NonNullable<CommentsTreeProps['onDelete']>>(
     async commentId => {
       try {
         await handleDeleteBlogPostComment({ blogId, commentId, postId });
@@ -218,7 +218,7 @@ const BlogPostDetailsScreenLoaded = withSession<
       navigation={navigation}
       route={route}
       alwaysShowCommentField
-      allowReplies={blogData.allowReplies}
+      canAddReply={blogData.allowReplies}
       canAddComment={canAddComment}
       data={postData.comments}
       onSubmit={submitComment}

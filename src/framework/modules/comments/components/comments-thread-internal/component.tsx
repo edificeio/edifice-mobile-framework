@@ -29,18 +29,17 @@ import { unwrapAnimatedProp } from '~/framework/util/reanimated';
 
 import { CommentsThreadContext, commentsThreadContextInitialData, commentsThreadContextReducer } from './context';
 import { CommentsThreadAddForm } from './form';
-import { DEFAULT_CONFIG, useCommentsThreadData } from './hooks';
 import { CommentsThread as CommentsThreadComponents } from './item';
 import styles from './styles';
-import { CommentsThreadInternals, CommentsThreadProps } from './types';
+import { CommentsThreadInternalProps, CommentsThreadInternals } from './types';
 
 export const DefaultAnimatedListComponent = Animated.FlatList<CommentsThreadInternals.Item>;
 
-export function CommentsThread({
-  allowReplies = DEFAULT_CONFIG.allowReplies,
+export function CommentsThreadInternal({
   alwaysShowCommentField = false,
   AnimatedListComponent = DefaultAnimatedListComponent,
   canAddComment: _canAddComment,
+  canAddReply: _canAddReply,
   data,
   focusItem,
   ListHeaderComponent: _ListHeaderComponent,
@@ -49,22 +48,16 @@ export function CommentsThread({
   onReply,
   onScroll: _onScroll,
   onSubmit,
+  onUnfoldReplies: unfoldReplies,
   ref,
   refreshControl,
-  repliesPageSize,
-  repliesStartSize,
   ...props
-}: Readonly<CommentsThreadProps>) {
+}: Readonly<CommentsThreadInternalProps>) {
   const session = useSelector(selectors.session);
   const canAddComment = session && _canAddComment;
+  const canAddReply = session && _canAddReply && _canAddComment;
 
   const context = React.useReducer(commentsThreadContextReducer, commentsThreadContextInitialData);
-
-  const { flatData, unfoldReplies } = useCommentsThreadData(data, {
-    allowReplies,
-    repliesPageSize,
-    repliesStartSize,
-  });
 
   // Screen layout
   const route = useRoute();
@@ -254,18 +247,18 @@ export function CommentsThread({
     info => (
       <CommentsThreadComponents.Item
         {...info}
-        allowReplies={allowReplies}
-        onUnfoldReplies={unfoldReplies}
+        canAddReply={canAddReply}
         canAddComment={canAddComment}
         onPressReply={onPressReply}
         onPressEdit={onPressEdit}
         onSendEdit={onEdit}
         onPressDelete={onPressDelete}
+        onUnfoldReplies={unfoldReplies}
         inputRef={inlineEditRef}
         listRef={listRef}
       />
     ),
-    [allowReplies, canAddComment, listRef, onEdit, onPressDelete, onPressEdit, onPressReply, unfoldReplies],
+    [canAddReply, canAddComment, listRef, onEdit, onPressDelete, onPressEdit, onPressReply, unfoldReplies],
   );
 
   const keyExtractor = React.useCallback<NonNullable<FlatListProps<CommentsThreadInternals.Item>['keyExtractor']>>(item => {
@@ -283,7 +276,7 @@ export function CommentsThread({
   // auto-scroll
   const previousFocusItem = usePrevious(focusItem);
   if (focusItem && previousFocusItem !== focusItem) {
-    const scrollToIndex = flatData.findIndex(e => 'id' in e && e.id === focusItem);
+    const scrollToIndex = data.findIndex(e => 'id' in e && e.id === focusItem);
     scrollToIndex !== -1 &&
       listRef.current?.scrollToIndex({
         animated: true,
@@ -304,7 +297,7 @@ export function CommentsThread({
         keyboardDismissMode="interactive"
         onScroll={onScroll}
         renderScrollComponent={renderScrollComponent}
-        data={flatData}
+        data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ListHeaderComponent={ListHeaderComponent}
@@ -328,7 +321,7 @@ export function CommentsThread({
 
 export const CommentsThreadError = () => <EmptyContentScreen />;
 
-export const CommentsThreadEmpty = ({ canAddComment }: Pick<CommentsThreadProps, 'canAddComment'>) =>
+export const CommentsThreadEmpty = ({ canAddComment }: Pick<CommentsThreadInternalProps, 'canAddComment'>) =>
   canAddComment && (
     <View style={styles.emptyWrapper}>
       <Svg

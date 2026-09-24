@@ -13,7 +13,6 @@ import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import { AccountType } from '~/framework/modules/auth/model';
 import { withSession } from '~/framework/modules/auth/util';
 import { ResourceWithCommentsTemplate } from '~/framework/modules/comments';
-import { CommentsThreadInternals, CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
 import { toInstant } from '~/framework/modules/communities/adapter';
 import DiscussionHeader from '~/framework/modules/communities/components/discussions/header';
 import { useCollapsibleDiscussionHeader } from '~/framework/modules/communities/hooks/use-collapsible-discussion-header';
@@ -29,6 +28,8 @@ import { getDiscussionStatus } from '~/framework/modules/communities/utils';
 
 import styles, { SCROLL_INDICATOR_INSETS } from './styles';
 import { CommunitiesDiscussionDetailsScreen } from './types';
+
+import { CommentsThreadInternals, CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
 
 const PAGE_SIZE = 20;
 const END_REACHED_THRESHOLD = 0.5;

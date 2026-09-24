@@ -14,22 +14,23 @@ import { TemporalTimeText } from '~/framework/util/date';
 import { CommentsThreadContext } from './context';
 import { CommentsThreadEditForm } from './form';
 import styles from './styles';
-import { CommentsThreadConfig, CommentsThreadInternals, CommentsThreadProps } from './types';
+import { CommentsThreadInternalProps, CommentsThreadInternals } from './types';
 
 export namespace CommentsThread {
   export const CommentItem = ({
-    allowReplies,
     canAddComment,
+    canAddReply,
     onPressDelete,
     onPressEdit,
     onPressReply,
     ...info
   }: ListRenderItemInfo<CommentsThreadInternals.CommentItem> & {
     canAddComment?: boolean;
+    canAddReply?: boolean;
     onPressReply?: (item: CommentsThreadInternals.CommentItem, index: number) => void;
     onPressEdit?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
     onPressDelete?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
-  } & Partial<Pick<CommentsThreadConfig, 'allowReplies'>>) => {
+  }) => {
     const { item } = info;
     const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
     const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeComment], []);
@@ -43,7 +44,7 @@ export namespace CommentsThread {
         </View>
         <View style={styles.itemCommentContentWrapper}>
           <ContentItem
-            allowReplies={allowReplies}
+            canAddReply={canAddReply}
             canAddComment={canAddComment}
             onPressReply={onPressReply}
             onPressEdit={onPressEdit}
@@ -145,18 +146,19 @@ export namespace CommentsThread {
   };
 
   export const ContentItem = ({
-    allowReplies,
     canAddComment,
+    canAddReply,
     onPressDelete: _onPressDelete,
     onPressEdit: _onPressEdit,
     onPressReply: _onPressReply,
     ...info
   }: ListRenderItemInfo<CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem> & {
     canAddComment?: boolean;
+    canAddReply?: boolean;
     onPressReply?: (item: CommentsThreadInternals.CommentItem, index: number) => void;
     onPressEdit?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
     onPressDelete?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
-  } & Partial<Pick<CommentsThreadConfig, 'allowReplies'>>) => {
+  }) => {
     const { index, item } = info;
     const session = useSelector(selectors.session);
     const isAuthor = session && item.authorId === session.user.id;
@@ -176,7 +178,7 @@ export namespace CommentsThread {
           <SmallText style={styles.itemContentText}>{item.content}</SmallText>
           {session && canAddComment && (
             <View style={styles.itemContentButtons}>
-              {allowReplies && item.type === CommentsThreadInternals.ITEM_COMMENT && (
+              {canAddReply && item.type === CommentsThreadInternals.ITEM_COMMENT && (
                 <TerciaryButton text={I18n.get('comment-reply')} testID="comment-reply" onPress={onPressReply} />
               )}
               {isAuthor && <TerciaryButton text={I18n.get('comment-edit')} testID="comment-edit" onPress={onPressEdit} />}
@@ -233,7 +235,7 @@ export namespace CommentsThread {
     onSubmit,
     ...info
   }: ListRenderItemInfo<CommentsThreadInternals.CommentItem> & {
-    onSubmit?: CommentsThreadProps['onEdit'];
+    onSubmit?: CommentsThreadInternalProps['onEdit'];
     inputRef?: CommentsThreadInternals.ItemProps['inputRef'];
   } & Pick<CommentsThreadInternals.ItemProps, 'listRef'>) => {
     const { item } = info;
@@ -261,7 +263,7 @@ export namespace CommentsThread {
     onSubmit,
     ...info
   }: ListRenderItemInfo<CommentsThreadInternals.ReplyItem> & {
-    onSubmit?: CommentsThreadProps['onEdit'];
+    onSubmit?: CommentsThreadInternalProps['onEdit'];
     inputRef?: CommentsThreadInternals.ItemProps['inputRef'];
   } & Pick<CommentsThreadInternals.ItemProps, 'listRef'>) => {
     const { item } = info;
@@ -289,8 +291,8 @@ export namespace CommentsThread {
   };
 
   export const Item = ({
-    allowReplies,
     canAddComment,
+    canAddReply,
     inputRef,
     listRef,
     onPressDelete,
@@ -312,7 +314,7 @@ export namespace CommentsThread {
         />
       ) : (
         <CommentItem
-          allowReplies={allowReplies}
+          canAddReply={canAddReply}
           canAddComment={canAddComment}
           onPressReply={onPressReply}
           onPressEdit={onPressEdit}

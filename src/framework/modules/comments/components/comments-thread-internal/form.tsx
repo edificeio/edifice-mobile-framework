@@ -19,7 +19,7 @@ import { config } from '~/framework/modules/comments';
 
 import { CommentsThreadContext } from './context';
 import styles from './styles';
-import { CommentsThreadInternals, CommentsThreadProps } from './types';
+import { CommentsThreadInternalProps, CommentsThreadInternals } from './types';
 
 export const CommentsThreadAddForm = ({
   onBlur,
@@ -32,7 +32,7 @@ export const CommentsThreadAddForm = ({
   style?: AnimatedStyle<ViewStyle>;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
-  onSubmit?: CommentsThreadProps['onSubmit'];
+  onSubmit?: CommentsThreadInternalProps['onSubmit'];
   ref?: ChatTextAreaProps['ref'];
   stickyOffset?: KeyboardStickyViewProps['offset'];
 }) => {
@@ -114,7 +114,7 @@ export const CommentsThreadEditForm = ({
   style?: StyleProp<ViewStyle>;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
-  onSubmit?: CommentsThreadProps['onEdit'];
+  onSubmit?: CommentsThreadInternalProps['onEdit'];
   ref?: ChatTextAreaProps['ref'];
 } & ListRenderItemInfo<CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem> &
   Pick<CommentsThreadInternals.ItemProps, 'listRef'>) => {
