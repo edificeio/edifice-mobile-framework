@@ -16,8 +16,8 @@ import { TopTabBar, TopTabBarProps } from '~/framework/modules/home/components';
 import { HomeReloadProvider, useHomeReloadKey } from '~/framework/modules/home/hooks';
 import { HomeNotificationsScreen, HomeNotificationsScreenOptions } from '~/framework/modules/home/screens/notifications';
 import { HomeOverviewScreen, HomeOverviewScreenOptions } from '~/framework/modules/home/screens/overview';
-import { getTimelineWorkflows } from '~/framework/modules/timeline/timeline-modules';
 import { accountTypeInfos } from '~/framework/util/accountType';
+import { getTimelineWorkflows } from '~/framework/util/timelineWorkflows';
 
 import { styles } from './styles';
 import { HomeScreenProps, HomeTabsParamList } from './types';

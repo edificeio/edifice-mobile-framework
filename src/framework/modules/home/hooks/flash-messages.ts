@@ -3,8 +3,8 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { dismissFlashMessageAction, loadFlashMessagesAction } from '~/framework/modules/timeline/actions';
-import timelineConfig from '~/framework/modules/timeline/module-config';
+import { dismissFlashMessageAction, loadFlashMessagesAction } from '~/framework/modules/home/actions';
+import timelineConfig from '~/framework/modules/home/module-config';
 
 export function useFlashMessages() {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();

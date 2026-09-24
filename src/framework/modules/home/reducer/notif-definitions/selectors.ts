@@ -1,5 +1,5 @@
 import { IGlobalState } from '~/app/store';
-import { getState } from '~/framework/modules/timeline/reducer';
+import { getState } from '~/framework/modules/home/reducer';
 
 import { IEntcoreNotificationType } from './notif-types';
 
