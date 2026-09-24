@@ -86,7 +86,7 @@ export default () =>
     );
   });
 
-const rightsThatCanComment = new Set(['creator', 'manager', 'comment']); // Business rule here. Need to be implemented into the backend.
+const rightsThatCanComment = new Set(['creator', 'comment']); // Business rule here. Need to be implemented into the backend.
 export const computeCanComment = (blogData: Pick<Blog, 'rights'>, session: AuthActiveAccount) => {
   const actualRights = computeRights(blogData, session);
   return !rightsThatCanComment.isDisjointFrom(new Set(actualRights));
