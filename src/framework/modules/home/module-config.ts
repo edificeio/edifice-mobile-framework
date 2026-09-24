@@ -2,6 +2,10 @@ import { ModuleConfig } from '~/framework/util/moduleTool';
 
 import type { TimelineState } from './reducer';
 
+/**
+ * Identity of the notifications module.
+ * The reducer, actions and storage keys all use this name.
+ */
 export default new ModuleConfig<'home', TimelineState>({
   entcoreScope: ['timeline', 'userbook'],
   entcoreTrackingName: 'Timeline',
