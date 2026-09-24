@@ -4,9 +4,9 @@ import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { getNewsItemsAction, getNewsThreadsAction } from '~/framework/modules/news/actions';
 import { NEWS_COUNT } from '~/framework/modules/news/components/home-section/constants';
 import type { HomeNewsItem } from '~/framework/modules/news/components/home-section/types';
-import { getNewsItemsAction, getNewsThreadsAction } from '~/framework/modules/news/actions';
 import type { NewsItem, NewsThreadItem } from '~/framework/modules/news/model';
 import { getNewsRights } from '~/framework/modules/news/rights';
 

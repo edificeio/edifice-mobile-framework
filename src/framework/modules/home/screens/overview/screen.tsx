@@ -10,8 +10,7 @@ import ScrollView from '~/framework/components/scrollView';
 import { withSession } from '~/framework/modules/auth/util';
 import { FlashMessageSection } from '~/framework/modules/home/components';
 import { useFlashMessages, useHomeReload, useHomeReloadKeyBump } from '~/framework/modules/home/hooks';
-import { hasNews, NewsHomeSection } from '~/framework/modules/news/components/home-section';
-import { hasWidgets, WidgetsSection } from '~/framework/modules/widgets/components/home-section';
+import { getVisibleHomeSections } from '~/framework/modules/home/registry';
 
 import styles from './styles';
 import { HomeOverviewScreenProps } from './types';
@@ -32,9 +31,11 @@ export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ sessio
 
   const refreshControl = React.useMemo(() => <RefreshControl refreshing={false} onRefresh={onRefresh} />, [onRefresh]);
 
+  const sections = React.useMemo(() => getVisibleHomeSections(session), [session]);
+
   // Every section hides itself when it has nothing to show, and the page is no list, so it would be
   // left blank. The first load is waited for, or this would flash on every opening.
-  const isEmpty = !pristine && !flashMessages.length && !hasNews(session) && !hasWidgets(session);
+  const isEmpty = !pristine && !flashMessages.length && !sections.length;
 
   return (
     <ScrollView
@@ -56,9 +57,9 @@ export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ sessio
             onDismiss={onDismissFlashMessage}
           />
 
-          <NewsHomeSection session={session} />
-
-          <WidgetsSection session={session} />
+          {sections.map(section => (
+            <React.Fragment key={section.name}>{section.renderComponent(session)}</React.Fragment>
+          ))}
         </React.Fragment>
       )}
     </ScrollView>
