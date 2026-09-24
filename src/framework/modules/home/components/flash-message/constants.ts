@@ -1,5 +1,5 @@
 import theme from '~/app/theme';
-import type { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
+import type { IEntcoreFlashMessage } from '~/framework/modules/home/reducer/flash-messages';
 
 import type { FlashMessageTint } from './types';
 

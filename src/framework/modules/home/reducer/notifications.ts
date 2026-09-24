@@ -1,4 +1,4 @@
-import moduleConfig from '~/framework/modules/timeline/module-config';
+import moduleConfig from '~/framework/modules/home/module-config';
 import { ITimelineNotification } from '~/framework/util/notifications';
 import {
   AsyncPagedState,
