@@ -13,7 +13,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { navigationRef } from '~/app/navigation';
 import { useNavigationRedirectionDispatch } from '~/app/navigation/use-confirm-remove';
 import { IGlobalState } from '~/app/store';
-import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
+import { startLoadNotificationsAction } from '~/framework/modules/home/actions';
 
 import { defaultNotificationActionStack, handleNotificationAction } from './routing';
 
