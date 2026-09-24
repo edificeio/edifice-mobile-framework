@@ -24,23 +24,24 @@ import { HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import {
   dismissFlashMessageAction,
   loadNotificationsPageAction,
   startLoadNotificationsAction,
-} from '~/framework/modules/timeline/actions';
+} from '~/framework/modules/home/actions';
+import moduleConfig from '~/framework/modules/home/module-config';
+import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/home/reducer/flash-messages';
+import { INotifFilterSettings } from '~/framework/modules/home/reducer/notif-settings/notif-filter-settings';
+import { NotificationsState } from '~/framework/modules/home/reducer/notifications';
+import { getTimelineWorkflowInformation } from '~/framework/modules/home/rights';
+import { notificationsService } from '~/framework/modules/home/service';
+import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import TimelineNotification from '~/framework/modules/timeline/components/notification';
 import TimelineSpace from '~/framework/modules/timeline/components/space';
 import TimelineFlashMessage from '~/framework/modules/timeline/components/timeline-flash-message';
 import { WidgetChip } from '~/framework/modules/timeline/components/widget-chip';
-import moduleConfig from '~/framework/modules/timeline/module-config';
-import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
-import { NotificationsState } from '~/framework/modules/timeline/reducer/notifications';
-import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
-import { notificationsService } from '~/framework/modules/timeline/service';
-import { getTimelineWorkflows, timelineWidgets } from '~/framework/modules/timeline/timeline-modules';
 import { userRouteNames } from '~/framework/modules/user/navigation';
+import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { openUrl } from '~/framework/util/linking';
 import { NavigableModuleArray } from '~/framework/util/moduleTool';
 import {
@@ -54,11 +55,13 @@ import {
   handleNotificationAction,
   NotifHandlerThunkAction,
 } from '~/framework/util/notifications/routing';
+import { getTimelineWorkflows, timelineWidgets } from '~/framework/util/timelineWorkflows';
 
 // TYPES ==========================================================================================
 
 export interface ITimelineScreenDataProps {
   flashMessages: FlashMessagesStateData;
+  notifFilterSettings: INotifFilterSettings;
   notifications: NotificationsState;
   session?: AuthActiveAccount;
 }
@@ -361,6 +364,9 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
       navigation.setParams({ reloadWithNewSettings: undefined });
     }
 
+    // The filters modal only saves the settings, so the screen showing them reloads on its own.
+    if (this.props.notifFilterSettings !== prevProps.notifFilterSettings) this.doInit();
+
     const workflows = session ? getTimelineWorkflows(session, navigation) : [];
 
     this.props.navigation.setOptions({
@@ -370,7 +376,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
             {
               icon: 'ui-filter',
               onPress: () => {
-                this.props.navigation.navigate('timeline/filters');
+                this.props.navigation.navigate(ModalsRouteNames.NotificationFilters);
               },
               testID: 'timeline-filter-button',
             },
@@ -399,7 +405,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
             {
               icon: 'ui-filter',
               onPress: () => {
-                this.props.navigation.navigate('timeline/filters');
+                this.props.navigation.navigate(ModalsRouteNames.NotificationFilters);
               },
               testID: 'timeline-filter-button',
             },
@@ -520,6 +526,7 @@ const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = s => {
   const session = getSession();
   return {
     flashMessages: ts.flashMessages.data,
+    notifFilterSettings: ts.notifSettings.notifFilterSettings.data,
     notifications: ts.notifications,
     session,
   };

@@ -18,7 +18,7 @@ import { editBlogPostAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight } from '~/framework/modules/blog/rights';
-import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
+import { startLoadNotificationsAction } from '~/framework/modules/home/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';

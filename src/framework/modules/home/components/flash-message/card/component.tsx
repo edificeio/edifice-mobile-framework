@@ -7,7 +7,7 @@ import IconButton from '~/framework/components/buttons/icon';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { Svg, SvgIconName } from '~/framework/components/picture';
 import { SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
-import type { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
+import type { IEntcoreFlashMessage } from '~/framework/modules/home/reducer/flash-messages';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import HtmlContentView from '~/ui/HtmlContentView';
 

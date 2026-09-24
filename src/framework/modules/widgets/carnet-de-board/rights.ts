@@ -1,5 +1,5 @@
 import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
-import { timelineWidgets } from '~/framework/modules/timeline/timeline-modules';
+import { timelineWidgets } from '~/framework/util/timelineWorkflows';
 
 import moduleConfig from './module-config';
 
