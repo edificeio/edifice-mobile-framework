@@ -7,8 +7,8 @@ import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import Toast from '~/framework/components/toast';
 import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
-import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
 import { resourceHasRight } from '~/framework/util/resourceRights';
+import { registerTimelineWorkflow } from '~/framework/util/timelineWorkflows';
 
 import { fetchHomeworkDiaryList } from './actions/diaryList';
 import { homeworkDiarySelected } from './actions/selectedDiary';

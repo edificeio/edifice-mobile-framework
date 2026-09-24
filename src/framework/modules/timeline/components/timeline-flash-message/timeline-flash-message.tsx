@@ -11,7 +11,7 @@ import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { getScaleWidth } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { getLineHeight, SmallBoldText, TextFontStyle } from '~/framework/components/text';
-import { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
+import { IEntcoreFlashMessage } from '~/framework/modules/home/reducer/flash-messages';
 import HtmlContentView from '~/ui/HtmlContentView';
 
 const flashMessageColors: Record<NonNullable<IEntcoreFlashMessage['color']>, Pick<IShades, 'pale' | 'light' | 'regular'>> = {

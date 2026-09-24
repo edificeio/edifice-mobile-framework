@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
 
 import { I18n } from '~/app/i18n';
+import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import {
@@ -169,13 +170,14 @@ export const NotificationList = React.memo(
 
     return (
       <FlatList
+        style={UI_STYLES.flex1}
         showsVerticalScrollIndicator={false}
         scrollEnabled={!loadingOrRefreshing}
         data={loadingOrRefreshing ? undefined : shownNotifications}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         ItemSeparatorComponent={loadingOrRefreshing ? undefined : renderSeparator}
-        contentContainerStyle={loadingOrRefreshing || shownNotifications.length ? undefined : styles.empty}
+        contentContainerStyle={loadingOrRefreshing || shownNotifications.length ? UI_STYLES.flexGrow1 : styles.empty}
         ListEmptyComponent={loadingOrRefreshing ? <NotificationsPlaceholder preview /> : renderEmpty}
         ListFooterComponent={loadingMore ? <NotificationsPlaceholder count={PLACEHOLDER_NEXT_PAGE_CARDS} /> : null}
         refreshControl={refreshControl}

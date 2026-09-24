@@ -11,6 +11,7 @@ import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pd
 import AudienceReactionsScreen, { computeNavBar as audienceReactionsNavBar } from '~/framework/modules/audience/screens/reactions';
 import AudienceViewsScreen, { computeNavBar as audienceViewsNavBar } from '~/framework/modules/audience/screens/views';
 import { infosNavBar, InfosScreen, logNavBar, LogScreen, networkNavBar, NetworkScreen } from '~/framework/modules/debug';
+import { NotificationFiltersScreen, NotificationFiltersScreenOptions } from '~/framework/modules/home/screens/notification-filters';
 import AttachmentsImportScreen, {
   computeNavBar as AttachmentsImportAddNavBar,
 } from '~/framework/modules/mails/components/attachments/modal-import';
@@ -81,6 +82,11 @@ export default (
         options={ManageFavoritesAddNavbar}
         component={ManageFavoritesModalScreen}
       />
+      <RootStack.Screen
+        name={ModalsRouteNames.NotificationFilters}
+        options={NotificationFiltersScreenOptions}
+        component={NotificationFiltersScreen}
+      />
     </RootStack.Group>
   </>
 );
@@ -101,6 +107,7 @@ setModalModeForRoutes([
   ModalsRouteNames.RichTextEditor,
   ModalsRouteNames.SplashAds,
   ModalsRouteNames.FavoritesManagement,
+  ModalsRouteNames.NotificationFilters,
 ]);
 
 setCrossIconBlackForRoutes([ModalsRouteNames.AttachmentsImport, ModalsRouteNames.FileImport, ModalsRouteNames.SplashAds]);

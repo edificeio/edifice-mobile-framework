@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
+import { registeredNotificationTypesData } from '~/framework/modules/home/reducer/notif-definitions/selectors';
 import { getNotifTypeLookupMap } from '~/framework/modules/myapps/hooks/lookup';
 import {
   resolveAppShades,
@@ -9,7 +10,6 @@ import {
   resolveNotifBadgeFromApp,
   selectAggregatedApps,
 } from '~/framework/modules/myapps/reducer';
-import { registeredNotificationTypesData } from '~/framework/modules/timeline/reducer/notif-definitions/selectors';
 import { IAppBadgeInfo, IAppThemeInfo } from '~/framework/util/moduleTool';
 import type { IAbstractNotification } from '~/framework/util/notifications';
 

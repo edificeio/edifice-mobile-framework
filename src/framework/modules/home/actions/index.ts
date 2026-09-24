@@ -3,13 +3,13 @@
  */
 import { ThunkDispatch } from 'redux-thunk';
 
-import moduleConfig from '~/framework/modules/timeline/module-config';
-import { TimelineState } from '~/framework/modules/timeline/reducer';
-import { actions as flashMessagesActions } from '~/framework/modules/timeline/reducer/flash-messages';
-import * as notifDefinitionsStateHandler from '~/framework/modules/timeline/reducer/notif-definitions';
-import * as notifSettingsStateHandler from '~/framework/modules/timeline/reducer/notif-settings';
-import { actions as notificationsActions } from '~/framework/modules/timeline/reducer/notifications';
-import { flashMessagesService, notificationsService } from '~/framework/modules/timeline/service';
+import moduleConfig from '~/framework/modules/home/module-config';
+import { TimelineState } from '~/framework/modules/home/reducer';
+import { actions as flashMessagesActions } from '~/framework/modules/home/reducer/flash-messages';
+import * as notifDefinitionsStateHandler from '~/framework/modules/home/reducer/notif-definitions';
+import * as notifSettingsStateHandler from '~/framework/modules/home/reducer/notif-settings';
+import { actions as notificationsActions } from '~/framework/modules/home/reducer/notifications';
+import { flashMessagesService, notificationsService } from '~/framework/modules/home/service';
 
 import { loadNotificationsDefinitionsAction } from './notif-definitions';
 import { loadNotificationFiltersSettingsAction } from './notif-settings';
