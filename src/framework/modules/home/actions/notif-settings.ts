@@ -1,19 +1,19 @@
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
-import moduleConfig from '~/framework/modules/timeline/module-config';
-import { TimelineState } from '~/framework/modules/timeline/reducer';
-import * as notifDefinitionsStateHandler from '~/framework/modules/timeline/reducer/notif-definitions';
+import moduleConfig from '~/framework/modules/home/module-config';
+import { TimelineState } from '~/framework/modules/home/reducer';
+import * as notifDefinitionsStateHandler from '~/framework/modules/home/reducer/notif-definitions';
 import {
   INotifFilterSettings,
   actions as notifFilterSettingsActions,
-} from '~/framework/modules/timeline/reducer/notif-settings/notif-filter-settings';
+} from '~/framework/modules/home/reducer/notif-settings/notif-filter-settings';
 import {
   IPushNotifsSettings,
   actions as pushNotifsSettingsActions,
-} from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
-import { pushNotifsService } from '~/framework/modules/timeline/service';
-import { preferences } from '~/framework/modules/timeline/storage';
+} from '~/framework/modules/home/reducer/notif-settings/push-notifs-settings';
+import { pushNotifsService } from '~/framework/modules/home/service';
+import { preferences } from '~/framework/modules/home/storage';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 
 import { loadNotificationsDefinitionsAction } from './notif-definitions';

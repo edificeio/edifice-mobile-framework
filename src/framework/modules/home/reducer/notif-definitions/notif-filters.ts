@@ -1,5 +1,5 @@
 // State definition
-import moduleConfig from '~/framework/modules/timeline/module-config';
+import moduleConfig from '~/framework/modules/home/module-config';
 import {
   AsyncState,
   createAsyncActionCreators,

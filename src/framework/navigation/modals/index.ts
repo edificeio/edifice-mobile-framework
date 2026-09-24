@@ -32,6 +32,7 @@ export enum ModalsRouteNames {
   SplashAds = 'splashads',
   FavoritesManagement = 'favorites-management',
   FavoritesReorder = 'favorites-reorder',
+  NotificationFilters = 'notification-filters',
 }
 
 export interface IModalsNavigationParams extends ParamListBase {
@@ -48,4 +49,5 @@ export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.SplashAds]: SplashadsScreenNavParams;
   [ModalsRouteNames.FavoritesManagement]: undefined;
   [ModalsRouteNames.FavoritesReorder]: undefined;
+  [ModalsRouteNames.NotificationFilters]: undefined;
 }
