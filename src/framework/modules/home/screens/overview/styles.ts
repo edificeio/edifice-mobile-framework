@@ -9,4 +9,10 @@ export default StyleSheet.create({
     padding: UI_SIZES.spacing.medium,
     paddingBottom: UI_SIZES.spacing.big,
   },
+  emptyContent: {
+    flexGrow: 1,
+  },
+  widgets: {
+    gap: UI_SIZES.spacing.minor,
+  },
 });

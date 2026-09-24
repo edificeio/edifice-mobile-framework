@@ -1,5 +1,5 @@
 import { IGlobalState } from '~/app/store';
-import { ICarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import { ICarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/model';
 import moduleConfig from '~/framework/modules/widgets/carnet-de-board/module-config';
 import {
   AsyncState,
