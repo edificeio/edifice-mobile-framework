@@ -217,6 +217,7 @@ const BlogPostDetailsScreenLoaded = withSession<
     <ResourceWithCommentsTemplate
       navigation={navigation}
       route={route}
+      alwaysShowCommentField
       allowReplies={blogData.allowReplies}
       canAddComment={canAddComment}
       data={postData.comments}
