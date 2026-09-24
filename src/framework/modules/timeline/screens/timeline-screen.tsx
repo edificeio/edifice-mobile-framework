@@ -40,7 +40,6 @@ import TimelineNotification from '~/framework/modules/timeline/components/notifi
 import TimelineSpace from '~/framework/modules/timeline/components/space';
 import TimelineFlashMessage from '~/framework/modules/timeline/components/timeline-flash-message';
 import { WidgetChip } from '~/framework/modules/timeline/components/widget-chip';
-import { getTimelineWorkflows, timelineWidgets } from '~/framework/modules/timeline/timeline-modules';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { openUrl } from '~/framework/util/linking';
@@ -56,6 +55,7 @@ import {
   handleNotificationAction,
   NotifHandlerThunkAction,
 } from '~/framework/util/notifications/routing';
+import { getTimelineWorkflows, timelineWidgets } from '~/framework/util/timelineWorkflows';
 
 // TYPES ==========================================================================================
 
