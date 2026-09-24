@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-09-24 12:05:26",
-  "notes": "Merge branch 'dev/1.17.8' into dev/peda\nMerge remote-tracking branch 'origin/dev/1.17.7' into dev/1.17.8\nfix(blog): always show comment field\nfix(comments): show add commend form only when scroll down to the comments section\nfeat: compute and respect comment & reply rights on blog\nrelease: 1.17.7-rc.4(1170706)",
-  "version": "1.17.8-peda.4(1170807)",
+  "last": "2026-09-24 13:14:57",
+  "notes": "release: 1.17.8-peda.4(1170807)",
+  "version": "1.17.8-peda.5(1170808)",
   "track": "1.17.8",
-  "order": "peda.4"
+  "order": "peda.5"
 }
