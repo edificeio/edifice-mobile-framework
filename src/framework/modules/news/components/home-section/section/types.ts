@@ -1,5 +1,5 @@
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
-import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
+import type { HomeNewsItem } from '~/framework/modules/news/components/home-section/types';
 
 export interface NewsSectionProps {
   news: HomeNewsItem[];

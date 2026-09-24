@@ -6,11 +6,11 @@ import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { HeadingSText } from '~/framework/components/text';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { NewsCard } from '~/framework/modules/home/components/news/card';
-import { NewsEmpty } from '~/framework/modules/home/components/news/empty';
-import { NewsPager, NewsPagerHandle } from '~/framework/modules/home/components/news/pager';
-import { NewsPlaceholder } from '~/framework/modules/home/components/news/placeholder';
-import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
+import { NewsCard } from '~/framework/modules/news/components/home-section/card';
+import { NewsEmpty } from '~/framework/modules/news/components/home-section/empty';
+import { NewsPager, NewsPagerHandle } from '~/framework/modules/news/components/home-section/pager';
+import { NewsPlaceholder } from '~/framework/modules/news/components/home-section/placeholder';
+import type { HomeNewsItem } from '~/framework/modules/news/components/home-section/types';
 import { getNewsRights } from '~/framework/modules/news/rights';
 
 import { CARD_SNAP_INTERVAL } from '../constants';

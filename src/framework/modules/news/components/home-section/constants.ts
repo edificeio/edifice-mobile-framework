@@ -2,7 +2,7 @@ import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 import { MEDIA_HEIGHT } from '~/framework/modules/home/components/media-preview/constants';
-import { NEWS_PAGER_EDGE_INSET, NEWS_PAGER_GAP } from '~/framework/modules/home/components/news/pager/constants';
+import { NEWS_PAGER_EDGE_INSET, NEWS_PAGER_GAP } from '~/framework/modules/news/components/home-section/pager/constants';
 
 export const NEWS_COUNT = 6;
 
