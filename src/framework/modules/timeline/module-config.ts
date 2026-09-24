@@ -1,9 +1,9 @@
 import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 /**
- * All that is left of the timeline's identity. Its state moved to the home module with the
- * notifications, but its navigator, routes and notification handler still use this name.
- * `storageName` is only kept to satisfy the type.
+ * kept for the names too, as for home one.
+ * Its state left for the home module with the
+ * notifications, so it holds none.
  */
 export default new NavigableModuleConfig<'timeline', undefined>({
   displayAs: ModuleType.TAB_MODULE,
