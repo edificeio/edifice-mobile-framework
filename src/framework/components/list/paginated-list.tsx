@@ -7,6 +7,7 @@ import React from 'react';
 import { FlatList, FlatListProps, ListRenderItemInfo as RNListRenderItemInfo, ViewToken, VirtualizedListProps } from 'react-native';
 
 import { FlashList, FlashListProps, FlashListRef, ListRenderItemInfo as SHListRenderItemInfo } from '@shopify/flash-list';
+import { AnimatedProps, createAnimatedComponent } from 'react-native-reanimated';
 
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 
@@ -228,7 +229,8 @@ const usePagination = <TItem, TCustomPlaceholderItem>({
 // # Paginated FlashList Component
 
 export interface PaginatedFlashListProps<TItem, TCustomPlaceholderItem = never>
-  extends CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
+  extends
+    CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
     Omit<
       FlashListProps<PaginatedListItem<TItem, TCustomPlaceholderItem>>,
       | 'onRefresh'
@@ -375,7 +377,8 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
 // # Paginated FlatList Component
 
 export interface PaginatedFlatListProps<TItem, TCustomPlaceholderItem = never>
-  extends CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
+  extends
+    CommonPaginatedListProps<TItem, TCustomPlaceholderItem>,
     Omit<
       FlatListProps<PaginatedListItem<TItem>>,
       | 'onRefresh'
@@ -548,3 +551,26 @@ export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never
     />
   );
 };
+
+export type AnimatedPaginatedFlashListProps<TItem, TPlaceholderItem = never> = AnimatedProps<
+  PaginatedFlashListProps<TItem, TPlaceholderItem>
+>;
+export type AnimatedPaginatedFlatListProps<TItem, TPlaceholderItem = never> = AnimatedProps<
+  PaginatedFlatListProps<TItem, TPlaceholderItem>
+>;
+
+// `createAnimatedComponent` erases the generic signature of the wrapped component (it infers TItem/TPlaceholderItem
+// once, as `unknown`), so we restore proper genericity by casting to a hand-written generic component type.
+type AnimatedPaginatedFlashListComponent = (<TItem, TPlaceholderItem = never>(
+  props: AnimatedPaginatedFlashListProps<TItem, TPlaceholderItem>,
+) => React.ReactElement | null) & { displayName?: string };
+type AnimatedPaginatedFlatListComponent = (<TItem, TPlaceholderItem = never>(
+  props: AnimatedPaginatedFlatListProps<TItem, TPlaceholderItem>,
+) => React.ReactElement | null) & { displayName?: string };
+
+export const AnimatedPaginatedFlashList = createAnimatedComponent(
+  PaginatedFlashList,
+) as unknown as AnimatedPaginatedFlashListComponent;
+export const AnimatedPaginatedFlatList = createAnimatedComponent(
+  PaginatedFlatList,
+) as unknown as AnimatedPaginatedFlatListComponent;
