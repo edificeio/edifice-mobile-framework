@@ -8,13 +8,9 @@ import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import ScrollView from '~/framework/components/scrollView';
 import { withSession } from '~/framework/modules/auth/util';
-import { FlashMessageSection, hasNews, hasWidgets, NewsSection, WidgetsSection } from '~/framework/modules/home/components';
-import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
-import { useFlashMessages, useHomeNews, useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
-import { newsRouteNames } from '~/framework/modules/news/navigation';
-import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks';
-import type { CarnetDeBordSection, ICarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/model';
-import { pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
+import { FlashMessageSection } from '~/framework/modules/home/components';
+import { useFlashMessages, useHomeReload, useHomeReloadKeyBump } from '~/framework/modules/home/hooks';
+import { getVisibleHomeSections } from '~/framework/modules/home/registry';
 
 import styles from './styles';
 import { HomeOverviewScreenProps } from './types';
@@ -24,48 +20,22 @@ export const HomeOverviewScreenOptions = (): MaterialTopTabNavigationOptions => 
   title: I18n.get('home-overview-title'),
 });
 
-export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ navigation, session }) => {
+export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ session }) => {
   const { dismiss: onDismissFlashMessage, load: loadFlashMessages, pristine, visible: flashMessages } = useFlashMessages();
-  const { load: loadNews, loading: newsLoading, news } = useHomeNews(session);
-  const { load: loadCarnetDeBord, loading: carnetDeBordLoading } = useCarnetDeBord();
 
-  // Each block shows its own failure, so one of them going down must not take the reload with it.
-  const reload = React.useCallback(async () => {
-    await Promise.allSettled([loadFlashMessages(), loadNews(), loadCarnetDeBord()]);
-  }, [loadCarnetDeBord, loadFlashMessages, loadNews]);
+  const reloadingFlashMessages = useHomeReload(loadFlashMessages);
 
-  // everything is fetched again
-  // every time the tab is opened
-  const reloading = useHomeReload(reload);
+  // The page asks every section to reload without waiting for any of them: each one shows its own
+  // placeholder, so there is nothing left to coordinate here.
+  const onRefresh = useHomeReloadKeyBump();
 
-  const { onRefresh, refreshing } = useRefresh(reload);
+  const refreshControl = React.useMemo(() => <RefreshControl refreshing={false} onRefresh={onRefresh} />, [onRefresh]);
 
-  const refreshControl = React.useMemo(
-    () => <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
-    [onRefresh, refreshing],
-  );
-
-  const onSeeMorePress = React.useCallback(() => navigation.navigate(newsRouteNames.home, {}), [navigation]);
-
-  const onOpenNews = React.useCallback(
-    (item: HomeNewsItem) => navigation.navigate(newsRouteNames.details, { news: item.news, thread: item.thread }),
-    [navigation],
-  );
-
-  const onOpenCarnetDeBord = React.useCallback(() => navigation.navigate(pronoteRouteNames.carnetDeBordModal), [navigation]);
-
-  const onOpenCarnetDeBordSection = React.useCallback(
-    (section: CarnetDeBordSection, data: ICarnetDeBord) =>
-      navigation.navigate(pronoteRouteNames.carnetDeBordModal, {
-        params: { data, type: section },
-        screen: pronoteRouteNames.carnetDeBordDetails,
-      }),
-    [navigation],
-  );
+  const sections = React.useMemo(() => getVisibleHomeSections(session), [session]);
 
   // Every section hides itself when it has nothing to show, and the page is no list, so it would be
   // left blank. The first load is waited for, or this would flash on every opening.
-  const isEmpty = !pristine && !flashMessages.length && !hasNews(session) && !hasWidgets(session);
+  const isEmpty = !pristine && !flashMessages.length && !sections.length;
 
   return (
     <ScrollView
@@ -83,18 +53,13 @@ export const HomeOverviewScreen = withSession<HomeOverviewScreenProps>(({ naviga
         <React.Fragment>
           <FlashMessageSection
             flashMessages={flashMessages}
-            loading={pristine || refreshing || reloading}
+            loading={pristine || reloadingFlashMessages}
             onDismiss={onDismissFlashMessage}
           />
 
-          <NewsSection session={session} loading={newsLoading} news={news} onPressItem={onOpenNews} onSeeMore={onSeeMorePress} />
-
-          <WidgetsSection
-            session={session}
-            carnetDeBordLoading={carnetDeBordLoading}
-            onOpenCarnetDeBord={onOpenCarnetDeBord}
-            onOpenCarnetDeBordSection={onOpenCarnetDeBordSection}
-          />
+          {sections.map(section => (
+            <React.Fragment key={section.name}>{section.renderComponent(session)}</React.Fragment>
+          ))}
         </React.Fragment>
       )}
     </ScrollView>

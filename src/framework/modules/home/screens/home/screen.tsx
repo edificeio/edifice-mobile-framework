@@ -13,7 +13,7 @@ import { BodyBoldText, CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { withSession } from '~/framework/modules/auth/util';
 import { TopTabBar, TopTabBarProps } from '~/framework/modules/home/components';
-import { HomeReloadProvider, useHomeReloadKey } from '~/framework/modules/home/hooks';
+import { HomeReloadProvider, useHomeReloadValue } from '~/framework/modules/home/hooks';
 import { HomeNotificationsScreen, HomeNotificationsScreenOptions } from '~/framework/modules/home/screens/notifications';
 import { HomeOverviewScreen, HomeOverviewScreenOptions } from '~/framework/modules/home/screens/overview';
 import { accountTypeInfos } from '~/framework/util/accountType';
@@ -59,7 +59,7 @@ const renderTabBar = (props: TopTabBarProps) => <TopTabBar {...props} />;
 const HomeTabs = createMaterialTopTabNavigator<HomeTabsParamList>();
 
 export const HomeScreen = withSession<HomeScreenProps>(({ navigation, session }) => {
-  const reloadKey = useHomeReloadKey();
+  const reload = useHomeReloadValue();
 
   const workflows = React.useMemo(
     () => getTimelineWorkflows(session, navigation as unknown as Parameters<typeof getTimelineWorkflows>[1]),
@@ -89,7 +89,7 @@ export const HomeScreen = withSession<HomeScreenProps>(({ navigation, session })
   }, [navigation, workflows]);
 
   return (
-    <HomeReloadProvider value={reloadKey}>
+    <HomeReloadProvider value={reload}>
       <HomeTabs.Navigator style={styles.page} screenOptions={homeTabsScreenOptions} tabBar={renderTabBar}>
         <HomeTabs.Screen name="home/overview" component={HomeOverviewScreen} options={HomeOverviewScreenOptions} />
         <HomeTabs.Screen name="home/notifications" component={HomeNotificationsScreen} options={HomeNotificationsScreenOptions} />
