@@ -7,20 +7,21 @@ export interface RegistryEntry {
   renderComponent: (session: AuthActiveAccount) => React.ReactNode;
 }
 
+/**
+ * Collects what the modules expose to a host screen, which knows none of them. The name identifies
+ * an entry, so registering the same one twice replaces it, and the entries come back sorted based
+ * on the `displayOrder` of each entry.
+ */
 export const createRegistry = () => {
-  const entries: RegistryEntry[] = [];
+  const entries = new Map<string, RegistryEntry>();
 
   const register = (entry: RegistryEntry) => {
-    const existingIndex = entries.findIndex(e => e.name.toLowerCase() === entry.name.toLowerCase());
-
-    if (existingIndex !== -1) entries.splice(existingIndex, 1);
-
-    entries.push(entry);
+    entries.set(entry.name.toLowerCase(), entry);
 
     return entry;
   };
 
-  const getAll = (): ReadonlyArray<RegistryEntry> => [...entries].sort((a, b) => a.displayOrder - b.displayOrder);
+  const getAll = (): ReadonlyArray<RegistryEntry> => [...entries.values()].sort((a, b) => a.displayOrder - b.displayOrder);
 
   return { getAll, register };
 };
