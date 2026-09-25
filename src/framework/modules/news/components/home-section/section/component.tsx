@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { FlatList, ListRenderItemInfo, View } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
 import type { NavigationProp, ParamListBase } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { HeadingSText } from '~/framework/components/text';
-import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { useHomeReload } from '~/framework/modules/home/hooks';
 import { NewsCard } from '~/framework/modules/news/components/home-section/card';
 import { NewsEmpty } from '~/framework/modules/news/components/home-section/empty';
@@ -17,15 +16,12 @@ import { NewsPlaceholder } from '~/framework/modules/news/components/home-sectio
 import type { HomeNewsItem } from '~/framework/modules/news/components/home-section/types';
 import { useHomeNews } from '~/framework/modules/news/hooks';
 import { newsRouteNames } from '~/framework/modules/news/navigation';
-import { getNewsRights } from '~/framework/modules/news/rights';
 
 import { CARD_SNAP_INTERVAL } from '../constants';
 import styles from './styles';
 import { NewsHomeSectionProps } from './types';
 
 const keyExtractor = (item: HomeNewsItem) => String(item.news.id);
-
-export const hasNews = (session: AuthActiveAccount) => getNewsRights(session).view;
 
 export const NewsHomeSection = React.memo(({ session }: NewsHomeSectionProps) => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();

@@ -7,7 +7,7 @@ export interface RegistryEntry {
   renderComponent: (session: AuthActiveAccount) => React.ReactNode;
 }
 
-export const createRegistryEntry = () => {
+export const createRegistry = () => {
   const entries: RegistryEntry[] = [];
 
   const register = (entry: RegistryEntry) => {
@@ -15,14 +15,12 @@ export const createRegistryEntry = () => {
 
     if (existingIndex !== -1) entries.splice(existingIndex, 1);
 
-    const insertIndex = entries.findIndex(e => e.displayOrder > entry.displayOrder);
-
-    entries.splice(insertIndex === -1 ? entries.length : insertIndex, 0, entry);
+    entries.push(entry);
 
     return entry;
   };
 
-  const getAll = (): ReadonlyArray<RegistryEntry> => entries;
+  const getAll = (): ReadonlyArray<RegistryEntry> => [...entries].sort((a, b) => a.displayOrder - b.displayOrder);
 
   return { getAll, register };
 };

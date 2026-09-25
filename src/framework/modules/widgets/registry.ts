@@ -1,7 +1,7 @@
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { createRegistryEntry } from '~/framework/util/registry';
+import { createRegistry } from '~/framework/util/registry';
 
-const homeWidgets = createRegistryEntry();
+const homeWidgets = createRegistry();
 
 export const registerHomeWidget = homeWidgets.register;
 
