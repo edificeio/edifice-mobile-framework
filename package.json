@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.17.6",
+  "version": "1.17.7",
   "private": true,
   "codegenConfig": {
     "name": "AppSpecs",
@@ -20,7 +20,7 @@
     "check-dependencies": "ncu --dep \"prod\",\"optional\"",
     "check-dev-dependencies": "ncu --dep \"dev\"",
     "check-patches": "npx patch-package",
-    "clean": "ccache --clear && rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./android/app/release && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && bundle install && npm cache clean --force && yarn install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && rm -rf .xcode.env.local && cd .. && node cli/override.js reset-cache",
+    "clean": "ccache --clear && rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./android/app/release && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && bundle install && npm cache clean --force && yarn install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && rm -rf .xcode.env.local && cd .. && node cli/override.js reset-cache",
     "depcheck": "npx depcheck",
     "i18n-diff": "node cli/i18n.js diff",
     "i18n-dynamic": "grep --recursive \"I18n.get(\\`\" ./src",
@@ -307,5 +307,5 @@
       "defaultBranch": "main"
     }
   },
-  "packageManager": "yarn@4.13.0"
+  "packageManager": "yarn@4.18.0"
 }

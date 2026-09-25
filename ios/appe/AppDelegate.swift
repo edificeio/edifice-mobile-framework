@@ -12,6 +12,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     var reactNativeDelegate: ReactNativeDelegate?
     var reactNativeFactory: RCTReactNativeFactory?
 
+    /// Stashed at launch so SceneDelegate can pass them to startReactNative.
+    var launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+
     // MARK: - Badge Management
 
     private let RECEIVED_PUSHES_KEY = "RECEIVED_PUSHES"
@@ -45,19 +48,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             #endif
         }
 
-        // React Native setup
+        // React Native setup.
+        // Under the UIScene life cycle the window is created by SceneDelegate,
+        // so we only build the factory here and hand it over in scene(_:willConnectTo:).
         let delegate = ReactNativeDelegate()
         let factory = RCTReactNativeFactory(delegate: delegate)
         delegate.dependencyProvider = RCTAppDependencyProvider()
 
         reactNativeDelegate = delegate
         reactNativeFactory = factory
-        window = UIWindow(frame: UIScreen.main.bounds)
-        factory.startReactNative(
-            withModuleName: "appe",
-            in: window,
-            launchOptions: launchOptions
-        )
+        self.launchOptions = launchOptions
 
         // UNUserNotificationCenter
         let center = UNUserNotificationCenter.current()
@@ -67,15 +67,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         return true
     }
 
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        resetApplicationBadge()
-    }
+    // NOTE: applicationDidBecomeActive(_:) is NOT called once the app adopts
+    // UIScene. The badge reset now lives in SceneDelegate.sceneDidBecomeActive(_:).
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return Orientation.getOrientation()
     }
 
+    // MARK: - Scene configuration
+
+    func application(
+        _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        return UISceneConfiguration(
+            name: "Default Configuration",
+            sessionRole: connectingSceneSession.role
+        )
+    }
+
     // MARK: - Deep Linking
+    //
+    // These two are kept for safety, but under the scene life cycle the system
+    // delivers URLs and user activities to SceneDelegate instead — see
+    // scene(_:openURLContexts:) and scene(_:continue:).
 
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         return RCTLinkingManager.application(application, continue: userActivity, restorationHandler: restorationHandler)

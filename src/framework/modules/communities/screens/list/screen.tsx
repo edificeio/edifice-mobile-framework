@@ -6,9 +6,11 @@ import {
   InvitationClient,
   InvitationFields,
   InvitationStatus,
+  InvitationTargetType,
   SearchInvitationDto,
 } from '@edifice.io/community-client-rest-rn';
 import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
+import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { FlashListRef } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
@@ -109,6 +111,7 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
         fields: INVITATION_FIELDS,
         page: page + 1,
         size: PAGE_SIZE,
+        targetType: InvitationTargetType.ALL,
       };
 
       const [allRes, pendingRes, totalPending] = await Promise.all([
@@ -124,6 +127,7 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
         accountApi(session, moduleConfig, InvitationClient).getUserInvitations({
           size: 1,
           status: InvitationStatus.PENDING,
+          targetType: InvitationTargetType.ALL,
         }),
       ]);
 
@@ -201,9 +205,16 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
     [displayedCommunities.length],
   );
 
+  // Skip the effect on first mount, already handled by ContentLoader
+  const isFirstFiltersRunRef = React.useRef(true);
+
   // Reload data on filters change
   React.useEffect(() => {
-    loadData(0, true);
+    if (isFirstFiltersRunRef.current) {
+      isFirstFiltersRunRef.current = false;
+      return;
+    }
+    loadData(0, true).catch(e => console.error('Error while reloading communities list', e));
   }, [loadData]);
 
   React.useEffect(() => {
@@ -211,6 +222,25 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
       paginatedListRef.current.scrollToOffset({ animated: false, offset: 0 });
     }
   }, [loadData]);
+
+  // loadData is read through a ref: the focus effect keeps empty deps so it doesn't re-run on
+  // every filters change, and the ref keeps it from calling a stale loadData (old filters).
+  const loadDataRef = React.useRef(loadData);
+  loadDataRef.current = loadData;
+
+  // Skip the first focus, already handled by ContentLoader
+  const isFirstFocusRef = React.useRef(true);
+
+  // Reload the list when coming back to this screen
+  useFocusEffect(
+    React.useCallback(() => {
+      if (isFirstFocusRef.current) {
+        isFirstFocusRef.current = false;
+        return;
+      }
+      loadDataRef.current(0, true).catch(e => console.error('Error while refreshing communities list', e));
+    }, []),
+  );
 
   return (
     <>
