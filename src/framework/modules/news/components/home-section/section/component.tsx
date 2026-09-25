@@ -1,29 +1,43 @@
 import * as React from 'react';
 import { FlatList, ListRenderItemInfo, View } from 'react-native';
 
+import type { NavigationProp, ParamListBase } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { HeadingSText } from '~/framework/components/text';
-import type { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { NewsCard } from '~/framework/modules/home/components/news/card';
-import { NewsEmpty } from '~/framework/modules/home/components/news/empty';
-import { NewsPager, NewsPagerHandle } from '~/framework/modules/home/components/news/pager';
-import { NewsPlaceholder } from '~/framework/modules/home/components/news/placeholder';
-import type { HomeNewsItem } from '~/framework/modules/home/components/news/types';
-import { getNewsRights } from '~/framework/modules/news/rights';
+import { useHomeReload } from '~/framework/modules/home/hooks';
+import { NewsCard } from '~/framework/modules/news/components/home-section/card';
+import { NewsEmpty } from '~/framework/modules/news/components/home-section/empty';
+import { NewsPager, NewsPagerHandle } from '~/framework/modules/news/components/home-section/pager';
+import { NewsPlaceholder } from '~/framework/modules/news/components/home-section/placeholder';
+import type { HomeNewsItem } from '~/framework/modules/news/components/home-section/types';
+import { useHomeNews } from '~/framework/modules/news/hooks';
+import { newsRouteNames } from '~/framework/modules/news/navigation';
 
 import { CARD_SNAP_INTERVAL } from '../constants';
 import styles from './styles';
-import { NewsSectionProps } from './types';
+import { NewsHomeSectionProps } from './types';
 
 const keyExtractor = (item: HomeNewsItem) => String(item.news.id);
 
-export const hasNews = (session: AuthActiveAccount) => getNewsRights(session).view;
-
-export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore, session }: NewsSectionProps) => {
+export const NewsHomeSection = React.memo(({ session }: NewsHomeSectionProps) => {
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const { load, news } = useHomeNews(session);
   const listRef = React.useRef<FlatList<HomeNewsItem>>(null);
   const pagerRef = React.useRef<NewsPagerHandle>(null);
+
+  // Loads on mount, then every time the home is opened again or pulled down.
+  const loading = useHomeReload(load);
+
+  const onSeeMore = React.useCallback(() => navigation.navigate(newsRouteNames.home, {}), [navigation]);
+
+  const onPressItem = React.useCallback(
+    (item: HomeNewsItem) => navigation.navigate(newsRouteNames.details, { news: item.news, thread: item.thread }),
+    [navigation],
+  );
 
   const onCardPress = React.useCallback(
     (item: HomeNewsItem) => {
@@ -39,8 +53,6 @@ export const NewsSection = React.memo(({ loading, news, onPressItem, onSeeMore, 
     ({ item }: ListRenderItemInfo<HomeNewsItem>) => <NewsCard item={item} onPress={onCardPress} />,
     [onCardPress],
   );
-
-  if (!hasNews(session)) return null;
 
   const renderLoading = () => <NewsPlaceholder />;
 
