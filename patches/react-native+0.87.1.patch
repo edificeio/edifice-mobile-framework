@@ -1,0 +1,45 @@
+diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
+index 9e36eee..eeccf4a 100644
+--- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
++++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.d.ts
+@@ -21,6 +21,7 @@ import {RefreshControlProps} from '../RefreshControl/RefreshControl';
+ import {Touchable} from '../Touchable/Touchable';
+ import {ViewProps} from '../View/ViewPropTypes';
+ import {View} from '../View/View';
++import type { Props as ScrollViewStickyHeaderProps } from './ScrollViewStickyHeader';
+ 
+ // See https://reactnative.dev/docs/scrollview#contentoffset
+ export interface PointProp {
+@@ -826,7 +827,7 @@ export interface ScrollViewProps
+    * transforms, for example, when you want your list to have an animated and hidable header.
+    * If component have not been provided, the default ScrollViewStickyHeader component will be used.
+    */
+-  StickyHeaderComponent?: React.ComponentType<any> | undefined;
++  StickyHeaderComponent?: React.ComponentType<ScrollViewStickyHeaderProps> | undefined;
+ }
+ 
+ export interface ScrollViewScrollToOptions {
+diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
+index 8f218c6..02b57c4 100644
+--- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
++++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
+@@ -1792,6 +1792,7 @@ class ScrollView extends React.Component<ScrollViewProps, ScrollViewState> {
+           return (
+             <StickyHeaderComponent
+               key={key}
++              index={index}
+               /* $FlowFixMe[incompatible-type] */
+               ref={ref => this._setStickyHeaderRef(key, ref)}
+               nextHeaderLayoutY={this._headerLayoutYs.get(
+diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js b/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
+index 692b4b7..7a15a45 100644
+--- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
++++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
+@@ -37,6 +37,7 @@ export type ScrollViewStickyHeaderProps = Readonly<{
+   scrollViewHeight: ?number,
+   nativeID?: ?string,
+   hiddenOnScroll?: ?boolean,
++  index: number,
+ }>;
+ 
+ interface Instance extends React.ElementRef<typeof Animated.View> {
