@@ -550,7 +550,7 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
  * @returns the React Element of the version details text
  */
 function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session'], debugVisible: boolean) {
-  const currentPlatform = session?.platform.displayName;
+  const currentPlatform = session?.platform.name;
   return React.useMemo(() => {
     if (debugVisible)
       return (
