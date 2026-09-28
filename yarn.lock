@@ -1797,36 +1797,45 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@edifice.io/collect-client-rest-rn@npm:1.0.8":
-  version: 1.0.8
-  resolution: "@edifice.io/collect-client-rest-rn@npm:1.0.8"
+"@edifice.io/collect-client-rest-rn@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@edifice.io/collect-client-rest-rn@npm:1.0.10"
   dependencies:
-    "@edifice.io/rest-client-base": "npm:2.6.4"
+    "@edifice.io/rest-client-base": "npm:2.6.6"
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.14.2"
     uuid: "npm:11.1.0"
-  checksum: 10/903ae0615d0b3a175358232dfe7a0a1ae45b8dd46c79ed5dde64862491c1344e45bf2acb8da173de738f41963cb0cbdeab0320cf8d096cf68b3eaf931c6c9161
+  checksum: 10/a89cc8f455665382c241f39c603c6a0f43d55f0cf0a09581dcf3673eaaead5620ad272743721e7f9ef1a25a386aa70928393faf70c00fa3ea119bb240d8b77a4
   languageName: node
   linkType: hard
 
-"@edifice.io/community-client-rest-rn@npm:1.5.4":
-  version: 1.5.4
-  resolution: "@edifice.io/community-client-rest-rn@npm:1.5.4"
+"@edifice.io/community-client-rest-rn@npm:1.5.9":
+  version: 1.5.9
+  resolution: "@edifice.io/community-client-rest-rn@npm:1.5.9"
   dependencies:
-    "@edifice.io/rest-client-base": "npm:2.6.4"
+    "@edifice.io/rest-client-base": "npm:2.6.7"
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.14.2"
     uuid: "npm:11.1.0"
-  checksum: 10/e5414e82e826080410e11d0642cb49fb6508d9d516b2f0843f91c54a6458557ea5fa6c7c2e9feaeb4a42ad7f49d8973756d64fcad7a30e0e4c4c74cb78279660
+  checksum: 10/3380bfba9bb3cf83b2d89dae384d475fa93aebf9d5e9fafa97d8d29edba41ee2cc4df99c0c4905463f20ea96c074ae99b770115cf07c201b4a10c536e93d7cbb
   languageName: node
   linkType: hard
 
-"@edifice.io/rest-client-base@npm:2.6.4":
-  version: 2.6.4
-  resolution: "@edifice.io/rest-client-base@npm:2.6.4"
+"@edifice.io/rest-client-base@npm:2.6.6":
+  version: 2.6.6
+  resolution: "@edifice.io/rest-client-base@npm:2.6.6"
   bin:
     rest-client-base: dist/node/cli.cjs
-  checksum: 10/f591b38648b252d38bafb241612a0f6cfd008a00685c092326ba7bcf865d31e7f7b1ae79e6ec016e0b9a833b9d0cf5f53f02baa0f0e86623b251b2aa706ba1d4
+  checksum: 10/a1109018796288c3c2cb60a629e61dbf95269a70273999f9b9d793329b1ffe6c6a787f79fcd0d4b2b261fd8b731b8fd56c9f145a9466cd26d9390872e5b67c58
+  languageName: node
+  linkType: hard
+
+"@edifice.io/rest-client-base@npm:2.6.7":
+  version: 2.6.7
+  resolution: "@edifice.io/rest-client-base@npm:2.6.7"
+  bin:
+    rest-client-base: dist/node/cli.cjs
+  checksum: 10/ecc122e5a5fa96a0597a51ae8fe243a799e417c7759f5e7d02a8477d5ec758362e92dc742d12710b2f5d06aea55f5f5bb8fa9815eb35fa2d34f289fe17a030a4
   languageName: node
   linkType: hard
 
@@ -5958,8 +5967,8 @@ __metadata:
     "@commitlint/cli": "npm:21.2.3"
     "@commitlint/config-conventional": "npm:21.2.3"
     "@d11/react-native-fast-image": "npm:8.13.0"
-    "@edifice.io/collect-client-rest-rn": "npm:1.0.8"
-    "@edifice.io/community-client-rest-rn": "npm:1.5.4"
+    "@edifice.io/collect-client-rest-rn": "npm:1.0.10"
+    "@edifice.io/community-client-rest-rn": "npm:1.5.9"
     "@emotion/native": "npm:11.11.0"
     "@emotion/react": "npm:11.14.0"
     "@eslint/compat": "npm:2.1.1"
