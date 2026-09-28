@@ -96,8 +96,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
         groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }
       await props.tryFetchTerms(structureId, groupId ?? '');
-    } catch (e) {
-      console.debug('[PRESENCES]: ERROR', (e as Error).message);
+    } catch {
       throw new Error();
     }
   };
