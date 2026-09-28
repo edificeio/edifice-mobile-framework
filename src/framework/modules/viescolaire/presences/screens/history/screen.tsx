@@ -7,9 +7,6 @@ import { Route as TabRoute, TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import type { CallListTabItemProps, PresencesHistoryScreenDispatchProps, PresencesHistoryScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
@@ -44,6 +41,9 @@ import { addTime, subtractTime } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
+import styles from './styles';
+import type { CallListTabItemProps, PresencesHistoryScreenDispatchProps, PresencesHistoryScreenPrivateProps } from './types';
+
 export const computeNavBar = ({
   navigation,
   route,
@@ -76,11 +76,11 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
 
       if (!structureId || !studentId || !userId || !userType) throw new Error();
       const initialized = await presencesService.initialization.getStructureStatus(structureId);
-
       if (!initialized) {
         setInitialized(false);
         throw new Error();
       }
+
       const { endDate, startDate } = await props.tryFetchSchoolYear(structureId);
       await props.tryFetchStatistics(studentId, structureId, startDate, endDate);
       await props.tryFetchAbsenceStatements(
@@ -89,13 +89,15 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
         subtractTime(moment(), 1, 'month'),
         addTime(moment(), 1, 'month'),
       );
+
       let groupId = classes?.[0];
       if (userType === AccountType.Relative) {
         const children = await props.tryFetchUserChildren(userId);
         groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }
       await props.tryFetchTerms(structureId, groupId ?? '');
-    } catch {
+    } catch (e) {
+      console.debug('[PRESENCES]: ERROR', (e as Error).message);
       throw new Error();
     }
   };
