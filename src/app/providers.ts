@@ -5,6 +5,7 @@ import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-c
 import { UI_STYLES } from '~/framework/components/constants';
 import appConf from '~/framework/util/appConf';
 import { NetworkMonitorProvider } from '~/framework/util/monitoring/network';
+import { StorageProvider } from '~/framework/util/storage/provider';
 import { ZendeskProvider } from '~/framework/util/zendesk';
 import { provider } from '~/util/compose-providers';
 import { DeviceTrust } from '~/util/device-trust';
@@ -13,6 +14,7 @@ import { I18nProvider } from '~/util/i18n';
 import { ReduxProvider } from './store';
 
 export const providers = [
+  provider(StorageProvider),
   provider(I18nProvider),
   provider(ReduxProvider),
   provider(DeviceTrust),

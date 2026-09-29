@@ -1,7 +1,7 @@
-import moduleConfig from './module-config';
-
 import { Storage } from '~/framework/util/storage';
+
+import moduleConfig from './module-config';
 
 export interface UserStorageData {}
 
-export const storage = Storage.slice<UserStorageData>().withModule(moduleConfig);
+export const storage = Storage.slice<UserStorageData>().withModule({ storage: { namespace: moduleConfig.storageName } });
