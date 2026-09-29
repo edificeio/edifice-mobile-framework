@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux';
 
-import { Reducers } from '~/app/store';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { ActionPayloads, actionTypes as authActionTypes } from '~/framework/modules/auth/redux/actions';
 import moduleConfig from '~/framework/modules/viescolaire/dashboard/module-config';
@@ -72,5 +71,5 @@ const reducer = combineReducers({
     },
   }),
 });
-Reducers.register(moduleConfig.reducerName, reducer);
+
 export default reducer;

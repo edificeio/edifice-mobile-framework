@@ -4,17 +4,10 @@
  */
 
 import OldModules from '~/app/modules';
-import { Reducers } from '~/app/store';
 
 import { Modules } from './all';
 
 export const ModuleCompat = {
-  getAllModulesReducers: () => {
-    const reducers = Modules.allReducers;
-    const oldReducers = Reducers.all;
-    return { ...oldReducers, ...reducers };
-  },
-
   getAllModulesScopes: () => {
     const scopes = Modules.getAllScopes();
     const oldScopes = new Set(OldModules().getScopes());

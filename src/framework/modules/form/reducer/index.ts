@@ -3,7 +3,6 @@
  */
 import { combineReducers } from 'redux';
 
-import { Reducers } from '~/app/store';
 import { IDistribution, IForm, IFormContent, IGdprDelegate } from '~/framework/modules/form/model';
 import moduleConfig from '~/framework/modules/form/module-config';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
@@ -45,5 +44,5 @@ const reducer = combineReducers({
   forms: createSessionAsyncReducer(initialState.forms, actionTypes.listFormsReceived),
   gdprDelegates: createSessionAsyncReducer(initialState.gdprDelegates, actionTypes.listGdprDelegates),
 });
-Reducers.register(moduleConfig.reducerName, reducer);
+
 export default reducer;
