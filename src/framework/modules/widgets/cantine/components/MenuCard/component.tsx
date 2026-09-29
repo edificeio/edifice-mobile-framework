@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
 
-import styles from './styles';
-import { MenuCardProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, BodyText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { MenuItem } from '~/framework/modules/widgets/cantine/model';
 import { Image } from '~/framework/util/media-deprecated';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { MenuCardProps } from './types';
 
 // Allergy configuration
 const ALLERGY_CONFIG = [

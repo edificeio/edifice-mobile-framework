@@ -1,6 +1,6 @@
 import CookieManager from '@preeternal/react-native-cookie-manager';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { AuthActiveAccount, AuthSavedLoggedInAccount, AuthTokenSet } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';

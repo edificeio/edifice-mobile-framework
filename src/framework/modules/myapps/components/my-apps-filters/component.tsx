@@ -3,7 +3,7 @@ import { Keyboard, ListRenderItem, Pressable, View } from 'react-native';
 
 import Animated from 'react-native-reanimated';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import FlatList from '~/framework/components/list/flat-list';
 import { Svg } from '~/framework/components/picture';

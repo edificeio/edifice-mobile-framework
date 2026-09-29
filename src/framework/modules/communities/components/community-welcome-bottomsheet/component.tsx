@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
 import { CommunityWelcomeBottomSheetModalProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';

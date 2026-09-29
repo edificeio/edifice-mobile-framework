@@ -3,7 +3,7 @@ import { ScrollView, View } from 'react-native';
 
 import moment from 'moment';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { SmallText } from '~/framework/components/text';
 import { ITerm } from '~/framework/modules/viescolaire/common/model';

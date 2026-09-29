@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native';
 import styles from './styles';
 import { DocumentsTileProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { AvatarStack } from '~/framework/components/avatar/stack';
 import { UI_STYLES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';

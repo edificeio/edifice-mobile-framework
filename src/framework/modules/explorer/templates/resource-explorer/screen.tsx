@@ -4,7 +4,6 @@ import { useIsFocused } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { getStore } from '~/app/store';
 import { PaginatedDocumentFlashList } from '~/framework/components/list/paginated-document-list/component';
@@ -14,6 +13,7 @@ import service from '~/framework/modules/explorer/service/index';
 import { emptyFolderData, ExplorerAction, useExplorerActions } from '~/framework/modules/explorer/store';
 import { ResourceMedia } from '~/framework/modules/media';
 import { HTTPError } from '~/framework/util/transport/error';
+import { I18n } from '~/util/i18n';
 
 import type { ResourceExplorerTemplate } from './types';
 

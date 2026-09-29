@@ -10,7 +10,7 @@ import { Alert, View } from 'react-native';
 
 import DeviceInfo from 'react-native-device-info';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 
 export const SimulatorTrust = React.memo(function ({ children, onUntrusted }: PropsWithChildren<{ onUntrusted: () => void }>) {
   const [isTrustedDevice, setIsTrustedDevice] = React.useState<boolean | undefined>(undefined);

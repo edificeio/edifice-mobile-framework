@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { ModuleScreenProps } from '~/app/navigation/types';
 import { screenOptions } from '~/app/navigation/util';
 import AlertCard from '~/framework/components/alert';

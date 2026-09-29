@@ -6,7 +6,7 @@ import React from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { withSession } from '~/framework/modules/auth/util';

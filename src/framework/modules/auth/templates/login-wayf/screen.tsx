@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';

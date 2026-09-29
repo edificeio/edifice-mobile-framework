@@ -6,7 +6,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';

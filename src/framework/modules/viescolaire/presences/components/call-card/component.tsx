@@ -6,7 +6,7 @@ import moment, { Moment } from 'moment';
 import styles from './styles';
 import type { CallCardProps, CallCardStyle } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';

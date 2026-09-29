@@ -9,7 +9,7 @@ import DeviceInfo from 'react-native-device-info';
 
 import { FetchErrorCode } from './transport/error';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { AccountErrorCode } from '~/framework/modules/auth/model/error';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';
 

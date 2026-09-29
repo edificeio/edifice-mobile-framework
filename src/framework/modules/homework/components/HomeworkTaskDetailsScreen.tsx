@@ -6,7 +6,7 @@ import LottieView from 'lottie-react-native';
 import { Moment } from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { getScaleHeight, UI_SIZES } from '~/framework/components/constants';

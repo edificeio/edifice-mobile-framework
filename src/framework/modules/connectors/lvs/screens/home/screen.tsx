@@ -4,15 +4,15 @@ import { Alert, View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
-import type { LvsHomeScreenPrivateProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { LvsNavigationParams, lvsRouteNames } from '~/framework/modules/connectors/lvs/navigation';
 import redirect from '~/framework/modules/connectors/lvs/service/redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { I18n } from '~/util/i18n';
+
+import type { LvsHomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

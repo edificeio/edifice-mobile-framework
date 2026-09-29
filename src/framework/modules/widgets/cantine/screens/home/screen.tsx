@@ -7,7 +7,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { runOnJS } from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';

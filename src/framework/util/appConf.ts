@@ -5,11 +5,11 @@
 import type { ImageStyle, PlatformOSType } from 'react-native';
 
 import AppConfValues from '~/app/appconf';
-import { I18n } from '~/app/i18n';
 import type { PictureProps } from '~/framework/components/picture';
 import type { AccountType } from '~/framework/modules/auth/model';
 import { WhoAreWellustrationType, WhoAreWeQuoteType } from '~/framework/modules/user/screens/who-are-we';
 import BuildInfo from '~/framework/util/build-info';
+import { I18n } from '~/util/i18n';
 
 // Platforms ======================================================================================
 

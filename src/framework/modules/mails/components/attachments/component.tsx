@@ -4,11 +4,6 @@ import { View, ViewStyle } from 'react-native';
 import { BottomSheetModal as RNBottomSheetModal } from '@gorhom/bottom-sheet';
 import { useNavigation } from '@react-navigation/native';
 
-import Attachment from './attachment';
-import styles from './styles';
-import { AttachmentsProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import BottomSheetModal from '~/framework/components/modals/bottom-sheet';
@@ -18,6 +13,11 @@ import Separator from '~/framework/components/separator';
 import toast from '~/framework/components/toast';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { FileSource } from '~/framework/util/fileHandler/types';
+import { I18n } from '~/util/i18n';
+
+import Attachment from './attachment';
+import styles from './styles';
+import { AttachmentsProps } from './types';
 
 const MODAL_DISMISS_DELAY = 500;
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { CheckboxButtonProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_STYLES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';

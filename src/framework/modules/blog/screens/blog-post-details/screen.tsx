@@ -6,7 +6,6 @@ import { Viewport } from '@skele/components';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
@@ -49,6 +48,7 @@ import { blogService } from '~/framework/modules/blog/service';
 import { blogPostGenerateResourceUriFunction, blogUriCaptureFunction } from '~/framework/modules/blog/service/adapters';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { resourceHasRight } from '~/framework/util/resourceRights';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import {

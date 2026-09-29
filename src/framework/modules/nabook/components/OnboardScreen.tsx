@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import FastImage from '@d11/react-native-fast-image';
 import Swiper from 'react-native-swiper';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { getScaleFontSize, getScaleWidth } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import BtnNBK from '~/framework/modules/nabook/components/BtnNBK';

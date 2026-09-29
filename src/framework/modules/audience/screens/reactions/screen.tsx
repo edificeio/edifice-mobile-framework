@@ -9,7 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import styles from './styles';
 import { AudienceReactionsScreenProps, ReactionsTabViewProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { IGlobalState } from '~/app/store';
 import { BadgeAvatar, BadgePosition } from '~/framework/components/badgeAvatar';
 import { UI_SIZES } from '~/framework/components/constants';

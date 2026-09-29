@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { CommonActions } from '@react-navigation/native';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { getAddAccountRouteForOnboarding } from '~/framework/modules/auth/new-navigation';
 import AuthIntroductionScreen from '~/framework/modules/auth/templates/introduction';

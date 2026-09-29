@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import moment from 'moment';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 import { showSplashads } from '~/framework/modules/splashads/screen';
 import { Platform } from '~/framework/util/appConf';

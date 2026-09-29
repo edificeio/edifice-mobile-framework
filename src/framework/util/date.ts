@@ -2,7 +2,7 @@ import moment, { DurationInputArg1, DurationInputArg2, Moment } from 'moment';
 
 import { uppercaseFirstLetter } from './string';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 
 export enum DayOfTheWeek {
   MONDAY = 'monday',

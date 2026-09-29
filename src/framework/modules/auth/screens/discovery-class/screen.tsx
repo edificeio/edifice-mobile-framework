@@ -3,13 +3,13 @@ import { View } from 'react-native';
 
 import { Trans } from 'react-i18next';
 
-import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingMText, NestedBoldText, SmallText } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media-deprecated';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { AuthDiscoveryClassScreenProps } from './types';

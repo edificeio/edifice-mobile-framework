@@ -6,7 +6,6 @@ import moment, { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_STYLES } from '~/framework/components/constants';
@@ -36,6 +35,7 @@ import appConf from '~/framework/util/appConf';
 import { subtractTime, today } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import type { PresencesCallListScreenDispatchProps, PresencesCallListScreenPrivateProps } from './types';

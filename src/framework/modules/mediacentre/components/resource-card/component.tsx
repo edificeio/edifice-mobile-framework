@@ -7,7 +7,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { defaultStyles, pinStyles, previewStyles } from './styles';
 import { ResourceCardProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { TouchCardWithoutPadding } from '~/framework/components/card/base';

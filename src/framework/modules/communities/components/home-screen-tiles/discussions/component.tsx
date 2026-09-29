@@ -3,13 +3,13 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { MembershipRole } from '@edifice.io/community-client-rest-rn';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import Pill from '~/framework/components/pill';
 import { SmallBoldText } from '~/framework/components/text';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { DiscussionsTileProps } from './types';

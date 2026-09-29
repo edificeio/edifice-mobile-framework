@@ -6,10 +6,6 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import type { DashboardTeacherScreenDispatchProps, DashboardTeacherScreenPrivateProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -36,6 +32,10 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { subtractTime } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import type { DashboardTeacherScreenDispatchProps, DashboardTeacherScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

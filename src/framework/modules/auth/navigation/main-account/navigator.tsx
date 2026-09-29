@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import AuthDiscoveryClassScreen, { computeNavBar as discoveryClassNavBar } from '~/framework/modules/auth/screens/discovery-class';

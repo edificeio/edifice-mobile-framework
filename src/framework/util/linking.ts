@@ -9,7 +9,7 @@ import { decode } from 'html-entities';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { navigationRef } from '~/app/navigation';
 import { getStore, IGlobalState } from '~/app/store';
 import { getSession } from '~/framework/modules/auth/redux/reducer';

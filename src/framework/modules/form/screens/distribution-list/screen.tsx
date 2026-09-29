@@ -5,10 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import { FormDistributionListScreenDispatchProps, FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -25,6 +21,10 @@ import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/n
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { FormDistributionListScreenDispatchProps, FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
 
 export const computeNavBar = ({
   navigation,

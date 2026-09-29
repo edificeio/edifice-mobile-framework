@@ -4,7 +4,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';

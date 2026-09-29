@@ -5,7 +5,7 @@ import FilterButton from './filter-button';
 import styles from './styles';
 import { ResourceFilterListProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { Svg } from '~/framework/components/picture';
 import { ResourceFilter } from '~/framework/modules/mediacentre/model';

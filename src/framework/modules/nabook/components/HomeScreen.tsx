@@ -6,7 +6,7 @@ import FastImage from '@d11/react-native-fast-image';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { getScaleWidth } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';

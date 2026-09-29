@@ -1,5 +1,5 @@
-import { I18n } from '~/app/i18n';
 import { AppsInfo } from '~/framework/modules/myapps/types.ts';
+import { I18n } from '~/util/i18n';
 
 export const getTranslatedAppLabel = (value?: string | null): string | undefined => {
   if (!value) return undefined;

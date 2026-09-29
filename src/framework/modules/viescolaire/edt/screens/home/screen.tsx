@@ -7,10 +7,6 @@ import { TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import { EdtHomeScreenDispatchProps, EdtHomeScreenPrivateProps, EdtTabViewProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -42,6 +38,10 @@ import { EdtNavigationParams, edtRouteNames } from '~/framework/modules/viescola
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { EdtHomeScreenDispatchProps, EdtHomeScreenPrivateProps, EdtTabViewProps } from './types';
 
 export const computeNavBar = ({
   navigation,

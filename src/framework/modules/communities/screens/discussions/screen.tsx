@@ -5,7 +5,7 @@ import { Temporal } from '@js-temporal/polyfill';
 import { useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { getScaleImageSize } from '~/framework/components/constants';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';

@@ -4,9 +4,6 @@ import { Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 
-import { HomeworkItem, SessionItem } from './Items';
-
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import DateTimePicker from '~/framework/components/dateTimePicker';
@@ -26,6 +23,9 @@ import {
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { PageContainer } from '~/ui/ContainerContent';
+import { I18n } from '~/util/i18n';
+
+import { HomeworkItem, SessionItem } from './Items';
 
 const styles = StyleSheet.create({
   childPickerContentContainer: {

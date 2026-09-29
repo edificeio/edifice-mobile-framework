@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
 import { AuthLoginRedirectScreenProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { BodyText } from '~/framework/components/text';

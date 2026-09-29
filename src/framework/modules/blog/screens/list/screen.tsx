@@ -7,7 +7,7 @@ import { ListRenderItemInfo } from 'react-native';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { headerAction, screenOptions } from '~/app/navigation/util';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PaginatedFlatList, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionText, HeadingLText } from '~/framework/components/text';
