@@ -10,7 +10,7 @@ import WebView, { WebViewProps } from 'react-native-webview';
 import { connect } from 'react-redux';
 
 import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';

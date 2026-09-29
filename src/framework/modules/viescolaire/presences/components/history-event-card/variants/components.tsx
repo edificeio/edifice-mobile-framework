@@ -4,7 +4,7 @@ import { Moment } from 'moment';
 
 import styles from './styles';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { BodyText, CaptionBoldText, NestedBoldText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
 import HistoryEventCard from '~/framework/modules/viescolaire/presences/components/history-event-card';

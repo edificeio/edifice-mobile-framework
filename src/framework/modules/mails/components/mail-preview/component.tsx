@@ -3,7 +3,7 @@ import { Pressable, View } from 'react-native';
 
 import moment from 'moment';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';

@@ -5,9 +5,6 @@ import moment, { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import type { DiaryTimetableScreenDispatchProps, DiaryTimetableScreenPrivateProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
@@ -24,6 +21,9 @@ import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
+import { I18n } from '~/util/i18n';
+
+import type { DiaryTimetableScreenDispatchProps, DiaryTimetableScreenPrivateProps } from './types';
 
 export type TimetableState = {
   startDate: Moment;

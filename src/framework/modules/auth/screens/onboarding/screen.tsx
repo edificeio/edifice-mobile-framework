@@ -6,7 +6,7 @@ import deviceInfoModule from 'react-native-device-info';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { ButtonGroup, PrimaryButton, SecondaryButton } from '~/framework/components/button';
 import { UI_STYLES } from '~/framework/components/constants';

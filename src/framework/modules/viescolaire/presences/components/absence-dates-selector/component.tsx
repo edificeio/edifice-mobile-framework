@@ -6,7 +6,7 @@ import moment, { Moment } from 'moment';
 import styles from './styles';
 import type { AbsenceDatesSelectorProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import IconButton from '~/framework/components/buttons/icon';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';

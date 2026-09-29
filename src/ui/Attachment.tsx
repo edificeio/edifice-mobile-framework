@@ -6,9 +6,6 @@ import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IconButton } from './IconButton';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -21,6 +18,9 @@ import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import Notifier from '~/framework/util/notifier';
 import { getPlatformUrl } from '~/framework/util/transport/common';
+import { I18n } from '~/util/i18n';
+
+import { IconButton } from './IconButton';
 
 export interface IRemoteAttachment {
   charset?: string;

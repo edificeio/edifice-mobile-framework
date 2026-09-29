@@ -4,7 +4,7 @@ import { Pressable, View } from 'react-native';
 import FeedbackMenuButton from './button';
 import styles from './styles';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import IconButton from '~/framework/components/buttons/icon';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES } from '~/framework/components/constants';

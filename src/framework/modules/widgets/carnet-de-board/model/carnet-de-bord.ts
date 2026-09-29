@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 
 export enum CarnetDeBordSection {
   CAHIER_DE_TEXTES = 1, // No falsy values in this

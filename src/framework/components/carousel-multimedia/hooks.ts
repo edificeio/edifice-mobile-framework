@@ -15,7 +15,7 @@ import Orientation, {
 import { SharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import Share from 'react-native-share';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { FileMedia, isEmbeddedMedia, isPlayableMedia } from '~/framework/modules/media';

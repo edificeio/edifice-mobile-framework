@@ -4,7 +4,7 @@ import { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { withSession } from '~/framework/modules/auth/util';
 import { deleteHomeworkDiaryEntry } from '~/framework/modules/homework/actions/deleteEntry';

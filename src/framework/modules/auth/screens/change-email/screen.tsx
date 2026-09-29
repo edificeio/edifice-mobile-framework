@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
 import { AllModulesNavigationParams } from '~/app/navigation/types';
 import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
@@ -25,6 +24,7 @@ import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/util/form';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';

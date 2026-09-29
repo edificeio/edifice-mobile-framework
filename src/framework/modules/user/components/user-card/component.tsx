@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
-import { IUserCardProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { cameraActionFm, galleryActionFm } from '~/framework/components/menus/actions';
@@ -20,6 +16,10 @@ import { LocalFile } from '~/framework/util/fileHandler/models';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { IUserCardProps } from './types';
 
 export const UserCard = ({
   canEdit = false,

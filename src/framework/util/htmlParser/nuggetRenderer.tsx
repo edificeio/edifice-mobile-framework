@@ -5,7 +5,6 @@
 import * as React from 'react';
 import { ImageURISource, TextStyle, View, ViewStyle } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import MediaButton from '~/framework/components/media/button';
@@ -24,6 +23,7 @@ import { MediaType } from '~/framework/modules/media';
 import { openUrl } from '~/framework/util/linking';
 import { formatMediaSourceArray, formatSource, Image } from '~/framework/util/media-deprecated';
 import Images from '~/ui/Images';
+import { I18n } from '~/util/i18n';
 
 export enum HtmlParserJsxTextVariant {
   None = 0,

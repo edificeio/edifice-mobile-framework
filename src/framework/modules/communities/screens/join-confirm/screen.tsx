@@ -8,7 +8,7 @@ import { useTheme } from '@react-navigation/native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { defaultScreenOptions } from '~/app/navigation/layout';
 import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';

@@ -3,7 +3,7 @@ import { TextProps } from 'react-native';
 
 import { SmallBoldText } from '.';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { AccountType } from '~/framework/modules/auth/model';
 

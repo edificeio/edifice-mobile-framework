@@ -6,7 +6,7 @@ import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-nav
 import moment, { Moment } from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';

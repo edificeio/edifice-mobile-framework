@@ -3,13 +3,13 @@ import { StyleSheet, View } from 'react-native';
 
 import DropDownPicker from 'react-native-dropdown-picker';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { BodyText, NestedText, SmallText } from '~/framework/components/text';
 import { DistributionStatus } from '~/framework/modules/form/model';
+import { I18n } from '~/util/i18n';
 
 const styles = StyleSheet.create({
   dropdown: {

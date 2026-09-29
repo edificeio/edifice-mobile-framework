@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { AnnouncementType } from '@edifice.io/community-client-rest-rn';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { UI_STYLES } from '~/framework/components/constants';
 import { CaptionItalicText, SmallBoldText } from '~/framework/components/text';

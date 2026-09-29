@@ -3,7 +3,7 @@ import { Animated, Keyboard, Platform, TextInput as RNTextInput, TouchableOpacit
 
 import debounce from 'lodash.debounce';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextInputType } from '~/framework/components/inputs/text/component';

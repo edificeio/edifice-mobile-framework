@@ -1,3 +1,8 @@
+/**
+ * @todo: remove this file after the migration.
+ *
+ */
+
 import moduleImports from '~/app/config/modules';
 
 import type { AllModulesArray } from './types';
