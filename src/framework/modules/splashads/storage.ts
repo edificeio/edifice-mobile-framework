@@ -1,14 +1,14 @@
 import { Moment } from 'moment';
 
-import moduleConfig from './module-config';
-
 import { Storage } from '~/framework/util/storage';
+
+import moduleConfig from './module-config';
 
 export interface SplashadsStorageData {
   splashads: Record<string, { date: Moment; url: string }>;
 }
 
-export const storage = Storage.slice<SplashadsStorageData>().withModule(moduleConfig);
+export const storage = Storage.slice<SplashadsStorageData>().withModule({ storage: { namespace: moduleConfig.storageName } });
 
 const SPLASHADS_KEY = 'splashads';
 

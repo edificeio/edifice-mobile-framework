@@ -1,12 +1,12 @@
+import { ModuleConfig } from '~/app/module';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { AuthState } from '~/framework/modules/auth/redux/types';
+import { Trackers } from '~/framework/util/tracker';
+
 import { StorageHandler } from './handler';
 import { mmkvHandler } from './mmkv';
 import { StorageSlice } from './slice';
 import { StorageTypeMap } from './types';
-
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { AuthState } from '~/framework/modules/auth/redux/types';
-import { IModuleConfig } from '~/framework/util/moduleTool';
-import { Trackers } from '~/framework/util/tracker';
 
 /**
  * Use MMKV as the storage technology.
@@ -27,15 +27,15 @@ export class Storage {
     return new StorageSlice(subStorage, subStorage.name) as unknown as StorageType;
   }
 
-  static create<Types extends StorageTypeMap>(module: IModuleConfig<string, any>) {
+  static create<Types extends StorageTypeMap>(module: Required<Pick<ModuleConfig<any>, 'storage'>>) {
     return Storage.slice<Types>().withModule(module);
   }
 
   static PREFERENCES_PREFIX = '@';
 
   static preferences<Types extends StorageTypeMap>(
-    module: IModuleConfig<string, any>,
-    initFn: (this: StorageSlice<Types>, session: AuthLoggedAccount) => void,
+    module: Required<Pick<ModuleConfig<any>, 'storage'>>,
+    initFn: (this: StorageSlice<Types>, session: AuthActiveAccount) => void,
   ) {
     const ret = Storage.compose(Storage.create<Types>(module));
     ret.setSessionInit(function (session) {
@@ -56,7 +56,7 @@ export class Storage {
     await StorageHandler.initAllStorages();
   }
 
-  static async sessionInit(session: AuthLoggedAccount) {
+  static async sessionInit(session: AuthActiveAccount) {
     await StorageHandler.sessionInitAllStorages(session);
   }
 }
