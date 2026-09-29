@@ -16,7 +16,7 @@
 import { decode } from 'html-entities';
 import Saxophone from 'saxophone';
 
-import { parseAttrs } from '~/utils/attrs';
+import { parseAttrs } from '~/util/attrs';
 
 export interface IHtmlParserAbstractOptions {
   selectable?: boolean;

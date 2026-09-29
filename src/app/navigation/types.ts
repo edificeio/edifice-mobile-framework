@@ -4,9 +4,9 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type authModule from '~/framework/modules/auth';
 import type mediaModule from '~/framework/modules/media';
-import { KeysOfUnion, ValueFromUnion } from '~/utils/types';
+import { KeysOfUnion, ValueFromUnion } from '~/util/types';
 
-import { ModuleNavigationParams, OneModule } from '../module/types';
+import { AllModulesUnion, ModuleNavigationParams } from '../module/types';
 
 import type { TABS_ROUTE_NAME } from '.';
 
@@ -26,7 +26,7 @@ export type NavigationTabParams = {
 
 // ToDo : ^^^ really need to staticly type this ?
 
-type AllModulesNavigationParamsAsUnion = ModuleNavigationParams<OneModule>;
+type AllModulesNavigationParamsAsUnion = ModuleNavigationParams<AllModulesUnion>;
 export type AllModulesScreenNames = KeysOfUnion<AllModulesNavigationParamsAsUnion>;
 export type AllModulesNavigationParams = {
   [RouteName in AllModulesScreenNames]: ValueFromUnion<AllModulesNavigationParamsAsUnion, RouteName>;

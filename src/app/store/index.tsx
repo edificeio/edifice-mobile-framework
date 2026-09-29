@@ -28,7 +28,7 @@ import { reducer as startupReducer } from '~/framework/navigation/redux';
 
 import { reactotronEnhancer } from './debug';
 import monitorReducerEnhancer from './monitor';
-import { ModuleCompat } from '../module/compat';
+// import { ModuleCompat } from '../module/compat';
 import { AllModulesState } from '../module/types';
 
 /** === Store reducers map === */
@@ -73,7 +73,7 @@ export default function configureStore(preloadedState?: AllModulesState) {
   const composedEnhancers: StoreEnhancer = compose(...enhancers);
 
   const rootReducer = combineReducers({
-    ...ModuleCompat.getAllModulesReducers(),
+    // ...ModuleCompat.getAllModulesReducers(),
     // Build-in reducers here
     // ToDo: migrate in new module system (no more specific build-in reducers plz)
     startup: startupReducer,
