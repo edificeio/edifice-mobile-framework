@@ -11,7 +11,10 @@ import { ZendeskProvider } from '~/framework/util/zendesk';
 import { provider } from '~/util/compose-providers';
 import { DeviceTrust } from '~/util/device-trust';
 
+import { ReduxProvider } from './store';
+
 export const providers = [
+  provider(ReduxProvider),
   provider(DeviceTrust),
   provider(NetworkMonitorProvider),
   provider(GestureHandlerRootView, { style: UI_STYLES.flex1 }),

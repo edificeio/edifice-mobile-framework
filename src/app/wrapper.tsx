@@ -1,24 +1,32 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+
+import { BodyBoldText } from '~/framework/components/text';
+
 import { CoreModule, EntModule } from './module';
 import { useModulesOfType } from './module/loader';
 
 export function AppWrapper() {
   const coreModules = useModulesOfType(CoreModule);
   const entModules = useModulesOfType(EntModule);
+  const state = useSelector(s => s);
   return (
-    <View>
-      <Text>CORE MODULES ---</Text>
+    <SafeAreaView>
+      <BodyBoldText>CORE MODULES ---</BodyBoldText>
       {coreModules.map(m => (
         <Text key={m.name}>{m.name}</Text>
       ))}
-      <Text>ENT MODULES ---</Text>
+      <BodyBoldText>ENT MODULES ---</BodyBoldText>
       {entModules.map(m => (
         <Text key={m.name}>
           {m.name} - {m.entTrackingName}
         </Text>
       ))}
-    </View>
+      <BodyBoldText>STORE REDUX ---</BodyBoldText>
+      <Text>{JSON.stringify(state)}</Text>
+    </SafeAreaView>
   );
 }

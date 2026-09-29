@@ -6,7 +6,7 @@ import React from 'react';
 
 import moduleImports from '~/app/config/modules';
 
-import { AllModulesArray } from './types';
+import { AllModulesArray, AllModulesReducers } from './types';
 
 import { Module } from '.';
 
@@ -32,8 +32,35 @@ export const ModuleLoader = React.memo(function ({ children }: React.PropsWithCh
   return <ModuleContext value={modules}>{children}</ModuleContext>;
 });
 
-export const useModulesOfType = <T extends typeof Module>(type: T): InstanceType<T>[] => {
+/**
+ * Retrieves all modules in a array.
+ * @returns
+ */
+export const useModules = (): AllModulesArray => {
   const modules = React.useContext(ModuleContext);
   if (modules === undefined) throw new Error('[Modules]: `useModules` was called before all modules could be loaded.');
-  return modules.filter(m => m instanceof type) as InstanceType<T>[];
+  return modules;
+};
+
+/**
+ * Retrieves all modules of a certain subclass in a array.
+ * @returns
+ */
+export const useModulesOfType = <T extends typeof Module>(type: T): InstanceType<T>[] => {
+  const modules = React.useContext(ModuleContext);
+  if (modules === undefined) throw new Error('[Modules]: `useModulesOfType` was called before all modules could be loaded.');
+  return React.useMemo(() => modules.filter(m => m instanceof type) as InstanceType<T>[], [modules, type]);
+};
+
+/**
+ * Retrieves all modules in a array.
+ * @returns
+ */
+export const useModuleReducers = (): AllModulesReducers => {
+  const modules = React.useContext(ModuleContext);
+  if (modules === undefined) throw new Error('[Modules]: `useModuleReducers` was called before all modules could be loaded.');
+  return React.useMemo(
+    () => Object.fromEntries(modules.map(module => [module.name, module.redux?.reducer])) as AllModulesReducers,
+    [modules],
+  );
 };
