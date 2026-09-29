@@ -1,10 +1,6 @@
 import React from 'react';
 import { FlatList, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
-import { FormAnswerText } from './FormAnswerText';
-import { FormCheckbox } from './FormCheckbox';
-
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
@@ -12,6 +8,10 @@ import { SmallText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionChoice, IQuestionResponse } from '~/framework/modules/form/model';
 import { sessionImageSource } from '~/framework/util/transport';
+import { I18n } from '~/util/i18n';
+
+import { FormAnswerText } from './FormAnswerText';
+import { FormCheckbox } from './FormCheckbox';
 
 const styles = StyleSheet.create({
   choiceContainer: {

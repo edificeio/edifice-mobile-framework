@@ -3,11 +3,11 @@ import { Pressable, View } from 'react-native';
 
 import moment from 'moment';
 
-import styles from './styles';
-
-import { I18n } from '~/app/i18n';
 import { BodyText, CaptionText } from '~/framework/components/text';
 import { ScreenTimeDayResponse, ScreenTimeWeekResponse } from '~/framework/modules/widgets/screen-time/model';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
 
 export type ChartType = 'week' | 'day';
 

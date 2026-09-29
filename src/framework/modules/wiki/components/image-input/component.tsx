@@ -4,7 +4,7 @@ import { TouchableOpacity, View } from 'react-native';
 import { INPUT_BUTTON_COLOR, styles } from './styles';
 import { ImageInputProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';

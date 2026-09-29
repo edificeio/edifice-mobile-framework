@@ -4,10 +4,6 @@ import { ColorValue, FlatList, View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 
-import styles from './styles';
-import type { PresencesEventListScreenPrivateProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
@@ -24,6 +20,10 @@ import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modu
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { isEmpty } from '~/framework/util/object';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import type { PresencesEventListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

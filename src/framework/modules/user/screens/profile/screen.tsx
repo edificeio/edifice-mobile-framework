@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { TerciaryButton } from '~/framework/components/button';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';

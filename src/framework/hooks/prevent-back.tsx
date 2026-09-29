@@ -1,4 +1,4 @@
-import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
+import { useConfirmRemove } from '~/app/navigation-new/confirm-remove';
 
 /**
  * @deprecated use useConfirmRemove instead.

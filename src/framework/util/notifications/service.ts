@@ -8,6 +8,8 @@ import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { Storage } from '~/framework/util/storage';
 import { accountFetch } from '~/framework/util/transport';
 
+import { PreferenceHandler } from '../storage/handler';
+
 export interface FirebaseNotificationStorage {
   'last-known-firebase-token': string;
 }
@@ -51,7 +53,7 @@ class FirebaseCloudMessagingService {
    * @returns A storage slice for Firebase notifications with the appropriate prefix.
    */
   getStorageSliceForAccount(account: Pick<AuthSavedLoggedInAccount | AuthActiveAccount, 'user'>) {
-    return Storage.slice<FirebaseNotificationStorage>().setPrefix(`${Storage.PREFERENCES_PREFIX}${account.user.id}`);
+    return Storage.create<FirebaseNotificationStorage>().setPrefix(`${PreferenceHandler.PREFIX_OWNER}${account.user.id}`);
   }
 
   constructor() {

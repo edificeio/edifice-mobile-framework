@@ -6,7 +6,7 @@ import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { Wiki, WikiPage, WikiResourceMetadata } from '~/framework/modules/wiki/model';
 import { API } from '~/framework/modules/wiki/service/types';
 import { sessionFetch } from '~/framework/util/transport/fetch';
-import { ArrayElement } from '~/utils/types';
+import { ArrayElement } from '~/util/types';
 
 const hydrateWikiResourceInfo = (data: API.Wiki.ListPagesResponse): WikiResourceMetadata => ({
   assetId: data._id, // Explorer.assetId = Wiki.id. Explorer.id is something else that does not depend on the application.

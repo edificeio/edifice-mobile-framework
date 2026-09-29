@@ -5,7 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
@@ -28,6 +27,7 @@ import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';

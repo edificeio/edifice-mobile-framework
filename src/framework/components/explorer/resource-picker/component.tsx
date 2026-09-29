@@ -4,7 +4,7 @@ import { RefreshControl, TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 import { ResourcePickerProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/list/flat-list';

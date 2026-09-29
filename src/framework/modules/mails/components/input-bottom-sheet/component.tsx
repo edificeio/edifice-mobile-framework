@@ -4,11 +4,11 @@ import { View } from 'react-native';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { ScrollView } from 'react-native-gesture-handler';
 
-import { I18n } from '~/app/i18n';
 import InputContainer from '~/framework/components/inputs/container';
 import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
 import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { MailsInputBottomSheetProps } from './types';

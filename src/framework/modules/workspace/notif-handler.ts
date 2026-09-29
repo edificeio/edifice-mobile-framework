@@ -3,7 +3,6 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import { I18n } from '~/app/i18n';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import {
@@ -11,6 +10,7 @@ import {
   NotifHandlerThunkAction,
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
+import { I18n } from '~/util/i18n';
 
 import { workspaceRouteNames } from './navigation';
 import { Filter } from './reducer';

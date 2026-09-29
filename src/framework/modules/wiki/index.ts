@@ -2,7 +2,6 @@ import { StackActions } from '@react-navigation/native';
 import { Reducer } from 'redux';
 
 import { INTENT_TYPE, registerIntent } from '~/app/intents';
-import { Reducers } from '~/app/store';
 import type { ExplorerAction } from '~/framework/modules/explorer/store';
 import { NavigableModule } from '~/framework/util/moduleTool';
 
@@ -17,8 +16,6 @@ module.exports = new NavigableModule({
   getRoot,
   reducer: reducer as unknown as Reducer<WikiStore, ExplorerAction>,
 });
-
-Reducers.register(config.reducerName, reducer as unknown as Reducer<WikiStore, ExplorerAction>);
 
 registerIntent('Wiki', INTENT_TYPE.OPEN_RESOURCE, ({ id }, navigation) => {
   navigation.dispatch(

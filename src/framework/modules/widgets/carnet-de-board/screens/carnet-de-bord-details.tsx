@@ -3,7 +3,6 @@ import { StyleSheet, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { cardPadding, CardWithoutPadding } from '~/framework/components/card/base';
@@ -26,6 +25,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { splitWords } from '~/framework/util/string';
+import { I18n } from '~/util/i18n';
 
 export interface CarnetDeBordDetailsScreenDataProps {
   session?: AuthLoggedAccount;

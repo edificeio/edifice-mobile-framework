@@ -7,7 +7,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import type { FlashListRef } from '@shopify/flash-list';
 import { useSelector } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LOADING_ITEM_DATA, PaginatedFlashList, PaginatedFlashListProps } from '~/framework/components/list/paginated-list';
@@ -26,6 +25,7 @@ import { isFirstCommunityVisit } from '~/framework/modules/communities/service/m
 import { communitiesSelectors } from '~/framework/modules/communities/store';
 import { getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { toURISource } from '~/framework/modules/media';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import type { CommunitiesListScreen } from './types';

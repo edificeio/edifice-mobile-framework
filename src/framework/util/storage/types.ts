@@ -15,7 +15,7 @@ export type KeysWithValueNotOfType<T extends StorageTypeMap, U> = {
 /**
  * Low-level storage technology as MMKV provides
  */
-export interface IStorageBackend {
+export interface StorageLib {
   contains(key: StorageKey): boolean;
   remove(key: StorageKey): void;
   getBoolean(key: StorageKey): boolean | undefined;

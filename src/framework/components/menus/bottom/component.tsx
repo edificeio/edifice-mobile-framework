@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // import BottomSheet from 'react-native-bottomsheet';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { TerciaryButton } from '~/framework/components/button';
 import { UI_SIZES } from '~/framework/components/constants';
 import { MenuAction } from '~/framework/components/menus/actions';

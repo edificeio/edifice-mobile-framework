@@ -3,7 +3,6 @@ import { Alert, Keyboard, ScrollView } from 'react-native';
 
 import moment from 'moment';
 
-import { I18n } from '~/app/i18n';
 import { RichEditor } from '~/framework/components/inputs/rich-text';
 import { deleteAction } from '~/framework/components/menus/actions';
 import toast from '~/framework/components/toast';
@@ -28,6 +27,7 @@ import {
 } from '~/framework/modules/mails/util';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { IDistantFileWithId } from '~/framework/util/fileHandler/models';
+import { I18n } from '~/util/i18n';
 
 import { MailsEditType, NavPayload, SendMailResponse, UseMailsEditControllerParams } from './types';
 

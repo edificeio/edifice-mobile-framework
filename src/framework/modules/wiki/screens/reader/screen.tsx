@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import { I18n } from '~/app/i18n';
 import { getStore, IGlobalState } from '~/app/store';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { AvatarSizes } from '~/framework/components/avatar/styles';
@@ -15,9 +14,9 @@ import GhostButton from '~/framework/components/buttons/ghost';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text/viewer';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import { PageView } from '~/framework/components/page';
 import { BodyBoldText, HeadingMText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
+import { useAudience } from '~/framework/modules/audience';
 import PageHeader from '~/framework/modules/wiki/components/page-header';
 import { PageHeaderPlaceholder } from '~/framework/modules/wiki/components/page-header/component';
 import { HeaderStatus } from '~/framework/modules/wiki/components/page-header/types';
@@ -28,10 +27,10 @@ import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/n
 import service from '~/framework/modules/wiki/service';
 import { actions, selectors, WikiAction, WikiPageAction } from '~/framework/modules/wiki/store';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import type { WikiReaderScreen } from './types';
-import { markViewAudience, useAudience } from '~/framework/modules/audience';
 import { wikiAudienceConfig } from '../../module-config';
 
 export const computeNavBar = ({

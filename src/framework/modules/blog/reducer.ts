@@ -4,16 +4,16 @@
 import { Moment } from 'moment';
 import { combineReducers } from 'redux';
 
-import moduleConfig from './module-config';
-import { createBlogPostResourceRight } from './rights';
-
-import { IGlobalState, Reducers } from '~/app/store';
+import { IGlobalState } from '~/app/store';
 import { PaginatedListItem, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { createExplorerActions, createExplorerReducer, createExplorerSelectors } from '~/framework/modules/explorer/store';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 import { resourceRightFilter } from '~/framework/util/resourceRights';
+
+import moduleConfig from './module-config';
+import { createBlogPostResourceRight } from './rights';
 
 // Types
 
@@ -316,8 +316,6 @@ export const reducer = combineReducers({
     },
   }),
 });
-
-export default Reducers.register(moduleConfig.reducerName, reducer);
 
 export const selectors = {
   blog: (id: Blog['id']) => (state: IGlobalState) => {

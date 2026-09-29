@@ -4,7 +4,7 @@ import { ActivityIndicator, Alert, Platform, View } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';

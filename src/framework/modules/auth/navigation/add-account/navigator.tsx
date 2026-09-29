@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import AuthActivationAddAccountScreen, {
   computeNavBar as authActivationAddAccountNavBar,
 } from '~/framework/modules/auth/screens/add-account/activation';

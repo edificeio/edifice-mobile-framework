@@ -207,6 +207,7 @@ const imports = {
   'ui-addUser': async () => import('ASSETS/icons/uiIcons/addUser.svg'),
   'ui-alert-triangle': async () => import('ASSETS/icons/uiIcons/alert-triangle.svg'),
   'ui-alertCircle': async () => import('ASSETS/icons/uiIcons/alertCircle.svg'),
+  'ui-android-native-xmark': async () => import('ASSETS/icons/uiIcons/android-native-xmark.svg'),
   'ui-anniversary': async () => import('ASSETS/icons/uiIcons/anniversary.svg'),
   'ui-answer': async () => import('ASSETS/icons/uiIcons/answer.svg'),
   'ui-answerall': async () => import('ASSETS/icons/uiIcons/answerall.svg'),

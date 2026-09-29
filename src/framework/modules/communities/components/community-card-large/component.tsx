@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import RNSvg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { Svg } from '~/framework/components/picture';

@@ -1,8 +1,5 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import { loadNotificationsDefinitionsAction } from './notif-definitions';
-
-import { I18n } from '~/app/i18n';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { TimelineState } from '~/framework/modules/timeline/reducer';
@@ -18,6 +15,9 @@ import {
 import { pushNotifsService } from '~/framework/modules/timeline/service';
 import { preferences } from '~/framework/modules/timeline/storage';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
+import { I18n } from '~/util/i18n';
+
+import { loadNotificationsDefinitionsAction } from './notif-definitions';
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {

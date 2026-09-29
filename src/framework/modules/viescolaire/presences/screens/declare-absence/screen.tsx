@@ -5,10 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import moment, { Moment } from 'moment';
 import { connect } from 'react-redux';
 
-import styles from './styles';
-import type { PresencesDeclareAbsenceScreenPrivateProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { Attachment } from '~/framework/components/attachment';
@@ -35,6 +31,10 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { Trackers } from '~/framework/util/tracker';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import type { PresencesDeclareAbsenceScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

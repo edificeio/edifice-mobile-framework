@@ -2,10 +2,6 @@ import * as React from 'react';
 
 import moment from 'moment';
 
-import styles from './styles';
-import { NewsCardProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
 import CardFooter from '~/framework/components/card/footer';
@@ -15,6 +11,10 @@ import ThumbnailThread from '~/framework/modules/news/components/thumbnail-threa
 import { displayDate } from '~/framework/util/date';
 import { commentsString } from '~/framework/util/string';
 import { ArticleContainer } from '~/ui/ContainerContent';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { NewsCardProps } from './types';
 
 const { convert } = require('html-to-text');
 

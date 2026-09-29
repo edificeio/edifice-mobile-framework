@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import BtnNBK from './BtnNBK';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { getScaleHeight, getScaleWidth } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NBK_COLORS } from '~/framework/modules/nabook/utils/constants';

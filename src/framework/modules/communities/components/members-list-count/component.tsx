@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import styles from './styles';
 import { MembersListCountProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { HeadingXSText } from '~/framework/components/text';
 
 const MembersListCount = ({ count }: Readonly<MembersListCountProps>) => {

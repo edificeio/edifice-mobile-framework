@@ -1,4 +1,4 @@
-import { IGlobalState, Reducers } from '~/app/store';
+import { IGlobalState } from '~/app/store';
 import moduleConfig from '~/framework/modules/user/module-config';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
@@ -28,5 +28,4 @@ export const getState = (state: IGlobalState) => state[moduleConfig.reducerName]
 
 // Register the reducer
 
-Reducers.register(moduleConfig.reducerName, reducer);
 export default reducer;

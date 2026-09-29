@@ -3,10 +3,10 @@ import { View } from 'react-native';
 
 import { FlashList, FlashListRef, ListRenderItem } from '@shopify/flash-list';
 
-import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { SmallBoldText } from '~/framework/components/text';
 import { MyAppsCard } from '~/framework/modules/myapps/components';
+import { I18n } from '~/util/i18n';
 
 import { styles } from './styles';
 import { MyAppsListItem, MyAppsListProps } from './types';

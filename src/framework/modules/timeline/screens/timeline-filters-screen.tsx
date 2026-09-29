@@ -4,16 +4,16 @@ import { FlashList } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
 import { ModuleScreenProps } from '~/app/navigation/types';
-import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
 import { modalScreenOptions } from '~/app/navigation/util';
+import { useConfirmRemove } from '~/app/navigation-new/confirm-remove';
 import CheckboxButton from '~/framework/components/buttons/checkbox';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { setFiltersAction } from '~/framework/modules/timeline/actions/notif-settings';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { NotificationFilter } from '~/framework/modules/timeline/reducer/notif-definitions/notif-filters';
 import { shallowEqual } from '~/framework/util/object';
+import { I18n } from '~/util/i18n';
 
 export interface TimelineFiltersScreenProps extends ModuleScreenProps<'timeline/filters'> {}
 

@@ -3,13 +3,12 @@
  */
 import { combineReducers } from 'redux';
 
-import favorites, { FavoritesStateData } from './favorites';
-import selectedStructure, { SelectedStructureStateData } from './selectedStructure';
-
-import { Reducers } from '~/app/store';
 import { MediacentreResources, Resource } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
+
+import favorites, { FavoritesStateData } from './favorites';
+import selectedStructure, { SelectedStructureStateData } from './selectedStructure';
 
 interface MediacentreReduxStateData {
   favorites: FavoritesStateData;
@@ -48,5 +47,5 @@ const reducer = combineReducers({
   search: createSessionAsyncReducer(initialState.search, actionTypes.search),
   selectedStructure,
 });
-Reducers.register(moduleConfig.reducerName, reducer);
+
 export default reducer;

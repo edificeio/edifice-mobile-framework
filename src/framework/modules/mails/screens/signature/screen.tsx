@@ -6,7 +6,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import styles from './styles';
 import { MailsSignatureScreenPrivateProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';

@@ -3,16 +3,16 @@ import { Alert } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import styles from './styles';
-import type { UserLangScreenPrivateProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { PageView } from '~/framework/components/page';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { OldStorageFunctions } from '~/framework/util/storage';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import type { UserLangScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -24,9 +24,6 @@ export const computeNavBar = ({
     title: I18n.get('user-lang-title'),
   }),
 });
-
-const I18N_APP_LANG = 'appLang';
-const I18N_SHOW_KEYS_KEY = 'showKeys';
 
 function UserLangScreen(props: UserLangScreenPrivateProps) {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState<boolean>(false);
@@ -40,8 +37,8 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
   ];
 
   const setInitialValue = async () => {
-    const lang = await OldStorageFunctions.getItemJson(I18N_APP_LANG);
-    const showI18nKeys = await OldStorageFunctions.getItemJson(I18N_SHOW_KEYS_KEY);
+    const lang = await OldStorageFunctions.getItemJson(I18n.I18N_APP_LANG_KEY);
+    const showI18nKeys = await OldStorageFunctions.getItemJson(I18n.I18N_SHOW_KEYS_KEY);
 
     const initialLang = showI18nKeys ? 'wordingKeys' : (lang ?? 'auto');
     setSelected(initialLang as string);

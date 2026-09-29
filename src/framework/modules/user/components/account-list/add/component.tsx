@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { I18n } from '~/app/i18n';
 import AccountList from '~/framework/components/list/account';
 import { AddAccountListProps } from '~/framework/modules/user/components/account-list/add/types';
+import { I18n } from '~/util/i18n';
 
 const AddAccountList = ({ data }: AddAccountListProps, ref) => {
   return (

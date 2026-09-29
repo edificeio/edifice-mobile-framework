@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ActivityIndicator, Animated, ColorValue, View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture';

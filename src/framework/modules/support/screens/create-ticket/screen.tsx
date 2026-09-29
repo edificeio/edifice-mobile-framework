@@ -8,10 +8,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { ISupportCreateTicketScreenEventProps, ISupportCreateTicketScreenProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { Attachment } from '~/framework/components/attachment';
@@ -32,6 +28,10 @@ import { getSupportWorkflowInformation } from '~/framework/modules/support/right
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler/models';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { ISupportCreateTicketScreenEventProps, ISupportCreateTicketScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,

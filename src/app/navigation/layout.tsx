@@ -21,7 +21,7 @@ import { TextFontStyle } from '~/framework/components/text';
 import { ToastContainer } from '~/framework/components/toast';
 import { getTabBarStyleForNavState } from '~/framework/navigation/hideTabBarAndroid';
 import { CloudMessagingNavigationHandler } from '~/framework/util/notifications/cloudMessaging';
-import { DeepPartial } from '~/utils/types';
+import { DeepPartial } from '~/util/types';
 
 import { AllModulesNavigationParams, AllModulesScreenNames } from './types';
 

@@ -3,7 +3,6 @@
  */
 import { combineReducers } from 'redux';
 
-import { Reducers } from '~/app/store';
 import { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import {
   Absence,
@@ -119,5 +118,5 @@ const reducer = combineReducers({
   terms: createSessionAsyncReducer(initialState.terms, actionTypes.terms),
   userChildren: createSessionAsyncReducer(initialState.userChildren, actionTypes.userChildren),
 });
-Reducers.register(moduleConfig.reducerName, reducer);
+
 export default reducer;
