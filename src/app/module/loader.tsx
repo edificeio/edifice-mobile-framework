@@ -25,7 +25,7 @@ const loadModules = Promise.all(moduleImports);
 export const ModuleLoader = React.memo(function ({ children }: React.PropsWithChildren) {
   // Load all modules
   const modules = React.use(loadModules).map(m => {
-    __DEV__ && console.info(`[Module] Loaded module ${m.default.name}.`);
+    __DEV__ && console.debug(`[Module] Loaded module ${m.default.name}.`);
     return m.default;
   });
 
