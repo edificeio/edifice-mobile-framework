@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { ModuleCompat } from '~/app/module/compat';
+// import { ModuleCompat } from '~/app/module/compat';
 import { getStore } from '~/app/store';
 import {
   AuthActiveAccount,

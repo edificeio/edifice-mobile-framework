@@ -5,8 +5,8 @@ import { AppRegistry } from 'react-native';
 import 'react-native-url-polyfill/auto';
 
 import { name as appName } from './app.json';
-import App from './src/app/index';
-import { Log } from './src/app/log';
+import { App } from './src/app/app';
+// import { Log } from './src/app/log';
 
 import './wdyr';
 
@@ -14,12 +14,12 @@ import './wdyr';
 // in React Native, `process.nextTick` doesn't exist.
 process.nextTick = setImmediate;
 
-if (__DEV__) {
-  globalThis.RNFBDebug = true;
-  require('./src/app/reactotron.ts');
-  console.debug('Reactotron initialized');
-}
+// if (__DEV__) {
+//   globalThis.RNFBDebug = true;
+//   require('./src/app/reactotron.ts');
+//   console.debug('Reactotron initialized');
+// }
 
-Log.init();
+// Log.init();
 
 AppRegistry.registerComponent(appName, () => App);
