@@ -1,7 +1,7 @@
 import { ParamListBase } from '@react-navigation/native';
 import type { Action, Reducer } from 'redux';
 
-import type modules from '~/app/config/modules';
+import type importModules from '~/app/config/modules';
 import { SvgIconName } from '~/framework/components/picture';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import type { StorageSlice } from '~/framework/util/storage/slice';
@@ -148,24 +148,21 @@ export type EntTabModule<
  */
 
 export type ModuleNavigationParams<T> = T extends
-  | CoreModule<infer Name, infer NavParams, any, any, any, any>
-  | EntModule<infer Name, infer NavParams, any, any, any, any>
+  CoreModule<infer Name, infer NavParams, any, any, any, any> | EntModule<infer Name, infer NavParams, any, any, any, any>
   ? Name extends any
     ? NavParams
     : never
   : never;
 
 export type ModuleReduxReducer<T> = T extends
-  | CoreModule<infer Name, any, infer State, infer A, any, any>
-  | EntModule<infer Name, any, infer State, infer A, any, any>
+  CoreModule<infer Name, any, infer State, infer A, any, any> | EntModule<infer Name, any, infer State, infer A, any, any>
   ? Name extends any
     ? Reducer<State, A>
     : never
   : never;
 
 export type ModuleReduxState<T> = T extends
-  | CoreModule<infer Name, any, infer State, any, any, any>
-  | EntModule<infer Name, any, infer State, any, any, any>
+  CoreModule<infer Name, any, infer State, any, any, any> | EntModule<infer Name, any, infer State, any, any, any>
   ? Name extends any
     ? State
     : never
@@ -175,27 +172,22 @@ export type ModuleReduxState<T> = T extends
  * Static strongly-typed modules collection
  */
 
-export type ResolvedModule<T> = T extends Promise<infer M> ? M : never;
+type AllModulesImports = Awaited<ArrayElement<typeof importModules>>[];
+export type AllModulesArray = ArrayElement<AllModulesImports>['default'][];
+export type AnyModule = ArrayElement<AllModulesArray>;
+export type AllModulesNames = AnyModule['name'];
 
-export type AllModules = {
-  [I in keyof typeof modules as I extends `${number}` ? I : never]: ResolvedModule<(typeof modules)[I]>;
-} & Omit<Array<ResolvedModule<(typeof modules)[keyof typeof modules]>>, number>;
-
-export type OneModule = AllModules[Extract<keyof AllModules, `${number}`>];
-
-export type AllModulesNames = OneModule['name'];
-
-export type AllModulesByName = {
+export type AllModulesMap = {
   [name in AllModulesNames]: Extract<
-    OneModule,
+    AnyModule,
     CoreModule<name, any, any, any, any, any> | EntModule<name, any, any, any, any, any>
   >;
 };
 
 export type AllModulesReducers = {
-  [Name in AllModulesNames]: ModuleReduxReducer<AllModulesByName[Name]>;
+  [Name in AllModulesNames]: ModuleReduxReducer<AllModulesMap[Name]>;
 };
 
 export type AllModulesState = {
-  [Name in AllModulesNames]: ModuleReduxState<AllModulesByName[Name]>;
+  [Name in AllModulesNames]: ModuleReduxState<AllModulesMap[Name]>;
 };

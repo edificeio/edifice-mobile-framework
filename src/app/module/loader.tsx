@@ -1,0 +1,39 @@
+/**
+ * Module Loader
+ * Async Component that import all modules than setup providers
+ */
+import React from 'react';
+
+import moduleImports from '~/app/config/modules';
+
+import { AllModulesArray } from './types';
+
+import { Module } from '.';
+
+/**
+ * @deprecated
+ * Access staticly to imported modules is dangerous. Instead, call module hooks to get loaded modules into a custom hook.
+ */
+export let AllModules: AllModulesArray = [] as unknown as AllModulesArray;
+
+// type AllModulesImports = Awaited<ReturnType<typeof React.use<typeof loadModules>>>;
+// type AllModulesArray = ArrayElement<AllModulesImports>['default'][];
+
+const ModuleContext = React.createContext<AllModulesArray | undefined>(undefined);
+
+const loadModules = Promise.all(moduleImports);
+export const ModuleLoader = React.memo(function ({ children }: React.PropsWithChildren) {
+  // Load all modules
+  const modules = React.use(loadModules).map(m => {
+    __DEV__ && console.info(`[Module] Loaded module ${m.default.name}.`);
+    return m.default;
+  });
+
+  return <ModuleContext value={modules}>{children}</ModuleContext>;
+});
+
+export const useModulesOfType = <T extends typeof Module>(type: T): InstanceType<T>[] => {
+  const modules = React.useContext(ModuleContext);
+  if (modules === undefined) throw new Error('[Modules]: `useModules` was called before all modules could be loaded.');
+  return modules.filter(m => m instanceof type) as InstanceType<T>[];
+};

@@ -5,7 +5,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { IActivationPayload } from '~/framework/modules/auth/model';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
-import { IValidatorContext, ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
+import { IValidatorContext, ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/util/form';
 
 export type { ValueChangeArgs };
 //

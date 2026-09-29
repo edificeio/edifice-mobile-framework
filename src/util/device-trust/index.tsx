@@ -12,7 +12,7 @@ import { exitApp } from '@logicwind/react-native-exit-app';
 import { PrivilegeTrust } from './privilege';
 import { SimulatorTrust } from './simulator';
 
-export const DeviceTrust = React.memo(function DeviceTrust({
+export const DeviceTrust = React.memo(function ({
   children,
   onUntrusted = exitApp,
 }: PropsWithChildren<{ onUntrusted?: () => void }>) {
@@ -22,3 +22,4 @@ export const DeviceTrust = React.memo(function DeviceTrust({
     </PrivilegeTrust>
   );
 });
+DeviceTrust.displayName = 'DeviceTrust';

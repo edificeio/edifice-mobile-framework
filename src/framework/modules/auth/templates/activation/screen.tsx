@@ -27,7 +27,7 @@ import { ActivationFormModel, ValueChangeArgs } from '~/framework/modules/auth/c
 import { IActivationError, LegalUrls, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/thunks';
 import { Loading } from '~/ui/Loading';
-import { ValidatorBuilder } from '~/utils/form';
+import { ValidatorBuilder } from '~/util/form';
 
 import styles from './styles';
 import { AuthActivationScreenProps, AuthActivationScreenState, IFields } from './types';

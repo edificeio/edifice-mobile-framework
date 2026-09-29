@@ -23,7 +23,7 @@ import { loadAuthContextAction } from '~/framework/modules/auth/thunks';
 import appConf from '~/framework/util/appConf';
 import { OAuth2Error } from '~/framework/util/oauth2';
 import { Loading } from '~/ui/Loading';
-import { ValueChangeArgs } from '~/utils/form';
+import { ValueChangeArgs } from '~/util/form';
 
 import ChangePasswordFormModel from './form-model';
 import styles from './styles';

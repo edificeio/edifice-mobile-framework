@@ -21,7 +21,7 @@ import { API } from '~/framework/modules/auth/service.ts';
 import { forgotAction } from '~/framework/modules/auth/thunks';
 import { containsKey } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
-import { ValidatorBuilder } from '~/utils/form';
+import { ValidatorBuilder } from '~/util/form';
 
 import styles from './styles';
 import { ForgotScreenEventProps, ForgotScreenLoadingState, ForgotScreenPrivateProps, ForgotScreenStructure } from './types';

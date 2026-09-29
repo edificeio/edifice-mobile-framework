@@ -1,7 +1,7 @@
 import { TextInput } from 'react-native';
 
 import { IChangePasswordModel } from '~/framework/modules/auth/thunks';
-import { IValidatorContext, ValidatorBuilder, ValueGetter } from '~/utils/form';
+import { IValidatorContext, ValidatorBuilder, ValueGetter } from '~/util/form';
 
 export default class ChangePasswordFormModel {
   oldPassword: IValidatorContext<string>;
