@@ -3615,6 +3615,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nodable/entities@npm:^3.0.1":
+  version: 3.1.0
+  resolution: "@nodable/entities@npm:3.1.0"
+  checksum: 10/b07d97b1dac8e0bc8a124ea52cdb6d6a50a8a750592acf540e47c4740a8b96b5add8d9dcce4dfbe74e08b2ab95303c1a2078cf4ba01a085a6de88a879f45576e
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -6046,7 +6053,7 @@ __metadata:
     eslint-plugin-sort-destructure-keys: "npm:3.0.0"
     eslint-plugin-sort-keys-fix: "npm:1.1.2"
     events: "npm:3.3.0"
-    fast-xml-parser: "npm:5.11.1"
+    fast-xml-parser: "npm:5.11.2"
     filesize: "npm:11.0.25"
     flat: "npm:6.0.1"
     global: "npm:4.4.0"
@@ -6121,7 +6128,7 @@ __metadata:
     react-native-snap-carousel: "npm:3.9.1"
     react-native-svg: "npm:15.15.5"
     react-native-svg-transformer: "npm:1.5.3"
-    react-native-swipe-list-view: "npm:3.2.9"
+    react-native-swipe-list-view: "npm:4.0.0"
     react-native-swiper: "npm:1.6.0"
     react-native-tab-view: "npm:4.3.2"
     react-native-toast-message: "npm:2.5.2"
@@ -9024,7 +9031,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:5.11.1, fast-xml-parser@npm:^5.3.6":
+"fast-xml-parser@npm:5.11.2":
+  version: 5.11.2
+  resolution: "fast-xml-parser@npm:5.11.2"
+  dependencies:
+    "@nodable/entities": "npm:^3.0.1"
+    fast-xml-builder: "npm:^1.2.0"
+    is-unsafe: "npm:^2.0.0"
+    path-expression-matcher: "npm:^1.6.2"
+    strnum: "npm:^2.4.2"
+    xml-naming: "npm:^0.3.0"
+  bin:
+    fxparser: src/cli/cli.js
+  checksum: 10/aa88bd2af831876b458a51c302a84f83a92bbd747606a1f0a85f7085461e2f3c52cb7438f4ef2dc136fbcb0cb33d450d007178a24b23c148d8a84b5ccfb70c58
+  languageName: node
+  linkType: hard
+
+"fast-xml-parser@npm:^5.3.6":
   version: 5.11.1
   resolution: "fast-xml-parser@npm:5.11.1"
   dependencies:
@@ -13819,14 +13842,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-swipe-list-view@npm:3.2.9":
-  version: 3.2.9
-  resolution: "react-native-swipe-list-view@npm:3.2.9"
+"react-native-swipe-list-view@npm:4.0.0":
+  version: 4.0.0
+  resolution: "react-native-swipe-list-view@npm:4.0.0"
   peerDependencies:
-    prop-types: ">=15.5.0"
-    react: ">=0.14.8"
-    react-native: ">=0.23.1"
-  checksum: 10/d35dc570dab82b2dfa2e3fd41361001545635b3d8ac417623fe38924491b5dc1ef6ec33c3956006c2ae8522bd8a3ca67fc8c6addf826819074e0f0026a1081f1
+    react: ">=18.0.0"
+    react-native: ">=0.73.0"
+    react-native-gesture-handler: ">=2.14.0"
+    react-native-reanimated: ">=3.6.0"
+  checksum: 10/9cee86247d22458d68f0b1963fa64adaa313456a074e6bbdb2e75518ade10d992f7fc1fdc898b711cee93b4fe9208ed97ecf4b7c32cdcd5aef9ca8abba243b9a
   languageName: node
   linkType: hard
 
