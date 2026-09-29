@@ -13,9 +13,9 @@ type MyAppsPreferencesData = {
 
 const oldStorageKey = 'infoBubbleAck-myAppsScreen.redirect';
 
-const myAppsStorage = Storage.preferences<MyAppsPreferencesData>(moduleConfig, function () {
-  Storage.global.delete(oldStorageKey);
-});
+const myAppsStorage = Storage.preferences<MyAppsPreferencesData>(async function () {
+  Storage.global.remove(oldStorageKey);
+}).setPrefix(moduleConfig.storageName);
 
 export const readShowAllApps = (): boolean => {
   return myAppsStorage.getBoolean('show-all-apps') ?? false;

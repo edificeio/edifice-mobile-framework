@@ -3,7 +3,6 @@
  */
 import { combineReducers } from 'redux';
 
-import { Reducers } from '~/app/store';
 import { ModuleParameters, Resource, Service } from '~/framework/modules/homework-assistance/model';
 import moduleConfig from '~/framework/modules/homework-assistance/module-config';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
@@ -36,5 +35,5 @@ const reducer = combineReducers({
   resources: createSessionAsyncReducer(initialState.resources, actionTypes.resources),
   services: createSessionAsyncReducer(initialState.services, actionTypes.services),
 });
-Reducers.register(moduleConfig.reducerName, reducer);
+
 export default reducer;

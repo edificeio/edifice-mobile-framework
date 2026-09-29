@@ -1,13 +1,14 @@
-import { ParamListBase } from '@react-navigation/native';
+import type React from 'react';
+
+import type { createNativeStackScreen } from '@react-navigation/native-stack';
 import type { Action, Reducer } from 'redux';
 
-import type modules from '~/app/config/modules';
-import { SvgIconName } from '~/framework/components/picture';
+import type importModules from '~/app/config/modules';
+import type { ScreenComponent } from '~/app/navigation-new/types';
+import type { SvgIconName } from '~/framework/components/picture';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
-import type { StorageSlice } from '~/framework/util/storage/slice';
-import type { StorageTypeMap } from '~/framework/util/storage/types';
 
-import { CoreModule, EntModule } from '.';
+import { EntModule, Module } from '.';
 
 /**
  * Entcore data
@@ -28,11 +29,39 @@ export namespace Entcore {
 }
 
 /**
- * Navigation related types
+ * Screens (or modals) of a module, indexed by route name.
+ * Route names must be prefixed by the module name : keys that don't match are resolved to `never`.
  */
-
-export type StrictNavigationParams<Name extends string, T> = {
+export type StrictModuleScreens<Name extends string, T> = {
   [K in keyof T]: K extends `${Name}` | `${Name}/${string}` ? T[K] : never;
+};
+
+/**
+ * Navigation params of a screen, inferred from the props of its component.
+ */
+export type NavigationParamsOfScreen<C> = C extends React.ComponentType<{ route: { params: infer P } }> ? P : undefined;
+
+/**
+ * Navigation params of each route, inferred from the components given to the module.
+ */
+export type NavigationParamsOfScreens<Components> = {
+  [RouteName in keyof Components]: NavigationParamsOfScreen<Components[RouteName]>;
+};
+
+/**
+ * Config of each screen (or modal) given to a module : same as the config given to `createNativeStackScreen`.
+ * `Components` (route name -> screen component) is inferred from it.
+ */
+export type ModuleScreensConfig<Components extends Record<string, ScreenComponent>> = {
+  [RouteName in keyof Components]: Parameters<typeof createNativeStackScreen<Components[RouteName]>>[0];
+};
+
+/**
+ * Screens (or modals) of a module as returned by `createNativeStackScreen`,
+ * ready to be given to `createNativeStackNavigator({ screens })`.
+ */
+export type ModuleStaticScreens<Components extends Record<string, ScreenComponent>> = {
+  [RouteName in keyof Components]: ReturnType<typeof createNativeStackScreen<Components[RouteName]>>;
 };
 
 /**
@@ -51,23 +80,9 @@ interface ConfigForRights {
   hasRight?: (session: AuthActiveAccount) => boolean;
 }
 
-interface ConfigForStorage<ModuleStorageSliceTypeMap extends StorageTypeMap, ModulePreferencesSliceTypeMap extends StorageTypeMap> {
-  // Prefix for all storage keys. Usually same as module name.
-  namespace: string;
-
-  // Instance of storage
-  device?: StorageSlice<ModuleStorageSliceTypeMap>;
-
-  // Instance of preferences storage for this account
-  account?: StorageSlice<ModulePreferencesSliceTypeMap>;
-}
-
-interface ConfigForTab<
-  Name extends string,
-  NavigationParams extends ParamListBase & StrictNavigationParams<Name, NavigationParams>,
-> {
+export interface ConfigForTab<Route extends PropertyKey> {
   // Name of the route that goes to the tab home
-  route: keyof NavigationParams;
+  route: Route;
 
   // Visible icon when the tab is not active
   iconInactive: SvgIconName;
@@ -82,17 +97,17 @@ interface ConfigForTab<
   testId: string;
 }
 
-interface ConfigForRedux<State = never, ActionType extends Action = never> {
+interface ConfigForRedux<State = undefined, ActionType extends Action = never> {
   // Reducer instance of this module
   reducer: Reducer<State, ActionType>;
 }
 
 export interface ModuleConfig<
   Name extends string,
-  State = never,
-  ActionType extends Action = never,
-  ModuleStorageSliceTypeMap extends StorageTypeMap = never,
-  ModulePreferencesSliceTypeMap extends StorageTypeMap = never,
+  Screens extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Screens> = {},
+  Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
+  ReduxState = undefined,
+  ReduxAction extends Action = never,
 > {
   // Technical name of this module. Needs to be the same as its folder name.
   name: Name;
@@ -100,102 +115,126 @@ export interface ModuleConfig<
   // Scope needed to use APIs in this modules.
   scope?: string[];
 
-  // Redux configuration
-  redux?: ConfigForRedux<State, ActionType>;
+  // Screens and Modals, each one configured like with `createNativeStackScreen`.
+  screens?: ModuleScreensConfig<Screens>;
+  modals?: ModuleScreensConfig<Modals>;
 
-  // Storage configuration
-  storage?: ConfigForStorage<ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>;
+  // Redux configuration
+  redux?: ConfigForRedux<ReduxState, ReduxAction>;
 }
 
 export interface CoreModuleConfig<
   Name extends string,
-  State = never,
-  ActionType extends Action = never,
-  ModuleStorageSliceTypeMap extends StorageTypeMap = never,
-  ModulePreferencesSliceTypeMap extends StorageTypeMap = never,
-> extends ModuleConfig<Name, State, ActionType, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {}
+  Screens extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Screens> = {},
+  Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
+  ReduxState = undefined,
+  ReduxAction extends Action = never,
+> extends ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction> {}
 
 export interface EntModuleConfig<
   Name extends string,
-  NavigationParams extends ParamListBase & StrictNavigationParams<Name, NavigationParams>,
-  State = never,
-  ActionType extends Action = never,
-  ModuleStorageSliceTypeMap extends StorageTypeMap = never,
-  ModulePreferencesSliceTypeMap extends StorageTypeMap = never,
+  Screens extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Screens> = {},
+  Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
+  ReduxState = undefined,
+  ReduxAction extends Action = never,
 >
-  extends ModuleConfig<Name, State, ActionType, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>, ConfigForRights {
-  tab?: ConfigForTab<Name, NavigationParams>;
+  extends ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>, ConfigForRights {
+  tab?: ConfigForTab<keyof Screens>;
   entTrackingName?: string;
 }
 
 export type EntTabModule<
   Name extends string,
-  NavigationParams extends ParamListBase & StrictNavigationParams<Name, NavigationParams> = {},
+  Screens extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Screens> = {},
+  Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
   ReduxState = undefined,
-  ReduxAction extends Action = Action,
-  StorageType extends StorageTypeMap = object,
-  PreferencesType extends StorageTypeMap = object,
-> = Omit<EntModule<Name, NavigationParams, ReduxState, ReduxAction, StorageType, PreferencesType>, 'tab'> & {
-  tab: NonNullable<EntModule<Name, NavigationParams, ReduxState, ReduxAction, StorageType, PreferencesType>['tab']>;
+  ReduxAction extends Action = never,
+> = Omit<EntModule<Name, Screens, Modals, ReduxState, ReduxAction>, 'tab'> & {
+  tab: NonNullable<EntModule<Name, Screens, Modals, ReduxState, ReduxAction>['tab']>;
 };
 
-/**
- * Module type utilities
- *
- * Note :
- * In the follow type definitions, `Name extends any` is an always-true condition and is used is used only to prevent the following linting error:
- * "'Name' is defined but never used."
- */
+export type ModuleScreens<T> =
+  T extends Module<infer _Name, infer Screens, infer _Modals, infer _State, infer _Action> ? Screens : never;
 
-export type ModuleNavigationParams<T> = T extends
-  | CoreModule<infer Name, infer NavParams, any, any, any, any>
-  | EntModule<infer Name, infer NavParams, any, any, any, any>
-  ? Name extends any
-    ? NavParams
-    : never
-  : never;
+export type ModuleModals<T> =
+  T extends Module<infer _Name, infer _Screens, infer Modals, infer _State, infer _Action> ? Modals : never;
 
-export type ModuleReduxReducer<T> = T extends
-  | CoreModule<infer Name, any, infer State, infer A, any, any>
-  | EntModule<infer Name, any, infer State, infer A, any, any>
-  ? Name extends any
-    ? Reducer<State, A>
-    : never
-  : never;
+export type ModuleReduxReducer<T> =
+  T extends Module<infer Name, any, any, infer State, infer A> ? (Name extends any ? Reducer<State, A> : never) : never;
 
-export type ModuleReduxState<T> = T extends
-  | CoreModule<infer Name, any, infer State, any, any, any>
-  | EntModule<infer Name, any, infer State, any, any, any>
-  ? Name extends any
-    ? State
-    : never
-  : never;
+export type ModuleReduxState<T> =
+  T extends Module<infer Name, any, any, infer State, any> ? (Name extends any ? State : never) : never;
+
+export type ModuleReduxAction<T> =
+  T extends Module<infer Name, any, any, any, infer ReduxAction> ? (Name extends any ? ReduxAction : never) : never;
 
 /**
  * Static strongly-typed modules collection
  */
 
-export type ResolvedModule<T> = T extends Promise<infer M> ? M : never;
+type AllModulesImports = Awaited<ArrayElement<typeof importModules>>[];
+export type AllModulesArray = ArrayElement<AllModulesImports>['default'][];
+export type AnyModule = ArrayElement<AllModulesArray>;
+export type AllModulesNames = AnyModule['name'];
 
-export type AllModules = {
-  [I in keyof typeof modules as I extends `${number}` ? I : never]: ResolvedModule<(typeof modules)[I]>;
-} & Omit<Array<ResolvedModule<(typeof modules)[keyof typeof modules]>>, number>;
+// Ent modules of the collection, typed as modules that have a tab (a module that has no tab is filtered at runtime).
+export type AnyEntTabModule = AnyModule extends infer M
+  ? M extends EntModule<infer Name, infer Screens, infer Modals, infer State, infer ReduxAction>
+    ? EntTabModule<Name, Screens, Modals, State, ReduxAction>
+    : never
+  : never;
 
-export type OneModule = AllModules[Extract<keyof AllModules, `${number}`>];
-
-export type AllModulesNames = OneModule['name'];
-
-export type AllModulesByName = {
-  [name in AllModulesNames]: Extract<
-    OneModule,
-    CoreModule<name, any, any, any, any, any> | EntModule<name, any, any, any, any, any>
-  >;
+export type AllModulesMap = {
+  [name in AllModulesNames]: Extract<AnyModule, { name: name }>;
 };
 
+// Names of the modules that provide a redux configuration (a module without it has `undefined` as state).
+export type AllModulesWithReduxNames = {
+  [Name in AllModulesNames]: [ModuleReduxState<AllModulesMap[Name]>] extends [undefined] ? never : Name;
+}[AllModulesNames];
+
 export type AllModulesReducers = {
-  [Name in AllModulesNames]: ModuleReduxReducer<AllModulesByName[Name]>;
+  [Name in AllModulesWithReduxNames]: ModuleReduxReducer<AllModulesMap[Name]>;
 };
 
 export type AllModulesState = {
-  [Name in AllModulesNames]: ModuleReduxState<AllModulesByName[Name]>;
+  [Name in AllModulesWithReduxNames]: ModuleReduxState<AllModulesMap[Name]>;
 };
+
+export type AllModulesActions = {
+  [Name in AllModulesNames]: ModuleReduxAction<AllModulesMap[Name]>;
+}[AllModulesNames];
+
+type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
+
+export type AllModulesScreensParams = UnionToIntersection<
+  {
+    [Name in AllModulesNames]: NavigationParamsOfScreens<ModuleScreens<AllModulesMap[Name]>>;
+  }[AllModulesNames]
+>;
+
+export type AllModulesModalsParams = UnionToIntersection<
+  {
+    [Name in AllModulesNames]: NavigationParamsOfScreens<ModuleModals<AllModulesMap[Name]>>;
+  }[AllModulesNames]
+>;
+
+// Across modules, the lists are merged (`&`, not `|`) so that every route of every module is a valid route key.
+// Route names are prefixed by the module name (see `StrictModuleScreens`) so there can't be any conflict.
+// Screens and modals are kept in separate types.
+
+// Screens and modals of all modules, as returned by `createNativeStackScreen`, ready to be given to `createNativeStackNavigator({ screens })`.
+export type AllModulesStaticScreens = UnionToIntersection<
+  {
+    [Name in AllModulesNames]: ModuleStaticScreens<ModuleScreens<AllModulesMap[Name]>>;
+  }[AllModulesNames]
+>;
+
+export type AllModulesStaticModals = UnionToIntersection<
+  {
+    [Name in AllModulesNames]: ModuleStaticScreens<ModuleModals<AllModulesMap[Name]>>;
+  }[AllModulesNames]
+>;
+
+// Navigation params of all routes (screens and modals) : only used to type the global navigation.
+export type AllModulesNavigationParams = AllModulesScreensParams & AllModulesModalsParams;

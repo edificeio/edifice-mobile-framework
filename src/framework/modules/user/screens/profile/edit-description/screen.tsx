@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import InputContainer from '~/framework/components/inputs/container';

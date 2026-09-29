@@ -1,9 +1,9 @@
 import { Moment } from 'moment';
 
-import { I18n } from '~/app/i18n';
 import { toURISource } from '~/framework/modules/media';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 import { sessionURISource } from '~/framework/util/transport';
+import { I18n } from '~/util/i18n';
 
 import {
   IMailsFolder,

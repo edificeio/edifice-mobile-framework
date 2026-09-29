@@ -3,7 +3,6 @@ import { ActivityIndicator, Alert, View } from 'react-native';
 
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import { I18n } from '~/app/i18n';
 import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
@@ -28,6 +27,7 @@ import { IMailsMailAttachment } from '~/framework/modules/mails/model';
 import moduleConfig from '~/framework/modules/mails/module-config';
 import { mailsService } from '~/framework/modules/mails/service';
 import { LocalFile } from '~/framework/util/fileHandler/models';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { AttachmentsImportScreenProps, UploadAttachment, UploadAttachmentStatus } from './types';
@@ -166,7 +166,12 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
           if (respAttachments) {
             attachmentsSnapshotRef.current = respAttachments;
           }
-          updateFileStatusAndID({ file, id: resp.attachment.df.id, status: UploadAttachmentStatus.OK, url: resp.attachment.df.url });
+          updateFileStatusAndID({
+            file,
+            id: resp.attachment.df.id,
+            status: UploadAttachmentStatus.OK,
+            url: resp.attachment.df.url,
+          });
         })
         .catch(error => {
           console.error(`Import Attachment Upload Failed: ${error}`);

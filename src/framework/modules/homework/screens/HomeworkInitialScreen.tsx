@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
-import { PageView } from '~/framework/components/page';
 import { fetchHomeworkDiaryList } from '~/framework/modules/homework/actions/diaryList';
 import HomeworkExplorerScreen from '~/framework/modules/homework/screens/explorer';
 import HomeworkTaskListScreen from '~/framework/modules/homework/screens/HomeworkTaskListScreen';

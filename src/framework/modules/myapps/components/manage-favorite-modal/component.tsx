@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -10,6 +9,7 @@ import SearchBar from '~/framework/components/search-bar';
 import { SearchBarHandle } from '~/framework/components/search-bar/types';
 import { MyAppsList } from '~/framework/modules/myapps/components/my-apps-list';
 import { EMPTY_SCREEN_CONFIG } from '~/framework/modules/myapps/screens/utils';
+import { I18n } from '~/util/i18n';
 
 import { styles } from './styles';
 import { HeaderLeftProps, HeaderRightProps, ManageFavoriteScreenProps } from './types';

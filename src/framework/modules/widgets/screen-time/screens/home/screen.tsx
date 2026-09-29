@@ -4,9 +4,6 @@ import { Pressable, ScrollView, View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 
-import styles from './styles';
-
-import { I18n } from '~/app/i18n';
 import IconButton from '~/framework/components/buttons/icon';
 import DateTimePicker from '~/framework/components/dateTimePicker';
 import { EmptyScreen } from '~/framework/components/empty-screens';
@@ -25,6 +22,9 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { sessionFetch } from '~/framework/util/transport';
 import HtmlContentView from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
 
 export const computeNavBar = ({
   navigation,

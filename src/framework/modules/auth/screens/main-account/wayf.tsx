@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/redux/reducer';
 import WayfScreen, { IWayfScreenProps, WAYFScreenDispatchProps } from '~/framework/modules/auth/templates/wayf';

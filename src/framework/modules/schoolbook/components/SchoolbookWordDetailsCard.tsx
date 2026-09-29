@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { EmitterSubscription, Keyboard, Platform, TouchableOpacity, View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
@@ -28,6 +27,7 @@ import {
 } from '~/framework/modules/schoolbook/reducer';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 import HtmlContentView from '~/ui/HtmlContentView';
+import { I18n } from '~/util/i18n';
 
 import CardTopContentCategory from './cardtopcontent-category';
 

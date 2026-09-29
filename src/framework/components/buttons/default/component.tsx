@@ -5,7 +5,7 @@ import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 import styles, { BUTTON_ICON_SIZE } from './styles';
 import { DefaultButtonProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';

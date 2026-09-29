@@ -7,7 +7,6 @@ import { Alert, RefreshControl, ScrollView } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { InfoCommentField } from '~/framework/components/commentField';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
@@ -28,6 +27,7 @@ import { hasDeleteRight } from '~/framework/modules/schoolbook/rights';
 import { schoolbookService, schoolbookUriCaptureFunction } from '~/framework/modules/schoolbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import { I18n } from '~/util/i18n';
 
 // TYPES ==========================================================================================
 

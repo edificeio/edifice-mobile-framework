@@ -19,7 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import type { NavigationTabParams } from '~/app/navigation/types';
 import { headerAction, screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';

@@ -8,7 +8,7 @@ import { useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import { Carousel, type CarouselRef, type CarouselRenderItemInfo } from 'react-native-reanimated-carousel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { ModuleScreenProps } from '~/app/navigation/types';
 import { UI_SIZES } from '~/framework/components/constants';
 import { FileMedia, isPlayableMedia } from '~/framework/modules/media';

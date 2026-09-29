@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { PageView } from '~/framework/components/page';
 import DisplayHomework from '~/framework/modules/viescolaire/diary/components/DisplayHomework';
 import DisplayListHomework from '~/framework/modules/viescolaire/diary/components/DisplayListHomework';

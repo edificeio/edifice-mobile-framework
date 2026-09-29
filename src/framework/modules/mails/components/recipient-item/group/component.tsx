@@ -1,14 +1,14 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import styles from './styles';
-
-import { I18n } from '~/app/i18n';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import MailsRecipientAvatar from '~/framework/modules/mails/components/avatar-recipient';
 import { MailsRecipientContainer, MailsRecipientContainerProps } from '~/framework/modules/mails/components/recipient-item';
 import { MailsRecipientGroupInfo, MailsVisible, MailsVisibleType } from '~/framework/modules/mails/model';
 import { getExternalInitials } from '~/framework/modules/mails/util';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
 
 const renderSubtitle = (nbUsers, disabled) => {
   if (disabled) return <SmallText style={styles.graphite}>{I18n.get('mails-edit-broadcastgroupsubtitle')}</SmallText>;

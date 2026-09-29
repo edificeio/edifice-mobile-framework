@@ -4,13 +4,13 @@ import { StackActions } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { getState as getAuthState } from '~/framework/modules/auth/redux/reducer';
 import WayfScreen, { WAYFScreenDispatchProps } from '~/framework/modules/auth/templates/wayf';
 import { loginFederationActionAddAnotherAccount } from '~/framework/modules/auth/thunks';
 import track from '~/framework/modules/auth/tracking';
 import { tryAction } from '~/framework/util/redux/actions';
+import { I18n } from '~/util/i18n';
 
 import { AuthWayfAddAccountScreenPrivateProps } from './types';
 

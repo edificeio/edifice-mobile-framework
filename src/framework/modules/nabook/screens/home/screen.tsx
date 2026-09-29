@@ -6,9 +6,6 @@ import { useDispatch } from 'react-redux';
 import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import type { NabookHomeScreenPrivateProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { assertSession, getPlatform } from '~/framework/modules/auth/redux/reducer';
@@ -21,6 +18,9 @@ import { NabookNavigationParams, nabookRouteNames } from '~/framework/modules/na
 import { NBK_BASE_URL, NBK_COLORS } from '~/framework/modules/nabook/utils/constants';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { deviceFetch, sessionFetch } from '~/framework/util/transport';
+import { I18n } from '~/util/i18n';
+
+import type { NabookHomeScreenPrivateProps } from './types';
 
 const styles = StyleSheet.create({
   containerLoading: {

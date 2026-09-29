@@ -3,7 +3,7 @@ import { Keyboard, Platform } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import TextInput from '~/framework/components/inputs/text';

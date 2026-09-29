@@ -3,14 +3,14 @@ import { Animated, Easing, LayoutChangeEvent, useAnimatedValue, View, ViewProps 
 
 import RNSvg, { ClipPath, Line, Linecap, Path, Rect, VectorEffect } from 'react-native-svg';
 
-import { styles } from './styles';
-import { HeaderStatus, PageHeaderProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture/svg';
 import { SmallBoldText } from '~/framework/components/text';
+import { I18n } from '~/util/i18n';
+
+import { styles } from './styles';
+import { HeaderStatus, PageHeaderProps } from './types';
 
 const commonSvgBackgroundProps = {
   fill: theme.palette.grey.fog,

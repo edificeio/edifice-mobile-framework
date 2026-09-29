@@ -7,7 +7,7 @@ import { EdgeInsets, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-a
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import AlertCard from '~/framework/components/alert';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { Checkbox } from '~/framework/components/checkbox';
@@ -27,7 +27,7 @@ import { ActivationFormModel, ValueChangeArgs } from '~/framework/modules/auth/c
 import { IActivationError, LegalUrls, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/thunks';
 import { Loading } from '~/ui/Loading';
-import { ValidatorBuilder } from '~/utils/form';
+import { ValidatorBuilder } from '~/util/form';
 
 import styles from './styles';
 import { AuthActivationScreenProps, AuthActivationScreenState, IFields } from './types';

@@ -5,14 +5,14 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import moment from 'moment';
 
-import styles from './styles';
-import { TimelineSpaceProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { Svg } from '~/framework/components/picture';
 import { HeadingXSText, HeadingXXSText } from '~/framework/components/text';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import appConf from '~/framework/util/appConf';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { TimelineSpaceProps } from './types';
 
 const animationSpaceSource = require('ASSETS/animations/space/card.json');
 

@@ -4,7 +4,6 @@ import { View } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { getScaleWidth } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
@@ -14,6 +13,7 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import styles from '~/framework/modules/user/screens/account-onboarding/styles';
 import { UserAccountOnboardingScreenPrivateProps } from '~/framework/modules/user/screens/account-onboarding/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { I18n } from '~/util/i18n';
 
 export const computeNavBar = ({
   navigation,

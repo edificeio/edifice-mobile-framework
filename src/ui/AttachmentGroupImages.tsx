@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
@@ -14,6 +13,7 @@ import { LocalFile } from '~/framework/util/fileHandler/models';
 import { mapLocalFileToLegacy } from '~/framework/util/fileHandler/utils/mapLocalFileToLegacy';
 import { formatSource, Image } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
+import { I18n } from '~/util/i18n';
 
 import { ILocalAttachment } from './Attachment';
 

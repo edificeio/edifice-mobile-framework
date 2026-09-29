@@ -20,10 +20,5 @@
  *   duration?: number;
  * }))
  */
-import reducer from './reducer';
-
-import { Reducers } from '~/app/store';
-
-Reducers.register('notifiers', reducer);
 
 export { default } from './component';

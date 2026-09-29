@@ -1,6 +1,6 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { getStore } from '~/app/store';
 import Toast from '~/framework/components/toast';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';

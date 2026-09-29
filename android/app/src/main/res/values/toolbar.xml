@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Kept in its own file because styles.xml is overridden by the install CLI.
+         The overlay is applied at runtime in MainActivity (see `theme.applyStyle`). -->
+
+    <!-- react-native-screens applies toolbar's contentInsetStart on both sides of custom header views.
+         16dp (default) - 12dp, to align them with the native back button. -->
+    <style name="AppToolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="contentInsetStart">4dp</item>
+    </style>
+
+    <style name="ThemeOverlay.AppToolbar" parent="">
+        <item name="toolbarStyle">@style/AppToolbar</item>
+    </style>
+</resources>
