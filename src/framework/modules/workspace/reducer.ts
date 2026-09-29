@@ -3,10 +3,9 @@
  */
 import { combineReducers } from 'redux';
 
-import moduleConfig from './module-config';
-
-import { Reducers } from '~/app/store';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
+
+import moduleConfig from './module-config';
 
 // Types
 
@@ -83,5 +82,4 @@ const reducer = combineReducers({
   directories: createSessionAsyncReducer(initialState.directories, actionTypes.directories),
   folderTree: createSessionAsyncReducer(initialState.folderTree, actionTypes.listFolders),
 });
-Reducers.register(moduleConfig.reducerName, reducer);
 export default reducer;

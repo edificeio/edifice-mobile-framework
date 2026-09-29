@@ -1,5 +1,5 @@
 import { ParamListBase } from '@react-navigation/native';
-import type { Action, Reducer } from 'redux';
+import type { Reducer } from 'redux';
 
 import type importModules from '~/app/config/modules';
 import { SvgIconName } from '~/framework/components/picture';
@@ -168,6 +168,13 @@ export type ModuleReduxState<T> = T extends
     : never
   : never;
 
+export type ModuleReduxAction<T> = T extends
+  CoreModule<infer Name, any, any, infer Action, any, any> | EntModule<infer Name, any, any, infer Action, any, any>
+  ? Name extends any
+    ? Action
+    : never
+  : never;
+
 /**
  * Static strongly-typed modules collection
  */
@@ -191,3 +198,7 @@ export type AllModulesReducers = {
 export type AllModulesState = {
   [Name in AllModulesNames]: ModuleReduxState<AllModulesMap[Name]>;
 };
+
+export type AllModulesActions = {
+  [Name in AllModulesNames]: ModuleReduxAction<AllModulesMap[Name]>;
+}[AllModulesNames];

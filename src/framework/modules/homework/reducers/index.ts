@@ -3,13 +3,12 @@
 */
 import { combineReducers } from 'redux';
 
+import { createExplorerActions, createExplorerReducer, createExplorerSelectors } from '~/framework/modules/explorer/store';
+import moduleConfig from '~/framework/modules/homework/module-config';
+
 import diaryList from './diaryList';
 import selectedDiary from './selectedDiary';
 import tasks from './tasks';
-
-import { Reducers } from '~/app/store';
-import { createExplorerActions, createExplorerReducer, createExplorerSelectors } from '~/framework/modules/explorer/store';
-import moduleConfig from '~/framework/modules/homework/module-config';
 
 export const reducer = combineReducers({
   diaryList,
@@ -17,8 +16,6 @@ export const reducer = combineReducers({
   selectedDiary,
   tasks,
 });
-
-export default Reducers.register(moduleConfig.reducerName, reducer);
 
 export const selectors = {
   explorer: createExplorerSelectors(moduleConfig, state => moduleConfig.getState(state).explorer),

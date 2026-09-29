@@ -3,9 +3,6 @@
  */
 import { Moment } from 'moment';
 
-import moduleConfig from './module-config';
-
-import { Reducers } from '~/app/store';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 
 // Types
@@ -140,5 +137,5 @@ const initialState: ISchoolbookState = {};
 const reducer = createSessionReducer(initialState, {
   // Add reducer functions here or use reducer tools
 });
-Reducers.register(moduleConfig.reducerName, reducer);
+
 export default reducer;

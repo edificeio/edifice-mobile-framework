@@ -1,4 +1,4 @@
-import { IGlobalState, Reducers } from '~/app/store';
+import { IGlobalState } from '~/app/store';
 import { CantineData } from '~/framework/modules/widgets/cantine/model';
 import moduleConfig from '~/framework/modules/widgets/cantine/module-config';
 import createReducer from '~/framework/util/redux/reducerFactory';
@@ -113,5 +113,5 @@ export const shouldRetryCantineData = (state: IGlobalState, structureUAI: string
 };
 
 // Register the reducer
-Reducers.register(moduleConfig.reducerName, reducer);
+
 export default reducer;
