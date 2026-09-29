@@ -1,9 +1,9 @@
+import { Storage } from '~/framework/util/storage';
+
 import { MailsVisible } from './model';
 import moduleConfig from './module-config';
 import { mailsService } from './service';
 import { isServiceMethodAvailable } from './util';
-
-import { Storage } from '~/framework/util/storage';
 
 export interface MailsStorageData {
   visibles: MailsVisible[];
@@ -15,7 +15,7 @@ const enum MailsStorageKeys {
   LAST_CALL_TIMESTAMP = 'lastcalltimestamp',
 }
 
-export const storage = Storage.slice<MailsStorageData>().withModule(moduleConfig);
+export const storage = Storage.slice<MailsStorageData>().withModule({ storage: { namespace: moduleConfig.storageName } });
 
 export const readLastCallTimestamp = (): number => storage.getJSON(MailsStorageKeys.LAST_CALL_TIMESTAMP) ?? 0;
 
