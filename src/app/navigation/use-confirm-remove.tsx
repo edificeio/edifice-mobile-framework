@@ -13,7 +13,7 @@ import {
   usePreventRemove,
 } from '@react-navigation/native';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 
 export const ConfirmRemoveContext = React.createContext<React.RefObject<NavigationAction[]>>({ current: [] });
 

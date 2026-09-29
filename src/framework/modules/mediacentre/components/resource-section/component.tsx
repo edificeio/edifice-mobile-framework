@@ -4,7 +4,7 @@ import { TouchableOpacity, View } from 'react-native';
 import styles from './styles';
 import { ResourceSectionProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import FlatList from '~/framework/components/list/flat-list';

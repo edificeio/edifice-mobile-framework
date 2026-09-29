@@ -6,7 +6,7 @@
 import React from 'react';
 
 export type ProviderEntry<ProviderProps extends React.PropsWithChildren = Required<React.PropsWithChildren>> =
-  [React.ComponentType<ProviderProps>, Omit<ProviderProps, 'children'>] | [React.ComponentType<ProviderProps>];
+  [React.ComponentType<ProviderProps>, Omit<ProviderProps, 'children'>] | [React.ComponentType<ProviderProps>] | false;
 
 type ProviderOwnProps<ProviderProps> = Omit<ProviderProps, 'children'>;
 
@@ -20,7 +20,7 @@ type ProviderPropsArgs<ProviderProps> =
  * Declares a provider entry, type-checking its props against the provider component.
  */
 export const provider = <ProviderProps extends React.PropsWithChildren>(
-  Component: React.ComponentType<ProviderProps>,
+  Component: React.ComponentType<ProviderProps> | false,
   ...[props]: ProviderPropsArgs<ProviderProps>
 ) => (props === undefined ? [Component] : [Component, props]) as unknown as ProviderEntry;
 
@@ -31,7 +31,9 @@ interface ComposeProvidersProps extends Required<React.PropsWithChildren> {
 export const ComposeProviders = React.memo(function ({ children, providers = [] }: ComposeProvidersProps) {
   return (
     <>
-      {providers.reduceRight((acc, [Comp, props]) => {
+      {providers.reduceRight((acc, entry) => {
+        if (entry === false) return acc;
+        const [Comp, props] = entry;
         return <Comp {...props}>{acc}</Comp>;
       }, children)}
     </>

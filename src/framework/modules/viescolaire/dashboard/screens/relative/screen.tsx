@@ -7,10 +7,6 @@ import moment, { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import type { DashboardRelativeScreenDispatchProps, DashboardRelativeScreenPrivateProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyScreen } from '~/framework/components/empty-screens';
@@ -56,6 +52,10 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { Trackers } from '~/framework/util/tracker';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import type { DashboardRelativeScreenDispatchProps, DashboardRelativeScreenPrivateProps } from './types';
 
 type IHomeworkByDateList = {
   [key: string]: IHomework[];

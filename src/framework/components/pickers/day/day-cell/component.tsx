@@ -4,7 +4,7 @@ import { AppState, AppStateStatus, TouchableOpacity, View } from 'react-native';
 import { styles } from './styles';
 import { DayCellProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { deviceFontScale, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';

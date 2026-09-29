@@ -3,10 +3,6 @@ import { View } from 'react-native';
 
 import { Trans } from 'react-i18next';
 
-import styles from './styles';
-import { AuthDiscoveryClassScreenProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import ScrollView from '~/framework/components/scrollView';
@@ -14,6 +10,10 @@ import { HeadingMText, NestedBoldText, SmallText } from '~/framework/components/
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media-deprecated';
 import { Trackers } from '~/framework/util/tracker';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { AuthDiscoveryClassScreenProps } from './types';
 
 const renderDiscoveryClassPics = {
   illu1: require('ASSETS/images/discovery-class/illu1.png'),

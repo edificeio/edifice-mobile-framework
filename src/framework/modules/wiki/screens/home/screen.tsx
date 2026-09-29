@@ -1,8 +1,5 @@
 import * as React from 'react';
 
-import type { WikiHomeScreen } from './types';
-
-import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { RootFolderId } from '~/framework/modules/explorer/model/types';
@@ -12,6 +9,9 @@ import moduleConfig from '~/framework/modules/wiki/module-config';
 import { wikiRouteNames } from '~/framework/modules/wiki/navigation';
 import { hasWikiCreationRights } from '~/framework/modules/wiki/rights';
 import { selectors } from '~/framework/modules/wiki/store';
+import { I18n } from '~/util/i18n';
+
+import type { WikiHomeScreen } from './types';
 
 export const homeNavBar = createResourceExplorerNavBar('wiki-home-title', selectors.explorer);
 

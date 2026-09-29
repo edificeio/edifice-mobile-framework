@@ -4,7 +4,7 @@ import { FlatListProps, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';

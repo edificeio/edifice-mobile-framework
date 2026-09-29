@@ -5,10 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { connect, useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import type { LegalItem, UserLegalNoticeScreenPrivateProps, UserLegalNoticeScreenProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
@@ -23,6 +19,10 @@ import { loadPlatformLegalUrlsAction } from '~/framework/modules/auth/thunks';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Loading } from '~/ui/Loading';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import type { LegalItem, UserLegalNoticeScreenPrivateProps, UserLegalNoticeScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,

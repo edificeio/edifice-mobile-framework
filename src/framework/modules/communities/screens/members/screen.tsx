@@ -4,7 +4,7 @@ import { PixelRatio } from 'react-native';
 import { MembershipClient, MembershipResponseDto, SearchMembershipQueryDto } from '@edifice.io/community-client-rest-rn';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import VisibleItem, { VisibleItemLoader } from '~/framework/components/card/visible-item';
 import { VisibleItemProps } from '~/framework/components/card/visible-item/types';

@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
-import { ITimelineNotificationProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_STYLES } from '~/framework/components/constants';
 import { SmallItalicText, SmallText } from '~/framework/components/text';
@@ -15,6 +11,10 @@ import { renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { Image } from '~/framework/util/media-deprecated';
 import { getAsEnrichedNotification, getAsResourceUriNotification } from '~/framework/util/notifications';
 import { ArticleContainer } from '~/ui/ContainerContent';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { ITimelineNotificationProps } from './types';
 
 export function TimelineNotification(props: ITimelineNotificationProps) {
   const { notification, notificationAction } = props;

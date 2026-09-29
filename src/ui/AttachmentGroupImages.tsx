@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { ILocalAttachment } from './Attachment';
-
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
@@ -17,6 +14,9 @@ import { mapLocalFileToLegacy } from '~/framework/util/fileHandler/utils/mapLoca
 import { formatSource, Image } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
+import { I18n } from '~/util/i18n';
+
+import { ILocalAttachment } from './Attachment';
 
 const itemWidth =
   // The items' width is computed by substracting spacings from the screen's width

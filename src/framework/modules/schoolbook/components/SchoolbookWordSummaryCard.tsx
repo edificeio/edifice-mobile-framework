@@ -5,7 +5,7 @@ import { Moment } from 'moment';
 
 import CardTopContentCategory from './cardtopcontent-category';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
 import CardTopContent from '~/framework/components/card/top-content';

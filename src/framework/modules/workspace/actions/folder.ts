@@ -1,4 +1,4 @@
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { actionTypes, IFolder } from '~/framework/modules/workspace/reducer';

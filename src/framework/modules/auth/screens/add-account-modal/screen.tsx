@@ -3,12 +3,12 @@ import * as React from 'react';
 import { NavigationIndependentTree, useNavigationContainerRef } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
 import { NavigationContainer, navigationRef as parentNavigationRef } from '~/app/navigation';
 import { createLeafStackNavigator } from '~/app/navigation/leaf-stack';
 import { modalScreenOptions } from '~/app/navigation/util';
 import { getAuthReduxNavigationStateForNewAccount } from '~/framework/modules/auth/new-navigation';
 import { getState } from '~/framework/modules/auth/redux/reducer';
+import { I18n } from '~/util/i18n';
 
 import AuthActivationAddAccountScreen, { computeNavBar as authActivationAddAccountNavBar } from '../add-account/activation';
 import AuthForgotAddAccountScreen from '../add-account/forgot';

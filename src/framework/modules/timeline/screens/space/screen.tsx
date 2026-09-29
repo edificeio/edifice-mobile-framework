@@ -6,7 +6,7 @@ import LottieView from 'lottie-react-native';
 import styles from './styles';
 import { TimelineSpaceScreenPrivateProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';

@@ -6,10 +6,6 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
@@ -33,6 +29,10 @@ import { presencesService } from '~/framework/modules/viescolaire/presences/serv
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

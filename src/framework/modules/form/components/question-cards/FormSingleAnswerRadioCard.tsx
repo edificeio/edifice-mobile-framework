@@ -4,7 +4,7 @@ import { FlatList, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-
 import { FormAnswerText } from './FormAnswerText';
 import { FormRadio } from './FormRadio';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';

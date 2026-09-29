@@ -1,10 +1,10 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import FlatList from '~/framework/components/list/flat-list';
 import { SmallBoldText } from '~/framework/components/text';
 import { Resource } from '~/framework/modules/homework-assistance/model';
+import { I18n } from '~/util/i18n';
 
 import ResourceListItem from './item';
 import styles from './styles';

@@ -2,11 +2,11 @@ import * as React from 'react';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
 import { PageView } from '~/framework/components/page';
 import DisplaySession from '~/framework/modules/viescolaire/diary/components/DisplaySession';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { I18n } from '~/util/i18n';
 
 export const computeNavBar = ({
   navigation,

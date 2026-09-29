@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 
 import { FormAnswerText } from './FormAnswerText';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { Attachment } from '~/framework/components/attachment';
 import { UI_SIZES } from '~/framework/components/constants';

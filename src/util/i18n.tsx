@@ -4,24 +4,31 @@
  * Usage: import and use the init() function when local changes (setup is automatic on import)
  * Then, import and use the native i18next and moment modules.
  */
+import React from 'react';
+
 import { Temporal } from '@js-temporal/polyfill';
 import { flatten, unflatten } from 'flat';
 import i18n, { TOptions } from 'i18next';
 import resourcesToBackend from 'i18next-resources-to-backend';
 import moment from 'moment';
+
 import 'moment/locale/es';
 import 'moment/locale/fr';
 import 'moment/locale/it';
+
 import { initReactI18next } from 'react-i18next';
 import DeviceInfo from 'react-native-device-info';
 import * as RNLocalize from 'react-native-localize';
 import Phrase from 'react-native-phrase-sdk';
 import RNRestart from 'react-native-restart';
 
+import { useConstructor } from '~/framework/hooks/constructor';
 import appConf from '~/framework/util/appConf';
 import { isEmpty } from '~/framework/util/object';
 import { OldStorageFunctions } from '~/framework/util/storage';
 import { getOverrideName } from '~/framework/util/string';
+
+import { AppState, AppStateStatus } from 'react-native';
 
 // Read Phrase ID && Secrets
 const phraseSecrets = require('ROOT/phrase.json');
@@ -54,21 +61,6 @@ export namespace I18n {
     return unflatten(overridenTranslations);
   };
 
-  // i18n Keys toggling management (dev && alpha only)
-  // Toggle button available in UserHomeScreen (src/framework/modules/user/screens/home/screen.tsx)
-  const I18N_SHOW_KEYS_KEY = 'showKeys';
-  let showKeys = false;
-  export const canShowKeys = appConf.isDebugEnabled;
-
-  const I18N_APP_LANG = 'appLang';
-
-  // Define fallback locale
-  export const fallbackLng = 'en';
-
-  // Supported locales
-  const supportedLanguages = ['co', 'en', 'es', 'fr', 'it'] as const;
-  export type SupportedLocales = (typeof supportedLanguages)[number];
-
   // Transform translations for all embeded locales
   const localResources = {
     co: { translation: getOverridenTranslations(require('ASSETS/i18n/co.json')) },
@@ -77,6 +69,20 @@ export namespace I18n {
     fr: { translation: getOverridenTranslations(require('ASSETS/i18n/fr.json')) },
     it: { translation: getOverridenTranslations(require('ASSETS/i18n/it.json')) },
   };
+
+  // i18n Keys toggling management (dev && alpha only)
+  // Toggle button available in UserHomeScreen (src/framework/modules/user/screens/home/screen.tsx)
+  const I18N_SHOW_KEYS_KEY = 'showKeys';
+  const I18N_APP_LANG_KEY = 'appLang';
+  let showKeys = false;
+  export const canShowKeys = appConf.isDebugEnabled;
+
+  // Define fallback locale
+  export const fallbackLng = 'en';
+
+  // Supported locales
+  const supportedLanguages = ['co', 'en', 'es', 'fr', 'it'] as const;
+  export type SupportedLocales = (typeof supportedLanguages)[number];
 
   const momentLocales = {
     co: 'fr',
@@ -133,7 +139,7 @@ export namespace I18n {
       languageTag: string;
       isRTL: boolean;
     };
-    const lang = await OldStorageFunctions.getItemJson(I18N_APP_LANG);
+    const lang = await OldStorageFunctions.getItemJson(I18N_APP_LANG_KEY);
     if (isEmpty(lang)) {
       const newLang = bestAvailableLanguage?.languageTag ?? fallbackLng;
       i18n.language = newLang;
@@ -146,8 +152,8 @@ export namespace I18n {
 
   export const changeLanguage = async (lang: SupportedLocales | 'auto') => {
     if (showKeys) await OldStorageFunctions.setItemJson(I18N_SHOW_KEYS_KEY, false);
-    if (lang === 'auto') await OldStorageFunctions.removeItem(I18N_APP_LANG);
-    else await OldStorageFunctions.setItemJson(I18N_APP_LANG, lang);
+    if (lang === 'auto') await OldStorageFunctions.removeItem(I18N_APP_LANG_KEY);
+    else await OldStorageFunctions.setItemJson(I18N_APP_LANG_KEY, lang);
     RNRestart.restart();
   };
 
@@ -221,3 +227,36 @@ export namespace I18n {
 
   export const date = (d: Temporal.Instant) => d.toLocaleString(getLanguage(), { dateStyle: 'medium', timeStyle: undefined });
 }
+
+export const I18nProvider = React.memo(function ({ children }: React.PropsWithChildren) {
+  useConstructor(async () => {
+    await I18n.init();
+  });
+
+  const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
+
+  const handleAppStateChange = React.useCallback(
+    (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'active') {
+        // Change locale if needed
+        const locales = RNLocalize.getLocales();
+        const newLocale = isEmpty(locales) ? null : locales[0].languageCode;
+        I18n.setLanguage().then(lng => {
+          if (newLocale !== currentLocale) setCurrentLocale(lng as I18n.SupportedLocales);
+        });
+      }
+    },
+    [currentLocale],
+  );
+
+  React.useEffect(() => {
+    const appStateListener = AppState.addEventListener('change', handleAppStateChange);
+    return () => {
+      appStateListener.remove();
+    };
+  }, [handleAppStateChange]);
+
+  /* @todo: make this reactive with translation hooks */
+  return <>{children}</>;
+});
+I18nProvider.displayName = 'I18nProvider';
