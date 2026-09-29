@@ -1,3 +1,5 @@
+import { ModuleConfig } from '~/app/module';
+
 import { StorageHandler } from './handler';
 import type {
   IStorageBackend,
@@ -7,8 +9,6 @@ import type {
   StorageStringKeys,
   StorageTypeMap,
 } from './types';
-
-import type { IModuleConfig } from '~/framework/util/moduleTool';
 
 export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHandler {
   static separator = '.';
@@ -221,7 +221,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHa
    * @param module
    * @returns
    */
-  withModule<Name extends string>(module: IModuleConfig<Name, any>) {
+  withModule(module: Required<Pick<ModuleConfig<any>, 'storage'>>) {
     if (this.prefix.length > 0) {
       console.warn(
         `[Storage] Do not use setPrefix() or withModule() more than once, nor together. That mutates the storage '${
@@ -229,8 +229,8 @@ export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHa
         }' view.`,
       );
     }
-    this.setPrefix(module.storageName);
-    this.name = module.storageName;
+    this.setPrefix(module.storage.namespace);
+    this.name = module.storage.namespace;
     return this;
   }
 }
