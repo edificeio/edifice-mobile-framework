@@ -6,7 +6,7 @@ import { useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import { Carousel, type CarouselPanGesture, type CarouselRef, type CarouselRenderItemInfo } from 'react-native-reanimated-carousel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { NavigationRootScreenProps } from '~/app/navigation/types';
 import CarouselItem from '~/framework/components/carousel/components/carousel-item/component';
 import CarouselPagination from '~/framework/components/carousel/components/pagination/component';

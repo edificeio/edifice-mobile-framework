@@ -16,7 +16,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
@@ -53,6 +52,7 @@ import { DiscussionsSummary, getDiscussionsSummary } from '~/framework/modules/c
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getCommunityBannerImage, getItemSeparatorStyle } from '~/framework/modules/communities/utils';
 import { accountApi, sessionApi } from '~/framework/util/transport';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import type { CommunitiesHomeScreen } from './types';

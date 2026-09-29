@@ -4,15 +4,15 @@ import { View } from 'react-native';
 import type { NativeStackHeaderItemProps } from '@react-navigation/native-stack';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 
-import { I18n } from '~/app/i18n';
-import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
 import { headerAction, modalScreenOptions } from '~/app/navigation/util';
+import { useConfirmRemove } from '~/app/navigation-new/confirm-remove';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import FavoriteReorderItem from '~/framework/modules/myapps/components/favorite-reorder-item';
 import { useFavoritesReorder } from '~/framework/modules/myapps/hooks/use-favorites-reorder';
 import type { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 import Feedback from '~/framework/util/feedback/feedback';
+import { I18n } from '~/util/i18n';
 
 import { styles } from './styles';
 import type { MyAppsFavoritesReorderScreen } from './types';

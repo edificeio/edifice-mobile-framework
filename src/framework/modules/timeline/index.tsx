@@ -22,10 +22,9 @@ export default new EntModule<
     entTrackingName: 'Timeline',
     matchEntcoreApp: 'Timeline',
     name: 'timeline',
-    preferences,
     redux: { reducer },
     scope: ['timeline', 'userbook'],
-    storage: { device: storage, namespace: 'timeline' },
+    storage: { account: preferences, device: storage, namespace: 'timeline' },
     tab: {
       iconActive: 'home-fill',
       iconInactive: 'home-outline',

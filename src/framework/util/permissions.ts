@@ -10,7 +10,7 @@ import {
   RESULTS,
 } from 'react-native-permissions';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import toast from '~/framework/components/toast';
 import AppInfo, { ANDROID_API, isAndroidApiAtLeast } from '~/framework/util/app-info';
 

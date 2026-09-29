@@ -10,7 +10,6 @@ import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import CheckboxButton from '~/framework/components/buttons/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -34,6 +33,7 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Notifier from '~/framework/util/notifier';
 import { shallowEqual } from '~/framework/util/object';
+import { I18n } from '~/util/i18n';
 
 export interface IPushNotifsItemsListScreenDataProps {
   timelineState: TimelineState;

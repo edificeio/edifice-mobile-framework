@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { I18n } from '~/app/i18n';
 import { ModuleScreenProps } from '~/app/navigation/types';
 import { modalScreenOptions } from '~/app/navigation/util';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { withSession } from '~/framework/modules/auth/util';
 import { CommentsTree, CommentsTreeProps } from '~/framework/modules/comments/components/comments-tree';
 import { useCommentsThreadStore } from '~/framework/modules/comments/store';
+import { I18n } from '~/util/i18n';
 
 export const CommentsThreadReplyScreenOptions = modalScreenOptions<'comments/reply'>('modal', () => ({
   title: I18n.get('comments-reply-title'),

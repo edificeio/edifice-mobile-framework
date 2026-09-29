@@ -3,7 +3,6 @@ import { ListRenderItemInfo, View } from 'react-native';
 
 import { useSelector } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { GhostButton, TerciaryButton } from '~/framework/components/button';
 import RichEditorNativeViewer from '~/framework/components/inputs/rich-text/native-viewer';
@@ -11,6 +10,7 @@ import { CaptionItalicText, SmallBoldText, SmallItalicText, SmallText } from '~/
 import { AccountTypeText } from '~/framework/modules/auth/components/account-type-text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { TemporalTimeText } from '~/framework/util/date';
+import { I18n } from '~/util/i18n';
 
 import { CommentsThreadContext } from './context';
 import { CommentsThreadEditForm } from './form';

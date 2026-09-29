@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { HeadingSText, SmallBoldText } from '~/framework/components/text';
@@ -9,6 +8,7 @@ import Audience from '~/framework/modules/audience/components';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { type Blog, type BlogPostWithAudience, countComments } from '~/framework/modules/blog/reducer';
 import { hasPermissionManager } from '~/framework/modules/blog/rights';
+import { I18n } from '~/util/i18n';
 
 import styles from './style';
 

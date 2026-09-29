@@ -1,10 +1,10 @@
 import React from 'react';
 import { TextProps } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { NestedText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
+import { I18n } from '~/util/i18n';
 
 const profilesI18n: Record<AccountType, string> = {
   [AccountType.Guest]: 'user-profiletypes-guest',

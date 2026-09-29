@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import { headerAction, screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -13,6 +12,7 @@ import { MAOSProps, MyAppsFilters, MyAppsList, MyAppsMenuItem, MyAppsOnboardingM
 import { AppsInfoAggregated } from '~/framework/modules/myapps/types';
 import Feedback from '~/framework/util/feedback/feedback';
 import { Loading } from '~/ui/Loading';
+import { I18n } from '~/util/i18n';
 
 import { styles } from './styles';
 import { MyAppsHomeScreenProps } from './types';

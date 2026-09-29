@@ -3,13 +3,13 @@ import React from 'react';
 import type { DragEndParams } from 'react-native-draggable-flatlist';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
 import type { AppDispatch } from '~/app/store';
 import Toast from '~/framework/components/toast';
 import { saveGroupedFavorites } from '~/framework/modules/myapps/reducer/actions';
 import { mergeReorderedBookmarks } from '~/framework/modules/myapps/reducer/adapter';
 import { selectAppBookmarks } from '~/framework/modules/myapps/reducer/selectors';
 import { AppsInfoAggregated, MyAppsFilter, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
+import { I18n } from '~/util/i18n';
 
 import { useFilteredApps } from './use-filtered-apps';
 

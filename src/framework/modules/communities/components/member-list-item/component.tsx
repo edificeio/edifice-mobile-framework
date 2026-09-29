@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import styles from './styles';
-import { MemberListItemProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
 import { rolesI18n } from '~/framework/modules/communities/model';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { MemberListItemProps } from './types';
 
 const profilesI18n: Record<AccountType, string> = {
   [AccountType.Guest]: 'user-profiletypes-guest',

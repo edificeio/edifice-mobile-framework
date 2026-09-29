@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 import { DISCUSSION_STATUS_CONFIG } from '~/framework/modules/communities/utils';
+import { I18n } from '~/util/i18n';
 
 import styles, { TAB_STYLES } from './styles';
 import { DiscussionStatusTabProps } from './types';

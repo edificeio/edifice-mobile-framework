@@ -4,7 +4,6 @@ import { Alert, ListRenderItemInfo, NativeScrollEvent, NativeSyntheticEvent, Vie
 import { useSharedValue } from 'react-native-reanimated';
 import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 
-import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import { hasMediaContent } from '~/framework/components/inputs/rich-text/native-viewer';
@@ -35,6 +34,7 @@ import { useDiscussionScroll } from '~/framework/modules/communities/hooks/use-d
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { deleteMessage, MESSAGES_PAGE_SIZE } from '~/framework/modules/communities/service/discussions';
 import { getDiscussionStatus } from '~/framework/modules/communities/utils';
+import { I18n } from '~/util/i18n';
 
 import styles, { SCROLL_INDICATOR_INSETS } from './styles';
 import { CommunitiesDiscussionDetailsScreen } from './types';

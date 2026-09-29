@@ -19,6 +19,17 @@ class MainActivity : ReactActivity() {
         this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
         RNBootSplash.init(this, R.style.SplashScreenTheme)
+
+        /**
+         * React-navigation fix for native android navBar margins.
+         * Default margins are too wide and mismatch the traditional native behaviour.
+         * This custom theme overrides the value used by react-navigation ('contentInsetStart')
+         * by a value that visually matches the native header buttons.
+         * This is located to a custom style file because the regular one is overriden by the override-cli.
+         * note: Must be applied after RNBootSplash.init, which resets the activity theme.
+         */
+        theme.applyStyle(R.style.ThemeOverlay_AppToolbar, true)
+
         super.onCreate(null)
     }
 

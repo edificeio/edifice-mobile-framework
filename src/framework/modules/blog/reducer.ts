@@ -4,7 +4,7 @@
 import { Moment } from 'moment';
 import { combineReducers } from 'redux';
 
-import { IGlobalState, Reducers } from '~/app/store';
+import { IGlobalState } from '~/app/store';
 import { PaginatedListItem, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { CommentDeletedItem, CommentItem } from '~/framework/modules/comments/types';
@@ -299,8 +299,6 @@ export const reducer = combineReducers({
     },
   }),
 });
-
-export default Reducers.register(moduleConfig.reducerName, reducer);
 
 export const selectors = {
   blog: (id: Blog['id']) => (state: IGlobalState) => {

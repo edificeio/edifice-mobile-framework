@@ -4,7 +4,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 import { Moment } from 'moment';
 import { Trans } from 'react-i18next';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyBoldText, BodyText, NestedBoldText } from '~/framework/components/text';
 import { IGdprDelegate } from '~/framework/modules/form/model';

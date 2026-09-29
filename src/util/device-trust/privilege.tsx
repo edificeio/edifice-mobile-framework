@@ -11,7 +11,7 @@ import JailMonkey from 'jail-monkey';
 
 import AppInfo from '~/framework/util/app-info';
 
-export const PrivilegeTrust = React.memo(function PrivilegeTrust({
+export const PrivilegeTrust = React.memo(function ({
   children,
   onUntrusted,
 }: PropsWithChildren<{ onUntrusted: () => void }>) {
@@ -45,3 +45,4 @@ export const PrivilegeTrust = React.memo(function PrivilegeTrust({
   else if (!isTrustedDevice) return <View />;
   else */ return children;
 });
+PrivilegeTrust.displayName = 'PrivilegeTrust';

@@ -4,7 +4,7 @@ import { Temporal } from '@js-temporal/polyfill';
 import { Source } from 'react-native-pdf';
 import { ReactVideoSourceProperties } from 'react-native-video';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { FileMedia, isPdfContent, MediaType } from '~/framework/modules/media';
 import { OldStorageFunctions } from '~/framework/util/storage';

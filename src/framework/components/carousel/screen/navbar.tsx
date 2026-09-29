@@ -4,12 +4,12 @@ import { Platform } from 'react-native';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackHeaderBackProps, NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
 import { headerAction, modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import { showPrivacyAlert } from '~/framework/components/carousel/utils';
 import PopupMenu from '~/framework/components/menus/popup';
 import { FileMedia } from '~/framework/modules/media';
+import { I18n } from '~/util/i18n';
 
 const isAndroid = Platform.OS === 'android';
 

@@ -4,7 +4,6 @@ import { TouchableOpacity, View } from 'react-native';
 import { DiscussionIcon } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { AvatarStack } from '~/framework/components/avatar/stack';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -12,6 +11,7 @@ import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { DiscussionStatus } from '~/framework/modules/communities/model';
 import { DISCUSSION_TYPE_CONFIG, getDiscussionStatusIcon } from '~/framework/modules/communities/utils';
+import { I18n } from '~/util/i18n';
 
 import { DiscussionCardState, getCardStyle, styles } from './styles';
 import { DiscussionCardProps } from './types';

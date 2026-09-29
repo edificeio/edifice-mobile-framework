@@ -6,10 +6,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import styles from './styles';
-import { IWorkspaceFilePreviewScreenProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
@@ -23,6 +19,10 @@ import { WorkspaceNavigationParams, workspaceRouteNames } from '~/framework/modu
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { ButtonIconText } from '~/ui/ButtonIconText';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { IWorkspaceFilePreviewScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,

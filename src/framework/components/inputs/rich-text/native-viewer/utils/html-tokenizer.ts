@@ -2,7 +2,7 @@
  * Light regex tokenizer for ENT rich content: finds the tags of the html and reads their attributes,
  * without building a tree. Shared by the parser and the table builder.
  */
-import { parseAttrs } from '~/utils/attrs';
+import { parseAttrs } from '~/util/attrs';
 
 export const TAG_REGEX = /<(\/?)([a-zA-Z][a-zA-Z0-9-]*)(?![a-zA-Z0-9-])((?:[^>"']|"[^"]*"|'[^']*')*)>/g;
 const BACKGROUND_COLOR_REGEX = /background-color\s*:\s*([^;]+)/i;

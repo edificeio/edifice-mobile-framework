@@ -11,7 +11,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, CaptionItalicText, HeadingSText } from '~/framework/components/text';
@@ -19,6 +18,7 @@ import AuthorLine from '~/framework/modules/communities/components/discussions/a
 import DiscussionStatusTab from '~/framework/modules/communities/components/discussions/status-tab';
 import { DISCUSSION_TYPE_CONFIG } from '~/framework/modules/communities/utils';
 import { formatDateConvivialHourless } from '~/framework/util/date';
+import { I18n } from '~/util/i18n';
 
 import styles, {
   COLLAPSIBLE_AREA_WITH_STATUS_STYLE,

@@ -4,12 +4,12 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import FastImage from '@d11/react-native-fast-image';
 
-import { I18n } from '~/app/i18n';
 import { getScaleWidth } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import BtnNBK from '~/framework/modules/nabook/components/BtnNBK';
 import { NBK_COLORS } from '~/framework/modules/nabook/utils/constants';
 import textStyle from '~/framework/modules/nabook/utils/textStyle';
+import { I18n } from '~/util/i18n';
 
 const NBK_KV = require('ASSETS/images/nabook/nabook-key-visual.png');
 const NBK_LOGO = require('ASSETS/images/nabook/nabook-logo-full.png');

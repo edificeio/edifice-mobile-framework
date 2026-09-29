@@ -10,7 +10,7 @@ import { View, ViewProps } from 'react-native';
 
 import { connect } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { navigationRef } from '~/app/navigation';
 import { IGlobalState } from '~/app/store';
 import { convertNotificationToFileMedia } from '~/framework/components/carousel/utils/adapter';

@@ -4,7 +4,6 @@ import { Alert, FlatListProps } from 'react-native';
 import { connect, useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
@@ -36,6 +35,7 @@ import { blogService } from '~/framework/modules/blog/service';
 import { ResourceWithCommentsTemplate } from '~/framework/modules/comments';
 import { CommentsTreeProps } from '~/framework/modules/comments/components/comments-tree';
 import { resourceHasRight } from '~/framework/util/resourceRights';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { BlogPostDetailsScreenEventProps, BlogPostDetailsScreenProps } from './types';
@@ -318,8 +318,7 @@ export const BlogPostDetailsScreen = connect(
       setBlogData(await blogService.get(session, blogId));
       let blogPostState: string | undefined;
       const newBlogPostData = (await handleGetBlogPostDetails({ blogId, postId }, blogPostState)) as
-        | BlogPostWithAudience
-        | undefined;
+        BlogPostWithAudience | undefined;
       if (!newBlogPostData) throw new Error('blogPostData is undefined');
       setPostData(newBlogPostData);
       await loadAudienceData();

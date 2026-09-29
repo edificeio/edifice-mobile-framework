@@ -1,6 +1,6 @@
 import { MyAppsEmptyScreenConfig } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { MyAppsFilter, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 import { openUrl } from '~/framework/util/linking';
 

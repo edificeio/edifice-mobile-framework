@@ -7,7 +7,6 @@ import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { PrimaryButton, TerciaryButton } from '~/framework/components/button';
@@ -16,6 +15,7 @@ import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/t
 import toast from '~/framework/components/toast';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { config } from '~/framework/modules/comments';
+import { I18n } from '~/util/i18n';
 
 import { CommentsThreadContext } from './context';
 import styles from './styles';

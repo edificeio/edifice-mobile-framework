@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { RefreshControl, TouchableOpacity, View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/list/flat-list';
@@ -11,6 +10,7 @@ import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { Image } from '~/framework/util/media-deprecated';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { ResourcePickerProps } from './types';

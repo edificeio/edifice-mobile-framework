@@ -3,8 +3,8 @@ import React from 'react';
 import { Temporal } from '@js-temporal/polyfill';
 import moment, { DurationInputArg1, DurationInputArg2, Moment } from 'moment';
 
-import { I18n } from '~/app/i18n';
 import { NestedText } from '~/framework/components/text';
+import { I18n } from '~/util/i18n';
 
 import { uppercaseFirstLetter } from './string';
 

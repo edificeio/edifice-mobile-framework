@@ -4,7 +4,6 @@ import { StyleSheet, View } from 'react-native';
 import moment from 'moment';
 import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handler';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
@@ -13,15 +12,12 @@ import { Homework } from '~/framework/modules/viescolaire/common/utils/diary';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { PageContainer } from '~/ui/ContainerContent';
 import HtmlContentView from '~/ui/HtmlContentView';
+import { I18n } from '~/util/i18n';
 
 const styles = StyleSheet.create({
-  LeftColoredItemInfoBar: {
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
   course: {
-    textTransform: 'uppercase',
     marginLeft: UI_SIZES.spacing.minor,
+    textTransform: 'uppercase',
   },
   homeworkInfoBar: {
     flexDirection: 'row',
@@ -30,6 +26,10 @@ const styles = StyleSheet.create({
   homeworkPart: {
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.minor,
+  },
+  LeftColoredItemInfoBar: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   mainView: {
     flex: 1,

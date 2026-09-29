@@ -2,8 +2,8 @@ import CookieManager from '@preeternal/react-native-cookie-manager';
 import { getCrashlytics, log, recordError, setAttribute, setAttributes, setUserId } from '@react-native-firebase/crashlytics';
 
 import { EntModule } from '~/app/module';
-import { Modules } from '~/app/module/all';
-import AllModules from '~/app/modules';
+import { AllModules } from '~/app/module/loader';
+import AllModulesLegacy from '~/app/modules';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import AppInfo, { fullVersionLabel } from '~/framework/util/app-info';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
@@ -52,7 +52,7 @@ export abstract class AbstractTracker<OptionsType> {
   }
 
   // UserID procedure. Override _setUserId() function to create custom trackers.
-  protected async _setUserId(id: string): Promise<boolean> {
+  protected async _setUserId(_id: string): Promise<boolean> {
     return false;
   }
 
@@ -67,7 +67,7 @@ export abstract class AbstractTracker<OptionsType> {
   }
 
   // Custom dimension procedure. Override _setCustomDimension() function to create custom trackers.
-  protected async _setCustomDimension(id: number, name: string, value: string): Promise<boolean> {
+  protected async _setCustomDimension(_id: number, _name: string, _value: string): Promise<boolean> {
     return false;
   }
 
@@ -97,7 +97,7 @@ export abstract class AbstractTracker<OptionsType> {
   }
 
   // Track event procedure. Override _trackEvent() function to create custom trackers.
-  protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
+  protected async _trackEvent(_category: string, _action: string, _name?: string, _value?: number): Promise<boolean> {
     return false;
   }
 
@@ -121,7 +121,7 @@ export abstract class AbstractTracker<OptionsType> {
   }
 
   // Track debug event procedure. Override _trackDebugEvent() function to create custom trackers.
-  protected async _trackDebugEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
+  protected async _trackDebugEvent(_category: string, _action: string, _name?: string, _value?: number): Promise<boolean> {
     return false;
   }
 
@@ -145,7 +145,7 @@ export abstract class AbstractTracker<OptionsType> {
   }
 
   // Track view procedure. Override _trackView() function to create custom trackers.
-  protected async _trackView(path: string[]): Promise<boolean> {
+  protected async _trackView(_path: string[]): Promise<boolean> {
     return false;
   }
 
@@ -163,7 +163,7 @@ export abstract class AbstractTracker<OptionsType> {
     await this._trackView([moduleConfig.routeName, ...path]);
   }
 
-  protected async _setCrashAttribute(attributeName: string, attribute: string): Promise<boolean> {
+  protected async _setCrashAttribute(_attributeName: string, _attribute: string): Promise<boolean> {
     return false;
   }
 
@@ -177,7 +177,7 @@ export abstract class AbstractTracker<OptionsType> {
     }
   }
 
-  protected async _setCrashAttributes(attributes: Record<string, string>): Promise<boolean> {
+  protected async _setCrashAttributes(_attributes: Record<string, string>): Promise<boolean> {
     return false;
   }
 
@@ -191,7 +191,7 @@ export abstract class AbstractTracker<OptionsType> {
     }
   }
 
-  protected async _recordCrashError(error: Error, errorName?: string): Promise<boolean> {
+  protected async _recordCrashError(_error: Error, _errorName?: string): Promise<boolean> {
     return false;
   }
 
@@ -223,15 +223,15 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   sending: boolean = false;
 
   async _init(): Promise<void> {
-    AllModules()
+    AllModulesLegacy()
       .map(m => m.config)
       .forEach(config => {
         if (config?.entcoreTrackingName) {
           ConcreteEntcoreTracker.moduleAccessMap[config.name] = config.entcoreTrackingName;
         }
       });
-    Modules.getAllOfType(EntModule).forEach(module => {
-      if (module.entTrackingName) {
+    AllModules.forEach(module => {
+      if (module instanceof EntModule && module.entTrackingName) {
         ConcreteEntcoreTracker.moduleAccessMap[module.name] = module.entTrackingName;
       }
     });

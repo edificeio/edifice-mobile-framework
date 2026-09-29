@@ -5,7 +5,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import LottieView from 'lottie-react-native';
 import Rate, { AndroidMarket } from 'react-native-rate';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import ScrollView from '~/framework/components/scrollView';

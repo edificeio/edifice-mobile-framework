@@ -14,7 +14,7 @@ import RNFS from 'react-native-fs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Share from 'react-native-share';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { NavigationRootParams } from '~/app/navigation/types';
 import theme from '~/app/theme';
 import ImageViewer from '~/framework/components/carousel/image-viewer';

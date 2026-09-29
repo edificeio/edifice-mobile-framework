@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';
 

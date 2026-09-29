@@ -3,13 +3,13 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import moment, { Moment } from 'moment';
 
-import { FormAnswerText } from './FormAnswerText';
-
-import { I18n } from '~/app/i18n';
 import DateTimePicker from '~/framework/components/dateTimePicker';
 import { SmallActionText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse } from '~/framework/modules/form/model';
+import { I18n } from '~/util/i18n';
+
+import { FormAnswerText } from './FormAnswerText';
 
 const styles = StyleSheet.create({
   datePicker: {

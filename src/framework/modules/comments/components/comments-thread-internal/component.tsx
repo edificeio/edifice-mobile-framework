@@ -14,8 +14,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
-import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
+import { useConfirmRemove } from '~/app/navigation-new/confirm-remove';
 import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { FlatListProps } from '~/framework/components/list/flat-list';
@@ -26,6 +25,7 @@ import { useSyncRef } from '~/framework/hooks/ref';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import { unwrapAnimatedProp } from '~/framework/util/reanimated';
+import { I18n } from '~/util/i18n';
 
 import { CommentsThreadContext, commentsThreadContextInitialData, commentsThreadContextReducer } from './context';
 import { CommentsThreadAddForm } from './form';

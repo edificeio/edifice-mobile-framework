@@ -17,7 +17,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
 
-import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { FolderItem } from '~/framework/components/list/paginated-document-list/types';
 import { LOADING_ITEM_DATA, staleOrSplice } from '~/framework/components/list/paginated-list';
@@ -31,6 +30,7 @@ import { getCommunityBannerImage } from '~/framework/modules/communities/utils';
 import { isFileMedia, isResourceMedia, MediaType, mime, UNKNOWN_MIME_TYPE } from '~/framework/modules/media';
 import { openMedia } from '~/framework/modules/media/hooks';
 import { accountApi } from '~/framework/util/transport';
+import { I18n } from '~/util/i18n';
 
 import { DecoratedDocumentFlatList } from './community-paginated-document-list';
 import styles from './styles';

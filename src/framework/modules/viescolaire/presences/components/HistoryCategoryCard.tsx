@@ -1,7 +1,6 @@
 import React from 'react';
 import { ColorValue, FlatList, StyleSheet, View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { Card } from '~/framework/components/card/base';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
@@ -15,6 +14,7 @@ import {
   SmallText,
 } from '~/framework/components/text';
 import { IForgottenNotebook, IHistoryEvent, IIncident, IPunishment } from '~/framework/modules/viescolaire/presences/model';
+import { I18n } from '~/util/i18n';
 
 const styles = StyleSheet.create({
   container: {

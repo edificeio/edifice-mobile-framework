@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { genericHitSlop, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText } from '~/framework/components/text';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { DiscussionRepliesBarProps } from './types';

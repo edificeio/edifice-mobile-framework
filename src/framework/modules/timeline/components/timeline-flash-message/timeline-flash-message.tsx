@@ -4,7 +4,7 @@ import { LayoutChangeEvent, ScrollView as RNScrollView, View } from 'react-nativ
 import styles from './styles';
 import { ITimelineFlashMessageProps, ITimelineFlashMessageState } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme, { IShades } from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import TertiaryButton from '~/framework/components/buttons/tertiary';

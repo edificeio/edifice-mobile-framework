@@ -1,6 +1,5 @@
 import moment from 'moment';
 
-import { I18n } from '~/app/i18n';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
 import {
   IEntcoreWorkspaceDocument,
@@ -8,6 +7,7 @@ import {
   implicitWorkspaceUploadParams,
   IWorkspaceUploadParams,
 } from '~/framework/modules/workspace/service/types';
+import { I18n } from '~/util/i18n';
 
 export const workspaceFileAdapter = (file: IEntcoreWorkspaceDocument | IEntcoreWorkspaceFolder | any) => {
   const ret = file.metadata
@@ -67,7 +67,7 @@ export const getImplicitWorkspaceUploadParams = (params: IWorkspaceUploadParams)
   return !params?.parent ? {} : implicitWorkspaceUploadParams[params.parent] || { parentId: params.parent };
 };
 
-/** 
+/**
 const getThumbnailWorkspaceUploadParams = () => {
   return {
     quality: '1',

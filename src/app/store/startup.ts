@@ -1,4 +1,3 @@
-import { IGlobalState, Reducers } from '~/app/store';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
 // State type
@@ -17,7 +16,7 @@ export const actionTypes = {
 };
 
 export const reducer = createReducer(initialState, {
-  [actionTypes.ready]: (state, action) => {
+  [actionTypes.ready]: state => {
     return {
       ...state,
       isReady: Date.now(),
@@ -31,4 +30,4 @@ export const appReadyAction = () => {
   };
 };
 
-export const getState = (state: IGlobalState) => state.startup as StartupState;
+export const getState = (state: any) => state.startup as StartupState;

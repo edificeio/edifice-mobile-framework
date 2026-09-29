@@ -10,11 +10,11 @@ import moment from 'moment';
 import { DownloadDirectoryPath, moveFile, scanFile, UploadFileItem } from 'react-native-fs';
 import { Asset, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
-import { I18n } from '~/app/i18n';
 import { ImagePicked } from '~/framework/components/menus/actions';
 import toast from '~/framework/components/toast';
 import AppInfo from '~/framework/util/app-info';
 import { assertPermissions } from '~/framework/util/permissions';
+import { I18n } from '~/util/i18n';
 
 import { openDocument } from './actions';
 

@@ -3,7 +3,6 @@ import { Keyboard } from 'react-native';
 
 import { NativeStackHeaderItemCustom, NativeStackHeaderItemProps } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
 import { headerAction, modalScreenOptions } from '~/app/navigation/util';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -12,6 +11,7 @@ import { withSession } from '~/framework/modules/auth/util';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { createMessage, getMessages, MESSAGES_PAGE_SIZE, updateMessage } from '~/framework/modules/communities/service/discussions';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { CommunitiesDiscussionMessageEditorScreen } from './types';

@@ -5,7 +5,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { FlashListRef } from '@shopify/flash-list';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import AllModules from '~/app/modules';
 import { AppDispatch } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';

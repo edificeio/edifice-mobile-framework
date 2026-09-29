@@ -7,7 +7,6 @@ import { RefreshControl, TouchableOpacity, View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
@@ -41,6 +40,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
+import { I18n } from '~/util/i18n';
 
 // HEADER =====================================================================================
 
