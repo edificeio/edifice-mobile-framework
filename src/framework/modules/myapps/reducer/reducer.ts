@@ -1,9 +1,7 @@
-import { appsInfoActionTypes, FetchSuccessAction, UpdateFavoritesAction } from './action-types';
-
-import { Reducers } from '~/app/store';
-import moduleConfig from '~/framework/modules/myapps/module-config';
 import { AppsInfoState } from '~/framework/modules/myapps/types';
 import createReducer from '~/framework/util/redux/reducerFactory';
+
+import { appsInfoActionTypes, FetchSuccessAction, UpdateFavoritesAction } from './action-types';
 
 export const appsInfoInitialState: AppsInfoState = {
   aggregatedApps: {},
@@ -49,7 +47,5 @@ const reducer = createReducer(appsInfoInitialState, {
     };
   },
 });
-
-Reducers.register(moduleConfig.reducerName, reducer);
 
 export default reducer;

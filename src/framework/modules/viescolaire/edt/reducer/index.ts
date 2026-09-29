@@ -3,7 +3,6 @@
  */
 import { combineReducers } from 'redux';
 
-import { Reducers } from '~/app/store';
 import { IUser } from '~/framework/modules/auth/model';
 import { IClassGroups } from '~/framework/modules/viescolaire/common/model';
 import { IClass, IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
@@ -54,5 +53,4 @@ const reducer = combineReducers({
   teachers: createSessionAsyncReducer(initialState.teachers, actionTypes.teachers),
   userChildren: createSessionAsyncReducer(initialState.userChildren, actionTypes.userChildren),
 });
-Reducers.register(moduleConfig.reducerName, reducer);
 export default reducer;

@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { IGlobalState, Reducers } from '~/app/store';
+import { IGlobalState } from '~/app/store';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 
 import flashMessages, { FlashMessagesState } from './flash-messages';
@@ -65,7 +65,7 @@ export const getDefaultPushNotifsSettingsByType = (state: TimelineState) => {
   }, {});
 };
 
-Reducers.register(moduleConfig.reducerName, reducer);
+// Reducers.register(moduleConfig.reducerName, reducer);
 
 export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as TimelineState;
 

@@ -3,7 +3,6 @@
  */
 import { combineReducers } from 'redux';
 
-import { Reducers } from '~/app/store';
 import { IUser } from '~/framework/modules/auth/model';
 import { IDiaryCourse, IDiarySession, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
@@ -61,5 +60,5 @@ const reducer = combineReducers({
   slots: createSessionAsyncReducer(initialState.slots, actionTypes.timeSlots),
   teachers: createSessionAsyncReducer(initialState.teachers, actionTypes.teachers),
 });
-Reducers.register(moduleConfig.reducerName, reducer);
+
 export default reducer;
