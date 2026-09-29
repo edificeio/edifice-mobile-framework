@@ -3,7 +3,6 @@ import * as React from 'react';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourcePicker from '~/framework/components/explorer/resource-picker';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
@@ -13,6 +12,7 @@ import { BlogList } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { I18n } from '~/util/i18n';
 
 export interface BlogSelectScreenNavParams {
   blogsData: BlogList;

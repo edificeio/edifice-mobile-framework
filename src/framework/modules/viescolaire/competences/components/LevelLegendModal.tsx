@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { BodyText, SmallText } from '~/framework/components/text';
 import { ILevel } from '~/framework/modules/viescolaire/competences/model';
+import { I18n } from '~/util/i18n';
 
 const styles = StyleSheet.create({
   levelColorContainer: {

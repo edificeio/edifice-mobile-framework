@@ -2,7 +2,7 @@ import DeviceInfo from 'react-native-device-info';
 import { Action } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { IGlobalState } from '~/app/store';
 import { audienceService } from '~/framework/modules/audience/service';
 import { AudienceValidReactionTypes } from '~/framework/modules/audience/types';

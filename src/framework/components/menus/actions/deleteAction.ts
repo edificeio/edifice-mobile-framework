@@ -1,6 +1,6 @@
 import { MenuActionProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 
 export default function deleteAction(props: MenuActionProps) {
   return {

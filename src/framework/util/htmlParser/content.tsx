@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { decode } from 'html-entities';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import MediaButton from '~/framework/components/media/button';

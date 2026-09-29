@@ -5,7 +5,6 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -22,6 +21,7 @@ import { forgotAction } from '~/framework/modules/auth/thunks';
 import { containsKey } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/util/form';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { ForgotScreenEventProps, ForgotScreenLoadingState, ForgotScreenPrivateProps, ForgotScreenStructure } from './types';

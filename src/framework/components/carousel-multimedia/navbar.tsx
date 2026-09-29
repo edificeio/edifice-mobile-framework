@@ -4,7 +4,6 @@ import { Platform } from 'react-native';
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackHeaderBackProps, NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
 import { headerAction, modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -12,6 +11,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { FileMedia } from '~/framework/modules/media';
 import { IModalsNavigationParams } from '~/framework/navigation/modals';
+import { I18n } from '~/util/i18n';
 
 import { showPrivacyAlert } from './util';
 

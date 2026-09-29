@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { getScaleWidth } from '~/framework/components/constants';
 import HeaderBottomSheetModal from '~/framework/components/modals/bottom-sheet/header';

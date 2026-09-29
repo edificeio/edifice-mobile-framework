@@ -3,7 +3,6 @@ import { Platform } from 'react-native';
 import Share from 'react-native-share';
 import { ThunkAction } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { toURISource } from '~/framework/modules/media';
@@ -17,6 +16,7 @@ import type { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 import { sessionURISource } from '~/framework/util/transport';
+import { I18n } from '~/util/i18n';
 
 /**
  * Take a file from the mobile and post it to the backend.

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import type { AuthAddAccountModalScreenPrivateProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { PageView } from '~/framework/components/page';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';

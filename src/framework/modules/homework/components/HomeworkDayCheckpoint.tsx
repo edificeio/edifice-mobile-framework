@@ -2,11 +2,11 @@ import * as React from 'react';
 
 import moment from 'moment';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import Label from '~/framework/components/label';
 import { displayDate, getDayOfTheWeek, today } from '~/framework/util/date';
 import { uppercaseFirstLetter } from '~/framework/util/string';
+import { I18n } from '~/util/i18n';
 
 export interface IHomeworkDayCheckpointProps {
   date: moment.Moment;

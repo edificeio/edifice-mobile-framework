@@ -4,7 +4,7 @@ import { TouchableOpacity, View } from 'react-native';
 import { DiscussionIcon } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme, { IShades } from '~/app/theme';
 import { AvatarStack } from '~/framework/components/avatar/stack';
 import { UI_SIZES } from '~/framework/components/constants';

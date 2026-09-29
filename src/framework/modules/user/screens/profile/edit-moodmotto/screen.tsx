@@ -3,7 +3,6 @@ import { Alert, Image, ScrollView, TouchableOpacity, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
@@ -16,6 +15,7 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import type { UserEditMoodMottoScreenProps } from './types';

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { ScrollView } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import ActionCard from '~/framework/components/card/action/component';
 import { useCurvedNavBarFeature } from '~/framework/hooks/curved-navbar';
 import { openUrl } from '~/framework/util/linking';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { CommunitiesSpotlightedCourseScreen } from './types';

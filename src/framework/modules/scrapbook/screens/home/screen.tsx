@@ -4,7 +4,7 @@ import { useHeaderHeight } from '@react-navigation/elements';
 
 import { ScrapbookHomeScreenProps } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { sessionScreen } from '~/framework/components/screen';
 import ResourceExplorer from '~/framework/modules/explorer/templates/resource-explorer';

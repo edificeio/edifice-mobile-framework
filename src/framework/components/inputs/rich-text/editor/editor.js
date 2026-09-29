@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 
 import RNFS from 'react-native-fs';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { getScaleFontSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';

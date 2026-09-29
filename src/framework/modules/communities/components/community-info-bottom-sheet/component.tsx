@@ -4,15 +4,15 @@ import { Platform, StatusBar, View } from 'react-native';
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { styles } from './styles';
-import { CommunityInfoBottomSheetProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { Svg } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import CommunityCardLarge from '~/framework/modules/communities/components/community-card-large';
+import { I18n } from '~/util/i18n';
+
+import { styles } from './styles';
+import { CommunityInfoBottomSheetProps } from './types';
 
 const CommunityInfoBottomSheet = React.forwardRef<BottomSheetModalMethods, CommunityInfoBottomSheetProps>(({ data }, ref) => {
   const { bottom } = useSafeAreaInsets();

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import styles from './style';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { HeadingSText, SmallBoldText } from '~/framework/components/text';

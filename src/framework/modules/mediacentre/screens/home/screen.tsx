@@ -5,10 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import { MediacentreHomeScreenDispatchProps, MediacentreHomeScreenPrivateProps, Section } from './types';
-
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
@@ -33,6 +29,10 @@ import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { MediacentreHomeScreenDispatchProps, MediacentreHomeScreenPrivateProps, Section } from './types';
 
 export const computeNavBar = ({
   navigation,

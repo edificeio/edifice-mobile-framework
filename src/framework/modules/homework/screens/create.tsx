@@ -6,7 +6,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
 import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
 import { headerAction, modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
@@ -23,6 +22,7 @@ import { createHomeworkDiaryEntry } from '~/framework/modules/homework/actions/c
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { StackNavigationAction } from '~/framework/navigation/types';
+import { I18n } from '~/util/i18n';
 
 import { fetchHomeworkTasks } from '../actions/tasks';
 

@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { FormPicture } from './FormPicture';
-
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ContentCardHeader, TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { DistributionStatus } from '~/framework/modules/form/model';
 import { IFormDistributions } from '~/framework/modules/form/screens/distribution-list/types';
+import { I18n } from '~/util/i18n';
+
+import { FormPicture } from './FormPicture';
 
 const styles = StyleSheet.create({
   statusText: {

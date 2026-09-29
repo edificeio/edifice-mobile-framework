@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import TouchableSelectorPictureCard from '~/framework/components/card/picture';
 import { UI_SIZES } from '~/framework/components/constants';

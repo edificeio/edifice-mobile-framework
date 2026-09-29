@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { getPlatformContextOf, getPlatformLegalUrlsOf, getValidReactionTypes } from '~/framework/modules/auth/redux/reducer';
 import ActivationScreen from '~/framework/modules/auth/templates/activation';
@@ -12,6 +11,7 @@ import { AuthActivationScreenDispatchProps } from '~/framework/modules/auth/temp
 import { activateAccountActionAddAnotherAccount } from '~/framework/modules/auth/thunks';
 import track from '~/framework/modules/auth/tracking';
 import { tryAction } from '~/framework/util/redux/actions';
+import { I18n } from '~/util/i18n';
 
 import type { AuthActivationAddAccountScreenPrivateProps } from './types';
 

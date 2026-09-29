@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import EventButton from './event-button';
-import styles from './styles';
-import type { StudentStatusProps } from './types';
-
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { Svg } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
 import { CallEventType } from '~/framework/modules/viescolaire/presences/model';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
+import { I18n } from '~/util/i18n';
+
+import EventButton from './event-button';
+import styles from './styles';
+import type { StudentStatusProps } from './types';
 
 export default function StudentStatus({
   createAbsence,

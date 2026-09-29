@@ -10,7 +10,7 @@ import styles from './styles';
 import type { UserWhoAreWeScreenPrivateProps } from './types';
 import { WhoAreWellustrationType, WhoAreWeQuoteType } from './types';
 
-import { I18n } from '~/app/i18n';
+import { I18n } from '~/util/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import ScrollView from '~/framework/components/scrollView';
