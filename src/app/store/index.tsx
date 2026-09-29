@@ -26,10 +26,10 @@ import { thunk, ThunkDispatch } from 'redux-thunk';
 
 import { reducer as startupReducer } from '~/framework/navigation/redux';
 
-import { ModuleCompat } from '../module/compat';
-import { AllModulesState } from '../module/types';
 import { reactotronEnhancer } from './debug';
 import monitorReducerEnhancer from './monitor';
+// import { ModuleCompat } from '../module/compat';
+import { AllModulesState } from '../module/types';
 
 /** === Store reducers map === */
 
@@ -68,10 +68,12 @@ const theStore: { current?: Store } = { current: undefined };
 export default function configureStore(preloadedState?: AllModulesState) {
   const middlewares = [thunk];
   const middlewareEnhancer = applyMiddleware(...middlewares);
+
   const enhancers = __DEV__ ? [middlewareEnhancer, monitorReducerEnhancer, reactotronEnhancer] : [middlewareEnhancer];
   const composedEnhancers: StoreEnhancer = compose(...enhancers);
+
   const rootReducer = combineReducers({
-    ...ModuleCompat.getAllModulesReducers(),
+    // ...ModuleCompat.getAllModulesReducers(),
     // Build-in reducers here
     // ToDo: migrate in new module system (no more specific build-in reducers plz)
     startup: startupReducer,

@@ -9,11 +9,9 @@ import { ParamListBase } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Action } from 'redux';
 
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { StorageTypeMap } from '~/framework/util/storage/types';
 
-import { Modules } from './all';
-import { AllModules, CoreModuleConfig, EntModuleConfig, EntTabModule, ModuleConfig, StrictNavigationParams } from './types';
+import { AnyModule, CoreModuleConfig, EntModuleConfig, ModuleConfig, StrictNavigationParams } from './types';
 
 export * from './types';
 
@@ -109,20 +107,7 @@ export class EntModule<
     this.entTrackingName = config.entTrackingName;
   }
 
-  static getAvailableForAccount(_session: AuthActiveAccount) {
-    // ToDo: write predicate to filter with modules that are available to the user
-    const predicate = () => true;
-    return Modules.getAllOfType(EntModule).filter(predicate);
-  }
-
-  private static isTabModule<N extends string, Np extends ParamListBase & StrictNavigationParams<N, Np>>(
-    m: ArrayElement<AllModules>,
-  ) {
+  private static isTabModule<N extends string, Np extends ParamListBase & StrictNavigationParams<N, Np>>(m: AnyModule) {
     return m instanceof EntModule && !!m.tab;
-  }
-
-  static filterTabModules(modules: ReturnType<typeof EntModule.getAvailableForAccount>) {
-    const tabModules = modules.filter(EntModule.isTabModule);
-    return tabModules.sort((a, b) => (a.tab?.order ?? 0) - (b.tab?.order ?? 0)) as EntTabModule<string>[];
   }
 }

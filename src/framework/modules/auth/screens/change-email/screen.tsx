@@ -24,7 +24,7 @@ import { logoutAction } from '~/framework/modules/auth/thunks';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
-import { ValidatorBuilder } from '~/utils/form';
+import { ValidatorBuilder } from '~/util/form';
 
 import styles from './styles';
 import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
