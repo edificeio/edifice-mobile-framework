@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import React, { createContext, useContext } from 'react';
 
 import type {
@@ -75,8 +74,7 @@ export function useZendesk(): Zendesk | undefined {
   return useContext(ZendeskContext);
 }
 
-interface ZendeskProviderProps {
-  children: ReactNode;
+interface ZendeskProviderProps extends React.PropsWithChildren {
   zendeskConfig: ZendeskConfig;
 }
 

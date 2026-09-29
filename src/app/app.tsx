@@ -4,7 +4,7 @@
  */
 
 import * as React from 'react';
-import { ActivityIndicator, Text } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 // import { AppState, AppStateStatus, Platform, Text } from 'react-native';
 
 // import FastImage from '@d11/react-native-fast-image';
@@ -145,15 +145,24 @@ import { ModuleLoader } from './module/loader';
 import { providers } from './providers';
 import { AppWrapper } from './wrapper';
 
+const loaderStyles = StyleSheet.create({
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+});
+
 export function App() {
   BootSplash.hide({ fade: true });
   return (
-    <ModuleLoader>
+    <View style={loaderStyles.loader}>
       <React.Suspense fallback={<ActivityIndicator />}>
-        <ComposeProviders providers={providers}>
-          <AppWrapper />
-        </ComposeProviders>
+        <ModuleLoader>
+          <ComposeProviders providers={providers}>
+            <AppWrapper />
+          </ComposeProviders>
+        </ModuleLoader>
       </React.Suspense>
-    </ModuleLoader>
+    </View>
   );
 }
