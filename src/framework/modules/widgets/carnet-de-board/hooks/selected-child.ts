@@ -7,7 +7,7 @@ import { preferences } from '~/framework/modules/widgets/carnet-de-board/storage
 
 const readSavedId = () => preferences.getString('carnet-de-bord.selected-user') ?? undefined;
 
-export function useSelectedChild<T extends Pick<CarnetDeBordChild, 'id' | 'idPronote'>>(children: T[]) {
+export function useSelectedChild<T extends Pick<CarnetDeBordChild, 'id'>>(children: T[]) {
   const [savedId, setSavedId] = React.useState<string | undefined>(readSavedId);
 
   useFocusEffect(
