@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-09-30 11:30:46",
-  "notes": "fix(communities): PEDAGO-4351 handling join request, refactoring list data loading\nfix(blog): PEDAGO-4294 adding fallback for dateless resources\nfix(presences): remove unwanted consile statement\nfix(presences): ORGA-537, manage empty events\nchore(i18n): change phrase sync branch\nMerge remote-tracking branch 'origin/dev/1.17.7' into dev/1.17.8\nrelease: 1.17.7-rc.4(1170706)",
-  "version": "1.17.8-peda.1(1170807)",
+  "last": "2026-09-30 15:11:01",
+  "notes": "release: 1.17.8-peda.1(1170807)",
+  "version": "1.17.8-rc.1(1170808)",
   "track": "1.17.8",
-  "order": "peda.1"
+  "order": "rc.1"
 }
