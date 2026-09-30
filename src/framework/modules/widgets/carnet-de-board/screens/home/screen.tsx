@@ -14,12 +14,11 @@ import { withSession } from '~/framework/modules/auth/util';
 import { CarnetDeBordPronoteButton } from '~/framework/modules/widgets/carnet-de-board/components/pronote-button';
 import { CarnetDeBordSectionCard } from '~/framework/modules/widgets/carnet-de-board/components/section-card';
 import { CarnetDeBordSectionPlaceholder } from '~/framework/modules/widgets/carnet-de-board/components/section-placeholder';
-import { useCarnetDeBord, useSelectedChild } from '~/framework/modules/widgets/carnet-de-board/hooks';
+import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks';
 import {
   CarnetDeBordSection,
   getChildId,
   hasPronoteData,
-  ICarnetDeBord,
   PronoteCdbInitError,
   SCREEN_SECTIONS,
 } from '~/framework/modules/widgets/carnet-de-board/model';
@@ -39,8 +38,7 @@ export const computeNavBar = ({ navigation, route }: CarnetDeBordScreenProps): N
 });
 
 export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ navigation, session }) => {
-  const { data, error, load } = useCarnetDeBord();
-  const { select, selected } = useSelectedChild<ICarnetDeBord>(data);
+  const { data, error, load, select, selected } = useCarnetDeBord();
 
   // The home page has just loaded this data, so the screen shows it at once instead of a spinner.
   // Frozen on mount: the loader only ever reads this state when it initialises.
