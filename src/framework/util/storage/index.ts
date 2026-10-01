@@ -7,6 +7,11 @@ import { mmkvHandler } from './mmkv';
 import { StorageTypeMap } from './types';
 
 /**
+ * Extract the StorageTypeMap of a StorageHandler (or any of its subclasses).
+ */
+type StorageTypesOf<Handler extends StorageHandler<any>> = ReturnType<NonNullable<Handler['__types']>>;
+
+/**
  * Use MMKV as the storage technology.
  */
 const defaultStorageLib = mmkvHandler;
@@ -17,8 +22,8 @@ const defaultStorageLib = mmkvHandler;
 export class Storage {
   static global = defaultStorageLib;
 
-  static compose<Types extends StorageTypeMap>(subStorage: StorageHandler<Types>) {
-    return new StorageHandler<Types>(subStorage, subStorage.name);
+  static compose<Handler extends StorageHandler<any>>(subStorage: Handler) {
+    return new StorageHandler<StorageTypesOf<Handler>>(subStorage, subStorage.name);
   }
 
   static create<Types extends StorageTypeMap>(initFn?: (this: StorageHandler<Types>) => Promise<void>) {
