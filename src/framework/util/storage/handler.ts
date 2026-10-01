@@ -5,20 +5,26 @@ import { KeysWithValueNotOfType, KeysWithValueOfType, StorageKey, StorageLib, St
 export class StorageHandler<StorageTypes extends StorageTypeMap = StorageTypeMap> implements StorageLib {
   static PREFIX_SEPARATOR = '.';
 
+  /**
+   * Type-only member (no implementation, stripped at compile time) to retrieve StorageTypes from any subclass instance.
+   * @see StorageTypesOf
+   */
+  public __types?(): StorageTypes;
+
   constructor(
     public parent: StorageLib | StorageHandler,
     public name?: string,
   ) {}
 
   private prefix?: string | undefined;
-  private onAppInit?: ((this: this) => Promise<void>) | undefined;
+  private onAppInit?: (() => Promise<void>) | undefined;
 
   setPrefix(prefix: string) {
     this.prefix = prefix;
     return this;
   }
   setAppInit(initFn?: (this: this) => Promise<void>) {
-    this.onAppInit = initFn;
+    this.onAppInit = initFn?.bind(this);
     return this;
   }
 
@@ -31,12 +37,12 @@ export class StorageHandler<StorageTypes extends StorageTypeMap = StorageTypeMap
     this.initDone = true;
   }
 
-  public computeKey: (key: StorageStringKeys<StorageTypes>) => StorageKey = key => {
+  public computeKey(key: StorageStringKeys<StorageTypes>): StorageKey {
     const [start, prefixes] = this.walkPrefixes();
     if (start) prefixes.unshift(start);
     prefixes.push(key);
     return prefixes.join(StorageHandler.PREFIX_SEPARATOR);
-  };
+  }
 
   public walkPrefixes([childStart, childList]: [string | undefined, string[]] = [undefined, []]): [string | undefined, string[]] {
     const ret = [childStart, this.prefix ? [...childList, this.prefix] : childList] satisfies [string | undefined, string[]];
@@ -117,7 +123,7 @@ export class PreferenceHandler<StorageTypes extends StorageTypeMap = StorageType
     this.owner = owner;
     return this;
   }
-  private onSessionInit?: ((this: this, session: AuthActiveAccount) => Promise<void>) | undefined;
+  private onSessionInit?: ((session: AuthActiveAccount) => Promise<void>) | undefined;
 
   public walkPrefixes(given: [string | undefined, string[]] = [undefined, []]): [string | undefined, string[]] {
     const [childStart, childList] = super.walkPrefixes(given);
@@ -129,7 +135,7 @@ export class PreferenceHandler<StorageTypes extends StorageTypeMap = StorageType
   }
 
   setSessionInit(initFn?: (this: this, session: AuthActiveAccount) => Promise<void>) {
-    this.onSessionInit = initFn;
+    this.onSessionInit = initFn?.bind(this);
     return this;
   }
 
