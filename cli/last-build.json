@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-09-30 15:11:01",
-  "notes": "release: 1.17.8-peda.1(1170807)",
-  "version": "1.17.8-rc.1(1170808)",
+  "last": "2026-10-01 08:05:54",
+  "notes": "release: 1.17.8-rc.1(1170808)",
+  "version": "1.17.8-rc.2(1170809)",
   "track": "1.17.8",
-  "order": "rc.1"
+  "order": "rc.2"
 }
