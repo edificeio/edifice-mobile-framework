@@ -9,6 +9,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Action } from 'redux';
 
+import { Storage } from '~/framework/util/storage';
 import { StorageTypeMap } from '~/framework/util/storage/types';
 
 import { AnyModule, CoreModuleConfig, EntModuleConfig, ModuleConfig, StrictNavigationParams } from './types';
@@ -41,7 +42,12 @@ export abstract class Module<
     this.name = config.name;
     this.scope = config.scope;
     this.redux = config.redux;
-    this.storage = config.storage;
+    this.storage = config.storage
+      ? {
+          device: config.storage.device ? Storage.compose(config.storage.device).setPrefix(config.storage.namespace) : undefined,
+          namespace: config.storage.namespace,
+        }
+      : undefined;
     this.renderScreens = screens;
   }
 }

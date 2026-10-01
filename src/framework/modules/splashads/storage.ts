@@ -8,7 +8,7 @@ export interface SplashadsStorageData {
   splashads: Record<string, { date: Moment; url: string }>;
 }
 
-export const storage = Storage.slice<SplashadsStorageData>().withModule({ storage: { namespace: moduleConfig.storageName } });
+export const storage = Storage.create<SplashadsStorageData>().setPrefix(moduleConfig.storageName);
 
 const SPLASHADS_KEY = 'splashads';
 

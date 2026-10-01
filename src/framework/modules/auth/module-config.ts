@@ -1,6 +1,6 @@
-import type { AuthState } from './redux/types';
-
 import { ModuleConfig } from '~/framework/util/moduleTool';
+
+import type { AuthState } from './redux/types';
 
 /**
  * @deprecated use new module system
