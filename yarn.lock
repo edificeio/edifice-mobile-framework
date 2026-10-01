@@ -6111,7 +6111,7 @@ __metadata:
     react-native-network-logger: "npm:3.0.0"
     react-native-nitro-modules: "npm:0.37.1"
     react-native-orientation-locker: "npm:1.7.0"
-    react-native-pager-view: "npm:9.0.5"
+    react-native-pager-view: "npm:9.0.6"
     react-native-pdf: "npm:7.0.5"
     react-native-permissions: "npm:5.6.2"
     react-native-phone-number-input: "npm:2.1.0"
@@ -13658,13 +13658,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-pager-view@npm:9.0.5":
-  version: 9.0.5
-  resolution: "react-native-pager-view@npm:9.0.5"
+"react-native-pager-view@npm:9.0.6":
+  version: 9.0.6
+  resolution: "react-native-pager-view@npm:9.0.6"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/a1fa4286c5cbcb272b5913e19b8c29cbfe4fafc715257b107972f5f26a4349c346845900ffe34b945d524748e1d93d76468d18e04a3c9e217734c5a538922f45
+  checksum: 10/844249e641a9b3ad2ae7c95f8a9239bfb89fc0e445bd82d492920f33f53c9ca9bd73754ce8bf69dcd1f0158e3ce07f3e3d218e6a7662b69cc975d2c113f0cb81
   languageName: node
   linkType: hard
 
