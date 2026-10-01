@@ -10,10 +10,12 @@ import { ZendeskProvider } from '~/framework/util/zendesk';
 import { provider } from '~/util/compose-providers';
 import { DeviceTrust } from '~/util/device-trust';
 import { I18nProvider } from '~/util/i18n';
+import { MemoryWarningProvider } from '~/util/memory-warning';
 
 import { ReduxProvider } from './store';
 
 export const providers = [
+  provider(MemoryWarningProvider),
   provider(StorageProvider),
   provider(I18nProvider),
   provider(ReduxProvider),
