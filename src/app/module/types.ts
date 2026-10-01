@@ -4,7 +4,7 @@ import type { Action, Reducer } from 'redux';
 import type importModules from '~/app/config/modules';
 import { SvgIconName } from '~/framework/components/picture';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
-import type { StorageSlice } from '~/framework/util/storage/slice';
+import { StorageHandler } from '~/framework/util/storage/handler';
 import type { StorageTypeMap } from '~/framework/util/storage/types';
 
 import { CoreModule, EntModule } from '.';
@@ -56,10 +56,10 @@ interface ConfigForStorage<ModuleStorageSliceTypeMap extends StorageTypeMap, Mod
   namespace: string;
 
   // Instance of storage
-  device?: StorageSlice<ModuleStorageSliceTypeMap>;
+  device?: StorageHandler<ModuleStorageSliceTypeMap>;
 
   // Instance of preferences storage for this account
-  account?: StorageSlice<ModulePreferencesSliceTypeMap>;
+  account?: StorageHandler<ModulePreferencesSliceTypeMap>;
 }
 
 interface ConfigForTab<
