@@ -1,11 +1,14 @@
 import React from 'react';
 
+import { useModules } from '~/app/module/loader';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { Storage } from '~/framework/util/storage';
 
 export const StorageProvider = React.memo(function ({ children }: React.PropsWithChildren) {
+  const allStorages = useModules()
+    .map(module => module.storage?.device)
+    .filter(t => t !== undefined);
   useConstructor(async () => {
-    await Storage.init();
+    await Promise.all(allStorages.map(item => item.init));
   });
   return <>{children}</>;
 });

@@ -1,63 +1,41 @@
-import { ModuleConfig } from '~/app/module';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { AuthState } from '~/framework/modules/auth/redux/types';
 import { Trackers } from '~/framework/util/tracker';
 
-import { StorageHandler } from './handler';
+import { PreferenceHandler, StorageHandler } from './handler';
 import { mmkvHandler } from './mmkv';
-import { StorageSlice } from './slice';
 import { StorageTypeMap } from './types';
 
 /**
  * Use MMKV as the storage technology.
  */
-const defaultStorage = mmkvHandler;
+const defaultStorageLib = mmkvHandler;
 
 /**
  * Storage API
  */
 export class Storage {
-  static global = defaultStorage;
+  static global = defaultStorageLib;
 
-  static slice<Types extends StorageTypeMap>() {
-    return new StorageSlice<Types>(defaultStorage);
+  static compose<Types extends StorageTypeMap>(subStorage: StorageHandler<Types>) {
+    return new StorageHandler<Types>(subStorage, subStorage.name);
   }
 
-  static compose<StorageType extends StorageHandler>(subStorage: StorageType) {
-    return new StorageSlice(subStorage, subStorage.name) as unknown as StorageType;
+  static create<Types extends StorageTypeMap>(initFn?: (this: StorageHandler<Types>) => Promise<void>) {
+    return new StorageHandler<Types>(Storage.global).setAppInit(initFn);
   }
-
-  static create<Types extends StorageTypeMap>(module: Required<Pick<ModuleConfig<any>, 'storage'>>) {
-    return Storage.slice<Types>().withModule(module);
-  }
-
-  static PREFERENCES_PREFIX = '@';
 
   static preferences<Types extends StorageTypeMap>(
-    module: Required<Pick<ModuleConfig<any>, 'storage'>>,
-    initFn: (this: StorageSlice<Types>, session: AuthActiveAccount) => void,
+    initFn?: (this: PreferenceHandler<Types>, session: AuthActiveAccount) => Promise<void>,
   ) {
-    const ret = Storage.compose(Storage.create<Types>(module));
-    ret.setSessionInit(function (session) {
-      this.setPrefix(`${Storage.PREFERENCES_PREFIX}${session.user.id}`);
-      initFn.call(this, session);
-    });
-    return ret;
+    return new PreferenceHandler<Types>(Storage.global).setSessionInit(initFn);
   }
 
   static erasePreferences(id: keyof AuthState['accounts']) {
-    const keys = Storage.global.getAllKeys().filter(k => k.startsWith(`${Storage.PREFERENCES_PREFIX}${id}`));
+    const keys = Storage.global.getAllKeys().filter(k => k.startsWith(`${PreferenceHandler.PREFIX_OWNER}${id}`));
     for (const key of keys) {
       Storage.global.remove(key);
     }
-  }
-
-  static async init() {
-    await StorageHandler.initAllStorages();
-  }
-
-  static async sessionInit(session: AuthActiveAccount) {
-    await StorageHandler.sessionInitAllStorages(session);
   }
 }
 
@@ -184,15 +162,6 @@ export const OldStorageFunctions = {
     }
   },
 
-  //
-  //
-  //
-  //
-  // === Legacy zone ===
-  //
-  //
-  //
-  //
   /**
    * Set item JSON
    * - Convert data into JSON string

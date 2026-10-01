@@ -6,9 +6,7 @@ import { INotifFilterSettings } from './reducer/notif-settings/notif-filter-sett
 
 export interface TimelineStorageData {}
 
-export const storage = Storage.create<TimelineStorageData>({ storage: { namespace: moduleConfig.storageName } }).setAppInit(
-  function () {},
-);
+export const storage = Storage.create<TimelineStorageData>().setPrefix(moduleConfig.storageName);
 
 export interface TimelinePreferencesData {
   'notif-filters': INotifFilterSettings;
@@ -20,23 +18,20 @@ const getOldStorageKeys = (session: AuthLoggedAccount) => ({
   '1.9.6': `timeline.notifFilterSettings.${session.user.id}`,
 });
 
-export const preferences = Storage.preferences<TimelinePreferencesData>(
-  { storage: { namespace: moduleConfig.storageName } },
-  async function (session) {
-    // notif-filters data migration
-    const filters = this.getJSON('notif-filters');
-    const oldKeys = getOldStorageKeys(session);
+export const preferences = Storage.preferences<TimelinePreferencesData>(async function (session) {
+  // notif-filters data migration
+  const filters = this.getJSON('notif-filters');
+  const oldKeys = getOldStorageKeys(session);
 
-    if (!filters) {
-      let str: string | undefined;
-      for (const version in oldKeys) {
-        str = str ?? Storage.global.getString(oldKeys[version]);
-      }
-      if (str) this.setJSON('notif-filters', JSON.parse(str));
-    }
-
+  if (!filters) {
+    let str: string | undefined;
     for (const version in oldKeys) {
-      Storage.global.remove(oldKeys[version]);
+      str = str ?? Storage.global.getString(oldKeys[version]);
     }
-  },
-);
+    if (str) this.setJSON('notif-filters', JSON.parse(str));
+  }
+
+  for (const version in oldKeys) {
+    Storage.global.remove(oldKeys[version]);
+  }
+}).setPrefix(moduleConfig.storageName);
