@@ -2,7 +2,6 @@ import DeviceInfo from 'react-native-device-info';
 import { Action } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/util/i18n';
 import { IGlobalState } from '~/app/store';
 import { audienceService } from '~/framework/modules/audience/service';
 import { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
@@ -14,9 +13,9 @@ import { Error } from '~/framework/util/error';
 import firebaseService from '~/framework/util/notifications/service';
 import { isTokenExpired, OAuth2Error, OAuth2ErrorCode, refreshTokenForAccount } from '~/framework/util/oauth2';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
-import { Storage } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
 import { platformFetch } from '~/framework/util/transport';
+import { I18n } from '~/util/i18n';
 
 import { callRegisteredActionsAtLogin } from './calls-at-login';
 import {
@@ -204,7 +203,6 @@ export const loginSteps = {
           userData,
           userPublicInfo,
         );
-        await Storage.sessionInit(sessionInfo);
         Trackers.setUserId(sessionInfo.user.id);
         Trackers.setCustomDimension(1, 'Profile', sessionInfo.user.type.toString());
         Trackers.setCustomDimension(3, 'Project', new URL(sessionInfo.platform.url).hostname);

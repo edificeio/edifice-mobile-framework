@@ -1,122 +1,147 @@
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 
-import { IStorageBackend, StorageKey } from './types';
+import { KeysWithValueNotOfType, KeysWithValueOfType, StorageKey, StorageLib, StorageStringKeys, StorageTypeMap } from './types';
 
-export class StorageHandler {
+export class StorageHandler<StorageTypes extends StorageTypeMap = StorageTypeMap> implements StorageLib {
+  static PREFIX_SEPARATOR = '.';
+
   constructor(
-    protected storage: StorageHandler | IStorageBackend,
+    public parent: StorageLib | StorageHandler,
     public name?: string,
   ) {}
 
-  private static storageListWithAppInit: StorageHandler[] = [];
+  private prefix?: string | undefined;
+  private onAppInit?: ((this: this) => Promise<void>) | undefined;
 
-  private static storageListWithSessionInit: StorageHandler[] = [];
-
-  private static initPhaseDone: boolean = false;
-
-  private isInitialized: boolean = false;
-
-  private init?: () => void;
-
-  /**
-   * Execute this function when the app startup. Use the `function` keyword instead of `() => {}` to use `this` keyword inside the function.
-   * @param initFn
-   * @returns
-   */
-  setAppInit(initFn: (this: this) => void) {
-    if (this.isInitialized) {
-      console.warn('[Storage] Do not use `withInit()` twice.');
-      return this;
-    }
-
-    this.init = async () => {
-      console.debug(`[Storage] init storage '${this.name ?? this.constructor.name}'`);
-      initFn.call(this);
-      this.isInitialized = true;
-    };
-
-    StorageHandler.storageListWithAppInit.push(this);
-    if (StorageHandler.initPhaseDone) {
-      this.init();
-    }
-
+  setPrefix(prefix: string) {
+    this.prefix = prefix;
+    return this;
+  }
+  setAppInit(initFn?: (this: this) => Promise<void>) {
+    this.onAppInit = initFn;
     return this;
   }
 
-  private sessionInit?: (session: AuthActiveAccount) => void;
-
-  /**
-   * Execute this function whenever a user logs in. Use the `function` keyword instead of `() => {}` to use `this` keyword inside the function.
-   * @param initFn
-   */
-  setSessionInit(initFn: (this: this, session: AuthActiveAccount) => void) {
-    this.sessionInit = async (session: AuthActiveAccount) => {
-      console.debug(`[Storage] session init storage '${this.name ?? this.constructor.name}'`);
-      initFn.call(this, session);
-    };
-
-    StorageHandler.storageListWithSessionInit.push(this);
-
-    return this;
+  private initDone = false;
+  async init() {
+    if (this.parent instanceof StorageHandler) this.parent.init();
+    if (this.initDone) return;
+    console.debug(`[Storage] init storage '${this.name ?? this.constructor.name}'`);
+    await this.onAppInit?.();
+    this.initDone = true;
   }
 
-  static async initAllStorages() {
-    for (const storage of StorageHandler.storageListWithAppInit) {
-      try {
-        if (!storage.isInitialized) {
-          storage.init?.();
-        }
-      } catch (e) {
-        console.error(`[Storage] storage '${storage.name ?? storage.constructor.name}' failed to init`, e);
-      }
-    }
-    StorageHandler.initPhaseDone = true;
-  }
+  public computeKey: (key: StorageStringKeys<StorageTypes>) => StorageKey = key => {
+    const [start, prefixes] = this.walkPrefixes();
+    if (start) prefixes.unshift(start);
+    prefixes.push(key);
+    return prefixes.join(StorageHandler.PREFIX_SEPARATOR);
+  };
 
-  static async sessionInitAllStorages(session: AuthActiveAccount) {
-    for (const storage of StorageHandler.storageListWithSessionInit) {
-      try {
-        storage.sessionInit?.(session);
-      } catch (e) {
-        console.error(`[Storage] storage '${storage.name ?? storage.constructor.name}' failed to session init`, e);
-      }
-    }
+  public walkPrefixes([childStart, childList]: [string | undefined, string[]] = [undefined, []]): [string | undefined, string[]] {
+    const ret = [childStart, this.prefix ? [...childList, this.prefix] : childList] satisfies [string | undefined, string[]];
+    return this.parent instanceof StorageHandler ? this.parent.walkPrefixes(ret) : ret;
   }
 
   static BOOL_FALSE = 0;
-
   static BOOL_TRUE = 1;
 
-  contains(key: StorageKey): boolean {
-    return this.storage.contains(key);
+  contains(key: StorageStringKeys<StorageTypes>): boolean {
+    return this.parent.contains(this.computeKey(key));
   }
 
-  remove(key: StorageKey): void {
-    return this.storage.remove(key);
+  remove(key: StorageStringKeys<StorageTypes>): void {
+    return this.parent.remove(this.computeKey(key));
   }
 
-  getBoolean(key: StorageKey): boolean | undefined {
-    const val = this.storage.getNumber(key);
-    if (val === StorageHandler.BOOL_TRUE) return true;
+  getBoolean(key: KeysWithValueOfType<StorageTypes, boolean>): boolean | undefined {
+    const val = this.parent.getNumber(this.computeKey(key));
     if (val === StorageHandler.BOOL_FALSE) return false;
-    else return undefined;
+    else return true;
   }
 
-  getNumber(key: StorageKey): number | undefined {
-    return this.storage.getNumber(key);
+  getNumber(key: KeysWithValueOfType<StorageTypes, number>): number | undefined {
+    return this.parent.getNumber(this.computeKey(key));
   }
 
-  getString(key: StorageKey): string | undefined {
-    return this.storage.getString(key);
+  getString(key: KeysWithValueOfType<StorageTypes, string>): string | undefined {
+    return this.parent.getString(this.computeKey(key));
   }
 
-  set(key: StorageKey, value: string | number | boolean): void {
+  getJSON<KeyType extends KeysWithValueNotOfType<StorageTypes, boolean | number | string>>(
+    key: KeyType,
+  ): StorageTypes[typeof key] | undefined {
+    const str = this.parent.getString(this.computeKey(key));
+    return str ? JSON.parse(str) : undefined;
+  }
+
+  set(key: KeysWithValueOfType<StorageTypes, boolean>, value: StorageTypes[KeysWithValueOfType<StorageTypes, boolean>]): void;
+  set(key: KeysWithValueOfType<StorageTypes, number>, value: StorageTypes[KeysWithValueOfType<StorageTypes, number>]): void;
+  set(key: KeysWithValueOfType<StorageTypes, string>, value: StorageTypes[KeysWithValueOfType<StorageTypes, string>]): void;
+  set(key: StorageStringKeys<StorageTypes>, value: boolean | number | string): void {
     if (typeof value === 'boolean') {
-      return this.storage.set(key, value ? StorageHandler.BOOL_TRUE : StorageHandler.BOOL_FALSE);
-    } else return this.storage.set(key, value);
+      return this.parent.set(this.computeKey(key), value ? StorageHandler.BOOL_TRUE : StorageHandler.BOOL_FALSE);
+    } else return this.parent.set(this.computeKey(key), value);
+  }
+
+  setJSON<KeyType extends KeysWithValueNotOfType<StorageTypes, boolean | number | string>>(
+    key: KeyType,
+    value: StorageTypes[typeof key],
+  ): void {
+    const str = JSON.stringify(value);
+    this.parent.set(this.computeKey(key), str ?? '');
   }
 
   getAllKeys(): StorageKey[] {
-    return this.storage.getAllKeys();
+    return this.parent.getAllKeys();
+  }
+}
+
+export class PreferenceHandler<StorageTypes extends StorageTypeMap = StorageTypeMap> extends StorageHandler<StorageTypes> {
+  static PREFIX_OWNER = '@';
+
+  constructor(
+    public parent: StorageLib | StorageHandler,
+    public name?: string,
+  ) {
+    super(parent, name);
+  }
+
+  private owner?: string | undefined;
+
+  /**
+   * ONLY FOR DEBUGGING PURPOSE
+   * @deprecated
+   */
+  setOwner(owner: string) {
+    this.owner = owner;
+    return this;
+  }
+  private onSessionInit?: ((this: this, session: AuthActiveAccount) => Promise<void>) | undefined;
+
+  public walkPrefixes(given: [string | undefined, string[]] = [undefined, []]): [string | undefined, string[]] {
+    const [childStart, childList] = super.walkPrefixes(given);
+    const ret = [childStart ?? `${PreferenceHandler.PREFIX_OWNER}${this.owner}`, childList] satisfies [
+      string | undefined,
+      string[],
+    ];
+    return this.parent instanceof StorageHandler ? this.parent.walkPrefixes(ret) : ret;
+  }
+
+  setSessionInit(initFn?: (this: this, session: AuthActiveAccount) => Promise<void>) {
+    this.onSessionInit = initFn;
+    return this;
+  }
+
+  private sessionInitDone = new Set<AuthActiveAccount['user']['id']>();
+  async sessionInit(session: AuthActiveAccount) {
+    if (this.parent instanceof PreferenceHandler) this.parent.sessionInit(session);
+    if (this.sessionInitDone.has(session.user.id)) return;
+    console.debug(
+      `[Storage] init preferences '${this.name ?? this.constructor.name} for ${PreferenceHandler.PREFIX_OWNER}${session.user.id}'`,
+    );
+    await this.onSessionInit?.(session);
+    this.owner = session.user.id;
+    this.sessionInitDone.add(session.user.id);
   }
 }
