@@ -19,6 +19,7 @@ import { styles } from './styles';
 import { CommunityCardLargeProps } from './types';
 
 export const CommunityCardLarge = ({
+  hasJoinedWithCode,
   image,
   membersCount,
   role,
@@ -62,13 +63,17 @@ export const CommunityCardLarge = ({
               </BodyText>
             </View>
           </View>
-          <View style={styles.infoSeparator} />
-          <View style={styles.infoInviterContainer}>
-            <SingleAvatar userId={senderId} size="xsm" />
-            <SmallText style={styles.infoInviterText}>
-              {I18n.get('community-invitation-from-label', { name: senderName })}
-            </SmallText>
-          </View>
+          {!hasJoinedWithCode ? (
+            <>
+              <View style={styles.infoSeparator} />
+              <View style={styles.infoInviterContainer}>
+                <SingleAvatar userId={senderId} size="xsm" />
+                <SmallText style={styles.infoInviterText}>
+                  {I18n.get('community-invitation-from-label', { name: senderName })}
+                </SmallText>
+              </View>
+            </>
+          ) : null}
         </View>
       </View>
     </View>
