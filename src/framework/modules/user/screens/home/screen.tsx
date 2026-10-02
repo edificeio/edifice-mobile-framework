@@ -290,8 +290,8 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     () => (
       <>
         <View style={styles.section}>
-          <HeadingSText style={styles.sectionTitle} testID="account-configuration">
-            {I18n.get('user-page-configuration')}
+          <HeadingSText style={styles.sectionTitle} testID="account-notifications-section">
+            {I18n.get('user-page-section-notifications')}
           </HeadingSText>
           <ButtonLineGroup>
             <LineButton
@@ -302,6 +302,36 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               icon="ui-notif"
               testID="account-notifications"
             />
+          </ButtonLineGroup>
+        </View>
+        <View style={styles.section}>
+          <HeadingSText style={styles.sectionTitle} testID="account-preferences-section">
+            {I18n.get('user-page-section-preferences')}
+          </HeadingSText>
+          <ButtonLineGroup>
+            <LineButton
+              disabled={!!currentLoadingMenu}
+              title={I18n.get('user-page-editlang')}
+              onPress={() => navigation.navigate(userRouteNames.lang, {})}
+              icon="ui-globe"
+              testID="account-change-language"
+            />
+            {availableThemes?.length > 1 && getSwitchThemeRight(session!) && (
+              <LineButton
+                disabled={!!currentLoadingMenu}
+                title={I18n.get('user-page-edittheme')}
+                onPress={() => navigation.navigate(userRouteNames.theme, {})}
+                icon="ui-image"
+                testID="account-change-theme"
+              />
+            )}
+          </ButtonLineGroup>
+        </View>
+        <View style={styles.section}>
+          <HeadingSText style={styles.sectionTitle} testID="account-security-section">
+            {I18n.get('user-page-section-security')}
+          </HeadingSText>
+          <ButtonLineGroup>
             {!isFederated ? (
               <LineButton
                 loading={currentLoadingMenu === ModificationType.PASSWORD}
@@ -332,27 +362,11 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 />
               </>
             ) : null}
-            <LineButton
-              disabled={!!currentLoadingMenu}
-              title={I18n.get('user-page-editlang')}
-              onPress={() => navigation.navigate(userRouteNames.lang, {})}
-              icon="ui-globe"
-              testID="account-change-language"
-            />
-            {availableThemes?.length > 1 && getSwitchThemeRight(session!) && (
-              <LineButton
-                disabled={!!currentLoadingMenu}
-                title={I18n.get('user-page-edittheme')}
-                onPress={() => navigation.navigate(userRouteNames.theme, {})}
-                icon="ui-image"
-                testID="account-change-theme"
-              />
-            )}
           </ButtonLineGroup>
         </View>
         <View style={[styles.section, styles.sectionLast]}>
-          <HeadingSText style={styles.sectionTitle} testID="account-others">
-            {I18n.get('user-page-others')}
+          <HeadingSText style={styles.sectionTitle} testID="account-help-section">
+            {I18n.get('user-page-section-help')}
           </HeadingSText>
           <ButtonLineGroup>
             {showHelpCenter ? (
