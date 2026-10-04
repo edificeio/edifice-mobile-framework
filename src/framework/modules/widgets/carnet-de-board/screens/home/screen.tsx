@@ -17,12 +17,12 @@ import { CarnetDeBordSectionPlaceholder } from '~/framework/modules/widgets/carn
 import { useCarnetDeBord } from '~/framework/modules/widgets/carnet-de-board/hooks';
 import {
   CarnetDeBordSection,
-  getChildId,
   hasPronoteData,
   PronoteCdbInitError,
   SCREEN_SECTIONS,
 } from '~/framework/modules/widgets/carnet-de-board/model';
 import { pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
+import { getChildId } from '~/framework/modules/widgets/model';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
