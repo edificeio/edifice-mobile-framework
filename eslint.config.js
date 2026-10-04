@@ -75,6 +75,8 @@ module.exports = [
     rules: {
       // ── TypeScript ──────────────────────────────────────────────────
       '@typescript-eslint/no-shadow': 'error',
+      // Allow unused names prefixed by `_` (e.g. `infer _State` in conditional types).
+      '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }],
       'no-shadow': 'off',
       'no-undef': 'off',
       // ── React ───────────────────────────────────────────────────────

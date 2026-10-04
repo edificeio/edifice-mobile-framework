@@ -16,7 +16,7 @@ import { ComposeProviders } from '~/util/compose-providers';
 
 import { ModuleLoader } from './module/loader';
 import { providers } from './providers';
-import { AppWrapper } from './wrapper';
+import { AppStartupHandler } from './startup';
 
 const loaderStyles = StyleSheet.create({
   loader: {
@@ -26,8 +26,6 @@ const loaderStyles = StyleSheet.create({
 });
 
 export function App() {
-  BootSplash.hide({ fade: true });
-
   /**
    * @deprecated matomo is not used anymore. Plz replace this with anything when we'll switch to another data tracking tool.
    */
@@ -62,7 +60,7 @@ export function App() {
       }>
       <ModuleLoader>
         <ComposeProviders providers={providers}>
-          <AppWrapper />
+          <AppStartupHandler />
         </ComposeProviders>
       </ModuleLoader>
     </React.Suspense>

@@ -39,9 +39,3 @@ export type NavigationTabScreenProps<T extends keyof NavigationTabParams> = Comp
 >;
 
 export type ModuleScreenProps<T extends keyof AllModulesNavigationParams> = NativeStackScreenProps<AllModulesNavigationParams, T>;
-
-declare global {
-  namespace ReactNavigation {
-    interface RootParamList extends NavigationRootParams {}
-  }
-}

@@ -9,6 +9,7 @@ import { thunk, ThunkDispatch } from 'redux-thunk';
 
 import { reactotronEnhancer } from './debug';
 import monitorReducerEnhancer from './monitor';
+import { reducer as startupReducer } from './startup';
 import { useModuleReducers } from '../module/loader';
 import { AllModulesActions, AllModulesReducers, AllModulesState } from '../module/types';
 
@@ -40,7 +41,9 @@ export default function configureStore(reducers: AllModulesReducers, preloadedSt
 
 export const ReduxProvider = React.memo(function ({ children }: React.PropsWithChildren) {
   const reducers = useModuleReducers();
-  const store = React.useMemo(() => configureStore(reducers), [reducers]);
+  // todo: delete startup reducer in favor of suspense-enabled components.
+  // @ts-ignore
+  const store = React.useMemo(() => configureStore({ ...reducers, startup: startupReducer }), [reducers]);
   _store = store;
   return <Provider store={store}>{children}</Provider>;
 });
