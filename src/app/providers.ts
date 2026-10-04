@@ -11,6 +11,7 @@ import { provider } from '~/util/compose-providers';
 import { DeviceTrust } from '~/util/device-trust';
 import { I18nProvider } from '~/util/i18n';
 import { MemoryWarningProvider } from '~/util/memory-warning';
+import { TransportProvider } from '~/util/transport/provider';
 
 import { ReduxProvider } from './store';
 
@@ -20,6 +21,7 @@ export const providers = [
   provider(I18nProvider),
   provider(ReduxProvider),
   provider(DeviceTrust),
+  provider(TransportProvider),
   provider(NetworkMonitorProvider),
   provider(GestureHandlerRootView, { style: UI_STYLES.flex1 }),
   provider(SafeAreaProvider, { initialMetrics: initialWindowMetrics }),
