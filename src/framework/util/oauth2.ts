@@ -17,6 +17,7 @@ import { writeUpdateAccount } from '~/framework/modules/auth/storage';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { FetchError, FetchErrorCode, HTTPError } from '~/framework/util/transport/error';
+import { getModulesScopes } from '~/util/transport/provider';
 
 import { platformFetch } from './transport';
 
@@ -87,7 +88,7 @@ const createDeviceAuthenticationHeader = (clientId: string, clientSecret: string
  *
  * @returns A space-separated string of OAuth2 scopes.
  */
-const createScope = (): string => [...ModuleCompat.getAllModulesScopes()].join(' ');
+const createScope = (): string => [getModulesScopes()].join(' ');
 
 /**
  * Fetches an OAuth2 token for the specified platform using the given grant type and parameters.

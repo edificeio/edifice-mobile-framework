@@ -6,7 +6,7 @@ import React from 'react';
 
 import moduleImports from '~/app/config/modules';
 
-import { AllModulesArray, AllModulesReducers } from './types';
+import { AllModulesArray, AllModulesReducers, AllModulesStaticScreens } from './types';
 
 import { Module } from '.';
 
@@ -15,9 +15,6 @@ import { Module } from '.';
  * Access staticly to imported modules is dangerous. Instead, call module hooks to get loaded modules into a custom hook.
  */
 export let AllModules: AllModulesArray = [] as unknown as AllModulesArray;
-
-// type AllModulesImports = Awaited<ReturnType<typeof React.use<typeof loadModules>>>;
-// type AllModulesArray = ArrayElement<AllModulesImports>['default'][];
 
 const ModuleContext = React.createContext<AllModulesArray | undefined>(undefined);
 
@@ -31,6 +28,7 @@ export const ModuleLoader = React.memo(function ({ children }: React.PropsWithCh
 
   return <ModuleContext value={modules}>{children}</ModuleContext>;
 });
+ModuleLoader.displayName = 'ModuleLoader';
 
 /**
  * Retrieves all modules in a array.
@@ -60,7 +58,39 @@ export const useModuleReducers = (): AllModulesReducers => {
   const modules = React.useContext(ModuleContext);
   if (modules === undefined) throw new Error('[Modules]: `useModuleReducers` was called before all modules could be loaded.');
   return React.useMemo(
-    () => Object.fromEntries(modules.map(module => [module.name, module.redux?.reducer])) as AllModulesReducers,
+    () =>
+      Object.fromEntries(
+        modules.flatMap(module => (module.redux ? [[module.name, module.redux.reducer]] : [])),
+      ) as AllModulesReducers,
+    [modules],
+  );
+};
+
+/**
+ * Retrieves all modules in a array.
+ * @returns
+ */
+export const useModuleScopes = (): Set<string> => {
+  const modules = useModules();
+  return React.useMemo(() => {
+    const scopes = new Set<string>();
+    modules.forEach(module => {
+      module.scope?.forEach(scope => {
+        scopes.add(scope);
+      });
+    });
+    return scopes;
+  }, [modules]);
+};
+
+/**
+ * Gather all static screens and modals from modules.
+ * @returns
+ */
+export const useModuleScreens = (): AllModulesStaticScreens => {
+  const modules = useModules();
+  return React.useMemo(
+    () => Object.assign({}, ...modules.flatMap(module => [module.screens, module.modals])) as AllModulesStaticScreens,
     [modules],
   );
 };

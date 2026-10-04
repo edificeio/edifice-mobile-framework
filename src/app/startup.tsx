@@ -10,10 +10,10 @@ import { useConstructor } from '~/framework/hooks/constructor';
 import { accountIsLoggable } from '~/framework/modules/auth/model';
 import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/thunks';
 import track from '~/framework/modules/auth/tracking';
-import { appReadyAction, getState as getAppStartupState } from '~/framework/navigation/redux';
 import { tryAction } from '~/framework/util/redux/actions';
 
-import AppNavigation from './navigation';
+import { RootNavigation } from './navigation-new/root';
+import { appReadyAction, getState as getAppStartupState } from './store/startup';
 
 /**
  * Logic code that is run for the app start
@@ -31,10 +31,11 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
     } catch (e) {
       console.error('[Startup] Startup failed. Cause :', e);
     } finally {
-      initEditor().finally(null);
-      dispatch(appReadyAction());
-      BootSplash.hide({ fade: true });
-      setMessagesDisplaySuppressed(getInAppMessaging(), false).finally();
+      // ToDo: put these custom logic bits where it belongs to
+      initEditor().finally(null); // -> rich-editor
+      dispatch(appReadyAction()); // -> switch to async component
+      BootSplash.hide({ fade: true }); // -> switch to async component
+      setMessagesDisplaySuppressed(getInAppMessaging(), false).finally(); // -> refacto with app.tsx logic
     }
   });
 }
@@ -42,6 +43,5 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
 export function AppStartupHandler() {
   useAppStartup(useDispatch());
   const isAppReady = useSelector(getAppStartupState).isReady;
-
-  return isAppReady ? <AppNavigation /> : null;
+  return isAppReady && <RootNavigation />;
 }
