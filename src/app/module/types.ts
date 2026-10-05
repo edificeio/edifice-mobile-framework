@@ -88,7 +88,7 @@ interface ConfigForRights {
   hasRight?: (session: AuthActiveAccount) => boolean;
 }
 
-interface ConfigForTab<Route extends PropertyKey> {
+export interface ConfigForTab<Route extends PropertyKey> {
   // Name of the route that goes to the tab home
   route: Route;
 
@@ -184,6 +184,13 @@ type AllModulesImports = Awaited<ArrayElement<typeof importModules>>[];
 export type AllModulesArray = ArrayElement<AllModulesImports>['default'][];
 export type AnyModule = ArrayElement<AllModulesArray>;
 export type AllModulesNames = AnyModule['name'];
+
+// Ent modules of the collection, typed as modules that have a tab (a module that has no tab is filtered at runtime).
+export type AnyEntTabModule = AnyModule extends infer M
+  ? M extends EntModule<infer Name, infer Screens, infer Modals, infer State, infer ReduxAction>
+    ? EntTabModule<Name, Screens, Modals, State, ReduxAction>
+    : never
+  : never;
 
 export type AllModulesMap = {
   [name in AllModulesNames]: Extract<AnyModule, { name: name }>;

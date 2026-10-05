@@ -3,28 +3,32 @@ import React from 'react';
 import { createBottomTabNavigator, createBottomTabScreen } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { AllModulesStaticScreens, EntModule } from '../module';
-import { useModules } from '../module/loader';
+import { AllModulesStaticScreens, AnyEntTabModule } from '../module';
+import { useModuleScreens } from '../module/hooks';
+import { useTabModules } from '../module/loader';
+
+const getTabScreenName = (module: AnyEntTabModule) => `$tab/${module.name}`;
 
 /**
  * Gather all static tabs from modules.
  * @returns
  */
 export const useModuleTabs = (): AllModulesStaticScreens => {
-  const modules = useModules();
+  const tabModules = useTabModules();
+  const screens = useModuleScreens();
   return React.useMemo(() => {
-    const tabModules = modules.filter(module => module instanceof EntModule && module.tab !== undefined);
     return Object.assign(
       {},
       ...tabModules.map(module => ({
-        [`$tab/${module.name}`]: createBottomTabScreen({
+        [getTabScreenName(module)]: createBottomTabScreen({
           screen: createNativeStackNavigator({
-            screens: Object.assign({}, ...modules.map(m => m.screens)) as AllModulesStaticScreens,
+            initialRouteName: module.tab.route,
+            screens,
           }),
         }),
       })),
     );
-  }, [modules]);
+  }, [screens, tabModules]);
 };
 
 export const useModuleTabNavigation = () => {

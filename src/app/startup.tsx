@@ -5,14 +5,14 @@ import BootSplash from 'react-native-bootsplash';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { initEditor } from '~/framework/components/inputs/rich-text/editor/editor';
+// import { initEditor } from '~/framework/components/inputs/rich-text/editor/editor';
 import { useConstructor } from '~/framework/hooks/constructor';
 // import { accountIsLoggable } from '~/framework/modules/auth/model';
 // import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/thunks';
 // import track from '~/framework/modules/auth/tracking';
 // import { tryAction } from '~/framework/util/redux/actions';
 
-import { RootNavigation } from './navigation-new/root';
+import { RootNavigation } from './navigation-new/rootStack';
 import { appReadyAction, getState as getAppStartupState } from './store/startup';
 
 /**
