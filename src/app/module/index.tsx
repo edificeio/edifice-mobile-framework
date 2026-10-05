@@ -17,6 +17,7 @@ import {
   StrictModuleScreens,
 } from './types';
 
+export * from './util';
 export * from './types';
 
 // ToDo: does the hasRight must check token scope too ?

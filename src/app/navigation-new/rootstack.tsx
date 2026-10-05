@@ -1,3 +1,8 @@
+/**
+ * Root Stack
+ *
+ * Top-level stack that includes modals + guest/tab navigation
+ */
 import React from 'react';
 
 import { createStaticNavigation } from '@react-navigation/native';
@@ -7,7 +12,7 @@ import { useModuleTabNavigation } from './tabs';
 import { useModuleModals } from '../module/hooks';
 
 const useModulesNavigation = () => {
-  // Check static navigation is only created once.
+  // Ensure static navigation is only created once.
   const isMounted = React.useRef(false);
   if (isMounted.current) {
     console.error(`[Navigation] Static navigation was re-rendered and this should not happen. 'modules' array object has changed.`);
@@ -23,8 +28,8 @@ const useModulesNavigation = () => {
     () =>
       createStaticNavigation(
         createNativeStackNavigator({
-          screens: { ...modals, $tabs: tabs },
-          // screens: { ...modals },
+          initialRouteName: '$tabs',
+          screens: { $tabs: tabs, ...modals },
         }),
       ),
     [modals, tabs],
