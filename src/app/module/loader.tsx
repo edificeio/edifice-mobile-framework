@@ -6,9 +6,9 @@ import React from 'react';
 
 import moduleImports from '~/app/config/modules';
 
-import type { AllModulesArray } from './types';
+import type { AllModulesArray, AnyEntTabModule } from './types';
 
-import { Module } from '.';
+import { EntModule, Module } from '.';
 
 /**
  * @deprecated
@@ -45,7 +45,18 @@ export const useModules = (): AllModulesArray => {
  * @returns
  */
 export const useModulesOfType = <T extends typeof Module>(type: T): InstanceType<T>[] => {
-  const modules = React.useContext(ModuleContext);
-  if (modules === undefined) throw new Error('[Modules]: `useModulesOfType` was called before all modules could be loaded.');
+  const modules = useModules();
   return React.useMemo(() => modules.filter(m => m instanceof type) as InstanceType<T>[], [modules, type]);
+};
+
+/**
+ * Retrieves all modules that are displayed in the tab bar.
+ * @returns
+ */
+export const useTabModules = (): AnyEntTabModule[] => {
+  const modules = useModules();
+  return React.useMemo(
+    () => modules.filter(module => module instanceof EntModule && module.tab !== undefined) as unknown as AnyEntTabModule[],
+    [modules],
+  );
 };
