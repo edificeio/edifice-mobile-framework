@@ -4,12 +4,13 @@ import { MembershipRole } from '@edifice.io/community-client-rest-rn';
 
 export interface CommunityInfoBottomSheetProps {
   data: {
-    title?: string;
+    hasJoinedWithCode: boolean;
     image?: ImageURISource[];
-    totalMembers?: number;
+    role: MembershipRole;
     senderId: string;
     senderName: string;
-    role: MembershipRole;
+    title?: string;
+    totalMembers?: number;
     welcomeNote?: string;
   };
 }
