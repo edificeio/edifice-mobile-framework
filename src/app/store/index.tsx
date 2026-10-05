@@ -10,7 +10,7 @@ import { thunk, ThunkDispatch } from 'redux-thunk';
 import { reactotronEnhancer } from './debug';
 import monitorReducerEnhancer from './monitor';
 import { reducer as startupReducer } from './startup';
-import { useModuleReducers } from '../module/loader';
+import { useModuleReducers } from '../module/hooks';
 import { AllModulesActions, AllModulesReducers, AllModulesState } from '../module/types';
 
 let _store: Store<AllModulesState, AllModulesActions, unknown> | null = null;

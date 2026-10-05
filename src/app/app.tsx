@@ -8,7 +8,6 @@ import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { getInAppMessaging, setMessagesDisplaySuppressed } from '@react-native-firebase/in-app-messaging';
-import BootSplash from 'react-native-bootsplash';
 import DeviceInfo from 'react-native-device-info';
 
 import { Trackers } from '~/framework/util/tracker';

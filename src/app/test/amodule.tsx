@@ -1,47 +1,48 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { StaticScreenProps, useNavigation } from '@react-navigation/native';
+import { StaticScreenProps } from '@react-navigation/native';
 
-import { CoreModule } from '~/app/module';
+import { EntModule } from '~/app/module';
 
-function AModuleHomeScreen({
-  route,
-}: StaticScreenProps<{
+function AModuleHomeScreen({}: StaticScreenProps<{
   aParam: boolean;
 }>) {
-  const navigation = useNavigation();
-  const oih = () => {
-    navigation.navigate('amodule/modal', { skibidi: 'ldjf' });
-  };
-
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
+      <Text>A Home Screen</Text>
     </View>
   );
 }
 
-function AModuleModalScreen({
-  route,
-}: StaticScreenProps<{
+function AModuleDetailsScreen({}: StaticScreenProps<{
+  aId: number;
+}>) {
+  return (
+    <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+      <Text>A Details Screen</Text>
+    </View>
+  );
+}
+
+function AModuleModalScreen({}: StaticScreenProps<{
   skibidi: string;
 }>) {
-  const navigation = useNavigation();
-
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-      <Text>Modal Screen</Text>
+      <Text>A Modal Screen</Text>
     </View>
   );
 }
 
-export default new CoreModule({
+export default new EntModule({
   modals: {
     'amodule/modal': { screen: AModuleModalScreen },
   },
   name: 'amodule',
   screens: {
+    'amodule/details': { screen: AModuleDetailsScreen },
     'amodule/home': { screen: AModuleHomeScreen },
   },
+  tab: { iconActive: 'ui-camera', iconInactive: 'ui-anniversary', order: 1, route: 'amodule/home', testId: 'a' },
 });

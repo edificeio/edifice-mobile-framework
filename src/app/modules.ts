@@ -3,12 +3,12 @@
  */
 import React from 'react';
 
-import IncludedModules from '~/app/override/modules';
+// import IncludedModules from '~/app/override/modules';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import {
   AnyModule,
   dynamiclyRegisterModules,
-  loadModules,
+  // loadModules,
   ModuleArray,
   NavigableModule,
   NavigableModuleArray,
@@ -25,20 +25,19 @@ let AllModules: ModuleArray<AnyModule> | undefined;
 export default () => {
   if (AllModules) return AllModules;
   else {
-    const moduleDeclarations = [
-      // Built-in modules
-      // require('~/framework/modules/auth'),
-      // require('~/framework/modules/timeline'),
-      require('~/framework/modules/audience').default,
-      require('~/framework/modules/explorer').default,
-      require('~/framework/modules/myapps'),
-      // Included modules from override
-      ...(IncludedModules || []),
-
-      // Built-in modules that depends on other
-    ];
-    AllModules = loadModules(moduleDeclarations);
-    return AllModules;
+    // const moduleDeclarations = [
+    //   // Built-in modules
+    //   // require('~/framework/modules/auth'),
+    //   // require('~/framework/modules/timeline'),
+    //   // require('~/framework/modules/audience').default,
+    //   // require('~/framework/modules/explorer').default,
+    //   // require('~/framework/modules/myapps'),
+    //   // // Included modules from override
+    //   // ...(IncludedModules || []),
+    //   // Built-in modules that depends on other
+    // ];
+    // AllModules = loadModules(moduleDeclarations);
+    return [];
   }
 };
 
