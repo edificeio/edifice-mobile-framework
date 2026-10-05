@@ -1,30 +1,10 @@
 import React from 'react';
-import { Text, View } from 'react-native';
 
 import { createStaticNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { useModules, useModuleScreens } from '../module/loader';
-import type { AllModulesNavigationParams } from '../module/types';
-
-// export function renderCoreModulesScreens<NavigationParams extends ParamListBase>(
-//   RootStack: ReturnType<typeof createNativeStackNavigator<NavigationParams>>,
-// ) {
-//   const modules = useModules();
-
-//   return (
-//     <>
-//       {Modules.getAllOfType(CoreModule).map(module =>
-//         module.renderScreens ? (
-//           <RootStack.Group key={module.name}>
-//             {module.renderScreens(RootStack as ReturnType<typeof createNativeStackNavigator>)}
-//           </RootStack.Group>
-//         ) : null,
-//       )}
-//       {modalScreens}
-//     </>
-//   );
-// }
+import { useModuleTabNavigation } from './tabs';
+import { useModuleModals } from '../module/hooks';
 
 const useModulesNavigation = () => {
   // Check static navigation is only created once.
@@ -37,15 +17,17 @@ const useModulesNavigation = () => {
   }, []);
 
   // Create static navigation upon modules
-  const screens = useModuleScreens();
+  const modals = useModuleModals();
+  const tabs = useModuleTabNavigation();
   const Navigation = React.useMemo(
     () =>
       createStaticNavigation(
-        createNativeStackNavigator<AllModulesNavigationParams>({
-          screens,
+        createNativeStackNavigator({
+          screens: { ...modals, $tabs: tabs },
+          // screens: { ...modals },
         }),
       ),
-    [screens],
+    [modals, tabs],
   );
   return Navigation;
 };

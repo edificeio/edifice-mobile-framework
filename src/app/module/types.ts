@@ -220,20 +220,22 @@ export type AllModulesModalsParams = UnionToIntersection<
   }[AllModulesNames]
 >;
 
-// Within a module, screens and modals are merged (`&`).
-// Across modules, the param lists are merged too (`&`, not `|`) so that every route of every module is a valid route key.
-// Route names are prefixed by the module name (see `StrictNavigationParams`) so there can't be any conflict.
-
-export type AllModulesNavigationParams = UnionToIntersection<
-  {
-    [Name in AllModulesNames]: NavigationParamsOfScreens<ModuleModals<AllModulesMap[Name]> & ModuleScreens<AllModulesMap[Name]>>;
-  }[AllModulesNames]
->;
+// Across modules, the lists are merged (`&`, not `|`) so that every route of every module is a valid route key.
+// Route names are prefixed by the module name (see `StrictModuleScreens`) so there can't be any conflict.
+// Screens and modals are kept in separate types.
 
 // Screens and modals of all modules, as returned by `createNativeStackScreen`, ready to be given to `createNativeStackNavigator({ screens })`.
 export type AllModulesStaticScreens = UnionToIntersection<
   {
-    [Name in AllModulesNames]: ModuleStaticScreens<ModuleScreens<AllModulesMap[Name]>> &
-      ModuleStaticScreens<ModuleModals<AllModulesMap[Name]>>;
+    [Name in AllModulesNames]: ModuleStaticScreens<ModuleScreens<AllModulesMap[Name]>>;
   }[AllModulesNames]
 >;
+
+export type AllModulesStaticModals = UnionToIntersection<
+  {
+    [Name in AllModulesNames]: ModuleStaticScreens<ModuleModals<AllModulesMap[Name]>>;
+  }[AllModulesNames]
+>;
+
+// Navigation params of all routes (screens and modals) : only used to type the global navigation.
+export type AllModulesNavigationParams = AllModulesScreensParams & AllModulesModalsParams;

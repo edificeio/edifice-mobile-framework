@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useModuleScopes } from '~/app/module/loader';
+import { useModuleScopes } from '~/app/module/hooks';
 
 let GLOBAL_SCOPES: Set<string> = new Set();
 /**

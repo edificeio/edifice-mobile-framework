@@ -4,18 +4,12 @@
  *  @todo: remove this file after the migration.
  */
 
-import OldModules from '~/app/modules';
-
-import { Modules } from './all';
-
+/**
+ * @deprecated
+ * New module system & static navigation available. See docs.
+ */
 export const ModuleCompat = {
-  getAllModulesScopes: () => {
-    const scopes = Modules.getAllScopes();
-    const oldScopes = new Set(OldModules().getScopes());
-    return scopes.union(oldScopes);
-  },
+  getAllModulesScopes: () => new Set(),
 
-  loadModules: async () => {
-    OldModules();
-  },
+  loadModules: async () => [],
 };
