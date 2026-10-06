@@ -306,5 +306,10 @@
       "defaultBranch": "main"
     }
   },
+  "reanimated": {
+    "staticFeatureFlags": {
+      "ENABLE_SHARED_ELEMENT_TRANSITIONS": true
+    }
+  },
   "packageManager": "yarn@4.18.0"
 }

@@ -2,9 +2,10 @@ import React from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
+import Animated from 'react-native-reanimated';
 
 import { EntModule } from '~/app/module';
-import { defineScreen } from '~/app/navigation-new';
+import { defineScreen, sharedTransitions } from '~/app/navigation-new';
 import { PrimaryButton } from '~/framework/components/button';
 import { BodyText } from '~/framework/components/text';
 
@@ -22,6 +23,12 @@ function AModuleHomeScreen({}: StaticScreenProps<{
           navigation.navigate('amodule/modal', { skibidi: 'Nom de la modale' });
         }}
       />
+      <Animated.Image
+        source={{ uri: 'https://picsum.photos/id/39/200' }}
+        style={{ height: 100, width: 300 }}
+        sharedTransitionTag="sharedTag"
+        sharedTransitionStyle={sharedTransitions.default}
+      />
       <PrimaryButton
         testID="1"
         text="Go to a details"
@@ -38,6 +45,12 @@ function AModuleDetailsScreen({}: StaticScreenProps<{
 }>) {
   return (
     <View style={{ alignItems: 'center', borderWidth: 4, flex: 1, justifyContent: 'center' }}>
+      <Animated.Image
+        source={{ uri: 'https://picsum.photos/id/39/200' }}
+        style={{ height: 300, width: 300 }}
+        sharedTransitionTag="sharedTag"
+        sharedTransitionStyle={sharedTransitions.default}
+      />
       <BodyText>A Details Screen</BodyText>
     </View>
   );

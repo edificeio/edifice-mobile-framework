@@ -1,4 +1,5 @@
 import type { createNativeStackScreen } from '@react-navigation/native-stack';
+import { SharedTransition } from 'react-native-reanimated';
 
 import type { ScreenComponent } from './types';
 
@@ -11,3 +12,7 @@ import type { ScreenComponent } from './types';
  */
 export const defineScreen = <Component extends ScreenComponent>(config: Parameters<typeof createNativeStackScreen<Component>>[0]) =>
   config;
+
+export const sharedTransitions = {
+  default: SharedTransition.duration(500).springify(),
+};
