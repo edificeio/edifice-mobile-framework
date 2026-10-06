@@ -28,9 +28,9 @@ import navigationLightTheme, { BaseStackScreenLayout, defaultScreenOptions } fro
 import { LeafStackScreenLayout } from './leaf-stack';
 import { MainNavigation, MainNavigationOptions } from './main-navigation';
 import { renderCoreModulesScreens } from './root-navigation';
-import { useScreenTelemetry } from './telemetry';
 import { AllModulesNavigationParams, NavigationRootParams } from './types';
 import { ConfirmRemoveProvider } from './use-confirm-remove';
+import { useScreenTelemetry } from '../navigation-new/telemetry';
 
 // Note: import tabModules register to initialize it
 // remove when all modules will be ported to new module system
