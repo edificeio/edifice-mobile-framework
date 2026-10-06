@@ -147,7 +147,7 @@ export interface EntModuleConfig<
   ReduxAction extends Action = never,
 >
   extends ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>, ConfigForRights {
-  tab?: ConfigForTab<keyof Screens | keyof Modals>;
+  tab?: ConfigForTab<keyof Screens>;
   entTrackingName?: string;
 }
 

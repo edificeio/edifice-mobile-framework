@@ -1,3 +1,13 @@
+/**
+ * Navigation Confirm Remove
+ *
+ * Provides all toolchain to prompt user a confirmation to change screen
+ *
+ * Use `useConfirmRemove` in your screen to handle most regular use cases.
+ * If needed, `useConfirmDisptach` return a function similar to the regular navigation `disptach`,
+ * but ask user for confirmation if `useConfirmRemove` is triggered on the current screen.
+ *
+ */
 import React from 'react';
 import { Alert } from 'react-native';
 
@@ -50,7 +60,6 @@ export function useConfirmRemove(
       {
         onPress: () => {
           onConfirm?.(options);
-          console.info('STORED ACTIONS', storedActionsRef.current);
           storedActionsRef.current.forEach(navigation.dispatch);
           storedActionsRef.current.length = 0;
         },
@@ -72,7 +81,7 @@ export function useConfirmRemove(
 /**
  * Expose a navigation dispatch function that triggers any usePreventDefault in current screens, then dispatch the given action.
  */
-export function useNavigationRedirectionDispatch<ParamList extends ParamListBase, State extends NavigationState = NavigationState>(
+export function useConfirmDisptach<ParamList extends ParamListBase, State extends NavigationState = NavigationState>(
   navigation: NavigationProp<ParamList, keyof ParamList, string | undefined, State>,
 ): typeof navigation.dispatch {
   const storedActionsRef = React.useContext(ConfirmRemoveContext);
