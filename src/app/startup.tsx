@@ -35,7 +35,9 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
       // initEditor().finally(null); // -> rich-editor
       dispatch(appReadyAction()); // -> switch to async component
       BootSplash.hide({ fade: true }); // -> switch to async component
-      setMessagesDisplaySuppressed(getInAppMessaging(), false).finally(); // -> refacto with app.tsx logic
+      setMessagesDisplaySuppressed(getInAppMessaging(), false).catch(e =>
+        console.warn('[InAppMessaging] Unable to change messages display suppression:', e),
+      ); // -> refacto with app.tsx logic
     }
   });
 }

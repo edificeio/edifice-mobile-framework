@@ -44,7 +44,10 @@ export function App() {
       const result = PushNotificationIOS.FetchResult.NoData;
       notification.finish(result);
     });
-    if (Platform.OS === 'ios') setMessagesDisplaySuppressed(getInAppMessaging(), true).finally();
+    if (Platform.OS === 'ios')
+      setMessagesDisplaySuppressed(getInAppMessaging(), true).catch(e =>
+        console.warn('[InAppMessaging] Unable to change messages display suppression:', e),
+      );
     return () => {
       PushNotificationIOS.removeEventListener(type);
     };
