@@ -19,7 +19,7 @@ import { defaultTabOptions, tabBarIconSize, TabScreenLayout } from './layout';
 import { createLeafStackNavigator } from './leaf-stack';
 import { renderCoreModulesScreens } from './root-navigation';
 import { AllModulesNavigationParams } from './types';
-import { useConfirmChangeTab } from './use-confirm-remove';
+import { useConfirmChangeTab } from '../navigation-new/confirm-remove';
 
 const MainTabs = createBottomTabNavigator();
 const LeafStack = createLeafStackNavigator<AllModulesNavigationParams>();
