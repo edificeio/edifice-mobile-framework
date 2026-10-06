@@ -16,7 +16,7 @@ export const useScreenTelemetry = () => {
   const onScreenChange = React.useCallback((navigationState: Readonly<NavigationState> | undefined) => {
     const currentRoute = navigationState && findFocusedRoute(navigationState);
     if (currentRoute && currentRoute.name !== previousRouteRef.current?.name) {
-      __DEV__ && console.info(`[Navigation] Focused screen: ${currentRoute.name}`);
+      __DEV__ && console.debug(`[Navigation] Focused screen: ${currentRoute.name}`);
       Trackers.trackView(currentRoute.name.split('/'));
       previousRouteRef.current = currentRoute;
     }
@@ -27,7 +27,7 @@ export const useScreenTelemetry = () => {
   }, []);
 
   const onReady = React.useCallback<NonNullable<NavigationContainerProps['onReady']>>(() => {
-    __DEV__ && console.info('[Navigation] Ready');
+    __DEV__ && console.debug('[Navigation] Ready');
   }, []);
 
   return { onReady, onScreenChange, onUnhandledAction };

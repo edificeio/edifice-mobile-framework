@@ -1,12 +1,12 @@
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { defineScreen, EntModule } from '~/app/module';
+import { EntModule } from '~/app/module';
+import { defineScreen } from '~/app/navigation-new';
 import { PrimaryButton } from '~/framework/components/button';
-import { UI_SIZES } from '~/framework/components/constants';
+import { BodyText } from '~/framework/components/text';
 
 function AModuleHomeScreen({}: StaticScreenProps<{
   aParam: boolean;
@@ -14,7 +14,7 @@ function AModuleHomeScreen({}: StaticScreenProps<{
   const navigation = useNavigation();
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-      <Text>A Home Screen</Text>
+      <BodyText>A Home Screen</BodyText>
       <PrimaryButton
         testID="1"
         text="Go to a modal"
@@ -38,7 +38,7 @@ function AModuleDetailsScreen({}: StaticScreenProps<{
 }>) {
   return (
     <View style={{ alignItems: 'center', borderWidth: 4, flex: 1, justifyContent: 'center' }}>
-      <Text>A Details Screen</Text>
+      <BodyText>A Details Screen</BodyText>
     </View>
   );
 }
@@ -49,9 +49,9 @@ function AModuleModalScreen({}: StaticScreenProps<{
 }>) {
   return (
     <ScrollView>
-      <Text>A Modal Screen</Text>
+      <BodyText>A Modal Screen</BodyText>
       {new Array(20).fill(true).map((_, index) => (
-        <Text key={index}>{index}</Text>
+        <BodyText key={index}>{index}</BodyText>
       ))}
     </ScrollView>
   );

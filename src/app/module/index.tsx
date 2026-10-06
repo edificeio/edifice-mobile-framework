@@ -4,7 +4,9 @@
  */
 
 import { createNativeStackScreen } from '@react-navigation/native-stack';
-import { Action } from 'redux';
+import type { Action } from 'redux';
+
+import type { ScreenComponent } from '~/app/navigation-new';
 
 import {
   AnyModule,
@@ -13,12 +15,12 @@ import {
   ModuleConfig,
   ModuleScreensConfig,
   ModuleStaticScreens,
-  ScreenComponent,
   StrictModuleScreens,
 } from './types';
 
-export * from './util';
 export * from './types';
+export * from './hooks';
+export * from './loader';
 
 // ToDo: does the hasRight must check token scope too ?
 
