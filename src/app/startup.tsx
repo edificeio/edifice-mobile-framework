@@ -12,7 +12,7 @@ import { useConstructor } from '~/framework/hooks/constructor';
 // import track from '~/framework/modules/auth/tracking';
 // import { tryAction } from '~/framework/util/redux/actions';
 
-import { RootNavigation } from './navigation-new/rootStack';
+import { RootNavigation } from './navigation-new';
 import { appReadyAction, getState as getAppStartupState } from './store/startup';
 
 /**
