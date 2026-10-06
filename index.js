@@ -16,6 +16,7 @@ process.nextTick = setImmediate;
 
 if (__DEV__) {
   globalThis.RNFBDebug = true;
+  require('./src/app/debug/promise-rejections').trackPromiseRejections();
   require('./src/app/reactotron.ts');
   console.debug('Reactotron initialized');
 }
