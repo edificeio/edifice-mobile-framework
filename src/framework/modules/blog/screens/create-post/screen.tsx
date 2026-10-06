@@ -24,8 +24,8 @@ import {
   submitBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/home/actions';
-import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { useRedirection } from '~/framework/navigation/useRedirection';
 import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
@@ -57,6 +57,8 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const { handleInitTimeline, handleSendBlogPost, navigation, route, session } = props;
   const blog = route.params.blog;
 
+  const redirect = useRedirection(navigation);
+
   const doSendPost = async () => {
     try {
       const blogId = blog && blog.id;
@@ -74,7 +76,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
       // Create and submit/publish post
       await handleSendBlogPost(blog, title.trim(), htmlContent);
 
-      // Track action, load/navigate to timeline and display toast
+      // Track action, navigate where the caller asked, and display toast
       const blogPostDisplayRight = blogPostRight.displayRight;
       const event = {
         [createBlogPostResourceRight]: 'Enregistrer',
@@ -82,23 +84,15 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
         [submitBlogPostResourceRight]: 'Soumettre',
       }[blogPostDisplayRight];
       const eventName = `Rédaction blog - ${event}`;
-      const eventCategory = route.params.referrer ? 'Blog' : 'Timeline';
       const toastSuccessText = {
         [createBlogPostResourceRight]: I18n.get('blog-createpost-create-success'),
         [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish-success'),
         [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit-success'),
       }[blogPostDisplayRight];
 
-      Trackers.trackEvent(eventCategory, 'Créer un billet', eventName);
+      Trackers.trackEvent(route.params.source, 'Créer un billet', eventName);
       await handleInitTimeline();
-      navigation.navigate(
-        route.params.referrer ?? timelineRouteNames.Home,
-        {
-          ...(route.params.referrer ? { blogId: route.params.blog.id } : {}),
-          forceReload: true,
-        },
-        { pop: true },
-      );
+      redirect(route.params.navActionOnSuccess);
       Toast.showSuccess(toastSuccessText);
     } catch (e: any) {
       if (e.response?.body === '{"error":"file.too.large"}') {

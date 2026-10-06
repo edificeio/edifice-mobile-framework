@@ -13,6 +13,7 @@ import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { MyAppsListItem } from '~/framework/modules/myapps/components/my-apps-list/types';
 import { useFilteredApps } from '~/framework/modules/myapps/hooks';
+import moduleConfig from '~/framework/modules/myapps/module-config';
 import { isNavigableModule, refreshMyApps, selectAggregatedApps, toggleFavorite } from '~/framework/modules/myapps/reducer';
 import {
   readMyAppsOnboardingSeen,
@@ -21,8 +22,10 @@ import {
   writeShowAllApps,
 } from '~/framework/modules/myapps/storage';
 import { AppsInfoAggregated, MyAppsFilter, MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
-import { getModuleRouteName } from '~/framework/modules/myapps/utils';
+import { getAppModule } from '~/framework/modules/myapps/utils';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
+import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { getModuleTabRouteName } from '~/framework/navigation/tabTarget';
 import { openUrl } from '~/framework/util/linking';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 
@@ -33,6 +36,8 @@ import { BottomSheetMode } from './types';
  */
 const ONBOARDING_VERSION = 'v1';
 const autoShownOnboardingSessionKeys = new Set<string>();
+
+const MY_APPS_TAB_ROUTE_NAME = computeTabRouteName(moduleConfig.name);
 
 export function useMyAppsHomeController() {
   const navigation = useNavigation() as any;
@@ -141,9 +146,10 @@ export function useMyAppsHomeController() {
       if (app.routeName) {
         const session = assertSession();
         const modules = AllModules().filterAvailables(session!).filter(isNavigableModule);
-        const routeName = getModuleRouteName(app as IEntcoreApp, modules);
-        if (routeName) {
-          navigation.navigate(routeName);
+        const module = getAppModule(app as IEntcoreApp, modules);
+        if (module) {
+          const tabRouteName = getModuleTabRouteName(module.config.name, session);
+          navigation.navigate(tabRouteName === MY_APPS_TAB_ROUTE_NAME ? module.config.routeName : tabRouteName);
         }
       } else {
         const finalUrl = app.isConnector ? `/auth/redirect?url=${encodeURIComponent(app.address.trim())}` : app.address;
