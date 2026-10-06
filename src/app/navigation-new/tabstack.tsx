@@ -16,6 +16,8 @@ import { SharedTransitionBoundary } from 'react-native-reanimated';
 
 import { AllModulesStaticScreens } from '~/app/module';
 
+import { tabStackOptions } from './options';
+
 /**
  * Gather all static tabs from modules.
  * @returns
@@ -24,6 +26,7 @@ export const createTabStackNavigation = (screens: AllModulesStaticScreens, initi
   return createNativeStackNavigator({
     initialRouteName,
     screenLayout: ({ children }) => <TransitionBoundary>{children}</TransitionBoundary>,
+    screenOptions: tabStackOptions,
     screens,
   });
 };

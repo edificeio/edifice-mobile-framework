@@ -9,6 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useModuleModals } from '~/app/module';
 
+import { hiddenStackScreenOptions, rootStackOptions, visibleStackScreenOptions } from './options';
 import { useTabNavigation } from './tabs';
 
 export const useRootStackNavigation = () => {
@@ -17,8 +18,18 @@ export const useRootStackNavigation = () => {
   const Navigation = React.useMemo(
     () =>
       createNativeStackNavigator({
+        groups: {
+          modals: {
+            screenOptions: visibleStackScreenOptions,
+            screens: modals,
+          },
+          tabs: {
+            screenOptions: hiddenStackScreenOptions,
+            screens: { $tabs: tabs },
+          },
+        },
         initialRouteName: '$tabs',
-        screens: { $tabs: tabs, ...modals },
+        screenOptions: rootStackOptions,
       }),
     [modals, tabs],
   );
