@@ -1,5 +1,8 @@
 import { AppRegistry } from 'react-native';
 
+// Must stay the first import after react-native (side effect): see the module.
+import './src/app/debug/error-handler';
+
 // Add URLSearchParams polyfill as it is not implemented in React Native.
 // @see https://github.com/facebook/react-native/issues/23922#issuecomment-648096619
 import 'react-native-url-polyfill/auto';
