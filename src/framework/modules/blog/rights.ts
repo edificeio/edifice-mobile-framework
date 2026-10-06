@@ -3,13 +3,14 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import Toast from '~/framework/components/toast';
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { registerTimelineWorkflow } from '~/framework/util/timelineWorkflows';
 
 import { getPublishableBlogListAction } from './actions';
 import moduleConfig from './module-config';
 import { blogRouteNames } from './navigation';
+import { goToBlogPosts } from './navigation/actions';
 import { Blog } from './reducer';
 
 export const createBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|create';
@@ -29,7 +30,7 @@ export const deleteBlogResourceRight = 'org-entcore-blog-controllers-BlogControl
 
 export const addBlogFolderResourceRight = 'org.entcore.blog.controllers.FoldersController|add';
 
-export const getBlogPostRight = (blog: Blog, session: AuthLoggedAccount) => {
+export const getBlogPostRight = (blog: Blog, session: AuthActiveAccount) => {
   const hasPublishRight = resourceHasRight(blog, publishBlogPostResourceRight, session);
   const hasSubmitRight = resourceHasRight(blog, submitBlogPostResourceRight, session);
   const hasCreateRight = resourceHasRight(blog, createBlogPostResourceRight, session);
@@ -47,11 +48,11 @@ export const getBlogPostRight = (blog: Blog, session: AuthLoggedAccount) => {
   } else return undefined;
 };
 
-export const hasPermissionManager = (blog: Blog, session: AuthLoggedAccount) => {
+export const hasPermissionManager = (blog: Blog, session: AuthActiveAccount) => {
   return blog && (blog.author.userId === session.user.id || resourceHasRight(blog, deleteBlogResourceRight, session));
 };
 
-export const getBlogWorkflowInformation = (session: AuthLoggedAccount) => ({
+export const getBlogWorkflowInformation = (session: AuthActiveAccount) => ({
   blog: {
     create: session.rights.authorizedActions.some(a => a.name === createBlogResourceRight),
     createPublic: session.rights.authorizedActions.some(a => a.name === createPublicBlogResourceRight),
@@ -76,7 +77,11 @@ export default () =>
             const hasOneBlog = blogsData?.length === 1;
 
             if (hasOneBlog) {
-              navigation.navigate(blogRouteNames.blogCreatePost, { blog: blogsData[0] });
+              navigation.navigate(blogRouteNames.blogCreatePost, {
+                blog: blogsData[0],
+                navActionOnSuccess: goToBlogPosts(blogsData[0].id, session),
+                source: 'Timeline',
+              });
             } else navigation.navigate(blogRouteNames.home, { blogsData });
           } catch {
             Toast.showError(I18n.get('blog-rights-error-text'));

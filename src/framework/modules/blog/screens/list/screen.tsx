@@ -18,8 +18,8 @@ import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import BlogPlaceholderList from '~/framework/modules/blog/components/placeholder/list';
 import { BlogPostPlaceholder } from '~/framework/modules/blog/components/placeholder/list/component';
 import BlogPostResourceCard from '~/framework/modules/blog/components/post-resource-card';
-import moduleConfig from '~/framework/modules/blog/module-config';
 import { blogRouteNames } from '~/framework/modules/blog/navigation';
+import { goToBlogPosts } from '~/framework/modules/blog/navigation/actions';
 import { actions, Blog, BlogPost, BlogPostWithAudience, countComments, selectors } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight, hasPermissionManager } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
@@ -85,9 +85,10 @@ const BlogPostListScreenLoaded = ({
     () =>
       navigation.navigate(blogRouteNames.blogCreatePost, {
         blog,
-        referrer: `${moduleConfig.routeName}/posts`,
+        navActionOnSuccess: goToBlogPosts(blog.id, session),
+        source: 'Blog',
       }),
-    [navigation, blog],
+    [navigation, blog, session],
   );
 
   React.useEffect(() => {

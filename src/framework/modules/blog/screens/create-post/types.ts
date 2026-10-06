@@ -1,13 +1,14 @@
+import { NavigationAction } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { ISession } from '~/framework/modules/auth/model';
+import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import { SyncedFile } from '~/framework/util/fileHandler';
 
 export interface BlogCreatePostScreenDataProps {
-  session?: ISession;
+  session?: AuthActiveAccount;
 }
 
 export interface BlogCreatePostScreenEventProps {
@@ -18,7 +19,8 @@ export interface BlogCreatePostScreenEventProps {
 
 export interface BlogCreatePostScreenNavParams {
   blog: Blog;
-  referrer?: string;
+  navActionOnSuccess: NavigationAction | NavigationAction[];
+  source: 'Blog' | 'Timeline';
 }
 
 export type BlogCreatePostScreenProps = BlogCreatePostScreenDataProps &
