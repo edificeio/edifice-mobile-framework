@@ -4,7 +4,8 @@ import type { createNativeStackScreen } from '@react-navigation/native-stack';
 import type { Action, Reducer } from 'redux';
 
 import type importModules from '~/app/config/modules';
-import { SvgIconName } from '~/framework/components/picture';
+import type { ScreenComponent } from '~/app/navigation-new/types';
+import type { SvgIconName } from '~/framework/components/picture';
 import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 
 import { EntModule, Module } from '.';
@@ -26,15 +27,6 @@ export namespace Entcore {
     name: string;
   }
 }
-
-/**
- * Navigation related types
- */
-
-/**
- * Component rendered by a screen (or a modal).
- */
-export type ScreenComponent = React.ComponentType<any>;
 
 /**
  * Screens (or modals) of a module, indexed by route name.

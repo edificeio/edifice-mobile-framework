@@ -10,7 +10,7 @@
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { AllModulesStaticScreens } from '~/app/module/types';
+import { AllModulesStaticScreens } from '~/app/module';
 
 /**
  * Gather all static tabs from modules.
