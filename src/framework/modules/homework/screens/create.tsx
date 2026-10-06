@@ -2,6 +2,7 @@ import React from 'react';
 import { ActivityIndicator, Keyboard, Pressable, StyleSheet, View } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
+import { NavigationAction } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -22,13 +23,13 @@ import { withSession } from '~/framework/modules/auth/util';
 import { createHomeworkDiaryEntry } from '~/framework/modules/homework/actions/createEntry';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { StackNavigationAction } from '~/framework/navigation/types';
+import { useRedirection } from '~/framework/navigation/useRedirection';
 
 import { fetchHomeworkTasks } from '../actions/tasks';
 
 export interface HomeworkCreateScreenNavigationParams {
   diaryId: string;
-  navActionOnSuccess: StackNavigationAction;
+  navActionOnSuccess: NavigationAction | NavigationAction[];
 }
 
 export type HomeworkCreateScreenProps = NativeStackScreenProps<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkCreate>;
@@ -65,6 +66,8 @@ export const HomeworkCreateScreen = withSession(function ({
     text: I18n.get('homework-create-leavealert-text'),
     title: I18n.get('homework-create-leavealert-title'),
   });
+
+  const redirect = useRedirection(navigation);
 
   const topForm = (
     <View style={styles.topForm}>
@@ -106,7 +109,7 @@ export const HomeworkCreateScreen = withSession(function ({
       setSaving(true);
       await dispatch(createHomeworkDiaryEntry(diaryId, date, title, content));
       await dispatch(fetchHomeworkTasks(diaryId));
-      navigation.dispatch(navActionOnSuccess);
+      redirect(navActionOnSuccess);
       requestAnimationFrame(() => {
         Toast.showSuccess(I18n.get('homework-create-success'));
       });
@@ -114,7 +117,7 @@ export const HomeworkCreateScreen = withSession(function ({
       Toast.showError(I18n.get('homework-create-error-publish'));
       setSaving(false);
     }
-  }, [content, date, diaryId, dispatch, navActionOnSuccess, navigation, title]);
+  }, [content, date, diaryId, dispatch, navActionOnSuccess, redirect, title]);
 
   React.useEffect(() => {
     navigation.setOptions({

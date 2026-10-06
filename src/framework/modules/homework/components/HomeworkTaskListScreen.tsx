@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { StackActions, useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
@@ -19,6 +19,7 @@ import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import HomeworkCard from '~/framework/modules/homework/components/homework-card';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
+import { goToHomeworkTasks } from '~/framework/modules/homework/navigation/actions';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/framework/modules/homework/reducers/tasks';
 import {
@@ -195,10 +196,10 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   }
 
   addEntry = () => {
-    const { navigation } = this.props;
+    const { navigation, session } = this.props;
     navigation.navigate(homeworkRouteNames.homeworkCreate, {
       diaryId: this.props.diaryId!,
-      navActionOnSuccess: StackActions.pop(),
+      navActionOnSuccess: goToHomeworkTasks(session!),
     });
     Trackers.trackEvent('Homework', 'GO TO', 'Create');
   };
