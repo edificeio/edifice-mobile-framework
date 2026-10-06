@@ -8,7 +8,11 @@
  * If you need to switch tab, navigate to the tab itself using `getTabScreenName` in a JUMP_TO action.
  */
 
+import React from 'react';
+
+import { useIsFocused } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SharedTransitionBoundary } from 'react-native-reanimated';
 
 import { AllModulesStaticScreens } from '~/app/module';
 
@@ -19,6 +23,12 @@ import { AllModulesStaticScreens } from '~/app/module';
 export const createTabStackNavigation = (screens: AllModulesStaticScreens, initialRouteName: keyof AllModulesStaticScreens) => {
   return createNativeStackNavigator({
     initialRouteName,
+    screenLayout: ({ children }) => <TransitionBoundary>{children}</TransitionBoundary>,
     screens,
   });
 };
+
+function TransitionBoundary({ children }: React.PropsWithChildren) {
+  const isFocused = useIsFocused();
+  return <SharedTransitionBoundary isActive={isFocused}>{children}</SharedTransitionBoundary>;
+}
