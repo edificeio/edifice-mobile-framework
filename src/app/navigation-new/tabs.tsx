@@ -10,6 +10,7 @@ import { createBottomTabNavigator, createBottomTabScreen } from '@react-navigati
 
 import { AllModulesStaticScreens, AnyEntTabModule, useModuleScreens, useTabModules } from '~/app/module';
 
+import { tabsOptions } from './options';
 import { createTabStackNavigation } from './tabStack';
 
 const getTabScreenName = (module: AnyEntTabModule) => `$tab/${module.name}`;
@@ -38,6 +39,7 @@ export const useTabNavigation = () => {
   const Navigation = React.useMemo(
     () =>
       createBottomTabNavigator({
+        screenOptions: tabsOptions,
         screens: tabs,
       }),
     [tabs],
