@@ -29,7 +29,7 @@ import { LeafStackScreenLayout } from './leaf-stack';
 import { MainNavigation, MainNavigationOptions } from './main-navigation';
 import { renderCoreModulesScreens } from './root-navigation';
 import { AllModulesNavigationParams, NavigationRootParams } from './types';
-import { ConfirmRemoveProvider } from './use-confirm-remove';
+import { ConfirmRemoveProvider } from '../navigation-new/confirm-remove';
 import { useScreenTelemetry } from '../navigation-new/telemetry';
 
 // Note: import tabModules register to initialize it

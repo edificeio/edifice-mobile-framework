@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { ModuleScreenProps } from '~/app/navigation/types';
-import { useConfirmRemove } from '~/app/navigation/use-confirm-remove';
 import { modalScreenOptions } from '~/app/navigation/util';
+import { useConfirmRemove } from '~/app/navigation-new/confirm-remove';
 import CheckboxButton from '~/framework/components/buttons/checkbox';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { setFiltersAction } from '~/framework/modules/timeline/actions/notif-settings';

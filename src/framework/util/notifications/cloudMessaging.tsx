@@ -12,7 +12,7 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { navigationRef } from '~/app/navigation';
-import { useNavigationRedirectionDispatch } from '~/app/navigation/use-confirm-remove';
+import { useConfirmDisptach } from '~/app/navigation-new/confirm-remove';
 import { IGlobalState } from '~/app/store';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 
@@ -27,7 +27,7 @@ export function CloudMessagingProvider({ children }: PropsWithChildren) {
   const isInitialRef = React.useRef(true);
   const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, Action>>();
   const navigation = useNavigation<NavigationProp<ParamListBase, keyof ParamListBase, string>>();
-  const navDispatch = useNavigationRedirectionDispatch(isInitialRef.current ? navigation : navigationRef);
+  const navDispatch = useConfirmDisptach(isInitialRef.current ? navigation : navigationRef);
 
   React.useEffect(() => {
     const messaging = getMessaging();

@@ -10,7 +10,7 @@ import React from 'react';
 
 import { createStaticNavigation } from '@react-navigation/native';
 
-import { useModulesNavigation } from './rootStack';
+import { useRootStackNavigation } from './rootStack';
 import { useScreenTelemetry } from './telemetry';
 
 export const RootNavigation = React.memo(function () {
@@ -23,7 +23,7 @@ export const RootNavigation = React.memo(function () {
     isMounted.current = true;
   }, []);
 
-  const routes = useModulesNavigation();
+  const routes = useRootStackNavigation();
   const Navigation = createStaticNavigation(routes);
   const { onReady, onScreenChange, onUnhandledAction } = useScreenTelemetry();
   return <Navigation onReady={onReady} onStateChange={onScreenChange} onUnhandledAction={onUnhandledAction} />;
