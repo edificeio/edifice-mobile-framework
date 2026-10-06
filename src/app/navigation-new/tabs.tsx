@@ -8,10 +8,9 @@ import React from 'react';
 
 import { createBottomTabNavigator, createBottomTabScreen } from '@react-navigation/bottom-tabs';
 
-import { AllModulesStaticScreens, AnyEntTabModule } from '../module';
+import { AllModulesStaticScreens, AnyEntTabModule, useModuleScreens, useTabModules } from '~/app/module';
+
 import { createTabStackNavigation } from './tabStack';
-import { useModuleScreens } from '../module/hooks';
-import { useTabModules } from '../module/loader';
 
 const getTabScreenName = (module: AnyEntTabModule) => `$tab/${module.name}`;
 

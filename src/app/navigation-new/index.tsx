@@ -13,6 +13,10 @@ import { createStaticNavigation } from '@react-navigation/native';
 import { useRootStackNavigation } from './rootStack';
 import { useScreenTelemetry } from './telemetry';
 
+export * from './screen';
+export * from './types';
+export * from './confirm-remove';
+
 export const RootNavigation = React.memo(function () {
   // Ensure static navigation is only created once.
   const isMounted = React.useRef(false);

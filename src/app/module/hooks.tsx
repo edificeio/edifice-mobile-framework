@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { useModules } from './loader';
-import { AllModulesReducers, AllModulesStaticModals, AllModulesStaticScreens } from './types';
+import { AllModulesReducers, AllModulesStaticModals, AllModulesStaticScreens, useModules } from '.';
 
 /**
  * Gather all static screens from modules.

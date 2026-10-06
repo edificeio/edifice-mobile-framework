@@ -6,9 +6,7 @@ import React from 'react';
 
 import moduleImports from '~/app/config/modules';
 
-import type { AllModulesArray, AnyEntTabModule } from './types';
-
-import { EntModule, Module } from '.';
+import { AllModulesArray, AnyEntTabModule, EntModule, Module } from '.';
 
 /**
  * @deprecated
