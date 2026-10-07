@@ -5,7 +5,7 @@ import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import Animated from 'react-native-reanimated';
 
 import { EntModule } from '~/app/module';
-import { defineScreen, sharedTransitions } from '~/app/navigation-new';
+import { defineModal, defineScreen, sharedTransitions } from '~/app/navigation-new';
 import { PrimaryButton } from '~/framework/components/button';
 import { BodyText } from '~/framework/components/text';
 
@@ -40,9 +40,14 @@ function AModuleHomeScreen({}: StaticScreenProps<{
   );
 }
 
+const AModuleHomeScreenDeclaration = defineScreen({
+  screen: AModuleHomeScreen,
+});
+
 function AModuleDetailsScreen({}: StaticScreenProps<{
   aId: number;
 }>) {
+  const navigation = useNavigation();
   return (
     <View style={{ alignItems: 'center', borderWidth: 4, flex: 1, justifyContent: 'center' }}>
       <Animated.Image
@@ -52,10 +57,25 @@ function AModuleDetailsScreen({}: StaticScreenProps<{
         sharedTransitionStyle={sharedTransitions.default}
       />
       <BodyText>A Details Screen</BodyText>
+      <PrimaryButton
+        testID="1"
+        text="Push a new details"
+        onPress={() => {
+          navigation.push('amodule/details', { aId: 2 });
+        }}
+      />
     </View>
   );
 }
-AModuleDetailsScreen.options = {} as const;
+
+const AModuleDetailsScreenDeclaration = defineScreen({
+  options: ({
+    route: {
+      params: { aId },
+    },
+  }) => ({ title: aId.toString() }),
+  screen: AModuleDetailsScreen,
+});
 
 function AModuleModalScreen({}: StaticScreenProps<{
   skibidi: string;
@@ -70,12 +90,12 @@ function AModuleModalScreen({}: StaticScreenProps<{
   );
 }
 
-const AModuleModalScreenDeclaration = defineScreen({
+const AModuleModalScreenDeclaration = defineModal({
   options: ({
     route: {
       params: { skibidi },
     },
-  }) => ({ animation: 'fade_from_bottom', presentation: 'modal', title: skibidi }),
+  }) => ({ title: skibidi }),
   screen: AModuleModalScreen,
 });
 
@@ -85,8 +105,8 @@ export default new EntModule({
   },
   name: 'amodule',
   screens: {
-    'amodule/details': { options: AModuleDetailsScreen.options, screen: AModuleDetailsScreen },
-    'amodule/home': { screen: AModuleHomeScreen },
+    'amodule/details': AModuleDetailsScreenDeclaration,
+    'amodule/home': AModuleHomeScreenDeclaration,
   },
   tab: { iconActive: 'ui-camera', iconInactive: 'ui-anniversary', order: 1, route: 'amodule/home', testId: 'a' },
 });

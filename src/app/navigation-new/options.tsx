@@ -1,5 +1,11 @@
 import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
-import { NativeStackNavigatorProps } from '@react-navigation/native-stack';
+import { HeaderButton } from '@react-navigation/elements';
+import { NativeStackNavigationOptions, NativeStackNavigatorProps } from '@react-navigation/native-stack';
+
+import { UI_SIZES } from '~/framework/components/constants';
+import { Picture } from '~/framework/components/picture';
+
+import { ScreenOptionsProps } from './types';
 
 /**
  * All screens have these options
@@ -50,3 +56,36 @@ export const tabsOptions: BottomTabNavigatorProps['screenOptions'] = {
   lazy: true,
   popToTopOnBlur: true,
 };
+
+/**
+ * Options automatically applied to every modal defiend with `defineModal`
+ * A modal is presented by UIKit outside of the navigation stack, so the native back button never exists there
+ * (even when `canGoBack` is true): `headerBackIcon` has no effect and the close button must be provided as a header item.
+ */
+export const modalOptions = ({ navigation }: ScreenOptionsProps): NativeStackNavigationOptions => ({
+  // Animation for android. On iOS, the native animation is used.
+  animation: 'fade_from_bottom',
+
+  // Android (and iOS fallback) : `unstable_headerLeftItems` overrides this one on iOS.
+  headerLeft: ({ canGoBack, tintColor }) =>
+    canGoBack ? (
+      <HeaderButton accessibilityLabel="Close" onPress={() => navigation.goBack()}>
+        <Picture
+          type="Svg"
+          name="ui-close"
+          width={UI_SIZES.elements.navbarIconSize}
+          height={UI_SIZES.elements.navbarIconSize}
+          fill={tintColor}
+        />
+      </HeaderButton>
+    ) : null,
+
+  // Default modal mode that can be overriden for each modal.
+  presentation: 'modal',
+
+  // Close button for modern iOS
+  unstable_headerLeftItems: ({ canGoBack }) =>
+    canGoBack
+      ? [{ icon: { name: 'xmark', type: 'sfSymbol' }, label: 'Close', onPress: () => navigation.goBack(), type: 'button' }]
+      : [],
+});
