@@ -29,6 +29,7 @@ export type IPlatformAccessDeclaration = {
   splashads?: string; // splashads url
   url: string; // Access url WITHOUT trailing slash and WITH protocol
   wayf?: string; // WAYF url to redirect onto federation login process instead of standard one
+  wayfVersion?: string; // WAYF version if any
   webTheme: string; // web theme applied to the activated accounts
   webviewIdentifier?: string; // safe-webview unique key. In not provided, fallback to the application's one.
 };
@@ -47,6 +48,7 @@ export class Platform {
   carbonioUrl: IPlatformAccessDeclaration['carbonioUrl'];
   url!: IPlatformAccessDeclaration['url'];
   wayf: IPlatformAccessDeclaration['wayf'];
+  wayfVersion: IPlatformAccessDeclaration['wayfVersion'];
   redirect: IPlatformAccessDeclaration['redirect'];
   showVieScolaireDashboard!: IPlatformAccessDeclaration['showVieScolaireDashboard'];
   splashads: IPlatformAccessDeclaration['splashads'];
@@ -66,6 +68,7 @@ export class Platform {
     this.carbonioUrl = pf.carbonioUrl;
     this.url = pf.url;
     this.wayf = pf.wayf;
+    this.wayfVersion = pf.wayfVersion;
     this.redirect = pf.redirect;
     this.showVieScolaireDashboard = pf.showVieScolaireDashboard;
     this.splashads = pf.splashads;
