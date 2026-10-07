@@ -29,7 +29,7 @@ function Tab({ item, onSelect, ref, ringColor, selectable, selected }: Readonly<
       accessibilityState={{ disabled: !selectable, selected }}>
       <TextAvatar
         text={selected ? item.name : `${item.name.charAt(0)}.`}
-        userId={item.userId}
+        userId={item.id}
         size={WIDGET_USER_SELECTOR_AVATAR_SIZE}
         isHorizontal
         textStyle={styles.itemText}

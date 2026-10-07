@@ -19,10 +19,7 @@ export function useCarnetDeBord() {
 
   const load = React.useCallback(() => dispatch(loadCarnetDeBordAction()), [dispatch]);
 
-  const children = React.useMemo(
-    () => data.map(child => ({ id: getChildId(child), name: child.firstName, userId: child.id })),
-    [data],
-  );
+  const children = React.useMemo(() => data.map(child => ({ id: getChildId(child), name: child.firstName })), [data]);
 
   return {
     children,

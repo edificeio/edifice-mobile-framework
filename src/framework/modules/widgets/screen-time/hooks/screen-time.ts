@@ -16,14 +16,10 @@ interface ScreenTimeSummary {
 export function useScreenTimeUsers(session: AuthActiveAccount) {
   return React.useMemo(() => {
     if (session.user.type !== AccountType.Relative) {
-      return [{ id: session.user.id, name: session.user.firstName, userId: session.user.id }];
+      return [{ id: session.user.id, name: session.user.firstName }];
     }
 
-    return (getFlattenedChildren(session.user.children) ?? []).map(child => ({
-      id: child.id,
-      name: child.firstName,
-      userId: child.id,
-    }));
+    return (getFlattenedChildren(session.user.children) ?? []).map(child => ({ id: child.id, name: child.firstName }));
   }, [session.user]);
 }
 
