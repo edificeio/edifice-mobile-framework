@@ -180,6 +180,15 @@ export const UI_SIZES = {
   },
   navigation: {
     /**
+     * We need to override ripple color for native button on Android because react-navigation provided HeaderButton use incorrect colors.
+     * These values are ripped from native anndroid xml files from appcompat & react-native.
+     * These colors matches with the native one.
+     */
+    headerButtonRippleColor: {
+      dark: 'rgba(255, 255, 255, 0.20)',
+      light: 'rgba(0, 0, 0, 0.12)',
+    },
+    /**
      * on Android header buttons (including native back) are by default 48dp sized following Material Design recommendations.
      * on iOS, header buttons are natively sized.
      */

@@ -80,7 +80,11 @@ export const modalOptions = ({ navigation }: ScreenOptionsProps): NativeStackNav
   // Android (and iOS fallback) : `unstable_headerLeftItems` overrides this one on iOS.
   headerLeft: ({ canGoBack, tintColor }) =>
     canGoBack ? (
-      <HeaderButton accessibilityLabel="Close" onPress={() => navigation.goBack()} style={modalCloseButtonStyle.button}>
+      <HeaderButton
+        accessibilityLabel="Close"
+        onPress={() => navigation.goBack()}
+        pressColor={UI_SIZES.navigation.headerButtonRippleColor.light}
+        style={modalCloseButtonStyle.button}>
         <Picture
           type="Svg"
           name="ui-close"
