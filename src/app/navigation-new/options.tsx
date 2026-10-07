@@ -3,9 +3,9 @@ import { StyleSheet } from 'react-native';
 import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
 import { HeaderButton } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackNavigatorProps } from '@react-navigation/native-stack';
-import Svg, { Path } from 'react-native-svg';
 
 import { UI_SIZES } from '~/framework/components/constants';
+import { Svg } from '~/framework/components/picture';
 
 import { ScreenOptionsProps } from './types';
 
@@ -65,9 +65,12 @@ export const tabsOptions: BottomTabNavigatorProps['screenOptions'] = {
  * It can't be imported from native resources: `abc_*` are library-private and react-native's `Image` can't render XML vector drawables.
  */
 const ModalCloseIcon = ({ color }: { color?: string }) => (
-  <Svg width={UI_SIZES.elements.navbarIconSize} height={UI_SIZES.elements.navbarIconSize} viewBox="0 0 24 24">
-    <Path d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12z" fill={color} />
-  </Svg>
+  <Svg
+    name="ui-android-native-xmark"
+    width={UI_SIZES.elements.navbarIconSize}
+    height={UI_SIZES.elements.navbarIconSize}
+    fill={color}
+  />
 );
 
 const modalCloseButtonStyle = StyleSheet.create({
@@ -88,7 +91,7 @@ export const modalOptions = ({ navigation }: ScreenOptionsProps): NativeStackNav
   // Animation for android. On iOS, the native animation is used.
   animation: 'fade_from_bottom',
 
-  // Android (and iOS fallback) : `unstable_headerLeftItems` overrides this one on iOS.
+  // Android (and iOS fallback) close button : `unstable_headerLeftItems` overrides this one on iOS.
   headerLeft: ({ canGoBack, tintColor }) =>
     canGoBack ? (
       <HeaderButton
@@ -103,7 +106,7 @@ export const modalOptions = ({ navigation }: ScreenOptionsProps): NativeStackNav
   // Default modal mode that can be overriden for each modal.
   presentation: 'modal',
 
-  // Close button for modern iOS
+  // iOS Close button
   unstable_headerLeftItems: ({ canGoBack }) =>
     canGoBack
       ? [{ icon: { name: 'xmark', type: 'sfSymbol' }, label: 'Close', onPress: () => navigation.goBack(), type: 'button' }]
