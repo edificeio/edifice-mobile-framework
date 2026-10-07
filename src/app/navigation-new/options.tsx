@@ -1,3 +1,5 @@
+import { StyleSheet } from 'react-native';
+
 import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
 import { HeaderButton } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackNavigatorProps } from '@react-navigation/native-stack';
@@ -57,6 +59,15 @@ export const tabsOptions: BottomTabNavigatorProps['screenOptions'] = {
   popToTopOnBlur: true,
 };
 
+const modalCloseButtonStyle = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: UI_SIZES.navigation.headerButtonSizeAndroid,
+    minWidth: UI_SIZES.navigation.headerButtonSizeAndroid,
+  },
+});
+
 /**
  * Options automatically applied to every modal defiend with `defineModal`
  * A modal is presented by UIKit outside of the navigation stack, so the native back button never exists there
@@ -69,7 +80,7 @@ export const modalOptions = ({ navigation }: ScreenOptionsProps): NativeStackNav
   // Android (and iOS fallback) : `unstable_headerLeftItems` overrides this one on iOS.
   headerLeft: ({ canGoBack, tintColor }) =>
     canGoBack ? (
-      <HeaderButton accessibilityLabel="Close" onPress={() => navigation.goBack()}>
+      <HeaderButton accessibilityLabel="Close" onPress={() => navigation.goBack()} style={modalCloseButtonStyle.button}>
         <Picture
           type="Svg"
           name="ui-close"

@@ -140,15 +140,24 @@ export const UI_SIZES = {
       medium: getScaleImageSize(160),
       small: getScaleImageSize(64),
     },
-
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
 
-    navbarButtonSize: 36,
-    /** @todo replace these constants by native ones. For the moment, use useHeaderHeight() instead if possible. */
+    /** @todo replace these constants by native ones. For the moment, use useHeaderHeight() instead if possible.
+     * @deprecated use useHeaderHeight() hook instead.
+     */
     navbarHeight: Platform.select({ default: 56, ios: 44 }),
+
     navbarIconSize: 24,
     navbarMargin: 16,
+
+    /**
+     * @deprecated use useSafeAreaInsets instead
+     */
+
     statusbarHeight: Platform.select({ default: 0, ios: 19 }),
+    /**
+     * @deprecated use useTabBarHeight instead
+     */
     tabbarHeight: 56,
     textFieldMaxHeight: 105,
     thumbnail: getScaleImageSize(150),
@@ -168,6 +177,13 @@ export const UI_SIZES = {
       (withoutTabbar ? UI_SIZES.elements.tabbarHeight : 0) +
       Platform.select({ default: 24, ios: 4 })
     );
+  },
+  navigation: {
+    /**
+     * on Android header buttons (including native back) are by default 48dp sized following Material Design recommendations.
+     * on iOS, header buttons are natively sized.
+     */
+    headerButtonSizeAndroid: 48,
   },
   radius: {
     big: getScaleWidth(32),
