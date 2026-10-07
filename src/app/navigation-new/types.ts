@@ -1,5 +1,5 @@
 import type { ParamListBase, RouteProp } from '@react-navigation/native';
-import type { createNativeStackNavigator } from '@react-navigation/native-stack';
+import type { createNativeStackNavigator, createNativeStackScreen } from '@react-navigation/native-stack';
 
 import type { AllModulesNavigationParams } from '~/app/module';
 
@@ -22,3 +22,6 @@ declare module '@react-navigation/native' {
 export type ScreenComponent = React.ComponentType<{
   route: Omit<RouteProp<ParamListBase>, 'name' | 'params'> & { name: any; params: any };
 }>;
+
+export type ScreenConfig<Component extends ScreenComponent> = Parameters<typeof createNativeStackScreen<Component>>[0];
+export type ScreenOptionsProps = Parameters<Extract<ScreenConfig<ScreenComponent>['options'], Function>>[0];
