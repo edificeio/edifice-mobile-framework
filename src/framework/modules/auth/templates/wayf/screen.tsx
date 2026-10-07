@@ -48,6 +48,9 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // WAYF url
   private wayfUrl: string | undefined = undefined;
 
+  // WAYF version
+  private wayfVersion: string | undefined = undefined;
+
   // WebView reference management
   private webview?: WebView;
 
@@ -170,7 +173,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           source={deviceURISource(toURISource<WebViewSourceUri>({ uri: this.wayfUrl! }))}
           startInLoadingState
           style={styles.webview}
-          userAgent={`X-APP=mobile-${Platform.OS}`}
+          userAgent={`X-APP=mobile-${Platform.OS}${this.wayfVersion ? ` X-APP-WAYF=${this.wayfVersion}` : ''}`}
           webviewDebuggingEnabled={__DEV__}
           contentInsetAdjustmentBehavior="automatic"
         />
@@ -182,6 +185,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     super(props);
     const pfConf = this.props.route.params.platform;
     this.wayfUrl = pfConf?.wayf;
+    this.wayfVersion = pfConf.wayfVersion;
     this.state = { dropdownOpened: false, errkey: Error.generateErrorKey(), mode: WAYFPageMode.WEBVIEW };
     this.backActions.forEach(action => {
       action.bind(this);
