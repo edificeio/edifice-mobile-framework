@@ -12,7 +12,7 @@ import { useConstructor } from '~/framework/hooks/constructor';
 // import track from '~/framework/modules/auth/tracking';
 // import { tryAction } from '~/framework/util/redux/actions';
 
-import { RootNavigation } from './navigation-new';
+import { AppNavigation } from './navigation-new';
 import { appReadyAction, getState as getAppStartupState } from './store/startup';
 
 /**
@@ -45,5 +45,5 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
 export function AppStartupHandler() {
   useAppStartup(useDispatch());
   const isAppReady = useSelector(getAppStartupState).isReady;
-  return isAppReady && <RootNavigation />;
+  return isAppReady && <AppNavigation />;
 }

@@ -1,7 +1,15 @@
-import type { ParamListBase, RouteProp } from '@react-navigation/native';
-import type { createNativeStackNavigator, createNativeStackScreen } from '@react-navigation/native-stack';
+import type { ParamListBase, RouteProp, StaticParamList } from '@react-navigation/native';
+import type {
+  createNativeStackNavigator,
+  createNativeStackScreen,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 
 import type { AllModulesNavigationParams } from '~/app/module';
+
+import type { useRootStackNavigation } from './rootStack';
+import type { useTabNavigation } from './tabs';
+import type { createTabStackNavigation } from './tabStack';
 
 /**
  * Type of the root navigator, built from all modules screens and modals.
@@ -25,3 +33,12 @@ export type ScreenComponent = React.ComponentType<{
 
 export type ScreenConfig<Component extends ScreenComponent> = Parameters<typeof createNativeStackScreen<Component>>[0];
 export type ScreenOptionsProps = Parameters<Extract<ScreenConfig<ScreenComponent>['options'], Function>>[0];
+
+type TabStackParamList = StaticParamList<ReturnType<typeof createTabStackNavigation>>;
+export type StackNavigation = NativeStackNavigationProp<TabStackParamList, keyof TabStackParamList>;
+
+type RootStackParamList = StaticParamList<ReturnType<typeof useRootStackNavigation>>;
+export type RootNavigation = NativeStackNavigationProp<RootStackParamList, keyof RootStackParamList>;
+
+type TabsParamList = StaticParamList<ReturnType<typeof useTabNavigation>>;
+export type TabNavigation = NativeStackNavigationProp<TabsParamList, keyof TabsParamList>;

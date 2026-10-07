@@ -5,7 +5,7 @@ import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import Animated from 'react-native-reanimated';
 
 import { EntModule } from '~/app/module';
-import { defineModal, defineScreen, sharedTransitions } from '~/app/navigation-new';
+import { defineModal, defineScreen, sharedTransitions, StackNavigation } from '~/app/navigation-new';
 import { PrimaryButton } from '~/framework/components/button';
 import { BodyText } from '~/framework/components/text';
 
@@ -47,7 +47,7 @@ const AModuleHomeScreenDeclaration = defineScreen({
 function AModuleDetailsScreen({}: StaticScreenProps<{
   aId: number;
 }>) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigation>();
   return (
     <View style={{ alignItems: 'center', borderWidth: 4, flex: 1, justifyContent: 'center' }}>
       <Animated.Image
@@ -61,7 +61,7 @@ function AModuleDetailsScreen({}: StaticScreenProps<{
         testID="1"
         text="Push a new details"
         onPress={() => {
-          navigation.push('amodule/details', { aId: 2 });
+          navigation.push('amodule/details', { aId: 4 });
         }}
       />
     </View>
@@ -73,7 +73,7 @@ const AModuleDetailsScreenDeclaration = defineScreen({
     route: {
       params: { aId },
     },
-  }) => ({ title: aId.toString() + 'Un nom particulièrement lon pour rentrer dans un header title' }),
+  }) => ({ title: aId.toString() + 'Un nom particulièrement long pour rentrer dans un header title' }),
   screen: AModuleDetailsScreen,
 });
 
