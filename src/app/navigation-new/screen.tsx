@@ -1,7 +1,8 @@
 import type { createNativeStackScreen } from '@react-navigation/native-stack';
 import { SharedTransition } from 'react-native-reanimated';
 
-import type { ScreenComponent } from './types';
+import { modalOptions } from './options';
+import type { ScreenComponent, ScreenConfig, ScreenOptionsProps } from './types';
 
 /**
  * Typing helper to declare a screen (or modal) config in the screen's own file.
@@ -15,4 +16,18 @@ export const defineScreen = <Component extends ScreenComponent>(config: Paramete
 
 export const sharedTransitions = {
   default: SharedTransition.duration(500).springify(),
+};
+
+/**
+ * Same as `defineScreen`, for a modal screen : modal default options are applied under the ones declared by the screen.
+ */
+export const defineModal = <Component extends ScreenComponent>(config: ScreenConfig<Component>) => {
+  const { options } = config;
+  return {
+    ...config,
+    options: (props: ScreenOptionsProps) => ({
+      ...modalOptions(props),
+      ...(typeof options === 'function' ? options(props as never) : options),
+    }),
+  } as typeof config;
 };
