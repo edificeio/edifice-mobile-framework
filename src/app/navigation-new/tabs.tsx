@@ -6,10 +6,12 @@
  */
 import React from 'react';
 
-import { createBottomTabNavigator, createBottomTabScreen } from '@react-navigation/bottom-tabs';
+import { BottomTabNavigatorProps, createBottomTabNavigator, createBottomTabScreen } from '@react-navigation/bottom-tabs';
 
 import { AllModulesStaticScreens, AnyEntTabModule, useModuleScreens, useTabModules } from '~/app/module';
+import Feedback from '~/framework/util/feedback/feedback';
 
+import { useConfirmChangeTab } from './confirm-remove';
 import { tabsOptions } from './options';
 import { createTabStackNavigation } from './tabStack';
 
@@ -52,13 +54,25 @@ export const useModuleTabRoutes = (): AllModulesTabRoutes => {
 
 export const useTabNavigation = () => {
   const tabs = useModuleTabRoutes();
+  const confirmChangeTabListeners = useConfirmChangeTab();
+  const tabListeners = React.useCallback<NonNullable<BottomTabNavigatorProps['screenListeners'] & Function>>(
+    props => ({
+      ...confirmChangeTabListeners(props),
+      tabPress: event => {
+        Feedback.tabPressed();
+        confirmChangeTabListeners(props).tabPress?.(event);
+      },
+    }),
+    [confirmChangeTabListeners],
+  );
   const Navigation = React.useMemo(
     () =>
       createBottomTabNavigator({
+        screenListeners: tabListeners,
         screenOptions: tabsOptions,
         screens: tabs,
       }),
-    [tabs],
+    [tabListeners, tabs],
   );
   return Navigation;
 };

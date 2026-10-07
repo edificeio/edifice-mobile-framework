@@ -5,7 +5,7 @@ import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import Animated from 'react-native-reanimated';
 
 import { EntModule } from '~/app/module';
-import { defineModal, defineScreen, sharedTransitions, StackNavigation } from '~/app/navigation-new';
+import { defineModal, defineScreen, sharedTransitions, StackNavigation, useConfirmRemove } from '~/app/navigation-new';
 import { PrimaryButton } from '~/framework/components/button';
 import { BodyText } from '~/framework/components/text';
 
