@@ -17,7 +17,7 @@ export * from './screen';
 export * from './types';
 export * from './confirm-remove';
 
-export const RootNavigation = React.memo(function () {
+export const AppNavigation = React.memo(function () {
   // Ensure static navigation is only created once.
   const isMounted = React.useRef(false);
   if (isMounted.current) {
@@ -32,4 +32,4 @@ export const RootNavigation = React.memo(function () {
   const { onReady, onScreenChange, onUnhandledAction } = useScreenTelemetry();
   return <Navigation onReady={onReady} onStateChange={onScreenChange} onUnhandledAction={onUnhandledAction} />;
 });
-RootNavigation.displayName = 'RootNavigation';
+AppNavigation.displayName = 'AppNavigation';
