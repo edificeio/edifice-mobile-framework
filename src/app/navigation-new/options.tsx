@@ -3,9 +3,9 @@ import { StyleSheet } from 'react-native';
 import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
 import { HeaderButton } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackNavigatorProps } from '@react-navigation/native-stack';
+import Svg, { Path } from 'react-native-svg';
 
 import { UI_SIZES } from '~/framework/components/constants';
-import { Picture } from '~/framework/components/picture';
 
 import { ScreenOptionsProps } from './types';
 
@@ -59,6 +59,17 @@ export const tabsOptions: BottomTabNavigatorProps['screenOptions'] = {
   popToTopOnBlur: true,
 };
 
+/**
+ * Android system "close" icon (`abc_ic_clear_material` from appcompat), 24dp.
+ * The project's `ui-close` icon is bigger than the native back arrow, this one is sized like the system icons.
+ * It can't be imported from native resources: `abc_*` are library-private and react-native's `Image` can't render XML vector drawables.
+ */
+const ModalCloseIcon = ({ color }: { color?: string }) => (
+  <Svg width={UI_SIZES.elements.navbarIconSize} height={UI_SIZES.elements.navbarIconSize} viewBox="0 0 24 24">
+    <Path d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12z" fill={color} />
+  </Svg>
+);
+
 const modalCloseButtonStyle = StyleSheet.create({
   button: {
     alignItems: 'center',
@@ -85,13 +96,7 @@ export const modalOptions = ({ navigation }: ScreenOptionsProps): NativeStackNav
         onPress={() => navigation.goBack()}
         pressColor={UI_SIZES.navigation.headerButtonRippleColor.light}
         style={modalCloseButtonStyle.button}>
-        <Picture
-          type="Svg"
-          name="ui-close"
-          width={UI_SIZES.elements.navbarIconSize}
-          height={UI_SIZES.elements.navbarIconSize}
-          fill={tintColor}
-        />
+        <ModalCloseIcon color={tintColor} />
       </HeaderButton>
     ) : null,
 
