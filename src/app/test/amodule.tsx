@@ -20,7 +20,7 @@ function AModuleHomeScreen({}: StaticScreenProps<{
         testID="1"
         text="Go to a modal"
         onPress={() => {
-          navigation.navigate('amodule/modal', { skibidi: 'Nom de la modale' });
+          navigation.navigate('amodule/modal', { skibidi: 'Nom de la modale très très long avec du texte' });
         }}
       />
       <Animated.Image
@@ -73,7 +73,7 @@ const AModuleDetailsScreenDeclaration = defineScreen({
     route: {
       params: { aId },
     },
-  }) => ({ title: aId.toString() }),
+  }) => ({ title: aId.toString() + 'Un nom particulièrement lon pour rentrer dans un header title' }),
   screen: AModuleDetailsScreen,
 });
 
