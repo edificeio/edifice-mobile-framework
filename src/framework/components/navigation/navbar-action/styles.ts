@@ -18,8 +18,8 @@ export default StyleSheet.create({
     flexDirection: 'row',
   },
   navBarActionWrapperIcon: {
-    height: UI_SIZES.elements.navbarButtonSize,
+    height: UI_SIZES.navigation.headerButtonSizeAndroid,
     justifyContent: 'center',
-    width: UI_SIZES.elements.navbarButtonSize,
+    width: UI_SIZES.navigation.headerButtonSizeAndroid,
   },
 });
