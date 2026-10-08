@@ -6,7 +6,15 @@ import { SegmentedControlProps } from './types';
 
 import { SegmentedControlItem } from './';
 
-const SegmentedControl = ({ canUnselect, initialSelectedIndex, onChange, segments }: Readonly<SegmentedControlProps>) => {
+const FULL_WIDTH_ROW_STYLE = [styles.scrollContainer, styles.fullWidthRow];
+
+const SegmentedControl = ({
+  canUnselect,
+  fullWidth,
+  initialSelectedIndex,
+  onChange,
+  segments,
+}: Readonly<SegmentedControlProps>) => {
   const [selectedIndex, setSelectedIndex] = React.useState<number | undefined>(initialSelectedIndex);
 
   const segmentItems = React.useMemo(() => {
@@ -24,16 +32,22 @@ const SegmentedControl = ({ canUnselect, initialSelectedIndex, onChange, segment
             setSelectedIndex(newIndex);
             onChange?.(newIndex);
           }}
+          style={fullWidth ? styles.fullWidthItem : undefined}
           testID={`segmented-control-${index}`}
           text={segment.text}
         />
       );
     });
-  }, [segments, selectedIndex, canUnselect, onChange]);
+  }, [segments, selectedIndex, canUnselect, fullWidth, onChange]);
 
   return (
-    <ScrollView alwaysBounceHorizontal={false} horizontal showsHorizontalScrollIndicator={false}>
-      <View style={styles.scrollContainer}>{segmentItems}</View>
+    <ScrollView
+      style={fullWidth ? styles.fullWidthScrollView : undefined}
+      contentContainerStyle={fullWidth ? styles.fullWidthContent : undefined}
+      alwaysBounceHorizontal={false}
+      horizontal
+      showsHorizontalScrollIndicator={false}>
+      <View style={fullWidth ? FULL_WIDTH_ROW_STYLE : styles.scrollContainer}>{segmentItems}</View>
     </ScrollView>
   );
 };
