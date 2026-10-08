@@ -6,12 +6,12 @@ import { SegmentedControlProps } from './types';
 
 import { SegmentedControlItem } from './';
 
-const FULL_WIDTH_ROW_STYLE = [styles.scrollContainer, styles.fullWidthRow];
+const PARENT_ROW_STYLE = [styles.scrollContainer, styles.matchParentWidthRow];
 
 const SegmentedControl = ({
   canUnselect,
-  fullWidth,
   initialSelectedIndex,
+  matchParentWidth,
   onChange,
   segments,
 }: Readonly<SegmentedControlProps>) => {
@@ -32,22 +32,22 @@ const SegmentedControl = ({
             setSelectedIndex(newIndex);
             onChange?.(newIndex);
           }}
-          style={fullWidth ? styles.fullWidthItem : undefined}
+          style={matchParentWidth ? styles.matchParentWidthItem : undefined}
           testID={`segmented-control-${index}`}
           text={segment.text}
         />
       );
     });
-  }, [segments, selectedIndex, canUnselect, fullWidth, onChange]);
+  }, [segments, selectedIndex, canUnselect, matchParentWidth, onChange]);
 
   return (
     <ScrollView
-      style={fullWidth ? styles.fullWidthScrollView : undefined}
-      contentContainerStyle={fullWidth ? styles.fullWidthContent : undefined}
+      style={matchParentWidth ? styles.matchParentWidthScrollView : undefined}
+      contentContainerStyle={matchParentWidth ? styles.matchParentWidthContent : undefined}
       alwaysBounceHorizontal={false}
       horizontal
       showsHorizontalScrollIndicator={false}>
-      <View style={fullWidth ? FULL_WIDTH_ROW_STYLE : styles.scrollContainer}>{segmentItems}</View>
+      <View style={matchParentWidth ? PARENT_ROW_STYLE : styles.scrollContainer}>{segmentItems}</View>
     </ScrollView>
   );
 };

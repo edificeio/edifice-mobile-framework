@@ -344,7 +344,7 @@ const ScreenTimeHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolea
               {/* View mode toggle */}
               <View style={styles.modeToggleContainer}>
                 <SegmentedControl
-                  fullWidth
+                  matchParentWidth
                   segments={modeSegments}
                   initialSelectedIndex={WEEK_SEGMENT}
                   onChange={handleModeChange}

@@ -23,26 +23,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
   },
-  // The width travels down from the parent to the segments, one level per style. A segment never
-  // drops below its own, so enough of them overflow the row and it scrolls.
-  fullWidthContent: {
-    flexGrow: 1,
-  },
-  fullWidthItem: {
-    flexGrow: 1,
-    width: SEGMENT_WIDTH,
-  },
-  // The frame moves up to the scroll view, which stays put, the row being the part that travels.
-  fullWidthRow: {
-    borderWidth: 0,
-    flexGrow: 1,
-  },
-  fullWidthScrollView: {
-    alignSelf: 'stretch',
-    borderColor: theme.palette.primary.pale,
-    borderRadius: UI_SIZES.radius.input,
-    borderWidth: UI_SIZES.border.thin,
-  },
   inactiveContainer: {
     backgroundColor: theme.palette.grey.white,
   },
@@ -57,6 +37,26 @@ export const styles = StyleSheet.create({
     borderRadius: UI_SIZES.radius.input,
     height: LOADER_HEIGHT,
     width: SEGMENT_WIDTH,
+  },
+  // The width travels down from the parent to the segments, one level per style. A segment never
+  // drops below its own, so enough of them overflow the row and it scrolls.
+  matchParentWidthContent: {
+    flexGrow: 1,
+  },
+  matchParentWidthItem: {
+    flexGrow: 1,
+    width: SEGMENT_WIDTH,
+  },
+  // The frame moves up to the scroll view, which stays put, the row being the part that travels.
+  matchParentWidthRow: {
+    borderWidth: 0,
+    flexGrow: 1,
+  },
+  matchParentWidthScrollView: {
+    alignSelf: 'stretch',
+    borderColor: theme.palette.primary.pale,
+    borderRadius: UI_SIZES.radius.input,
+    borderWidth: UI_SIZES.border.thin,
   },
   scrollContainer: {
     borderColor: theme.palette.primary.pale,

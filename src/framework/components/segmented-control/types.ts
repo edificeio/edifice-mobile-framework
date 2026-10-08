@@ -12,8 +12,8 @@ export interface SegmentedItemProps {
 
 export interface SegmentedControlProps {
   canUnselect?: boolean;
-  fullWidth?: boolean;
   initialSelectedIndex?: number;
+  matchParentWidth?: boolean;
   onChange?: (index?: number) => void;
   segments: Pick<SegmentedItemProps, 'id' | 'count' | 'text'>[];
 }
