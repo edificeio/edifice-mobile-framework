@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import moment from 'moment';
 
-import styles from './styles';
-
 import { I18n } from '~/app/i18n';
-import { BodyText, CaptionText } from '~/framework/components/text';
+import TertiaryButton from '~/framework/components/buttons/tertiary';
+import { BodyBoldText, CaptionText } from '~/framework/components/text';
+import { ScreenTimeMessage } from '~/framework/modules/widgets/screen-time/components/message';
 import { ScreenTimeDayResponse, ScreenTimeWeekResponse } from '~/framework/modules/widgets/screen-time/model';
+
+import styles from './styles';
 
 export type ChartType = 'week' | 'day';
 
@@ -18,51 +20,28 @@ interface BarChartProps {
 
 const CHART_HEIGHT = 200;
 
-/**
- * Formats duration in minutes to a human-readable string
- */
-const formatDuration = (minutes: number): string => {
-  if (minutes === 0) return '0m';
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  if (hours > 0) {
-    return `${hours}h ${mins}m`;
-  }
-  return `${mins}m`;
-};
+const formatDuration = (minutes: number) => `${minutes}m`;
 
 export const BarChart: React.FC<BarChartProps> = ({ data, type }) => {
   const [showAllHours, setShowAllHours] = React.useState(false);
 
+  const noDataText = I18n.get(type === 'week' ? 'widget-screen-time-no-data-week' : 'widget-screen-time-no-data-day');
+
   // Check for empty data
   if (!data) {
-    return (
-      <View style={styles.container}>
-        <BodyText style={styles.noDataText}>
-          {I18n.get(type === 'week' ? 'widget-screen-time-no-data-week' : 'widget-screen-time-no-data-day')}
-        </BodyText>
-      </View>
-    );
+    return <ScreenTimeMessage text={noDataText} />;
   }
 
   // Type-specific validation
   if (type === 'week') {
     const weekData = data as ScreenTimeWeekResponse;
     if (!weekData.dailySummaries || weekData.dailySummaries.length === 0) {
-      return (
-        <View style={styles.container}>
-          <BodyText style={styles.noDataText}>{I18n.get('widget-screen-time-no-data-week')}</BodyText>
-        </View>
-      );
+      return <ScreenTimeMessage text={noDataText} />;
     }
   } else {
     const dayData = data as ScreenTimeDayResponse;
     if (!dayData.durations || dayData.durations.length === 0) {
-      return (
-        <View style={styles.container}>
-          <BodyText style={styles.noDataText}>{I18n.get('widget-screen-time-no-data-day')}</BodyText>
-        </View>
-      );
+      return <ScreenTimeMessage text={noDataText} />;
     }
   }
 
@@ -160,24 +139,28 @@ export const BarChart: React.FC<BarChartProps> = ({ data, type }) => {
     };
 
     // Filter hours: by default show only hours with values, or all if toggle is on
-    const filteredDurations = showAllHours ? dayData.durations : dayData.durations.filter(hourData => hourData.durationMinutes > 0);
+    const usedHours = dayData.durations.filter(hourData => hourData.durationMinutes > 0);
+    const shownHours = showAllHours ? dayData.durations : usedHours;
+
+    const totalMinutes = usedHours.reduce((total, hourData) => total + hourData.durationMinutes, 0);
 
     return (
       <>
         <View style={styles.titleContainer}>
-          <BodyText style={styles.totalTime}>
-            {I18n.get('widget-screen-time-total')}: {dayData.totalDurationString}
-          </BodyText>
-          <Pressable onPress={() => setShowAllHours(!showAllHours)} style={styles.toggleButton}>
-            <BodyText style={styles.toggleButtonText}>
-              {showAllHours ? I18n.get('widget-screen-time-show-only-with-values') : I18n.get('widget-screen-time-show-all-hours')}
-            </BodyText>
-          </Pressable>
+          <BodyBoldText style={styles.totalTime}>{I18n.get('widget-screen-time-total', { minutes: totalMinutes })}</BodyBoldText>
+          <TertiaryButton
+            iconLeft="ui-rafterLeft"
+            iconRight="ui-rafterRight"
+            text={showAllHours ? I18n.get('widget-screen-time-hide-all-hours') : I18n.get('widget-screen-time-show-all-hours')}
+            action={() => setShowAllHours(!showAllHours)}
+            style={styles.toggleButton}
+            testID="screen-time-show-all-hours"
+          />
         </View>
 
         <View style={styles.chartContainer}>
           <View style={styles.barsContainer}>
-            {filteredDurations.map(hourData => {
+            {shownHours.map(hourData => {
               const barWidth = getBarWidth(hourData.durationMinutes);
 
               return (

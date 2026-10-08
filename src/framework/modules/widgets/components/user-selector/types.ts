@@ -6,7 +6,6 @@ import type { SvgIconName } from '~/framework/components/picture';
 export interface WidgetUserSelectorItem {
   id: string;
   name: string;
-  userId: string;
 }
 
 export interface WidgetUserSelectorAction {

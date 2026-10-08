@@ -7,7 +7,8 @@ import { TextSizeStyle } from '~/framework/components/text';
 const LOADER_HEIGHT =
   TextSizeStyle.Normal.lineHeight * PixelRatio.getFontScale() + UI_SIZES.spacing.minor * 2 + UI_SIZES.spacing.tiny * 2;
 
-const LOADER_WIDTH = getScaleWidth(124);
+// The width a segment is drawn at while it loads, which is the one the design gives a segment.
+const SEGMENT_WIDTH = getScaleWidth(124);
 
 export const styles = StyleSheet.create({
   activeContainer: {
@@ -35,7 +36,27 @@ export const styles = StyleSheet.create({
   loaderContent: {
     borderRadius: UI_SIZES.radius.input,
     height: LOADER_HEIGHT,
-    width: LOADER_WIDTH,
+    width: SEGMENT_WIDTH,
+  },
+  // The width travels down from the parent to the segments, one level per style. A segment never
+  // drops below its own, so enough of them overflow the row and it scrolls.
+  matchParentWidthContent: {
+    flexGrow: 1,
+  },
+  matchParentWidthItem: {
+    flexGrow: 1,
+    width: SEGMENT_WIDTH,
+  },
+  // The frame moves up to the scroll view, which stays put, the row being the part that travels.
+  matchParentWidthRow: {
+    borderWidth: 0,
+    flexGrow: 1,
+  },
+  matchParentWidthScrollView: {
+    alignSelf: 'stretch',
+    borderColor: theme.palette.primary.pale,
+    borderRadius: UI_SIZES.radius.input,
+    borderWidth: UI_SIZES.border.thin,
   },
   scrollContainer: {
     borderColor: theme.palette.primary.pale,

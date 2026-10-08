@@ -1,19 +1,21 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleFontSize, UI_SIZES } from '~/framework/components/constants';
+import { getScaleFontSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+
+const HORIZONTAL_BAR_HEIGHT = 20;
 
 export default StyleSheet.create({
   bar: {
-    backgroundColor: theme.palette.complementary.blue.regular,
+    backgroundColor: theme.palette.primary.regular,
     borderRadius: UI_SIZES.radius.medium,
   },
 
   // Styles pour les barres horizontales (jour)
   barBackgroundHorizontal: {
     backgroundColor: theme.palette.grey.pearl,
-    borderRadius: UI_SIZES.radius.small,
-    height: UI_SIZES.dimensions.height.medium,
+    borderRadius: UI_SIZES.radius.medium,
+    height: getScaleWidth(HORIZONTAL_BAR_HEIGHT),
     justifyContent: 'center',
   },
 
@@ -36,7 +38,7 @@ export default StyleSheet.create({
   barContainerHorizontal: {
     alignItems: 'center',
     flex: 1,
-    height: 20,
+    height: getScaleWidth(HORIZONTAL_BAR_HEIGHT),
     justifyContent: 'flex-start',
     marginHorizontal: UI_SIZES.spacing.medium,
   },
@@ -49,8 +51,8 @@ export default StyleSheet.create({
   },
 
   barHorizontal: {
-    backgroundColor: theme.palette.complementary.blue.regular,
-    borderRadius: UI_SIZES.radius.small,
+    backgroundColor: theme.palette.complementary.yellow.regular,
+    borderRadius: UI_SIZES.radius.medium,
     height: '100%',
   },
 
@@ -89,21 +91,12 @@ export default StyleSheet.create({
   // Styles communs
   container: {
     backgroundColor: theme.palette.grey.white,
-    borderColor: theme.palette.grey.cloudy,
-    borderLeftColor: theme.palette.complementary.blue.regular,
-    borderLeftWidth: 4,
+    borderColor: theme.palette.primary.regular,
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: UI_SIZES.border.thin,
-    elevation: 3,
     marginBottom: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.medium,
-    shadowColor: theme.palette.grey.black,
-    shadowOffset: {
-      height: UI_SIZES.border.thin,
-      width: 0,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: UI_SIZES.radius.medium,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.small,
   },
 
   dayLabel: {
@@ -148,11 +141,6 @@ export default StyleSheet.create({
     textAlign: 'center',
   },
 
-  noDataText: {
-    color: theme.palette.grey.black,
-    fontSize: getScaleFontSize(16),
-    textAlign: 'center',
-  },
   scaleContainer: {
     alignItems: 'flex-end',
     height: 183,
@@ -178,18 +166,9 @@ export default StyleSheet.create({
     marginBottom: UI_SIZES.spacing.medium,
   },
   toggleButton: {
-    backgroundColor: theme.palette.complementary.blue.pale,
-    borderRadius: UI_SIZES.radius.medium,
     marginTop: UI_SIZES.spacing.small,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.tiny,
-  },
-  toggleButtonText: {
-    color: theme.palette.complementary.blue.regular,
-    fontSize: getScaleFontSize(12),
   },
   totalTime: {
-    color: theme.palette.primary.regular,
     fontSize: getScaleFontSize(14),
   },
 });

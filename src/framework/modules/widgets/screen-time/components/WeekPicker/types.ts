@@ -1,3 +1,5 @@
+import { ColorValue, StyleProp, ViewStyle } from 'react-native';
+
 import { Moment } from 'moment';
 
 export interface WeekPickerProps {
@@ -8,9 +10,7 @@ export interface WeekPickerProps {
   /** Désactive le composant */
   disabled?: boolean;
   /** Style personnalisé pour le conteneur */
-  style?: any;
-  /** Couleur des icônes */
-  iconColor?: string;
-  /** Format d'affichage de la semaine */
-  weekFormat?: string;
+  style?: StyleProp<ViewStyle>;
+  /** Couleur des chevrons, indigo par défaut */
+  iconColor?: ColorValue;
 }

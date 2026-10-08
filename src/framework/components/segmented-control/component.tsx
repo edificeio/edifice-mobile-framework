@@ -6,7 +6,15 @@ import { SegmentedControlProps } from './types';
 
 import { SegmentedControlItem } from './';
 
-const SegmentedControl = ({ canUnselect, initialSelectedIndex, onChange, segments }: Readonly<SegmentedControlProps>) => {
+const PARENT_ROW_STYLE = [styles.scrollContainer, styles.matchParentWidthRow];
+
+const SegmentedControl = ({
+  canUnselect,
+  initialSelectedIndex,
+  matchParentWidth,
+  onChange,
+  segments,
+}: Readonly<SegmentedControlProps>) => {
   const [selectedIndex, setSelectedIndex] = React.useState<number | undefined>(initialSelectedIndex);
 
   const segmentItems = React.useMemo(() => {
@@ -24,16 +32,22 @@ const SegmentedControl = ({ canUnselect, initialSelectedIndex, onChange, segment
             setSelectedIndex(newIndex);
             onChange?.(newIndex);
           }}
+          style={matchParentWidth ? styles.matchParentWidthItem : undefined}
           testID={`segmented-control-${index}`}
           text={segment.text}
         />
       );
     });
-  }, [segments, selectedIndex, canUnselect, onChange]);
+  }, [segments, selectedIndex, canUnselect, matchParentWidth, onChange]);
 
   return (
-    <ScrollView alwaysBounceHorizontal={false} horizontal showsHorizontalScrollIndicator={false}>
-      <View style={styles.scrollContainer}>{segmentItems}</View>
+    <ScrollView
+      style={matchParentWidth ? styles.matchParentWidthScrollView : undefined}
+      contentContainerStyle={matchParentWidth ? styles.matchParentWidthContent : undefined}
+      alwaysBounceHorizontal={false}
+      horizontal
+      showsHorizontalScrollIndicator={false}>
+      <View style={matchParentWidth ? PARENT_ROW_STYLE : styles.scrollContainer}>{segmentItems}</View>
     </ScrollView>
   );
 };
