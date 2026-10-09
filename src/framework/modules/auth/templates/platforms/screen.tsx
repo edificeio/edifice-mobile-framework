@@ -43,7 +43,7 @@ export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
           <HeadingSText style={styles.heading} testID="network-welcome-title">
             {I18n.get('auth-platformselect-welcome')}
           </HeadingSText>
-          <SmallText style={styles.lightP} testID="network-welcome-subtitle">
+          <SmallText style={styles.lightP} testID="network-welcome-version">
             {I18n.get('auth-platformselect-select')}
           </SmallText>
         </SafeAreaView>
