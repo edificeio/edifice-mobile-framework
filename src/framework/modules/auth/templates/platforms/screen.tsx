@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import DeviceInfo from 'react-native-device-info';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
@@ -50,7 +51,14 @@ export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
       alwaysBounceVertical={false}
       contentContainerStyle={contentContainerStyle}
       overScrollMode="never"
-      ListFooterComponent={<DebugOptions />}
+      ListFooterComponent={
+        <>
+          <DebugOptions />
+          <SmallText style={styles.lightP} testID="network-version-number">
+            {I18n.get('user-page-versionnumber')} {DeviceInfo.getVersion()}
+          </SmallText>
+        </>
+      }
       gap={[UI_SIZES.spacing.big, UI_SIZES.spacing.small]}
       gapOutside={UI_SIZES.spacing.big}
     />
