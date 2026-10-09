@@ -8,8 +8,12 @@
 
 import React from 'react';
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { createStaticNavigation } from '@react-navigation/native';
 
+import { CloudMessagingProvider } from '~/framework/util/notifications/cloudMessaging';
+
+import { ConfirmRemoveProvider } from './confirm-remove';
 import { useRootStackNavigation } from './rootStack';
 import { useScreenTelemetry } from './telemetry';
 
@@ -27,8 +31,17 @@ export const AppNavigation = React.memo(function () {
     isMounted.current = true;
   }, []);
 
-  const routes = useRootStackNavigation();
-  const Navigation = createStaticNavigation(routes);
+  const rootStack = useRootStackNavigation().with(({ Navigator }) => (
+    // Note : these providers depends on navigation so we can't put them in app providers.
+    <ConfirmRemoveProvider>
+      <BottomSheetModalProvider>
+        <CloudMessagingProvider>
+          <Navigator />
+        </CloudMessagingProvider>
+      </BottomSheetModalProvider>
+    </ConfirmRemoveProvider>
+  ));
+  const Navigation = createStaticNavigation(rootStack);
   const { onReady, onScreenChange, onUnhandledAction } = useScreenTelemetry();
   return <Navigation onReady={onReady} onStateChange={onScreenChange} onUnhandledAction={onUnhandledAction} />;
 });
