@@ -66,25 +66,27 @@ export namespace I18n {
   export const fallbackLng = 'en';
 
   // Supported locales
-  const supportedLanguages = ['co', 'en', 'es', 'fr', 'it'] as const;
+  const supportedLanguages = ['co', 'en', 'es', 'fr', 'fr-MQ', 'it'] as const;
   export type SupportedLocales = (typeof supportedLanguages)[number];
 
   // Transform translations for all embeded locales
   const localResources = {
-    co: { translation: getOverridenTranslations(require('ASSETS/i18n/co.json')) },
-    en: { translation: getOverridenTranslations(require('ASSETS/i18n/en.json')) },
-    es: { translation: getOverridenTranslations(require('ASSETS/i18n/es.json')) },
-    fr: { translation: getOverridenTranslations(require('ASSETS/i18n/fr.json')) },
-    it: { translation: getOverridenTranslations(require('ASSETS/i18n/it.json')) },
+    'co': { translation: getOverridenTranslations(require('ASSETS/i18n/co.json')) },
+    'en': { translation: getOverridenTranslations(require('ASSETS/i18n/en.json')) },
+    'es': { translation: getOverridenTranslations(require('ASSETS/i18n/es.json')) },
+    'fr': { translation: getOverridenTranslations(require('ASSETS/i18n/fr.json')) },
+    'fr-MQ': { translation: getOverridenTranslations(require('ASSETS/i18n/fr-MQ.json')) },
+    'it': { translation: getOverridenTranslations(require('ASSETS/i18n/it.json')) },
   };
 
   const momentLocales = {
-    co: 'fr',
-    default: fallbackLng,
-    en: 'en',
-    es: 'es',
-    fr: 'fr',
-    it: 'it',
+    'co': 'fr',
+    'default': fallbackLng,
+    'en': 'en',
+    'es': 'es',
+    'fr': 'fr',
+    'fr-MQ': 'fr',
+    'it': 'it',
   };
 
   // Phrase stuff
@@ -169,11 +171,12 @@ export namespace I18n {
       supportedLanguagesDisplayNames,
       Object.fromEntries(
         Object.entries({
-          co: 'user-lang-dropdownvalue-co',
-          en: 'user-lang-dropdownvalue-en',
-          es: 'user-lang-dropdownvalue-es',
-          fr: 'user-lang-dropdownvalue-fr',
-          it: 'user-lang-dropdownvalue-it',
+          'co': 'user-lang-dropdownvalue-co',
+          'en': 'user-lang-dropdownvalue-en',
+          'es': 'user-lang-dropdownvalue-es',
+          'fr': 'user-lang-dropdownvalue-fr',
+          'fr-MQ': 'user-lang-dropdownvalue-fr-mq',
+          'it': 'user-lang-dropdownvalue-it',
         }).map(([lng, i18nKey]) => [lng, get(i18nKey, { fallbackLng, lng })]),
       ),
     );

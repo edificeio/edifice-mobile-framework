@@ -57,17 +57,20 @@ const getLocalFile = language => {
  */
 const getTranslationActions = () => {
   // Read local translations files
-  let localFrContent = null;
   let localCoContent = null;
   let localEnContent = null;
   let localEsContent = null;
+  let localFrContent = null;
   let localItContent = null;
+  let localMqContent = null;
+
   try {
-    localFrContent = JSON.parse(fs.readFileSync(getLocalFile('fr'), 'utf-8'));
     localCoContent = JSON.parse(fs.readFileSync(getLocalFile('co'), 'utf-8'));
     localEnContent = JSON.parse(fs.readFileSync(getLocalFile('en'), 'utf-8'));
     localEsContent = JSON.parse(fs.readFileSync(getLocalFile('es'), 'utf-8'));
+    localFrContent = JSON.parse(fs.readFileSync(getLocalFile('fr'), 'utf-8'));
     localItContent = JSON.parse(fs.readFileSync(getLocalFile('it'), 'utf-8'));
+    localMqContent = JSON.parse(fs.readFileSync(getLocalFile('fr-MQ'), 'utf-8'));
   } catch (error) {
     console.error('!!! Unable to read fr.json, co.json, en.json, es.json or it.json !!!');
     console.error(error);
@@ -82,18 +85,21 @@ const getTranslationActions = () => {
   const frEnDiff = getKeysDifference(localFrContent, localEnContent);
   const frEsDiff = getKeysDifference(localFrContent, localEsContent);
   const frItDiff = getKeysDifference(localFrContent, localItContent);
+  const frMqDiff = getKeysDifference(localFrContent, localMqContent);
   console.info({
     translate: {
-      corse: displayObject(frCoDiff.extraKeysObject1),
+      corsican: displayObject(frCoDiff.extraKeysObject1),
       english: displayObject(frEnDiff.extraKeysObject1),
       spanish: displayObject(frEsDiff.extraKeysObject1),
       italian: displayObject(frItDiff.extraKeysObject1),
+      martinican: displayObject(frMqDiff.extraKeysObject1),
     },
     delete: {
-      corse: displayObject(frCoDiff.extraKeysObject2),
+      corsican: displayObject(frCoDiff.extraKeysObject2),
       english: displayObject(frEnDiff.extraKeysObject2),
       spanish: displayObject(frEsDiff.extraKeysObject2),
       italian: displayObject(frItDiff.extraKeysObject2),
+      martinican: displayObject(frMqDiff.extraKeysObject2),
     },
   });
 };
