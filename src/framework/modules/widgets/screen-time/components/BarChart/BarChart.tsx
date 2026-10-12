@@ -8,6 +8,7 @@ import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { BodyBoldText, CaptionText } from '~/framework/components/text';
 import { ScreenTimeMessage } from '~/framework/modules/widgets/screen-time/components/message';
 import { ScreenTimeDayResponse, ScreenTimeWeekResponse } from '~/framework/modules/widgets/screen-time/model';
+import { formatDuration, totalMinutes } from '~/framework/modules/widgets/screen-time/util/duration';
 
 import styles from './styles';
 
@@ -19,8 +20,6 @@ interface BarChartProps {
 }
 
 const CHART_HEIGHT = 200;
-
-const formatDuration = (minutes: number) => `${minutes}m`;
 
 export const BarChart: React.FC<BarChartProps> = ({ data, type }) => {
   const [showAllHours, setShowAllHours] = React.useState(false);
@@ -142,12 +141,14 @@ export const BarChart: React.FC<BarChartProps> = ({ data, type }) => {
     const usedHours = dayData.durations.filter(hourData => hourData.durationMinutes > 0);
     const shownHours = showAllHours ? dayData.durations : usedHours;
 
-    const totalMinutes = usedHours.reduce((total, hourData) => total + hourData.durationMinutes, 0);
+    const total = totalMinutes(dayData);
 
     return (
       <>
         <View style={styles.titleContainer}>
-          <BodyBoldText style={styles.totalTime}>{I18n.get('widget-screen-time-total', { minutes: totalMinutes })}</BodyBoldText>
+          <BodyBoldText style={styles.totalTime}>
+            {I18n.get('widget-screen-time-total', { duration: formatDuration(total) })}
+          </BodyBoldText>
           <TertiaryButton
             iconLeft="ui-rafterLeft"
             iconRight="ui-rafterRight"
