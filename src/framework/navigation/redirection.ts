@@ -7,6 +7,10 @@ import { useNavigationRedirectionDispatch } from '~/app/navigation/use-confirm-r
 import { NAVIGATE_CLOSE_DELAY } from '~/framework/navigation/nextTabJump';
 import { handleNotificationNavigationAction } from '~/framework/util/notifications/routing';
 
+const SCREEN_LAYOUT_DELAY = 48;
+
+const actionDelay = (index: number) => NAVIGATE_CLOSE_DELAY + SCREEN_LAYOUT_DELAY * index;
+
 // A tab change while a native modal is open leaves the tab bar deaf, see the note in main-navigation.
 // So the modal closes first, then the remaining actions build the stack we land in, one at a time.
 export function useRedirectActionOnSuccess(navigation: NavigationProp<ParamListBase>) {
@@ -17,7 +21,7 @@ export function useRedirectActionOnSuccess(navigation: NavigationProp<ParamListB
     (actions: NavigationAction | NavigationAction[]) => {
       const [first, ...rest] = [actions].flat();
       handleNotificationNavigationAction(first, navigation, redirectionDispatch);
-      rest.forEach((action, index) => setTimeout(() => rootNavigation.dispatch(action), NAVIGATE_CLOSE_DELAY * (index + 1)));
+      rest.forEach((action, index) => setTimeout(() => rootNavigation.dispatch(action), actionDelay(index)));
     },
     [navigation, redirectionDispatch, rootNavigation],
   );
