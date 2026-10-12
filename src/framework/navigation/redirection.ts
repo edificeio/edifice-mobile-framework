@@ -9,7 +9,7 @@ import { handleNotificationNavigationAction } from '~/framework/util/notificatio
 
 // A tab change while a native modal is open leaves the tab bar deaf, see the note in main-navigation.
 // So the modal closes first, then the remaining actions build the stack we land in, one at a time.
-export function useRedirection(navigation: NavigationProp<ParamListBase>) {
+export function useRedirectActionOnSuccess(navigation: NavigationProp<ParamListBase>) {
   const rootNavigation = navigationRef as unknown as NavigationProp<ParamListBase>;
   const redirectionDispatch = useNavigationRedirectionDispatch(rootNavigation);
 

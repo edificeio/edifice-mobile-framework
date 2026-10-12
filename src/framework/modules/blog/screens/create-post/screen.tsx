@@ -25,7 +25,7 @@ import {
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/home/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { useRedirection } from '~/framework/navigation/useRedirection';
+import { useRedirectActionOnSuccess } from '~/framework/navigation/redirection';
 import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
@@ -57,7 +57,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const { handleInitTimeline, handleSendBlogPost, navigation, route, session } = props;
   const blog = route.params.blog;
 
-  const redirect = useRedirection(navigation);
+  const dispatchActionOnSuccess = useRedirectActionOnSuccess(navigation);
 
   const doSendPost = async () => {
     try {
@@ -92,7 +92,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
 
       Trackers.trackEvent(route.params.source, 'Créer un billet', eventName);
       await handleInitTimeline();
-      redirect(route.params.navActionOnSuccess);
+      dispatchActionOnSuccess(route.params.navActionOnSuccess);
       Toast.showSuccess(toastSuccessText);
     } catch (e: any) {
       if (e.response?.body === '{"error":"file.too.large"}') {

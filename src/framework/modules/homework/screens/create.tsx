@@ -23,7 +23,7 @@ import { withSession } from '~/framework/modules/auth/util';
 import { createHomeworkDiaryEntry } from '~/framework/modules/homework/actions/createEntry';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { useRedirection } from '~/framework/navigation/useRedirection';
+import { useRedirectActionOnSuccess } from '~/framework/navigation/redirection';
 
 import { fetchHomeworkTasks } from '../actions/tasks';
 
@@ -67,7 +67,7 @@ export const HomeworkCreateScreen = withSession(function ({
     title: I18n.get('homework-create-leavealert-title'),
   });
 
-  const redirect = useRedirection(navigation);
+  const redirect = useRedirectActionOnSuccess(navigation);
 
   const topForm = (
     <View style={styles.topForm}>
