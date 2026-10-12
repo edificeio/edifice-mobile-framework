@@ -3,14 +3,14 @@ import { ColorValue, StyleProp, ViewStyle } from 'react-native';
 import { Moment } from 'moment';
 
 export interface WeekPickerProps {
-  /** Date de début de la semaine sélectionnée */
+  /** First day of the selected week */
   selectedWeekStart: Moment;
-  /** Callback appelé quand la semaine sélectionnée change */
+  /** Called whenever another week is picked */
   onWeekChange: (weekStart: Moment) => void;
-  /** Désactive le composant */
+  /** Whether the picker can be used */
   disabled?: boolean;
-  /** Style personnalisé pour le conteneur */
+  /** Style of the container, the placement of the picker being the caller's business */
   style?: StyleProp<ViewStyle>;
-  /** Couleur des chevrons, indigo par défaut */
+  /** Colour of the chevrons, indigo unless told otherwise */
   iconColor?: ColorValue;
 }

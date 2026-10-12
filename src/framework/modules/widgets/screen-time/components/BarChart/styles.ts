@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import theme from '~/app/theme';
 import { getScaleFontSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
-const HORIZONTAL_BAR_HEIGHT = 20;
+const HORIZONTAL_BAR_HEIGHT = UI_SIZES.dimensions.height.mediumPlus;
 
 export default StyleSheet.create({
   bar: {
