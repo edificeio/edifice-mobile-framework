@@ -148,6 +148,11 @@ export const UI_SIZES = {
     navbarHeight: Platform.select({ default: 56, ios: 44 }),
     navbarIconSize: 24,
     navbarMargin: 16,
+    segmentedControl: {
+      // The width the design gives a segment, which it keeps unless the control is told to fill
+      // the width it is given.
+      segmentWidth: getScaleWidth(124),
+    },
     statusbarHeight: Platform.select({ default: 0, ios: 19 }),
     tabbarHeight: 56,
     textFieldMaxHeight: 105,
