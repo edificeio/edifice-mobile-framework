@@ -10,7 +10,7 @@ import { registerTimelineWorkflow } from '~/framework/util/timelineWorkflows';
 import { getPublishableBlogListAction } from './actions';
 import moduleConfig from './module-config';
 import { blogRouteNames } from './navigation';
-import { goToBlogPosts } from './navigation/actions';
+import { dispatchBlogPostOnSuccessAction } from './navigation/actions';
 import { Blog } from './reducer';
 
 export const createBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|create';
@@ -79,7 +79,7 @@ export default () =>
             if (hasOneBlog) {
               navigation.navigate(blogRouteNames.blogCreatePost, {
                 blog: blogsData[0],
-                navActionOnSuccess: goToBlogPosts(blogsData[0].id, session),
+                navActionOnSuccess: dispatchBlogPostOnSuccessAction(blogsData[0].id, session),
                 source: 'Timeline',
               });
             } else navigation.navigate(blogRouteNames.home, { blogsData });

@@ -9,7 +9,7 @@ import ResourcePicker from '~/framework/components/explorer/resource-picker';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { goToBlogPosts } from '~/framework/modules/blog/navigation/actions';
+import { dispatchBlogPostOnSuccessAction } from '~/framework/modules/blog/navigation/actions';
 import { BlogList } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
@@ -53,7 +53,7 @@ function BlogSelectScreenComponent(props: BlogSelectScreenProps) {
     if (!session) return;
     props.navigation.navigate(blogRouteNames.blogCreatePost, {
       blog,
-      navActionOnSuccess: goToBlogPosts(blog.id, session),
+      navActionOnSuccess: dispatchBlogPostOnSuccessAction(blog.id, session),
       source: 'Timeline',
     });
   };

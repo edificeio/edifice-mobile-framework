@@ -19,7 +19,7 @@ import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import HomeworkCard from '~/framework/modules/homework/components/homework-card';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
-import { goToHomeworkTasks } from '~/framework/modules/homework/navigation/actions';
+import { goToHomeworkTasksAction } from '~/framework/modules/homework/navigation/actions';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/framework/modules/homework/reducers/tasks';
 import {
@@ -199,7 +199,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     const { navigation, session } = this.props;
     navigation.navigate(homeworkRouteNames.homeworkCreate, {
       diaryId: this.props.diaryId!,
-      navActionOnSuccess: goToHomeworkTasks(session!),
+      navActionOnSuccess: goToHomeworkTasksAction(session!),
     });
     Trackers.trackEvent('Homework', 'GO TO', 'Create');
   };

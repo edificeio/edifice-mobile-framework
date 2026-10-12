@@ -1,19 +1,13 @@
 import { EntModule } from '~/app/module';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import myAppsModuleConfig from '~/framework/modules/myapps/module-config';
 import { computeTabRouteName, tabModules } from '~/framework/navigation/tabModules';
 
 const isNewTabModule = (moduleName: string, session: AuthActiveAccount) =>
   EntModule.filterTabModules(EntModule.getAvailableForAccount(session)).some(module => module.name === moduleName);
 
-const isOldTabModule = (moduleName: string, session: AuthActiveAccount) =>
-  tabModules
-    .get()
-    .filterAvailables(session)
-    .some(module => module.config.name === moduleName);
+const isOldTabModule = (moduleName: string) => tabModules.get().some(module => module.config.name === moduleName);
 
-// there are some module that can be tab modules depending on the structure level.
-export const getModuleTabRouteName = (moduleName: string, session: AuthActiveAccount) =>
-  computeTabRouteName(
-    isNewTabModule(moduleName, session) || isOldTabModule(moduleName, session) ? moduleName : myAppsModuleConfig.name,
-  );
+// A module has a tab of its own or it has none, and that depends on the structure level. Where a
+// module without a tab is reached from is not this question.
+export const getModuleTabRouteName = (moduleName: string, session: AuthActiveAccount): string | undefined =>
+  isNewTabModule(moduleName, session) || isOldTabModule(moduleName) ? computeTabRouteName(moduleName) : undefined;

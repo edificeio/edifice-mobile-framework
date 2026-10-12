@@ -14,7 +14,7 @@ import { fetchHomeworkDiaryList } from './actions/diaryList';
 import { homeworkDiarySelected } from './actions/selectedDiary';
 import moduleConfig from './module-config';
 import { homeworkRouteNames } from './navigation';
-import { goToHomeworkTasks } from './navigation/actions';
+import { goToHomeworkTasksAction } from './navigation/actions';
 import { IHomeworkDiary } from './reducers/diaryList';
 
 export const deleteHomeworkEntryResourceRight = 'fr-wseduc-homeworks-controllers-HomeworksController|deleteEntry';
@@ -68,7 +68,7 @@ export default () =>
               (getStore().dispatch as ThunkDispatch<any, any, any>)(homeworkDiarySelected(diaryListWithCreationRight[0].id));
               navigation.navigate(homeworkRouteNames.homeworkCreate, {
                 diaryId: diaryListWithCreationRight[0].id,
-                navActionOnSuccess: goToHomeworkTasks(session),
+                navActionOnSuccess: goToHomeworkTasksAction(session),
               });
             } else navigation.navigate(homeworkRouteNames.homeworkSelect);
           } catch {
