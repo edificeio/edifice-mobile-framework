@@ -67,7 +67,7 @@ export const getBlogWorkflowInformation = (session: AuthActiveAccount) => ({
 });
 
 export default () =>
-  registerTimelineWorkflow((session, navigation) => {
+  registerTimelineWorkflow((session, navigation, source) => {
     const wk = getBlogWorkflowInformation(session);
     return (
       wk.blog.create && {
@@ -80,9 +80,9 @@ export default () =>
               navigation.navigate(blogRouteNames.blogCreatePost, {
                 blog: blogsData[0],
                 navActionOnSuccess: dispatchBlogPostOnSuccessAction(blogsData[0].id, session),
-                source: 'Timeline',
+                source,
               });
-            } else navigation.navigate(blogRouteNames.home, { blogsData });
+            } else navigation.navigate(blogRouteNames.home, { blogsData, source });
           } catch {
             Toast.showError(I18n.get('blog-rights-error-text'));
           }

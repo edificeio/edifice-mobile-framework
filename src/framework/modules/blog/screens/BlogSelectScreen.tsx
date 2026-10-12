@@ -17,6 +17,8 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 
 export interface BlogSelectScreenNavParams {
   blogsData: BlogList;
+  // Where the user started from, which the created post is tracked under.
+  source: string;
 }
 export type BlogSelectScreenProps = NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.home>;
 
@@ -54,7 +56,7 @@ function BlogSelectScreenComponent(props: BlogSelectScreenProps) {
     props.navigation.navigate(blogRouteNames.blogCreatePost, {
       blog,
       navActionOnSuccess: dispatchBlogPostOnSuccessAction(blog.id, session),
-      source: 'Timeline',
+      source: props.route.params.source,
     });
   };
 

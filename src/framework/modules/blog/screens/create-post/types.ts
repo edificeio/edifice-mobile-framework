@@ -20,7 +20,8 @@ export interface BlogCreatePostScreenEventProps {
 export interface BlogCreatePostScreenNavParams {
   blog: Blog;
   navActionOnSuccess: NavigationAction | NavigationAction[];
-  source: 'Blog' | 'Timeline';
+  // Where the user started from, which the created post is tracked under.
+  source: string;
 }
 
 export type BlogCreatePostScreenProps = BlogCreatePostScreenDataProps &
