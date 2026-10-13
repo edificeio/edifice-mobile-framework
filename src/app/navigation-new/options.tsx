@@ -19,6 +19,7 @@ const commonScreenOptions: NativeStackNavigatorProps['screenOptions'] & BottomTa
  */
 const commonStackOptions: NativeStackNavigatorProps['screenOptions'] = {
   ...commonScreenOptions,
+  scrollEdgeEffects: { bottom: 'automatic', left: 'automatic', right: 'automatic', top: 'automatic' },
 };
 
 /**
