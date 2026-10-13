@@ -93,7 +93,7 @@ function useCurvedNavBarFeature() {
         height={svgDisplayHeight}
         style={[styles.navBarSvgDecoration, { top: svgDisplayTopOffset }]}
         fill={theme.palette.primary.regular}
-        name="userpage-header"
+        name={theme.ui.account.headerImage}
       />
     );
   }, [svgDisplayHeight, svgDisplayTopOffset, svgDisplayWidth]);
