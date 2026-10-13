@@ -20,8 +20,7 @@ type TabScreenName<Name extends string> = `$tab/${Name}`;
 /**
  * Name of the tab screen of a module. Use it to navigate to the tab itself.
  */
-const getTabScreenName = <Name extends AnyEntTabModule['name']>(module: { name: Name }): TabScreenName<Name> =>
-  `$tab/${module.name}`;
+export const getTabScreenName = <Name extends AnyEntTabModule['name']>(name: Name): TabScreenName<Name> => `$tab/${name}`;
 
 const createTabRoute = (screens: AllModulesStaticScreens, initialRouteName: Parameters<typeof createTabStackNavigation>[1]) =>
   createBottomTabScreen({
@@ -46,7 +45,7 @@ export const useModuleTabRoutes = (): AllModulesTabRoutes => {
     return Object.assign(
       {},
       ...tabModules.map(module => ({
-        [getTabScreenName(module)]: createTabRoute(screens, module.tab.route),
+        [getTabScreenName(module.name)]: createTabRoute(screens, module.tab.route),
       })),
     );
   }, [screens, tabModules]);

@@ -9,10 +9,13 @@ import { defineModal, defineScreen, sharedTransitions, StackNavigation, useConfi
 import { PrimaryButton } from '~/framework/components/button';
 import { BodyText } from '~/framework/components/text';
 
+import { useSignInStore } from '../navigation-new/store';
+
 function AModuleHomeScreen({}: StaticScreenProps<{
   aParam: boolean;
 }>) {
   const navigation = useNavigation();
+  const { signOut } = useSignInStore();
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
       <BodyText>A Home Screen</BodyText>
@@ -34,6 +37,13 @@ function AModuleHomeScreen({}: StaticScreenProps<{
         text="Go to a details"
         onPress={() => {
           navigation.navigate('amodule/details', { aId: 2 });
+        }}
+      />
+      <PrimaryButton
+        testID="login"
+        text="Se déconnecter"
+        onPress={() => {
+          signOut();
         }}
       />
     </View>
@@ -91,11 +101,7 @@ function AModuleModalScreen({}: StaticScreenProps<{
 }
 
 const AModuleModalScreenDeclaration = defineModal({
-  options: ({
-    route: {
-      params: { skibidi },
-    },
-  }) => ({ title: skibidi }),
+  options: ({}) => ({ title: 'SALUT' }),
   screen: AModuleModalScreen,
 });
 

@@ -20,6 +20,7 @@ import { useScreenTelemetry } from './telemetry';
 export * from './screen';
 export * from './types';
 export * from './confirm-remove';
+export { getTabScreenName } from './tabs';
 
 export const AppNavigation = React.memo(function () {
   // Ensure static navigation is only created once.
