@@ -3,25 +3,20 @@ import { View } from 'react-native';
 
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import theme from '~/app/theme';
-import { WIDGET_SECTIONS } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/sections';
-import styles from '~/framework/modules/widgets/carnet-de-board/components/home-widget/styles';
-import { CarnetDeBordWidgetPlaceholderProps } from '~/framework/modules/widgets/carnet-de-board/components/home-widget/types';
-import { WidgetPanel } from '~/framework/modules/widgets/components/panel';
-import { WidgetUserSelectorPlaceholder } from '~/framework/modules/widgets/components/user-selector';
+import { WidgetPlaceholderProps } from '~/framework/modules/widgets/components/types';
+import { WidgetUserPanelPlaceholder } from '~/framework/modules/widgets/components/user-panel';
+
+import { WIDGET_SECTIONS } from './sections';
+import styles from './styles';
 
 const PLACEHOLDER_CARD_STYLE = [styles.sectionCard, styles.placeholderCard];
 const PLACEHOLDER_ICON_STYLE = [styles.icon, styles.placeholderIcon];
 const PLACEHOLDER_LINES_STYLE = [styles.sectionCardText, styles.placeholderLines];
 
-export function CarnetDeBordWidgetPlaceholder({ tabs }: Readonly<CarnetDeBordWidgetPlaceholderProps>) {
+export function CarnetDeBordWidgetPlaceholder({ hasTabs }: Readonly<WidgetPlaceholderProps>) {
   return (
     <Placeholder Animation={Fade}>
-      <WidgetPanel
-        style={styles.body}
-        background={theme.palette.grey.pearl}
-        border={theme.palette.grey.cloudy}
-        header={tabs ? <WidgetUserSelectorPlaceholder /> : undefined}>
+      <WidgetUserPanelPlaceholder hasTabs={hasTabs}>
         <View style={styles.sections}>
           {WIDGET_SECTIONS.map(block => (
             <View key={block.section} style={PLACEHOLDER_CARD_STYLE}>
@@ -33,7 +28,7 @@ export function CarnetDeBordWidgetPlaceholder({ tabs }: Readonly<CarnetDeBordWid
             </View>
           ))}
         </View>
-      </WidgetPanel>
+      </WidgetUserPanelPlaceholder>
     </Placeholder>
   );
 }
