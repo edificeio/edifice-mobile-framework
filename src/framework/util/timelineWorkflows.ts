@@ -20,7 +20,11 @@ export interface TimelineWorkflow extends MenuAction {
 }
 
 export interface ITimelineWorkflowDefinition {
-  (session: AuthActiveAccount, navigation: NavigationProp<AllModulesNavigationParams>): undefined | false | TimelineWorkflow;
+  (
+    session: AuthActiveAccount,
+    navigation: NavigationProp<AllModulesNavigationParams>,
+    source: string,
+  ): undefined | false | TimelineWorkflow;
 }
 
 // The workflows are built outside a render, where no hook can read the store.
@@ -36,9 +40,13 @@ export const registerTimelineWorkflows = (def: ITimelineWorkflowDefinition[]) =>
 };
 export const getRegisteredTimelineWorkflow = () => registeredTimelineWorkflows;
 
-export const getTimelineWorkflows = (session: AuthActiveAccount, navigation: NavigationProp<AllModulesNavigationParams>) =>
+export const getTimelineWorkflows = (
+  session: AuthActiveAccount,
+  navigation: NavigationProp<AllModulesNavigationParams>,
+  source: string,
+) =>
   registeredTimelineWorkflows.reduce((acc, current) => {
-    const workflow = current(session, navigation);
+    const workflow = current(session, navigation, source);
     if (workflow) {
       const { appName, ...action } = workflow;
       acc.push({ ...action, imageColor: appColor(appName) });

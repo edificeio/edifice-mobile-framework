@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { StackActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -9,6 +8,7 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourcePicker from '~/framework/components/explorer/resource-picker';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
+import { goToHomeworkTasksAction } from '~/framework/modules/homework/navigation/actions';
 import { IHomeworkDiary } from '~/framework/modules/homework/reducers/diaryList';
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
@@ -56,7 +56,10 @@ function HomeworkSelectScreenComponent(props: HomeworkSelectScreenProps) {
 
   const onPressDiary = (diary: IHomeworkDiary) => {
     onSelect(diary.id);
-    navigation.navigate(homeworkRouteNames.homeworkCreate, { diaryId: diary.id, navActionOnSuccess: StackActions.popToTop() });
+    navigation.navigate(homeworkRouteNames.homeworkCreate, {
+      diaryId: diary.id,
+      navActionOnSuccess: goToHomeworkTasksAction(session!),
+    });
   };
 
   const renderEmptyDiaryList = () => {
