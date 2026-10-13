@@ -45,32 +45,27 @@ export default StyleSheet.create({
     gap: UI_SIZES.spacing.medium,
   },
   primary: {
-    backgroundColor: theme.palette.primary.regular,
+    backgroundColor: theme.ui.button.background,
   },
   primaryActive: {
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.ui.button.pressedBackground,
   },
   primaryDisabled: {
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor: theme.ui.button.disabledBackground,
   },
   secondary: {
-    backgroundColor: theme.palette.grey.white,
-    borderColor: theme.palette.primary.regular,
+    borderColor: theme.ui.button.background,
     borderWidth: UI_SIZES.border.thin,
     paddingHorizontal: UI_SIZES.spacing.medium - UI_SIZES.border.thin,
     paddingVertical: UI_SIZES.spacing.minor - UI_SIZES.border.thin,
   },
   secondaryActive: {
-    borderColor: theme.palette.primary.dark,
+    // Themes that light nothing up on press leave the wash out, and the button keeps its surface.
+    backgroundColor: theme.ui.button.highlight,
+    borderColor: theme.ui.button.pressedBackground,
   },
   secondaryDisabled: {
-    borderColor: theme.palette.primary.light,
+    borderColor: theme.ui.button.disabledBackground,
   },
-  terciary: {
-    borderColor: theme.palette.primary.regular,
-    // no borderWidth on purpose. borderColor is data source for content color
-  },
-  terciaryActive: { borderColor: theme.palette.primary.dark },
-  terciaryDisabled: { borderColor: theme.palette.primary.light },
   wrapper: { alignItems: 'stretch', flex: 0 },
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import theme from '~/app/theme';
-import { SmallInverseBoldText } from '~/framework/components/text';
+import { SmallBoldText } from '~/framework/components/text';
 
 import { BasePillButton } from './base';
 import styles from './styles';
@@ -16,8 +16,9 @@ export const PrimaryButton = React.memo(function PrimaryButton({ disabled, style
         [disabled, style],
       )}
       activeStyle={styles.primaryActive}
-      contentColor={theme.ui.text.inverse}
-      TextComponent={SmallInverseBoldText}
+      contentColor={disabled ? theme.ui.button.disabledContentOnFill : theme.ui.button.contentOnFill}
+      contentColorActive={theme.ui.button.contentOnFill}
+      TextComponent={SmallBoldText}
       {...props}
     />
   );
