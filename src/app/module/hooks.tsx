@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AllModulesReducers, AllModulesStaticModals, AllModulesStaticScreens, useModules } from '.';
+import { AllModulesReducers, AllModulesStaticModals, AllModulesStaticScreens, CoreModule, useModules, useModulesOfType } from '.';
 
 /**
  * Gather all static screens from modules.
@@ -17,6 +17,24 @@ export const useModuleScreens = (): AllModulesStaticScreens => {
  */
 export const useModuleModals = (): AllModulesStaticModals => {
   const modules = useModules();
+  return React.useMemo(() => Object.assign({}, ...modules.map(module => module.modals)) as AllModulesStaticModals, [modules]);
+};
+
+/**
+ * Gather all static screens from modules.
+ * @returns
+ */
+export const useCoreModuleScreens = (): AllModulesStaticScreens => {
+  const modules = useModulesOfType(CoreModule);
+  return React.useMemo(() => Object.assign({}, ...modules.map(module => module.screens)) as AllModulesStaticScreens, [modules]);
+};
+
+/**
+ * Gather all static modals from modules.
+ * @returns
+ */
+export const useCoreModuleModals = (): AllModulesStaticModals => {
+  const modules = useModulesOfType(CoreModule);
   return React.useMemo(() => Object.assign({}, ...modules.map(module => module.modals)) as AllModulesStaticModals, [modules]);
 };
 

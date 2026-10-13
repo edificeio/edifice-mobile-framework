@@ -6121,7 +6121,7 @@ __metadata:
     react-native-reanimated-carousel: "npm:5.1.1"
     react-native-restart: "npm:0.0.29"
     react-native-safe-area-context: "npm:5.10.1"
-    react-native-screens: "npm:4.28.0"
+    react-native-screens: "npm:4.29.0"
     react-native-share: "npm:12.3.1"
     react-native-snap-carousel: "npm:3.9.1"
     react-native-svg: "npm:15.15.5"
@@ -6155,6 +6155,7 @@ __metadata:
     unorm: "npm:1.6.0"
     whatwg-fetch: "npm:3.6.20"
     yargs: "npm:18.2.0"
+    zustand: "npm:5.0.15"
   languageName: unknown
   linkType: soft
 
@@ -13779,16 +13780,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-screens@npm:4.28.0":
-  version: 4.28.0
-  resolution: "react-native-screens@npm:4.28.0"
+"react-native-screens@npm:4.29.0":
+  version: 4.29.0
+  resolution: "react-native-screens@npm:4.29.0"
   dependencies:
     react-freeze: "npm:^1.0.0"
     warn-once: "npm:^0.1.0"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/087dddff508c566740fdb540509f73f8e2ecf26c48dc102f76e4dbeaa2be6d885ab8a73a5f24200e4e050544b99ed6a8d9532450edebf7d88feea40bf6262e3d
+  checksum: 10/28e9d384135eb00137f54c8ea15f6e136b44df90cbe1fae5a7f73091659aef9471ef461df0b6ef28006921ebad6fc6d2a1e92ad277096bc284d323e6ce6f898b
   languageName: node
   linkType: hard
 
@@ -16521,5 +16522,26 @@ __metadata:
   version: 4.6.5
   resolution: "zod@npm:4.6.5"
   checksum: 10/db004952e4dc6eab38b70f0cdef9251a65da84f5d08c5a0ef85e2590cfa9c477544ce734161ff5c05f89a15f0967137607a7feb16716195e04965f030db47213
+  languageName: node
+  linkType: hard
+
+"zustand@npm:5.0.15":
+  version: 5.0.15
+  resolution: "zustand@npm:5.0.15"
+  peerDependencies:
+    "@types/react": ">=18.0.0"
+    immer: ">=9.0.6"
+    react: ">=18.0.0"
+    use-sync-external-store: ">=1.2.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    immer:
+      optional: true
+    react:
+      optional: true
+    use-sync-external-store:
+      optional: true
+  checksum: 10/5124e93d8f57483985981ea9795df6872991f0693eb3730d562b3cb09e72af8a892703f2610744e5814b2045f7373df3d6f80625a646197d700572f2c7f70db3
   languageName: node
   linkType: hard

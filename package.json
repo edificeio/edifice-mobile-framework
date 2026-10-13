@@ -156,7 +156,7 @@
     "react-native-reanimated-carousel": "5.1.1",
     "react-native-restart": "0.0.29",
     "react-native-safe-area-context": "5.10.1",
-    "react-native-screens": "4.28.0",
+    "react-native-screens": "4.29.0",
     "react-native-share": "12.3.1",
     "react-native-snap-carousel": "3.9.1",
     "react-native-svg": "15.15.5",
@@ -181,7 +181,8 @@
     "ts-polyfill": "3.8.2",
     "unorm": "1.6.0",
     "whatwg-fetch": "3.6.20",
-    "yargs": "18.2.0"
+    "yargs": "18.2.0",
+    "zustand": "5.0.15"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",
