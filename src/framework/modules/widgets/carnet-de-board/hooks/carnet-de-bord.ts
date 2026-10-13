@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { loadCarnetDeBordAction } from '~/framework/modules/widgets/carnet-de-board/actions';
-import { getChildId } from '~/framework/modules/widgets/carnet-de-board/model';
 import { getCarnetDeBordState } from '~/framework/modules/widgets/carnet-de-board/reducer/carnet-de-bord';
-
-import { useSelectedChild } from './selected-child';
+import { selectedChildStorage } from '~/framework/modules/widgets/carnet-de-board/storage';
+import { useSelectedChild } from '~/framework/modules/widgets/hooks';
+import { getChildId } from '~/framework/modules/widgets/model';
 
 export function useCarnetDeBord() {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
@@ -15,14 +15,11 @@ export function useCarnetDeBord() {
   const state = useSelector(getCarnetDeBordState);
   const data = state.data;
 
-  const { select, selected } = useSelectedChild(data);
+  const { select, selected } = useSelectedChild(data, selectedChildStorage);
 
   const load = React.useCallback(() => dispatch(loadCarnetDeBordAction()), [dispatch]);
 
-  const children = React.useMemo(
-    () => data.map(child => ({ id: getChildId(child), name: child.firstName, userId: child.id })),
-    [data],
-  );
+  const children = React.useMemo(() => data.map(child => ({ id: getChildId(child), name: child.firstName })), [data]);
 
   return {
     children,
