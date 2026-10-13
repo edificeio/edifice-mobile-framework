@@ -135,6 +135,9 @@ export interface ITheme {
   };
   // UI usage of the color palette
   ui: {
+    account: {
+      headerImage: SvgIconName;
+    };
     notificationBadge: ColorValue;
     shadowColor: ColorValue;
     shadowColorTransparent: ColorValue;
@@ -149,9 +152,6 @@ export interface ITheme {
     };
     button: IButtonColors & {
       danger: IButtonColors;
-    };
-    account: {
-      headerImage: SvgIconName;
     };
     checkbox: ICheckboxColors;
     radio: ISelectionColors;
