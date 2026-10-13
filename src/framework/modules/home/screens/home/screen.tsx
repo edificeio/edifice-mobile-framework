@@ -14,6 +14,7 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { withSession } from '~/framework/modules/auth/util';
 import { TopTabBar, TopTabBarProps } from '~/framework/modules/home/components';
 import { HomeReloadProvider, useHomeReloadValue } from '~/framework/modules/home/hooks';
+import moduleConfig from '~/framework/modules/home/module-config';
 import { HomeNotificationsScreen, HomeNotificationsScreenOptions } from '~/framework/modules/home/screens/notifications';
 import { HomeOverviewScreen, HomeOverviewScreenOptions } from '~/framework/modules/home/screens/overview';
 import { accountTypeInfos } from '~/framework/util/accountType';
@@ -62,7 +63,8 @@ export const HomeScreen = withSession<HomeScreenProps>(({ navigation, session })
   const reload = useHomeReloadValue();
 
   const workflows = React.useMemo(
-    () => getTimelineWorkflows(session, navigation as unknown as Parameters<typeof getTimelineWorkflows>[1]),
+    () =>
+      getTimelineWorkflows(session, navigation as unknown as Parameters<typeof getTimelineWorkflows>[1], moduleConfig.trackingName),
     [navigation, session],
   );
 
