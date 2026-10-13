@@ -5,18 +5,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { SECTION_ICON_SIZE } from '~/framework/modules/widgets/carnet-de-board/model';
 
 export default StyleSheet.create({
-  body: {
-    backgroundColor: theme.palette.grey.pearl,
-    borderRadius: UI_SIZES.radius.mediumPlus,
-  },
-  empty: {
-    alignItems: 'center',
-    gap: UI_SIZES.spacing.small,
-    padding: UI_SIZES.spacing.medium,
-  },
-  emptyText: {
-    textAlign: 'center',
-  },
   icon: {
     alignItems: 'center',
     borderRadius: UI_SIZES.radius.newCard,
