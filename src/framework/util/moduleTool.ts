@@ -651,6 +651,14 @@ export type AnyNavigableModule = NavigableModule<string, INavigableModuleConfig<
 // They may have a config override with the array-style syntax
 export type ModuleInclusion<ModuleType extends UnknownModule> = [ModuleType, IUnkownModuleConfig?] | ModuleType;
 
+/** Whether the account is granted the rights a module asks for. */
+export const isModuleAvailable = (module: UnknownModule, session: AuthActiveAccount) =>
+  module.config.hasRight({
+    matchingApps: module.config.getMatchingEntcoreApps(session.rights.apps),
+    matchingWidgets: module.config.getMatchingEntcoreWidgets(session.rights.widgets),
+    session,
+  });
+
 /**
  * An set of loaded modules.
  * This class extends built-in Array object.
@@ -662,15 +670,7 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
   }
 
   filterAvailables(session: AuthActiveAccount) {
-    return new ModuleArray<ModuleType>(
-      ...this.filter(m => {
-        return m.config.hasRight({
-          matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
-          matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
-          session,
-        });
-      }),
-    );
+    return new ModuleArray<ModuleType>(...this.filter(m => isModuleAvailable(m, session)));
   }
 
   getReducers() {
@@ -724,15 +724,7 @@ export class NavigableModuleArray<
   }
 
   filterAvailables(session: AuthActiveAccount) {
-    return new NavigableModuleArray<ModuleType>(
-      ...this.filter(m =>
-        m.config.hasRight({
-          matchingApps: m.config.getMatchingEntcoreApps(session.rights.apps),
-          matchingWidgets: m.config.getMatchingEntcoreWidgets(session.rights.widgets),
-          session: session,
-        }),
-      ),
-    );
+    return new NavigableModuleArray<ModuleType>(...this.filter(m => isModuleAvailable(m, session)));
   }
 }
 
