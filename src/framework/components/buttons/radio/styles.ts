@@ -14,11 +14,14 @@ export default StyleSheet.create({
     color: theme.palette.grey.grey,
   },
   iconContainer: {
-    borderRadius: 50,
+    // A circle: half the halo, taken on the smaller size since both share this style.
+    borderRadius: (UI_SIZES.elements.radio.small + 2 * UI_SIZES.spacing.tiny) / 2,
+    // Android only honours the radius when it has to clip to it.
+    overflow: 'hidden',
     padding: UI_SIZES.spacing.tiny,
   },
   iconPressedContainer: {
-    backgroundColor: theme.palette.primary.pale,
+    backgroundColor: theme.ui.radio.highlight,
   },
   labelText: {
     flexShrink: 1,
