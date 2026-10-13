@@ -9,6 +9,7 @@ import ResourcePicker from '~/framework/components/explorer/resource-picker';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
+import { dispatchBlogPostOnSuccessAction } from '~/framework/modules/blog/navigation/actions';
 import { BlogList } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
@@ -16,6 +17,8 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 
 export interface BlogSelectScreenNavParams {
   blogsData: BlogList;
+  // Where the user started from, which the created post is tracked under.
+  source: string;
 }
 export type BlogSelectScreenProps = NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.home>;
 
@@ -49,7 +52,12 @@ function BlogSelectScreenComponent(props: BlogSelectScreenProps) {
   }, [dispatch]);
 
   const onPressBlog = (blog: any) => {
-    props.navigation.navigate(blogRouteNames.blogCreatePost, { blog });
+    if (!session) return;
+    props.navigation.navigate(blogRouteNames.blogCreatePost, {
+      blog,
+      navActionOnSuccess: dispatchBlogPostOnSuccessAction(blog.id, session),
+      source: props.route.params.source,
+    });
   };
 
   const renderEmptyBlogList = () => {

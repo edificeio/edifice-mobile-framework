@@ -16,4 +16,5 @@ export default new ModuleConfig<'home', TimelineState>({
   // Todo: rename to 'home' once the timeline module is gone, with a migration. It is kept as is so
   // the preferences already saved on the devices are still found where the app looks for them.
   storageName: 'timeline',
+  trackingName: 'Timeline',
 });
