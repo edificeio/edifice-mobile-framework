@@ -10,6 +10,7 @@ import { createNativeStackNavigator, NativeStackNavigatorProps } from '@react-na
 import { useCoreModuleModals, useCoreModuleScreens, useModuleModals } from '~/app/module';
 import { useSessionStore } from '~/modules/auth/store/session';
 
+import { BaseStackScreenLayout } from './layout';
 import { hiddenStackScreenOptions, rootStackOptions, visibleStackScreenOptions } from './options';
 import { useTabNavigation } from './tabs';
 
@@ -78,6 +79,7 @@ export const useRootStackNavigation = () => {
     () =>
       createNativeStackNavigator({
         groups: Object.fromEntries(groupsOrder.map(k => [k, groups[k]])),
+        screenLayout: BaseStackScreenLayout,
         screenOptions: rootStackOptions,
       }),
     [groups, groupsOrder],
