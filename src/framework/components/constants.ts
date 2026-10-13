@@ -121,6 +121,11 @@ export const UI_SIZES = {
       large: 4,
       thin: 1,
     },
+
+    checkbox: {
+      default: { box: getScaleWidth(22), mark: getScaleWidth(19) },
+      small: { box: getScaleWidth(20), mark: getScaleWidth(17) },
+    },
     editor: {
       toolbarHeight: getScaleWidth(20) + 2 * getScaleWidth(8) + getScaleWidth(4) * 2,
     },
@@ -152,6 +157,10 @@ export const UI_SIZES = {
     navbarHeight: Platform.select({ default: 56, ios: 44 }),
     navbarIconSize: 24,
     navbarMargin: 16,
+    radio: {
+      default: getScaleWidth(24),
+      small: getScaleWidth(22),
+    },
     segmentedControl: {
       // The width the design gives a segment, which it keeps unless the control is told to fill
       // the width it is given.
@@ -164,6 +173,11 @@ export const UI_SIZES = {
     thumbnailFetchSize: {
       medium: '150x150',
       small: '100x100',
+    },
+    toggle: {
+      height: getScaleWidth(22),
+      thumb: getScaleWidth(18),
+      width: getScaleWidth(39),
     },
     videoThumbnail: 200,
   },
