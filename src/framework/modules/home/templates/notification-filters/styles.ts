@@ -22,7 +22,7 @@ export default StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.minor,
   },
   rowChecked: {
-    backgroundColor: theme.palette.primary.pale,
+    backgroundColor: theme.palette.primary.feather ?? theme.palette.primary.pale,
     borderColor: theme.palette.primary.light,
   },
   rowLabel: {
