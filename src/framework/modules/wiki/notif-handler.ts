@@ -1,7 +1,7 @@
 import { CommonActions } from '@react-navigation/native';
 
 import { wikiRouteNames } from '~/framework/modules/wiki/navigation';
-import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTab';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import {
   handleNotificationNavigationAction,

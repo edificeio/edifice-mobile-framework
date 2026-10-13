@@ -4,7 +4,7 @@
 import { CommonActions } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
-import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTab';
 import {
   handleNotificationNavigationAction,
   NotifHandlerThunkAction,

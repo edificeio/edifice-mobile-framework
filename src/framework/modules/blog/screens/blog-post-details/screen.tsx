@@ -12,7 +12,7 @@ import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import { BottomSheet } from '~/framework/components/BottomSheet';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
@@ -410,10 +410,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
                   {
                     onPress: () => {
                       this.doDeleteBlogPost(blogPostData!._id).then(() => {
-                        navigation.navigate(blogRouteNames.blogPostList, {
-                          blogId,
-                          forceReload: true,
-                        });
+                        navigation.navigate(
+                          blogRouteNames.blogPostList,
+                          {
+                            blogId,
+                            forceReload: true,
+                          },
+                          { pop: true },
+                        );
                       });
                     },
                     style: 'destructive',

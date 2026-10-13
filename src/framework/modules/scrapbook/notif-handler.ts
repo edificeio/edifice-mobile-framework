@@ -1,7 +1,7 @@
 import { CommonActions } from '@react-navigation/native';
 
 import { scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
-import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTab';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import {
   handleNotificationNavigationAction,
