@@ -6,7 +6,7 @@ import { TextSizeStyle } from '~/framework/components/text';
 
 export const styles = StyleSheet.create({
   activeDot: {
-    backgroundColor: theme.palette.primary.regular,
+    backgroundColor: theme.ui.button.content,
   },
   animation: {
     height: '100%',
@@ -69,7 +69,7 @@ export const styles = StyleSheet.create({
     fontSize: getScaleWidth(14),
   },
   navButtonText: {
-    color: theme.palette.primary.regular,
+    color: theme.ui.button.content,
     flexShrink: 1,
     fontSize: getScaleWidth(14),
   },
