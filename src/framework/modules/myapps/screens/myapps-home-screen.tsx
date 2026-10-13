@@ -2,11 +2,12 @@ import * as React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import { headerAction, screenOptions } from '~/app/navigation/util';
+import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
+import { NavBarAction } from '~/framework/components/navigation';
 import { Svg, SvgProps } from '~/framework/components/picture';
 import { Toggle } from '~/framework/components/toggle';
 import { MAOSProps, MyAppsFilters, MyAppsList, MyAppsMenuItem, MyAppsOnboardingModal } from '~/framework/modules/myapps/components';
@@ -93,52 +94,22 @@ const MyAppsHomeScreen = ({ navigation, route }: MyAppsHomeScreenProps) => {
 
   React.useEffect(() => {
     navigation.setOptions({
-      headerRight: props => (
+      headerRight: () => (
         <>
-          {
-            headerAction(
-              {
-                disabled: isAggregatedAppsEmpty,
-                icon: hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif',
-                onPress: handleOpenOnboarding,
-                testID: hasSeenOnboarding ? 'myapps-navbar-notif-empty' : 'myapps-navbar-notif',
-              },
-              props,
-            ).element
-          }
-          {
-            headerAction(
-              {
-                disabled: isAggregatedAppsEmpty,
-                icon: 'ui-options',
-                onPress: () => openBottomSheet('home_menu'),
-                testID: 'myapps-navbar-context-menu',
-              },
-              props,
-            ).element
-          }
+          <NavBarAction
+            disabled={isAggregatedAppsEmpty}
+            icon={hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif'}
+            onPress={handleOpenOnboarding}
+            testID={hasSeenOnboarding ? 'myapps-navbar-notif-empty' : 'myapps-navbar-notif'}
+          />
+          <NavBarAction
+            disabled={isAggregatedAppsEmpty}
+            icon="ui-options"
+            onPress={() => openBottomSheet('home_menu')}
+            testID="myapps-navbar-context-menu"
+          />
         </>
       ),
-      unstable_headerRightItems: props => [
-        headerAction(
-          {
-            disabled: isAggregatedAppsEmpty,
-            icon: hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif',
-            onPress: handleOpenOnboarding,
-            testID: hasSeenOnboarding ? 'myapps-navbar-notif-empty' : 'myapps-navbar-notif',
-          },
-          props,
-        ),
-        headerAction(
-          {
-            disabled: isAggregatedAppsEmpty,
-            icon: 'ui-options',
-            onPress: () => openBottomSheet('home_menu'),
-            testID: 'myapps-navbar-context-menu',
-          },
-          props,
-        ),
-      ],
     });
   }, [handleOpenOnboarding, hasSeenOnboarding, isAggregatedAppsEmpty, navigation, openBottomSheet]);
 
