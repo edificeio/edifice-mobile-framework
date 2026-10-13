@@ -4,7 +4,7 @@ import { CommonActions } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
-import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTab';
 import { openUrl } from '~/framework/util/linking';
 import {
   handleNotificationNavigationAction,

@@ -7,7 +7,7 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
-import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTab';
 import {
   handleNotificationNavigationAction,
   NotifHandlerThunkAction,
