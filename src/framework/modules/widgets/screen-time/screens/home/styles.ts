@@ -1,16 +1,11 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleFontSize, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  cardsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: UI_SIZES.spacing.medium,
-  },
   container: {
-    flex: 1,
+    flexGrow: 1,
   },
   contentContainer: {
     padding: UI_SIZES.spacing.medium,
@@ -22,68 +17,33 @@ export default StyleSheet.create({
     alignItems: 'center',
     marginBottom: UI_SIZES.spacing.medium,
   },
-  dropdownPicker: {
-    marginBottom: UI_SIZES.spacing.small,
-  },
-  infoIcon: {
-    marginLeft: UI_SIZES.spacing.tiny,
-  },
-  modalContent: {
-    padding: UI_SIZES.spacing.medium,
-  },
-  modalText: {
-    color: theme.palette.grey.black,
-    fontSize: 16,
+  info: {
+    alignSelf: 'center',
+    marginVertical: UI_SIZES.spacing.minor,
   },
   modeToggleContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: UI_SIZES.spacing.medium,
-  },
-  sectionTitle: {
-    color: theme.palette.grey.black,
-    marginBottom: UI_SIZES.spacing.tiny,
-    marginTop: UI_SIZES.spacing.tiny,
-    marginVertical: UI_SIZES.spacing.tiny,
-  },
-  sectionTitleContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
+    marginVertical: UI_SIZES.spacing.minor,
   },
 
   separator: {
     backgroundColor: theme.palette.grey.cloudy,
-    height: 2,
+    height: 1,
     marginVertical: UI_SIZES.spacing.tiny,
   },
-  tabToggleBackground: {
-    backgroundColor: theme.palette.grey.white,
-    borderRadius: 8,
-    flexDirection: 'row',
-    padding: 4,
-    position: 'relative',
+  summary: {
+    backgroundColor: theme.palette.complementary.yellow.pale,
+    borderColor: theme.palette.complementary.yellow.light,
+    borderRadius: UI_SIZES.radius.mediumPlus,
+    borderWidth: UI_SIZES.border.thin,
+    marginBottom: UI_SIZES.spacing.medium,
   },
-  tabToggleIndicator: {
-    backgroundColor: theme.palette.complementary.blue.pale,
-    borderRadius: UI_SIZES.radius.medium,
-    bottom: UI_SIZES.spacing.tiny,
-    left: UI_SIZES.spacing.tiny,
-    position: 'absolute',
-    top: UI_SIZES.spacing.tiny,
-    width: '50%',
+  users: {
+    marginBottom: UI_SIZES.spacing.small,
+    marginHorizontal: -UI_SIZES.spacing.medium,
   },
-  tabToggleIndicatorRight: {
-    left: '50%',
-  },
-  tabToggleItem: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
+  usersContent: {
     paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.tiny,
-  },
-  tabToggleText: {
-    fontSize: getScaleFontSize(14),
   },
 });
