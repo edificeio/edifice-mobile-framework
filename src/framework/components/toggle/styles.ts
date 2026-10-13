@@ -1,42 +1,43 @@
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-import theme from '~/app/theme';
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 
-export const styles = StyleSheet.create({
-  container: {
-    backgroundColor: theme.palette.grey.white,
-    borderColor: theme.palette.grey.grey,
-    borderRadius: UI_SIZES.radius.newCard,
-    borderWidth: 1,
-    height: UI_SIZES.spacing.big,
-    justifyContent: 'center',
-    width: getScaleWidth(34),
-  },
-  containerChecked: {
-    backgroundColor: theme.palette.primary.regular,
-    borderColor: theme.palette.primary.regular,
-  },
-  disabledThumb: {
-    backgroundColor: Platform.select({ android: theme.palette.primary.light, ios: theme.palette.primary.regular }),
-  },
-  thumb: {
-    backgroundColor: theme.palette.grey.stone,
-    borderRadius: getScaleWidth(UI_SIZES.dimensions.width.smallPlus) / 2,
-    height: getScaleWidth(UI_SIZES.dimensions.height.smallPlus),
-    width: getScaleWidth(UI_SIZES.dimensions.width.smallPlus),
-  },
-  thumbChecked: {
-    backgroundColor: theme.palette.grey.white,
-  },
-});
+const { height, thumb, width } = UI_SIZES.elements.toggle;
 
-const CONTAINER_WIDTH = getScaleWidth(34);
-const CONTAINER_BORDER = 1;
+const TRACK_BORDER_WIDTH = UI_SIZES.border.thin;
 
-const INNER_SPACING = 2;
+const INNER_SPACING = (height - 2 * TRACK_BORDER_WIDTH - thumb) / 2;
 
-const THUMB_SIZE = getScaleWidth(UI_SIZES.dimensions.width.smallPlus);
+const THUMB_CROSS_DISTANCE = width - 2 * TRACK_BORDER_WIDTH - 2 * INNER_SPACING - thumb;
+
+const HALO_SPACING = UI_SIZES.spacing.tiny;
+
+const HALO_RADIUS = (height + 2 * HALO_SPACING) / 2;
 
 export const TRANSLATE_X_OFF = INNER_SPACING;
-export const TRANSLATE_X_ON = CONTAINER_WIDTH - THUMB_SIZE - INNER_SPACING - CONTAINER_BORDER * 2;
+export const TRANSLATE_X_ON = INNER_SPACING + THUMB_CROSS_DISTANCE;
+
+export const styles = StyleSheet.create({
+  halo: {
+    alignItems: 'center',
+    borderRadius: HALO_RADIUS,
+    justifyContent: 'center',
+    overflow: 'hidden',
+    padding: HALO_SPACING,
+  },
+  pressable: {
+    alignSelf: 'flex-start',
+  },
+  thumb: {
+    borderRadius: thumb / 2,
+    height: thumb,
+    width: thumb,
+  },
+  track: {
+    borderRadius: height / 2,
+    borderWidth: TRACK_BORDER_WIDTH,
+    height,
+    justifyContent: 'center',
+    width,
+  },
+});

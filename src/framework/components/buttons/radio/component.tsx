@@ -1,17 +1,27 @@
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
 
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { Svg } from '~/framework/components/picture';
+import { BodyText, SmallText } from '~/framework/components/text';
+
 import styles from './styles';
 import type { RadioButtonProps } from './types';
 
-import theme from '~/app/theme';
-import { Svg } from '~/framework/components/picture';
-import { BodyText, SmallText } from '~/framework/components/text';
+const colors = theme.ui.radio;
+
+// The glyph is drawn in one colour: the accent once chosen, the stroke of an empty ring until then.
+const radioIconColor = (isChecked?: boolean, isDisabled?: boolean, isPressed?: boolean) => {
+  if (isChecked) return isDisabled ? colors.disabledBackground : colors.background;
+  if (isDisabled) return colors.disabledOffBorder;
+  return isPressed ? colors.pressedOffBorder : colors.offBorder;
+};
 
 export const RadioButton = ({ isChecked, isDisabled, label, onPress, size = 'default', style }: RadioButtonProps) => {
   const [isPressed, setPressed] = React.useState<boolean>(false);
   const LabelTextComponent = size === 'default' ? BodyText : SmallText;
-  const iconSize = size === 'default' ? 24 : 22;
+  const iconSize = UI_SIZES.elements.radio[size];
 
   const onPressIn = () => setPressed(true);
 
@@ -32,17 +42,7 @@ export const RadioButton = ({ isChecked, isDisabled, label, onPress, size = 'def
           name={isChecked ? 'ui-radio-checked' : 'ui-radio-unchecked'}
           width={iconSize}
           height={iconSize}
-          fill={
-            isChecked
-              ? isDisabled
-                ? theme.palette.primary.light
-                : theme.palette.primary.regular
-              : isDisabled
-                ? theme.palette.grey.grey
-                : isPressed
-                  ? theme.palette.primary.regular
-                  : theme.palette.grey.graphite
-          }
+          fill={radioIconColor(isChecked, isDisabled, isPressed)}
         />
       </View>
     </Pressable>
