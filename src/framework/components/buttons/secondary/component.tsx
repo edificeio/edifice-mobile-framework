@@ -1,29 +1,37 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-
-import styles from './styles';
-import { SecondaryButtonProps } from './types';
 
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 
+import styles from './styles';
+import { SecondaryButtonProps } from './types';
+
+const colors = theme.ui.button;
+
+const stroke = (disabled?: boolean, pressed?: boolean) => {
+  if (disabled) return { background: undefined, border: colors.disabledBackground, content: colors.disabledContent };
+  if (pressed) return { background: colors.highlight, border: colors.pressedBackground, content: colors.pressedContent };
+  return { background: undefined, border: colors.background, content: colors.content };
+};
+
 const SecondaryButton = (props: SecondaryButtonProps) => {
-  const initialContentColor = theme.palette.primary.regular;
+  const [pressed, setPressed] = React.useState(false);
 
-  const [contentColor, setContentColor] = useState(initialContentColor);
+  const state = stroke(props.disabled, pressed);
 
-  useEffect(() => {
-    if (props.disabled) setContentColor(theme.palette.primary.light);
-    if (!props.disabled && contentColor === theme.palette.primary.light) setContentColor(initialContentColor);
-  });
   return (
     <DefaultButton
       {...props}
       activeOpacity={1}
-      onPressIn={() => setContentColor(theme.palette.primary.dark)}
-      onPressOut={() => setContentColor(initialContentColor)}
-      style={[styles.secondary, { borderColor: contentColor }, { ...(props.round ? styles.round : {}) }, props.style]}
-      contentColor={contentColor}
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
+      style={[
+        styles.secondary,
+        { backgroundColor: state.background, borderColor: state.border },
+        { ...(props.round ? styles.round : {}) },
+        props.style,
+      ]}
+      contentColor={props.contentColor ?? state.content}
     />
   );
 };
