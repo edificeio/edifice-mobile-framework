@@ -1,30 +1,17 @@
 import React from 'react';
-import { View } from 'react-native';
 
 import { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
-import { useSignInStore } from '~/app/navigation-new/store';
-import { PrimaryButton } from '~/framework/components/button';
-import { BodyText } from '~/framework/components/text';
+
+import { AuthNavigationWrapper } from '../navigation/navigation-container';
 
 const AuthLoadAccountScreen = React.memo(function ({}: StaticScreenProps<undefined>) {
-  const signIn = useSignInStore(s => s.signIn);
-  return (
-    <View>
-      <BodyText>AuthLoadAccountScreen</BodyText>
-      <PrimaryButton
-        testID="login"
-        text="Se connecter"
-        onPress={() => {
-          signIn({ id: 'aaaa' });
-        }}
-      />
-    </View>
-  );
+  // const signIn = useSignInStore(s => s.signIn);
+  return <AuthNavigationWrapper />;
 });
 AuthLoadAccountScreen.displayName = 'AuthLoadAccountScreen';
 export default defineScreen({
-  options: { title: 'Connexion' },
+  options: { headerShown: false, title: 'Connexion' },
   screen: AuthLoadAccountScreen,
 });
