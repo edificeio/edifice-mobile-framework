@@ -3,15 +3,28 @@ import { View } from 'react-native';
 
 import { Moment } from 'moment';
 
+import theme from '~/app/theme';
+import IconButton from '~/framework/components/buttons/icon';
+import { BodyText } from '~/framework/components/text';
+import { addTime, displayWeekRange, subtractTime, today } from '~/framework/util/date';
+
 import styles from './styles';
 import { WeekPickerProps } from './types';
 
-import IconButton from '~/framework/components/buttons/icon';
-import { SmallText } from '~/framework/components/text';
-import { addTime, subtractTime } from '~/framework/util/date';
+const DISABLED_ICON_COLOR = theme.palette.grey.stone;
 
-const WeekPicker = ({ disabled = false, onWeekChange, selectedWeekStart, style }: WeekPickerProps) => {
+const WeekPicker = ({
+  disabled = false,
+  iconColor = theme.palette.primary.regular,
+  onWeekChange,
+  selectedWeekStart,
+  style,
+}: WeekPickerProps) => {
   const [currentWeekStart, setCurrentWeekStart] = React.useState<Moment>(selectedWeekStart.clone().startOf('week'));
+
+  const displayLabel = displayWeekRange(currentWeekStart);
+
+  const canGoNext = currentWeekStart.isBefore(today(), 'week');
 
   React.useEffect(() => {
     setCurrentWeekStart(selectedWeekStart.clone().startOf('week'));
@@ -25,26 +38,26 @@ const WeekPicker = ({ disabled = false, onWeekChange, selectedWeekStart, style }
   };
 
   const handleNextWeek = () => {
-    if (disabled) return;
+    if (disabled || !canGoNext) return;
     const newWeekStart = addTime(currentWeekStart, 1, 'week');
     setCurrentWeekStart(newWeekStart);
     onWeekChange(newWeekStart);
   };
 
-  const formatWeekDisplay = (weekStart: Moment) => {
-    const weekEnd = weekStart.clone().endOf('week');
-    return `${weekStart.format('DD/MM')} - ${weekEnd.format('DD/MM/YYYY')}`;
-  };
-
   return (
     <View style={[styles.container, disabled && styles.disabledContainer, style]}>
-      <IconButton icon="ui-rafterLeft" disabled={disabled} action={handlePreviousWeek} />
+      <IconButton icon="ui-rafterLeft" color={iconColor} disabled={disabled} action={handlePreviousWeek} />
 
       <View style={styles.weekTextContainer}>
-        <SmallText style={styles.weekText}>{formatWeekDisplay(currentWeekStart)}</SmallText>
+        <BodyText style={styles.weekText}>{displayLabel}</BodyText>
       </View>
 
-      <IconButton icon="ui-rafterRight" disabled={disabled} action={handleNextWeek} />
+      <IconButton
+        icon="ui-rafterRight"
+        color={canGoNext ? iconColor : DISABLED_ICON_COLOR}
+        disabled={disabled || !canGoNext}
+        action={handleNextWeek}
+      />
     </View>
   );
 };
