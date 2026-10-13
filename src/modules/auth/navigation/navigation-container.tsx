@@ -13,6 +13,8 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import { navigationLightTheme } from '~/app/navigation-new/theme';
+
 import signInModule from '../signIn';
 
 export function AuthNavigationWrapper() {
@@ -50,7 +52,12 @@ export function AuthNavigationWrapper() {
   // Note: `useState` is used here only to prevent re-renders
   const [tree] = React.useState(() => (
     <NavigationIndependentTree>
-      <AuthNavigation ref={navigationRef} onUnhandledAction={onUnhandledAction} initialState={navigationState} />
+      <AuthNavigation
+        theme={navigationLightTheme}
+        ref={navigationRef}
+        onUnhandledAction={onUnhandledAction}
+        initialState={navigationState}
+      />
     </NavigationIndependentTree>
   ));
 
