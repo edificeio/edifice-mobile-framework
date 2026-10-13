@@ -4,18 +4,17 @@ import { ScrollView, View } from 'react-native';
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import Animated from 'react-native-reanimated';
 
-import { EntModule } from '~/app/module';
+import { CoreModule, EntModule } from '~/app/module';
 import { defineModal, defineScreen, sharedTransitions, StackNavigation, useConfirmRemove } from '~/app/navigation-new';
 import { PrimaryButton } from '~/framework/components/button';
 import { BodyText } from '~/framework/components/text';
-
-import { useSignInStore } from '../navigation-new/store';
+import { useSessionStore } from '~/modules/auth/store/session';
 
 function AModuleHomeScreen({}: StaticScreenProps<{
   aParam: boolean;
 }>) {
   const navigation = useNavigation();
-  const { signOut } = useSignInStore();
+  const { signOut } = useSessionStore();
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
       <BodyText>A Home Screen</BodyText>
@@ -105,7 +104,7 @@ const AModuleModalScreenDeclaration = defineModal({
   screen: AModuleModalScreen,
 });
 
-export default new EntModule({
+export default new CoreModule({
   modals: {
     'amodule/modal': AModuleModalScreenDeclaration,
   },
@@ -114,5 +113,5 @@ export default new EntModule({
     'amodule/details': AModuleDetailsScreenDeclaration,
     'amodule/home': AModuleHomeScreenDeclaration,
   },
-  tab: { iconActive: 'ui-camera', iconInactive: 'ui-anniversary', order: 1, route: 'amodule/home', testId: 'a' },
+  // tab: { iconActive: 'ui-camera', iconInactive: 'ui-anniversary', order: 1, route: 'amodule/home', testId: 'a' },
 });

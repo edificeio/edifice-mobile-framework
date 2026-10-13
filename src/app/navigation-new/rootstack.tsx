@@ -8,9 +8,9 @@ import React from 'react';
 import { createNativeStackNavigator, NativeStackNavigatorProps } from '@react-navigation/native-stack';
 
 import { useCoreModuleModals, useCoreModuleScreens, useModuleModals } from '~/app/module';
+import { useSessionStore } from '~/modules/auth/store/session';
 
 import { hiddenStackScreenOptions, rootStackOptions, visibleStackScreenOptions } from './options';
-import { useSignInStore } from './store';
 import { useTabNavigation } from './tabs';
 
 type RootStackGroups = Record<
@@ -22,8 +22,8 @@ type RootStackGroups = Record<
   }
 >;
 
-const useIsSignedIn = () => useSignInStore(s => !!s.session);
-const useIsSignedOut = () => useSignInStore(s => !s.session);
+const useIsSignedIn = () => useSessionStore(s => !!s.session);
+const useIsSignedOut = () => useSessionStore(s => !s.session);
 
 const GUEST_START_SCREEN: keyof ReturnType<typeof useCoreModuleScreens> = 'auth/load-account';
 
