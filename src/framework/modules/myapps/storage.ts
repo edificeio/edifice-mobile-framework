@@ -1,4 +1,3 @@
-import moduleConfig from '~/framework/modules/myapps/module-config';
 import { Storage } from '~/framework/util/storage';
 
 export interface MyAppsOnboardingData {
@@ -13,12 +12,22 @@ type MyAppsPreferencesData = {
 
 const oldStorageKey = 'infoBubbleAck-myAppsScreen.redirect';
 
-const myAppsStorage = Storage.preferences<MyAppsPreferencesData>(async function () {
-  Storage.global.remove(oldStorageKey);
-}).setPrefix(moduleConfig.storageName);
+const myAppsStorage = Storage.account<MyAppsPreferencesData>({
+  migrations: [
+    {
+      id: 'remove-info-bubble-v1',
+      run: () => {
+        Storage.global.remove(oldStorageKey);
+      },
+    },
+  ],
+  namespace: 'myapps',
+});
 
 export const readShowAllApps = (): boolean => {
-  return myAppsStorage.getBoolean('show-all-apps') ?? false;
+  // `true` while nothing is stored, as it always was: `getBoolean` used to read a missing boolean as `true`, whatever the default here
+  // said (see `StorageHandler.getBoolean`). Kept so the app behaves the same for the users who never changed it.
+  return myAppsStorage.getBoolean('show-all-apps') ?? true;
 };
 
 export const writeShowAllApps = (value: boolean) => {

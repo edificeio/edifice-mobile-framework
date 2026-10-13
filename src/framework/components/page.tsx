@@ -16,7 +16,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
 import { KeyboardAvoidingView } from '~/framework/components/keyboard';
-import Notifier from '~/framework/util/notifier';
 
 import { UI_SIZES } from './constants';
 import { ScreenView } from './screen';
@@ -66,7 +65,6 @@ export const PageView = (props: PageViewProps) => {
   const page = (
     <PageViewStyle {...viewProps}>
       <>
-        <Notifier id={route.name} />
         <View style={gutterStyle}>{children}</View>
       </>
     </PageViewStyle>

@@ -1,8 +1,4 @@
-//const STORAGE_KEY = `${moduleConfig.name}.showAverageColors`;^
-
 import { Storage } from '~/framework/util/storage';
-
-import moduleConfig from './module-config';
 
 export interface CompetencesStorageData {
   'show-average-colors': boolean;
@@ -10,10 +6,20 @@ export interface CompetencesStorageData {
 
 const oldStorageKey = 'competences.showAverageColors';
 
-export const storage = Storage.create<CompetencesStorageData>(async function () {
-  const oldValue = Storage.global.getString(oldStorageKey) as 'true' | 'false' | undefined;
-  if (oldValue === 'true') {
-    this.set('show-average-colors', true);
-  }
-  Storage.global.remove(oldStorageKey);
-}).setPrefix(moduleConfig.storageName);
+export const storage = Storage.device<CompetencesStorageData>({
+  migrations: [
+    {
+      id: 'show-average-colors-v1',
+      run: handler => {
+        const oldValue = Storage.global.getString(oldStorageKey) as 'true' | 'false' | undefined;
+        // Only `true` is carried over: a missing value reads as `true` anyway (see `readShowAllApps`-like adaptation in the home screen),
+        // which is what `false` used to give too, as `getBoolean` read a missing boolean as `true`.
+        if (oldValue === 'true') {
+          handler.set('show-average-colors', true);
+        }
+        Storage.global.remove(oldStorageKey);
+      },
+    },
+  ],
+  namespace: 'competences',
+});

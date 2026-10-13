@@ -16,14 +16,16 @@ export let AllModules: AllModulesArray = [] as unknown as AllModulesArray;
 
 const ModuleContext = React.createContext<AllModulesArray | undefined>(undefined);
 
-const loadModules = Promise.all(moduleImports);
-export const ModuleLoader = React.memo(function ({ children }: React.PropsWithChildren) {
-  // Load all modules
-  const modules = React.use(loadModules).map(m => {
+// Built once, outside of the renders: what depends on the modules (the session lifecycle of auth) needs a stable array
+const loadModules = Promise.all(moduleImports).then(imported =>
+  imported.map(m => {
     __DEV__ && console.debug(`[Module] Loaded module ${m.default.name}.`);
     return m.default;
-  });
-
+  }),
+);
+export const ModuleLoader = React.memo(function ({ children }: React.PropsWithChildren) {
+  // Load all modules
+  const modules = React.use(loadModules);
   return <ModuleContext value={modules}>{children}</ModuleContext>;
 });
 ModuleLoader.displayName = 'ModuleLoader';

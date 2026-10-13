@@ -1,12 +1,15 @@
 import { AuthMixedAccountMap, AuthPendingRedirection, AuthRequirement, LegalUrls, PlatformAuthContext } from '../model';
-import type { AuthStorageData } from '../storage';
 
+/**
+ * Shape of the former auth redux state, now split in the zustand stores of `~/modules/auth/store`.
+ * @deprecated use the stores of `~/modules/auth/store` and the types of `~/modules/auth/model`.
+ */
 export interface AuthState {
   accounts: AuthMixedAccountMap; // account list with populated info
   connected?: keyof AuthState['accounts']; // Currently logged user if so
   requirement?: AuthRequirement; // Requirement for the current account
   lastDeletedAccount?: keyof AuthState['accounts']; // Last account was deleted
-  showOnboarding: AuthStorageData['show-onboarding'];
+  showOnboarding: boolean;
   platformContexts: Record<string, PlatformAuthContext | undefined>; // Platform contexts by pf name
   platformLegalUrls: Record<string, LegalUrls>; // Platform legal urls by pf name
   validReactionTypes: string[]; // Valid reaction types for audience

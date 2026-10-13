@@ -11,17 +11,27 @@ import React from 'react';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { createStaticNavigation } from '@react-navigation/native';
 
+import { useTelemetryDelegatedRoutes } from '~/app/module/hooks';
+import { ToastContainer } from '~/framework/components/toast';
 import { CloudMessagingProvider } from '~/framework/util/notifications/cloudMessaging';
 
 import { ConfirmRemoveProvider } from './confirm-remove';
-import { useRootStackNavigation } from './rootStack';
+import { useRootStackNavigation } from './root-stack';
 import { useScreenTelemetry } from './telemetry';
+import { navigationLightTheme } from './theme';
 
+export { useIsModal } from './layout';
 export * from './screen';
 export * from './types';
 export * from './confirm-remove';
+export { getTabScreenName } from './tabs';
 
-export const AppNavigation = React.memo(function () {
+export interface AppNavigationProps {
+  /** Called once the navigation is ready, after the telemetry. Must be stable (the navigation is not meant to re-render). */
+  onReady?: () => void;
+}
+
+export const AppNavigation = React.memo(function ({ onReady: _onReady }: AppNavigationProps) {
   // Ensure static navigation is only created once.
   const isMounted = React.useRef(false);
   if (isMounted.current) {
@@ -36,13 +46,28 @@ export const AppNavigation = React.memo(function () {
     <ConfirmRemoveProvider>
       <BottomSheetModalProvider>
         <CloudMessagingProvider>
-          <Navigator />
+          <BottomSheetModalProvider>
+            <Navigator />
+            <ToastContainer />
+          </BottomSheetModalProvider>
         </CloudMessagingProvider>
       </BottomSheetModalProvider>
     </ConfirmRemoveProvider>
   ));
   const Navigation = createStaticNavigation(rootStack);
-  const { onReady, onScreenChange, onUnhandledAction } = useScreenTelemetry();
-  return <Navigation onReady={onReady} onStateChange={onScreenChange} onUnhandledAction={onUnhandledAction} />;
+  const ignoredRoutes = useTelemetryDelegatedRoutes();
+  const { onReady: onReadyTelemetry, onScreenChange, onUnhandledAction } = useScreenTelemetry({ ignoredRoutes });
+  const onReady = React.useCallback(() => {
+    onReadyTelemetry();
+    _onReady?.();
+  }, [_onReady, onReadyTelemetry]);
+  return (
+    <Navigation
+      theme={navigationLightTheme}
+      onReady={onReady}
+      onStateChange={onScreenChange}
+      onUnhandledAction={onUnhandledAction}
+    />
+  );
 });
 AppNavigation.displayName = 'AppNavigation';

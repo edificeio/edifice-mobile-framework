@@ -1,9 +1,5 @@
 import * as React from 'react';
 
-import { useDispatch } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
-
-import { I18n } from '~/util/i18n';
 import { ModuleScreenProps } from '~/app/navigation/types';
 import { modalScreenOptions } from '~/app/navigation/util';
 import ChangePasswordScreen from '~/framework/modules/auth/templates/change-password';
@@ -12,9 +8,9 @@ import {
   AuthChangePasswordScreenProps,
   AuthChangePasswordScreenStoreProps,
 } from '~/framework/modules/auth/templates/change-password/types';
-import { buildChangePasswordActionReplaceAccount } from '~/framework/modules/auth/thunks';
 import { withSession } from '~/framework/modules/auth/util';
-import appConf from '~/framework/util/appConf';
+import { useAuthFlows } from '~/modules/auth/flows';
+import { I18n } from '~/util/i18n';
 
 export const UserChangePasswordScreenOptions = modalScreenOptions('fullScreenModal', () => ({
   title: I18n.get('user-page-editpassword'),
@@ -38,25 +34,13 @@ export const UserChangePasswordScreen = withSession<UserChangePasswordScreenProp
   navigation,
   session,
 }) {
-  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const { changePassword } = useAuthFlows();
   const onSubmit: AuthChangePasswordScreenProps['onSubmit'] = React.useCallback(
     async payload => {
-      await dispatch(
-        buildChangePasswordActionReplaceAccount(session.user.id, session.addTimestamp)(
-          appConf.getHost(session.platform.name),
-          {
-            confirm: payload.confirm,
-            login: session.user.login,
-            newPassword: payload.newPassword,
-            oldPassword: payload.oldPassword,
-          },
-          false,
-          true,
-        ),
-      );
+      await changePassword({ confirm: payload.confirm, newPassword: payload.newPassword, oldPassword: payload.oldPassword });
       navigation.goBack();
     },
-    [dispatch, navigation, session.addTimestamp, session.platform.name, session.user.id, session.user.login],
+    [changePassword, navigation],
   );
   return <ChangePasswordScreen onSubmit={onSubmit} prefillType="password" host={session.platform.name} />;
 });
