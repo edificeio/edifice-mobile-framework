@@ -57,6 +57,9 @@ export const useRootStackNavigation = () => {
         },
         UserScreens: {
           if: useIsSignedIn,
+          // Default animation to go on this screen is buggy adn show artifacts int the corner of the screen.
+          // 'simple_push' as a fallback use a rectangle container instead of rounded one, preventing the issue.
+          // ToDo: check with react-navigation@8 if this fix is still necessary.
           screenOptions: { ...hiddenStackScreenOptions, animation: 'simple_push' },
           screens: { $tabs: tabs },
         },
