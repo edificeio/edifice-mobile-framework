@@ -1,5 +1,6 @@
 import React from 'react';
 
+import theme from '~/app/theme';
 import { SmallBoldText } from '~/framework/components/text';
 
 import { BasePillButton } from './base';
@@ -15,8 +16,8 @@ export const SecondaryButton = React.memo(function SecondaryButton({ disabled, s
         [disabled, style],
       )}
       activeStyle={styles.secondaryActive}
-      contentColor={disabled ? styles.secondaryDisabled.borderColor : styles.secondary.borderColor}
-      contentColorActive={styles.secondaryActive.borderColor}
+      contentColor={disabled ? theme.ui.button.disabledContent : theme.ui.button.content}
+      contentColorActive={theme.ui.button.pressedContent}
       TextComponent={SmallBoldText}
       {...props}
     />
