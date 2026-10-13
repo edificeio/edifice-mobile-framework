@@ -16,6 +16,7 @@ import { CloudMessagingProvider } from '~/framework/util/notifications/cloudMess
 import { ConfirmRemoveProvider } from './confirm-remove';
 import { useRootStackNavigation } from './rootStack';
 import { useScreenTelemetry } from './telemetry';
+import { navigationLightTheme } from './theme';
 
 export * from './screen';
 export * from './types';
@@ -44,6 +45,13 @@ export const AppNavigation = React.memo(function () {
   ));
   const Navigation = createStaticNavigation(rootStack);
   const { onReady, onScreenChange, onUnhandledAction } = useScreenTelemetry();
-  return <Navigation onReady={onReady} onStateChange={onScreenChange} onUnhandledAction={onUnhandledAction} />;
+  return (
+    <Navigation
+      theme={navigationLightTheme}
+      onReady={onReady}
+      onStateChange={onScreenChange}
+      onUnhandledAction={onUnhandledAction}
+    />
+  );
 });
 AppNavigation.displayName = 'AppNavigation';
