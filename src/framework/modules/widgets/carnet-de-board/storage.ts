@@ -1,6 +1,6 @@
-import moduleConfig from './module-config';
-
 import { Storage } from '~/framework/util/storage';
+
+import moduleConfig from './module-config';
 
 export interface TimelineStorageData {}
 
@@ -20,3 +20,8 @@ export const preferences = Storage.preferences<PronotePreferencesData>(moduleCon
     Storage.global.remove(oldStorageKey);
   }
 });
+
+export const selectedChildStorage = {
+  read: () => preferences.getString('carnet-de-bord.selected-user') ?? undefined,
+  write: (id: string) => preferences.set('carnet-de-bord.selected-user', id),
+};
