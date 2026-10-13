@@ -163,16 +163,22 @@ export const styles = StyleSheet.create({
   },
 
   headerBackButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
     // Override items padding because react-navigation's styling is broken
     marginLeft: 0,
     marginRight: 0,
+    minHeight: UI_SIZES.elements.navbarButtonTouchSize,
     paddingHorizontal: UI_SIZES.spacing.minor,
     paddingVertical: UI_SIZES.spacing.minor,
   },
   headerButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
     // Override items padding because react-navigation's styling is broken
     marginLeft: 0,
     marginRight: 0,
+    minHeight: UI_SIZES.elements.navbarButtonTouchSize,
     paddingHorizontal: UI_SIZES.spacing.minor,
     paddingVertical: UI_SIZES.spacing.minor,
   },
