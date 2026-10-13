@@ -2,12 +2,8 @@ import * as React from 'react';
 import { FlatList, ScrollView, ScrollViewProps, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-import styles from './styles';
-import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -32,7 +28,9 @@ import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { Trackers } from '~/framework/util/tracker';
+
+import styles from './styles';
+import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -136,18 +134,6 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       if (!session) throw new Error();
       await presencesService.call.updateState(session, id, CallState.DONE);
       navigation.goBack();
-
-      //Tracking
-      const now = moment();
-      const isPast = now.isAfter(course.endDate);
-      const isDone = course.callStateId === CallState.DONE;
-      const event = (): string => {
-        if (isPast && isDone) return 'ancien-validé';
-        if (isPast && !isDone) return 'ancien-non-validé';
-        if (!isPast && isDone) return 'courant-validé';
-        return 'courant-non-validé';
-      };
-      Trackers.trackEvent('Présences', 'faire-appel', event());
 
       Toast.showSuccess(
         I18n.get('presences-call-successmessage', { class: course.classes.length ? course.classes : course.groups }),

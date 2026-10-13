@@ -28,7 +28,6 @@ import {
 } from '~/framework/modules/homework/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
-import { Trackers } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
 
 import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
@@ -200,7 +199,6 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
       diaryId: this.props.diaryId!,
       navActionOnSuccess: StackActions.pop(),
     });
-    Trackers.trackEvent('Homework', 'GO TO', 'Create');
   };
 
   refreshEntries = async () => {

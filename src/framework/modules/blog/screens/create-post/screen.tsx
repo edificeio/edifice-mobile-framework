@@ -26,7 +26,6 @@ import {
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
 import { BlogCreatePostScreenDataProps, BlogCreatePostScreenEventProps, BlogCreatePostScreenProps } from './types';
@@ -76,20 +75,12 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
 
       // Track action, load/navigate to timeline and display toast
       const blogPostDisplayRight = blogPostRight.displayRight;
-      const event = {
-        [createBlogPostResourceRight]: 'Enregistrer',
-        [publishBlogPostResourceRight]: 'Publier',
-        [submitBlogPostResourceRight]: 'Soumettre',
-      }[blogPostDisplayRight];
-      const eventName = `Rédaction blog - ${event}`;
-      const eventCategory = route.params.referrer ? 'Blog' : 'Timeline';
       const toastSuccessText = {
         [createBlogPostResourceRight]: I18n.get('blog-createpost-create-success'),
         [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish-success'),
         [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit-success'),
       }[blogPostDisplayRight];
 
-      Trackers.trackEvent(eventCategory, 'Créer un billet', eventName);
       await handleInitTimeline();
       navigation.navigate(
         route.params.referrer ?? timelineRouteNames.Home,
