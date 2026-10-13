@@ -3,6 +3,14 @@ import { AppRegistry } from 'react-native';
 // Must stay the first import after react-native (side effect): see the module.
 import './src/app/debug/error-handler';
 
+Log.init();
+if (__DEV__) {
+  globalThis.RNFBDebug = true;
+  require('./src/app/debug/promise-rejections').trackPromiseRejections();
+  require('./src/app/reactotron.ts');
+  console.debug('Reactotron initialized');
+}
+
 // Add URLSearchParams polyfill as it is not implemented in React Native.
 // @see https://github.com/facebook/react-native/issues/23922#issuecomment-648096619
 import 'react-native-url-polyfill/auto';
@@ -16,14 +24,5 @@ import './wdyr';
 // from https://stackoverflow.com/a/35305611/6111343
 // in React Native, `process.nextTick` doesn't exist.
 process.nextTick = setImmediate;
-
-if (__DEV__) {
-  globalThis.RNFBDebug = true;
-  require('./src/app/debug/promise-rejections').trackPromiseRejections();
-  require('./src/app/reactotron.ts');
-  console.debug('Reactotron initialized');
-}
-
-Log.init();
 
 AppRegistry.registerComponent(appName, () => App);

@@ -1,0 +1,67 @@
+import * as React from 'react';
+import { TouchableOpacity, View } from 'react-native';
+
+import theme from '~/app/theme';
+import { SingleAvatar } from '~/framework/components/avatar';
+import IconButton from '~/framework/components/buttons/icon';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { i18nAccountTypes } from '~/framework/components/text/account-type';
+import type { AccountListItemProps } from '~/modules/auth/components/account-list/item-types';
+import styles from '~/modules/auth/components/account-list/styles';
+import { AuthLoggedAccount, AuthSavedAccount } from '~/modules/auth/model';
+import { I18n } from '~/util/i18n';
+
+const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
+  getAvatarSource,
+  index,
+  item,
+  item: {
+    user: { displayName, id, type },
+  },
+  onDelete,
+  onPress,
+  selected,
+  separators,
+}: AccountListItemProps<ItemT>) => {
+  const containerBackgroundColor = { backgroundColor: selected ? theme.palette.primary.pale : theme.ui.background.card };
+  const typeColor = { color: theme.color.profileTypes[type] };
+  const typeText = I18n.get(i18nAccountTypes[type]);
+  const numberOfLines = 1;
+  const onSelectAccount = async () => {
+    onPress?.(item, index);
+  };
+
+  // No confirmation here: it is up to `onDelete` (see the `confirmRemoveAccount` flow)
+  const onRemoveAccount = () => {
+    onDelete?.(item, index);
+  };
+
+  const avatarProps = React.useMemo(
+    () => (getAvatarSource ? { source: getAvatarSource({ index, item, separators }) } : { userId: id }),
+    [getAvatarSource, id, index, item, separators],
+  );
+
+  const WrapperComponent = onPress ? TouchableOpacity : View;
+
+  return (
+    <WrapperComponent style={[styles.itemContainer, containerBackgroundColor]} onPress={onSelectAccount}>
+      <SingleAvatar size="lg" {...avatarProps} border />
+      <View style={styles.itemTextContainer}>
+        <SmallText numberOfLines={numberOfLines}>{displayName}</SmallText>
+        <SmallBoldText numberOfLines={numberOfLines} style={typeColor}>
+          {typeText}
+        </SmallBoldText>
+      </View>
+      {onDelete ? (
+        <IconButton
+          style={styles.iconButton}
+          color={theme.palette.complementary.red.regular}
+          icon="ui-delete"
+          action={onRemoveAccount}
+        />
+      ) : null}
+    </WrapperComponent>
+  );
+};
+
+export default AccountListItem;

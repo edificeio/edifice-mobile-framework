@@ -70,7 +70,9 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       const { childId, classes, structureId, userId, userType } = props;
 
       if (!childId || !structureId || !userId || !userType) throw new Error();
-      setAverageColorsShown(storage.getBoolean('show-average-colors') ?? false);
+      // `true` while nothing is stored, as it always was: `getBoolean` used to read a missing boolean as `true`, whatever the default
+      // here said (see `StorageHandler.getBoolean`). Kept so the app behaves the same for the users who never changed it.
+      setAverageColorsShown(storage.getBoolean('show-average-colors') ?? true);
       await props.tryFetchSubjects(structureId);
       let childClasses = classes?.[0];
       if (userType === AccountType.Relative) {

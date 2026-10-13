@@ -71,6 +71,7 @@
 
 export { accountApi, sessionApi } from './api';
 export { accountFetch, deviceFetch, platformFetch, sessionFetch, tokenFetch } from './fetch';
+export { abortSignedRequests } from './in-flight';
 export {
   deviceImageSource,
   deviceURISource,

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { CompetenceRound } from './Item';
-
 import theme from '~/app/theme';
 import { CardWithoutPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
 import { HeadingSText, NestedText, SmallBoldText, SmallInverseText, SmallText } from '~/framework/components/text';
 import { IDevoir, ISubject } from '~/framework/modules/viescolaire/competences/model';
+
+import { CompetenceRound } from './Item';
 
 const styles = StyleSheet.create({
   cardContainer: {

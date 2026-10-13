@@ -7,6 +7,7 @@ import appConf from '~/framework/util/appConf';
 import { NetworkMonitorProvider } from '~/framework/util/monitoring/network';
 import { StorageProvider } from '~/framework/util/storage/provider';
 import { ZendeskProvider } from '~/framework/util/zendesk';
+import { AuthFlowsProvider } from '~/modules/auth/flows/provider';
 import { provider } from '~/util/compose-providers';
 import { DeviceTrust } from '~/util/device-trust';
 import { I18nProvider } from '~/util/i18n';
@@ -23,6 +24,7 @@ export const providers = [
   provider(DeviceTrust),
   provider(TransportProvider),
   provider(NetworkMonitorProvider),
+  provider(AuthFlowsProvider),
   provider(GestureHandlerRootView, { style: UI_STYLES.flex1 }),
   provider(SafeAreaProvider, { initialMetrics: initialWindowMetrics }),
   provider(KeyboardProvider, { navigationBarTranslucent: true, statusBarTranslucent: true }),

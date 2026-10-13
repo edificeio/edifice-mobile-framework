@@ -1,7 +1,7 @@
 import ToastMessage, { ToastShowParams } from 'react-native-toast-message';
 
-import { I18n } from '~/util/i18n';
 import Feedback from '~/framework/util/feedback/feedback';
+import { I18n } from '~/util/i18n';
 
 import { DEFAULTS } from './component';
 import { ToastOptions } from './types';

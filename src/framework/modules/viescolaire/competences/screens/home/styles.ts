@@ -19,13 +19,13 @@ export default StyleSheet.create({
   dropdownMargin: {
     marginRight: UI_SIZES.spacing.small,
   },
-  dropdownText: {
-    color: theme.ui.text.regular,
-  },
   dropdownsContainer: {
     flexDirection: 'row',
-    zIndex: 100,
     marginVertical: UI_SIZES.spacing.small,
+    zIndex: 100,
+  },
+  dropdownText: {
+    color: theme.ui.text.regular,
   },
   headerContainer: {
     margin: UI_SIZES.spacing.medium,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Animated, Easing, LayoutChangeEvent, useWindowDimensions } from 'react-native';
 
-import { getDefaultHeaderHeight, useHeaderHeight } from '@react-navigation/elements';
+import { getDefaultHeaderHeight } from '@react-navigation/elements';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ToastMessage, { ToastConfig } from 'react-native-toast-message';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
