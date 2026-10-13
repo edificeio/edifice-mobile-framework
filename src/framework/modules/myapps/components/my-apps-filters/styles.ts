@@ -16,6 +16,7 @@ export const styles = StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.minor,
   },
   cancelTextStyle: {
+    color: theme.ui.button.content,
     fontWeight: 'bold',
     marginHorizontal: UI_SIZES.spacing.medium,
   },

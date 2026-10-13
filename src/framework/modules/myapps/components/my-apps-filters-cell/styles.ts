@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
   },
 
   selected: {
-    backgroundColor: theme.palette.primary.regular,
+    backgroundColor: theme.ui.button.background,
     borderColor: theme.palette.primary.light,
     borderWidth: 2,
   },
@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
   },
 
   textSelected: {
-    color: theme.palette.grey.white,
+    color: theme.ui.button.contentOnFill,
   },
 
   textUnselected: {
@@ -41,6 +41,6 @@ export const styles = StyleSheet.create({
   },
 
   unselected: {
-    borderColor: theme.palette.primary.regular,
+    borderColor: theme.ui.button.background,
   },
 });
