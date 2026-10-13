@@ -64,15 +64,12 @@ export function useScreenTimeDay(userId: string, date: moment.Moment) {
 
   React.useEffect(() => {
     let cancelled = false;
-    const load = async () => {
-      try {
-        const response = await screenTimeService.day(userId, date);
+    screenTimeService
+      .day(userId, date)
+      .then(response => {
         if (!cancelled) setDay(response);
-      } catch (error) {
-        console.error('[ScreenTime] failed to load the day', error);
-      }
-    };
-    load();
+      })
+      .catch(error => console.error('[ScreenTime] failed to load the day', error));
     return () => {
       cancelled = true;
     };
@@ -87,15 +84,12 @@ export function useScreenTimeWeek(userId: string, weekStart: moment.Moment) {
 
   React.useEffect(() => {
     let cancelled = false;
-    const load = async () => {
-      try {
-        const response = await screenTimeService.week(userId, weekStart);
+    screenTimeService
+      .week(userId, weekStart)
+      .then(response => {
         if (!cancelled) setWeek(response);
-      } catch (error) {
-        console.error('[ScreenTime] failed to load the week', error);
-      }
-    };
-    load();
+      })
+      .catch(error => console.error('[ScreenTime] failed to load the week', error));
     return () => {
       cancelled = true;
     };
