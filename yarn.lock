@@ -3576,6 +3576,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/hashes@npm:2.4.0":
+  version: 2.4.0
+  resolution: "@noble/hashes@npm:2.4.0"
+  checksum: 10/88d4cdd6cef00f412a39f65bda1d24cba2264c6cacdd1c6c48d7ed66fd9be865ffb7231024fb81177975c684b8a463879b89c5ae6960370b05a546c0fd8afa2c
+  languageName: node
+  linkType: hard
+
 "@nodable/entities@npm:^2.2.0":
   version: 2.2.0
   resolution: "@nodable/entities@npm:2.2.0"
@@ -4502,13 +4509,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@screeb/react-native@npm:4.4.3":
-  version: 4.4.3
-  resolution: "@screeb/react-native@npm:4.4.3"
+"@screeb/react-native@npm:4.4.4":
+  version: 4.4.4
+  resolution: "@screeb/react-native@npm:4.4.4"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/9716e2d06b41dec3218573867f9775706b0b5b1fd08ed1d247aca792f47fcfa36cd8b687ffa0dac16aaa3904fc524a6d9311c0cd5e5007215dd15c3b4555dce7
+  checksum: 10/0681b7458cd18f7eaecce5c2cd55be6bbdf79cdc7abfde6d12e659cfb0537425a7a5b995d73488fa9738923fd99272a9cbfbb913a5f1f0ce7acbb4a2de75ebcf
   languageName: node
   linkType: hard
 
@@ -5860,6 +5867,7 @@ __metadata:
     "@jumpn/react-native-jetifier": "npm:0.1.4"
     "@logicwind/react-native-exit-app": "npm:0.2.0"
     "@nicolo-ribaudo/semver-v6": "npm:6.3.3"
+    "@noble/hashes": "npm:2.4.0"
     "@preeternal/react-native-cookie-manager": "npm:6.3.2"
     "@react-native-camera-roll/camera-roll": "npm:7.10.2"
     "@react-native-clipboard/clipboard": "npm:1.16.3"
@@ -5887,7 +5895,7 @@ __metadata:
     "@react-navigation/elements": "npm:2.9.25"
     "@react-navigation/native": "npm:7.3.3"
     "@react-navigation/native-stack": "npm:7.17.5"
-    "@screeb/react-native": "npm:4.4.3"
+    "@screeb/react-native": "npm:4.4.4"
     "@shopify/flash-list": "npm:2.3.2"
     "@skele/components": "npm:1.0.0-alpha.40"
     "@trivago/prettier-plugin-sort-imports": "npm:6.0.2"

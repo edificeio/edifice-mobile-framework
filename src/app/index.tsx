@@ -76,8 +76,8 @@ function useAppState() {
 function useTrackers() {
   React.useEffect(() => {
     Trackers.init().then(() => {
-      Trackers.trackDebugEvent('Application', '');
-      Trackers.setCustomDimension(4, 'App Name', DeviceInfo.getApplicationName());
+      Trackers.trackDebugEvent('Application', DeviceInfo.getApplicationName());
+      Trackers.setCustomDimension(3, 'application', DeviceInfo.getApplicationName());
     });
   }, []);
 }

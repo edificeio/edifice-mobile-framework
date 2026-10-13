@@ -44,6 +44,7 @@ import {
 import { actions, ERASE_ALL_ACCOUNTS } from './redux/actions';
 import { assertSession, getState as getAuthState, getSession } from './redux/reducer';
 import { AuthState } from './redux/types';
+import * as authService from './service';
 import {
   assertNotPredeleted,
   fetchUserInfo,
@@ -55,7 +56,6 @@ import {
   UserPersonDataBackend,
   UserPrivateData,
 } from './service';
-import * as authService from './service';
 import * as storage from './storage';
 
 type AuthDispatch = ThunkDispatch<AuthState, any, Action>;
@@ -206,8 +206,8 @@ export const loginSteps = {
         );
         await Storage.sessionInit(sessionInfo);
         Trackers.setUserId(sessionInfo.user.id);
-        Trackers.setCustomDimension(1, 'Profile', sessionInfo.user.type.toString());
-        Trackers.setCustomDimension(3, 'Project', new URL(sessionInfo.platform.url).hostname);
+        Trackers.setCustomDimension(1, 'type', sessionInfo.user.type.toString());
+        Trackers.setCustomDimension(2, 'project', new URL(sessionInfo.platform.url).hostname);
         return sessionInfo;
       },
       'finalizeSession',
@@ -274,6 +274,8 @@ export function deactivateLoggedAccountActionIfApplicable(action?: Action | Thun
   return async (dispatch: ThunkDispatch<any, any, any>) => {
     const account = getSession();
     if (account) {
+      // Unregister userId with Trackers
+      await Trackers.resetUserId(account.user.id);
       // Unregister the device token from the backend
       await firebaseService.disablePushNotificationsForAccount(account);
       // flush sessionReducers

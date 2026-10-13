@@ -1,12 +1,14 @@
+import { sha256 } from '@noble/hashes/sha2.js';
+import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
 import CookieManager from '@preeternal/react-native-cookie-manager';
 import crashlytics from '@react-native-firebase/crashlytics';
-import { initSdk, setIdentity, setProperties, trackEvent, trackScreen } from '@screeb/react-native';
+import { initSdk, resetIdentity, setIdentity, setProperties, trackEvent, trackScreen } from '@screeb/react-native';
 import DeviceInfo from 'react-native-device-info';
 
+import { I18n } from '~/app/i18n';
 import { EntModule } from '~/app/module';
 import { Modules } from '~/app/module/all';
 import AllModules from '~/app/modules';
-import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import appConf from '~/framework/util/appConf';
 import BuildInfo from '~/framework/util/build-info';
@@ -52,6 +54,21 @@ export abstract class AbstractTracker<OptionsType> {
       this._isReady = true;
     } catch {
       this._isReady = false;
+    }
+  }
+
+  // UserID procedure. Override _reetsUserId() function to create custom trackers.
+  protected async _resetUserId(id: string): Promise<boolean> {
+    return false;
+  }
+
+  async resetUserId(id: string) {
+    try {
+      if (this.isReady) {
+        await this._resetUserId(id);
+      }
+    } catch (err) {
+      console.error('resetUserId failed: ', (err as Error).message);
     }
   }
 
@@ -125,7 +142,7 @@ export abstract class AbstractTracker<OptionsType> {
     await this.trackEvent(moduleConfig.trackingName, action, name, value);
   }
 
-  // Track debug event procedure. Override _trackEvent() function to create custom trackers.
+  // Track debug event procedure. Override _trackDebugEvent() function to create custom trackers.
   protected async _trackDebugEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
     return false;
   }
@@ -345,6 +362,33 @@ export class ConcreteCrashsTracker extends AbstractTracker<undefined> {
 }
 
 export class ConcreteScreebTracker extends AbstractTracker<undefined> {
+  private hashUserId(userId: string): string {
+    try {
+      return bytesToHex(sha256(utf8ToBytes(userId))).slice(0, 16);
+    } catch (e) {
+      console.error('[Screeb] hashUserId: Screeb not configured', e as Error);
+      return userId;
+    }
+  }
+
+  private userProfile(accountType: string) {
+    switch (accountType) {
+      case 'External':
+        return 'EXTERNAL';
+      case 'Guest':
+        return 'GUEST';
+      case 'Personnel':
+        return 'PERSEDUCNAT';
+      case 'Relative':
+        return 'PERSRELELEVE';
+      case 'Student':
+        return 'ELEVE';
+      case 'Teacher':
+        return 'ENSEIGNANT';
+    }
+    return 'UNDEFINED';
+  }
+
   async _init(): Promise<void> {
     if (!appConf.screebEnabled) {
       console.debug('[Screeb] init: Screeb not configured');
@@ -353,28 +397,34 @@ export class ConcreteScreebTracker extends AbstractTracker<undefined> {
     initSdk(appConf.screeb!.channelId!);
   }
 
+  async _resetUserId(id: string) {
+    if (!appConf.screebEnabled) {
+      console.debug('[Screeb] resetUserId: Screeb not configured');
+      return false;
+    }
+    await resetIdentity();
+    return true;
+  }
+
   async _setUserId(id: string) {
     if (!appConf.screebEnabled) {
       console.debug('[Screeb] setUserId: Screeb not configured');
       return false;
     }
-    const accountTypeCodes: Record<AccountType, string> = {
-      [AccountType.Student]: 'ELEVE',
-      [AccountType.Relative]: 'PERSRELELEVE',
-      [AccountType.Teacher]: 'ENSEIGNANT',
-      [AccountType.Personnel]: 'PERSEDUCNAT',
-      [AccountType.Guest]: 'GUEST',
-      [AccountType.External]: 'EXTERNAL',
-    };
+    const hashedUserId = this.hashUserId(id);
     const session = getSession();
-    // TODO: Encrypt used id as done in the web
-    setIdentity(id, {
-      device: `${DeviceInfo.getModel()} - ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`,
+    await resetIdentity();
+    setIdentity(hashedUserId, {
+      device: DeviceInfo.getModel(),
+      language: I18n.getLanguage(),
+      os: `${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`,
       override: BuildInfo.BundleVersionOverride,
       platform: session?.platform?.displayName ?? session?.platform?.name,
-      profile: session ? accountTypeCodes[session.user.type] : 'UNDEFINED',
-      version: `${DeviceInfo.getVersion()}-${BuildInfo.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
+      version: DeviceInfo.getVersion(),
+      versionNumber: DeviceInfo.getBuildNumber(),
+      versionType: BuildInfo.BundleVersionType,
     });
+    console.debug(`[Screeb] setUserId(${id}): Identity setted to ${hashedUserId}`);
     return true;
   }
 
@@ -382,6 +432,9 @@ export class ConcreteScreebTracker extends AbstractTracker<undefined> {
     if (!appConf.screebEnabled) {
       console.debug('[Screeb] setCustomDimension: Screeb not configured');
       return false;
+    }
+    if (name === 'type') {
+      setProperties({ profile: this.userProfile(value) });
     }
     setProperties({ [name]: value });
     return true;
@@ -442,8 +495,13 @@ export class ConcreteTrackerSet {
     await Promise.all(this._trackers.map(t => t.setCustomDimension(id, name, value)));
   }
 
+  async resetUserId(id: string) {
+    console.debug('[Tracking] Reset User ID :', id);
+    await Promise.all(this._trackers.map(t => t.setUserId(id)));
+  }
+
   async setUserId(id: string) {
-    console.debug('[Tracking] Set ID :', id);
+    console.debug('[Tracking] Set User ID :', id);
     await Promise.all(this._trackers.map(t => t.setUserId(id)));
   }
 
