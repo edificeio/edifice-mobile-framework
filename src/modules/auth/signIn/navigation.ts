@@ -26,7 +26,7 @@ export const useSignInNavigation = () => {
  * @returns
  */
 export const getRouteForOnboarding = () => {
-  return appConf.hasMultiplePlatform ? ({ name: 'auth/platforms' } as const) : getRouteForPlatformSelect(appConf.platforms[0]);
+  return appConf.hasMultiplePlatform ? ({ name: 'signIn/platforms' } as const) : getRouteForPlatformSelect(appConf.platforms[0]);
 };
 
 /**

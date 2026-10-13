@@ -13,6 +13,7 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import { visibleStackScreenOptions } from '~/app/navigation-new/options';
 import { navigationLightTheme } from '~/app/navigation-new/theme';
 
 import signInModule from '../signIn';
@@ -30,6 +31,7 @@ export function AuthNavigationWrapper() {
           Modals: { screens: modals },
           Screens: { screens },
         },
+        screenOptions: visibleStackScreenOptions,
       }),
     ),
   );
