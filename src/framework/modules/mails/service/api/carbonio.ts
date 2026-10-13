@@ -132,14 +132,14 @@ async function carbonioSoapRequest<T>(
   withContentName: boolean = false,
 ): Promise<T> {
   for (let attempt = 0; attempt < 2; attempt++) {
-    let authToken = getStore().getState().auth.accounts[session.user.id]?.tokens?.carbonioToken;
+    let authToken = getSession()?.tokens.carbonioToken;
     if (!authToken) {
       authToken = await getCarbonioAuthToken(session);
       if (!authToken) throw new Error('Carbonio auth token not found');
     }
 
     const contentName = withContentName
-      ? (getStore().getState().auth.accounts[session.user.id]?.carbonioUserInfos?.name ?? `${session.user.login}@${getCarbonioEmailDomain()}`)
+      ? (getSession()?.carbonioUserInfos?.name ?? `${session.user.login}@${getCarbonioEmailDomain()}`)
       : '';
     const soapBody = buildSoapRequest(authToken, requestName, requestBody, contentName);
 
@@ -188,9 +188,9 @@ const folderIdSwitch = (folderId: string) => {
 
 export const defaultUserIdCarbonio = (session: AuthActiveAccount | undefined) => {
   if (!session) return '';
-  return getStore().getState().auth.accounts[session.user.id]?.carbonioUserInfos?.name ?? `${session.user.login}@${getCarbonioEmailDomain()}`;
+  return getSession()?.carbonioUserInfos?.name ?? `${session.user.login}@${getCarbonioEmailDomain()}`;
 };
-const getItemId = (id: string) => id.startsWith('-') ? id.slice(1) : id;
+const getItemId = (id: string) => (id.startsWith('-') ? id.slice(1) : id);
 
 // Carbonio has no native way to add/remove one attachment: every mutation rereads the whole
 // draft MIME tree and rewrites it via SaveDraftRequest, which fully replaces the message.
@@ -202,7 +202,10 @@ const draftMutationQueues = new Map<string, Promise<unknown>>();
 function withDraftLock<T>(draftId: string, task: () => Promise<T>): Promise<T> {
   const previous = draftMutationQueues.get(draftId) ?? Promise.resolve();
   const run = previous.then(task, task);
-  draftMutationQueues.set(draftId, run.catch(() => undefined));
+  draftMutationQueues.set(
+    draftId,
+    run.catch(() => undefined),
+  );
   return run;
 }
 
@@ -234,18 +237,20 @@ export const carbonioMailsApi = {
         // Carbonio does not change existing part numbers when inserting the new attachment.
         const m: any = { id: safeId };
         if (inlineParts.length > 0) {
-          m.mp = [{
-            ct: 'multipart/related',
-            mp: [
-              { content: { _content: bodyWithCids }, ct: 'text/html' },
-              ...inlineParts.map((p: any) => ({
-                attach: { mp: [{ mid: safeId, part: p.part }] },
-                cd: 'inline',
-                ci: normalizeCid(p.ci),
-                ct: p.ct,
-              })),
-            ],
-          }];
+          m.mp = [
+            {
+              ct: 'multipart/related',
+              mp: [
+                { content: { _content: bodyWithCids }, ct: 'text/html' },
+                ...inlineParts.map((p: any) => ({
+                  attach: { mp: [{ mid: safeId, part: p.part }] },
+                  cd: 'inline',
+                  ci: normalizeCid(p.ci),
+                  ct: p.ct,
+                })),
+              ],
+            },
+          ];
         } else {
           m.mp = [{ content: { _content: body }, ct: 'text/html' }];
         }
@@ -273,9 +278,7 @@ export const carbonioMailsApi = {
         const inlinePartMapping: Record<string, string> = {};
         for (const oldInlinePart of inlineParts) {
           const ci = normalizeCid(oldInlinePart.ci);
-          const newInlinePart = afterInlineParts.find(
-            (p: any) => normalizeCid(p.ci) === ci,
-          );
+          const newInlinePart = afterInlineParts.find((p: any) => normalizeCid(p.ci) === ci);
           if (newInlinePart && oldInlinePart.part !== newInlinePart.part) {
             inlinePartMapping[oldInlinePart.part] = newInlinePart.part;
           }
@@ -320,25 +323,25 @@ export const carbonioMailsApi = {
         const currentMp = message?.mp || [];
         const body = extractBodyFromCarbonioMessage(message);
         const inlineParts = collectInlineParts(currentMp);
-        const remainingParts = collectAttachmentParts(currentMp).filter(
-          (p: any) => p.part !== params.attachmentId,
-        );
+        const remainingParts = collectAttachmentParts(currentMp).filter((p: any) => p.part !== params.attachmentId);
         const bodyWithCids = replaceInlineUrlsWithCids(body, inlineParts);
 
         const m: any = { id: safeId };
         if (inlineParts.length > 0) {
-          m.mp = [{
-            ct: 'multipart/related',
-            mp: [
-              { content: { _content: bodyWithCids }, ct: 'text/html' },
-              ...inlineParts.map((p: any) => ({
-                attach: { mp: [{ mid: safeId, part: p.part }] },
-                cd: 'inline',
-                ci: normalizeCid(p.ci),
-                ct: p.ct,
-              })),
-            ],
-          }];
+          m.mp = [
+            {
+              ct: 'multipart/related',
+              mp: [
+                { content: { _content: bodyWithCids }, ct: 'text/html' },
+                ...inlineParts.map((p: any) => ({
+                  attach: { mp: [{ mid: safeId, part: p.part }] },
+                  cd: 'inline',
+                  ci: normalizeCid(p.ci),
+                  ct: p.ct,
+                })),
+              ],
+            },
+          ];
         } else {
           m.mp = [{ content: { _content: body }, ct: 'text/html' }];
         }
@@ -380,19 +383,21 @@ export const carbonioMailsApi = {
 
         const m: any = {
           id: safeId,
-          mp: [{
-            ct: 'multipart/related',
-            mp: [
-              { content: { _content: bodyWithCids }, ct: 'text/html' },
-              ...currentInlineParts.map((p: any) => ({
-                attach: { mp: [{ mid: safeId, part: p.part }] },
-                cd: 'inline',
-                ci: normalizeCid(p.ci),
-                ct: p.ct,
-              })),
-              { attach: { aid }, cd: 'inline', ci: cid, ct: file.filetype || 'image/jpeg' },
-            ],
-          }],
+          mp: [
+            {
+              ct: 'multipart/related',
+              mp: [
+                { content: { _content: bodyWithCids }, ct: 'text/html' },
+                ...currentInlineParts.map((p: any) => ({
+                  attach: { mp: [{ mid: safeId, part: p.part }] },
+                  cd: 'inline',
+                  ci: normalizeCid(p.ci),
+                  ct: p.ct,
+                })),
+                { attach: { aid }, cd: 'inline', ci: cid, ct: file.filetype || 'image/jpeg' },
+              ],
+            },
+          ],
         };
         if (currentRegularParts.length) {
           m.attach = { mp: currentRegularParts.map((p: any) => ({ mid: safeId, part: p.part })) };
@@ -404,9 +409,7 @@ export const carbonioMailsApi = {
           m: { html: 1, id: safeId, needExp: 1 },
         });
         const updatedMp = updatedMsg?.m?.[0]?.mp || [];
-        const newInlinePart = collectInlineParts(updatedMp).find(
-          (p: any) => p.ci && normalizeCid(p.ci) === cid,
-        );
+        const newInlinePart = collectInlineParts(updatedMp).find((p: any) => p.ci && normalizeCid(p.ci) === cid);
         if (!newInlinePart) throw new Error('Carbonio: could not find uploaded inline image part');
 
         return buildCarbonioAttachmentUrl(params.draftId, newInlinePart.part, 'i');
@@ -462,7 +465,9 @@ export const carbonioMailsApi = {
     rename: async (params: { id: string }, payload: { name: string }) => {
       const session = getSession();
       if (!session) throw new Error('No session found');
-      await carbonioSoapRequest<any>(session, 'FolderActionRequest', { action: { id: params.id, name: payload.name, op: 'rename' } });
+      await carbonioSoapRequest<any>(session, 'FolderActionRequest', {
+        action: { id: params.id, name: payload.name, op: 'rename' },
+      });
     },
   },
   folders: {
@@ -488,9 +493,7 @@ export const carbonioMailsApi = {
       });
       const root = response?.folder?.[0];
       if (!root) return [];
-      return ((root.folder ?? []) as any[])
-        .filter((f: any) => !SYSTEM_IDS.has(f.id))
-        .map((f: any) => mapFolder(f, 1));
+      return ((root.folder ?? []) as any[]).filter((f: any) => !SYSTEM_IDS.has(f.id)).map((f: any) => mapFolder(f, 1));
     },
   },
   mail: {
@@ -519,18 +522,20 @@ export const carbonioMailsApi = {
         rt: 'w',
       };
       if (inlineParts.length > 0) {
-        m.mp = [{
-          ct: 'multipart/related',
-          mp: [
-            { content: { _content: '' }, ct: 'text/html' },
-            ...inlineParts.map((p: any) => ({
-              attach: { mp: [{ mid: safeId, part: p.part }] },
-              cd: 'inline',
-              ci: normalizeCid(p.ci),
-              ct: p.ct,
-            })),
-          ],
-        }];
+        m.mp = [
+          {
+            ct: 'multipart/related',
+            mp: [
+              { content: { _content: '' }, ct: 'text/html' },
+              ...inlineParts.map((p: any) => ({
+                attach: { mp: [{ mid: safeId, part: p.part }] },
+                cd: 'inline',
+                ci: normalizeCid(p.ci),
+                ct: p.ct,
+              })),
+            ],
+          },
+        ];
       } else {
         m.mp = [{ content: { _content: '' }, ct: 'text/html' }];
       }
@@ -575,9 +580,9 @@ export const carbonioMailsApi = {
       const mail = mailContentAdapter(backendMail);
 
       if (mail.unread) {
-        carbonioMailsApi.mail.toggleUnread({ ids: [mail.id], unread: false }).catch(e =>
-          console.error('Failed to mark mail as read', e),
-        );
+        carbonioMailsApi.mail
+          .toggleUnread({ ids: [mail.id], unread: false })
+          .catch(e => console.error('Failed to mark mail as read', e));
       }
 
       return mail;
@@ -636,18 +641,20 @@ export const carbonioMailsApi = {
           su: { _content: subject || '' },
         };
         if (inlineParts.length > 0) {
-          draftM.mp = [{
-            ct: 'multipart/related',
-            mp: [
-              { content: { _content: bodyWithCids }, ct: 'text/html' },
-              ...inlineParts.map((p: any) => ({
-                attach: { mp: [{ mid: safeId, part: p.part }] },
-                cd: 'inline',
-                ci: normalizeCid(p.ci),
-                ct: p.ct,
-              })),
-            ],
-          }];
+          draftM.mp = [
+            {
+              ct: 'multipart/related',
+              mp: [
+                { content: { _content: bodyWithCids }, ct: 'text/html' },
+                ...inlineParts.map((p: any) => ({
+                  attach: { mp: [{ mid: safeId, part: p.part }] },
+                  cd: 'inline',
+                  ci: normalizeCid(p.ci),
+                  ct: p.ct,
+                })),
+              ],
+            },
+          ];
         } else {
           draftM.mp = [{ content: { _content: bodyWithCids }, ct: 'text/html' }];
         }
@@ -717,18 +724,20 @@ export const carbonioMailsApi = {
       }
 
       if (replyInlineParts.length > 0) {
-        draftRequest.m.mp = [{
-          ct: 'multipart/related',
-          mp: [
-            { content: { _content: finalBody }, ct: 'text/html' },
-            ...replyInlineParts.map((p: any) => ({
-              attach: { mp: [{ mid: getItemId(params.inReplyTo!), part: p.part }] },
-              cd: 'inline',
-              ci: normalizeCid(p.ci),
-              ct: p.ct,
-            })),
-          ],
-        }];
+        draftRequest.m.mp = [
+          {
+            ct: 'multipart/related',
+            mp: [
+              { content: { _content: finalBody }, ct: 'text/html' },
+              ...replyInlineParts.map((p: any) => ({
+                attach: { mp: [{ mid: getItemId(params.inReplyTo!), part: p.part }] },
+                cd: 'inline',
+                ci: normalizeCid(p.ci),
+                ct: p.ct,
+              })),
+            ],
+          },
+        ];
       } else {
         draftRequest.m.mp = [{ content: { _content: finalBody }, ct: 'text/html' }];
       }
@@ -773,18 +782,20 @@ export const carbonioMailsApi = {
         su: { _content: subject || '' },
       };
       if (inlineParts.length > 0) {
-        m.mp = [{
-          ct: 'multipart/related',
-          mp: [
-            { content: { _content: bodyWithCids }, ct: 'text/html' },
-            ...inlineParts.map((p: any) => ({
-              attach: { mp: [{ mid: id, part: p.part }] },
-              cd: 'inline',
-              ci: normalizeCid(p.ci),
-              ct: p.ct,
-            })),
-          ],
-        }];
+        m.mp = [
+          {
+            ct: 'multipart/related',
+            mp: [
+              { content: { _content: bodyWithCids }, ct: 'text/html' },
+              ...inlineParts.map((p: any) => ({
+                attach: { mp: [{ mid: id, part: p.part }] },
+                cd: 'inline',
+                ci: normalizeCid(p.ci),
+                ct: p.ct,
+              })),
+            ],
+          },
+        ];
       } else {
         m.mp = [{ content: { _content: bodyWithCids }, ct: 'text/html' }];
       }

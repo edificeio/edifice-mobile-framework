@@ -6144,6 +6144,7 @@ __metadata:
     i18next: "npm:27.1.1"
     i18next-chained-backend: "npm:5.0.8"
     i18next-resources-to-backend: "npm:1.2.4"
+    immer: "npm:11.1.21"
     jail-monkey: "npm:3.0.0"
     jest: "npm:30.5.2"
     lint-staged: "npm:17.6.0"
@@ -6231,11 +6232,13 @@ __metadata:
     scaffolder-cli: "npm:1.10.3"
     set-value: "npm:4.1.0"
     set.prototype.isdisjointfrom: "npm:1.1.5"
+    test-renderer: "npm:1.3.1"
     ts-polyfill: "npm:3.8.2"
     typescript: "npm:6.0.3"
     unorm: "npm:1.6.0"
     whatwg-fetch: "npm:3.6.20"
     yargs: "npm:18.2.0"
+    zustand: "npm:5.0.15"
   languageName: unknown
   linkType: soft
 
@@ -10105,6 +10108,13 @@ __metadata:
   version: 7.0.9
   resolution: "ignore@npm:7.0.9"
   checksum: 10/0364b6e5895a2e3b187654048de07c3369b4d106f51f8c0294c823f717aaf92d4f42d138e52d6d498bfc71f123eddb9d1fdb01977fd1cf1f29cc4f5ceaca2d77
+  languageName: node
+  linkType: hard
+
+"immer@npm:11.1.21":
+  version: 11.1.21
+  resolution: "immer@npm:11.1.21"
+  checksum: 10/debf433fb0c62a9e57078f5fc0d27c014e13cfabaadc5bfdd1d37d96aeadda57d834aa065586954dd4493e87ae411799938a940bee8c5f328b59e993541fa4dc
   languageName: node
   linkType: hard
 
@@ -14332,6 +14342,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-reconciler@npm:~0.34.0":
+  version: 0.34.0
+  resolution: "react-reconciler@npm:0.34.0"
+  dependencies:
+    scheduler: "npm:^0.28.0"
+  peerDependencies:
+    react: ^19.3.0
+  checksum: 10/abc46a957cb5ea4d0477685c2748b4a7454859d4f8a832537c3e72b105a1a91705dc7b03dea07d5b9fce56e183979f6128cd087a423552842218c84e2413b111
+  languageName: node
+  linkType: hard
+
 "react-redux@npm:9.3.1":
   version: 9.3.1
   resolution: "react-redux@npm:9.3.1"
@@ -14862,6 +14883,20 @@ __metadata:
   linkType: hard
 
 "scheduler@npm:0.28.0, scheduler@npm:^0.28.0":
+  version: 0.28.0
+  resolution: "scheduler@npm:0.28.0"
+  checksum: 10/2a936a3729df438bd42e6af7a16a62b83543796209c9d2e637f3d7b198bd5c25c5909478a9da4f66923d290e01997816338cf740587c440448863783bd33d31d
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.27.0":
+  version: 0.27.0
+  resolution: "scheduler@npm:0.27.0"
+  checksum: 10/eab3c3a8373195173e59c147224fc30dabe6dd453f248f5e610e8458512a5a2ee3a06465dc400ebfe6d35c9f5b7f3bb6b2e41c88c86fd177c25a73e7286a1e06
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.28.0":
   version: 0.28.0
   resolution: "scheduler@npm:0.28.0"
   checksum: 10/2a936a3729df438bd42e6af7a16a62b83543796209c9d2e637f3d7b198bd5c25c5909478a9da4f66923d290e01997816338cf740587c440448863783bd33d31d
@@ -15811,6 +15846,18 @@ __metadata:
     glob: "npm:^10.4.1"
     minimatch: "npm:^10.2.2"
   checksum: 10/45920af7556a58333c75c3d5011b4087f7ac41366319fb0f6ccc4ac8d0e9d2c81442d7ebf6efd13813dcf18c135eda3c52e4ad3e00407a3ee041d8dec6bfd753
+  languageName: node
+  linkType: hard
+
+"test-renderer@npm:1.3.1":
+  version: 1.3.1
+  resolution: "test-renderer@npm:1.3.1"
+  dependencies:
+    "@types/react-reconciler": "npm:~0.34.0"
+    react-reconciler: "npm:~0.34.0"
+  peerDependencies:
+    react: ^19.0.0
+  checksum: 10/9af4e4e371dd9eaf81707f8a454fd02accaf43eb0f4c27bce0025adc6a9ecd974722ddee607635e0ce90076bf21ca1d7a026515adabe14d9c842f21ffec49a77
   languageName: node
   linkType: hard
 
@@ -16838,5 +16885,26 @@ __metadata:
   version: 4.6.5
   resolution: "zod@npm:4.6.5"
   checksum: 10/db004952e4dc6eab38b70f0cdef9251a65da84f5d08c5a0ef85e2590cfa9c477544ce734161ff5c05f89a15f0967137607a7feb16716195e04965f030db47213
+  languageName: node
+  linkType: hard
+
+"zustand@npm:5.0.15":
+  version: 5.0.15
+  resolution: "zustand@npm:5.0.15"
+  peerDependencies:
+    "@types/react": ">=18.0.0"
+    immer: ">=9.0.6"
+    react: ">=18.0.0"
+    use-sync-external-store: ">=1.2.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    immer:
+      optional: true
+    react:
+      optional: true
+    use-sync-external-store:
+      optional: true
+  checksum: 10/5124e93d8f57483985981ea9795df6872991f0693eb3730d562b3cb09e72af8a892703f2610744e5814b2045f7373df3d6f80625a646197d700572f2c7f70db3
   languageName: node
   linkType: hard

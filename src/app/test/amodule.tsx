@@ -1,46 +1,153 @@
 import React from 'react';
-import { ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import Animated from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EntModule } from '~/app/module';
-import { defineModal, defineScreen, sharedTransitions, StackNavigation, useConfirmRemove } from '~/app/navigation-new';
+import { defineModal, defineScreen, sharedTransitions, StackNavigation } from '~/app/navigation-new';
+import { SingleAvatar } from '~/framework/components/avatar';
+import { SelfAvatar } from '~/framework/components/avatar/self';
 import { PrimaryButton } from '~/framework/components/button';
-import { BodyText } from '~/framework/components/text';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/text';
+import { useStorageNumber } from '~/framework/util/storage/hooks';
+import { AccountsButton } from '~/modules/auth/components';
+import { useAuthFlows } from '~/modules/auth/flows';
+import { withSession } from '~/modules/auth/hoc';
+import { I18n } from '~/util/i18n';
 
-function AModuleHomeScreen({}: StaticScreenProps<{
-  aParam: boolean;
-}>) {
+import { preferences, storage } from './amodule-storage';
+
+const styles = StyleSheet.create({
+  button: { alignSelf: 'center' },
+  col: { alignItems: 'flex-start', alignSelf: 'flex-start', gap: UI_SIZES.spacing.medium },
+  contentContainer: { gap: UI_SIZES.spacing.medium, padding: UI_SIZES.spacing.medium },
+  image: { borderRadius: 8, ...StyleSheet.absoluteFill },
+  imageButton: { height: 100, width: 300 },
+  imageFull: { aspectRatio: 1.5, flex: 1 },
+  row: { alignItems: 'center', flexDirection: 'row', gap: UI_SIZES.spacing.medium, justifyContent: 'flex-start' },
+  rowCenter: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    gap: UI_SIZES.spacing.medium,
+    justifyContent: 'center',
+  },
+});
+
+// `withSession`: the hooks of an account storage work on the account of the session
+const AModuleHomeScreen = withSession<
+  StaticScreenProps<{
+    aParam: boolean;
+  }>
+>(function ({ session }) {
   const navigation = useNavigation();
+  const { confirmLogout } = useAuthFlows();
+  // Pilot of the storage API: a counter of the device, and a number of the account. Both render again when they change.
+  const [launchCount] = useStorageNumber(storage, 'launch-count');
+  const [favoriteNumber, setFavoriteNumber] = useStorageNumber(preferences, 'favorite-number');
+  React.useEffect(() => {
+    storage.set('launch-count', (storage.getNumber('launch-count') ?? 0) + 1);
+  }, []);
+
   return (
-    <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-      <BodyText>A Home Screen</BodyText>
+    <ScrollView contentContainerStyle={styles.contentContainer}>
+      <HeadingSText>Compte connecté</HeadingSText>
+      <View style={styles.col}>
+        <View style={styles.row}>
+          <SingleAvatar size="sm" userId={session.user.id} />
+          <BodyBoldText style={UI_STYLES.flex1} numberOfLines={1}>
+            {session.user.displayName}
+          </BodyBoldText>
+          <PrimaryButton testID="logout" text="Se déconnecter" onPress={confirmLogout} />
+        </View>
+        <View style={styles.rowCenter}>
+          <AccountsButton testID="home-accounts" />
+        </View>
+      </View>
+
+      <HeadingSText>Test navigation</HeadingSText>
       <PrimaryButton
+        style={styles.rowCenter}
         testID="1"
-        text="Go to a modal"
+        text="Ouvrir la modale"
         onPress={() => {
           navigation.navigate('amodule/modal', { skibidi: 'Nom de la modale très très long avec du texte' });
         }}
       />
-      <Animated.Image
-        source={{ uri: 'https://picsum.photos/id/39/200' }}
-        style={{ height: 100, width: 300 }}
-        sharedTransitionTag="sharedTag"
-        sharedTransitionStyle={sharedTransitions.default}
-      />
-      <PrimaryButton
-        testID="1"
-        text="Go to a details"
-        onPress={() => {
-          navigation.navigate('amodule/details', { aId: 2 });
-        }}
-      />
-    </View>
+      <View style={styles.rowCenter}>
+        <TouchableOpacity
+          style={styles.imageButton}
+          onPress={() => {
+            navigation.navigate('amodule/details', { aId: 2 });
+          }}>
+          <Animated.Image
+            source={{ uri: 'https://picsum.photos/id/39/200' }}
+            style={styles.image}
+            sharedTransitionTag="sharedTag"
+            sharedTransitionStyle={sharedTransitions.default}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <HeadingSText>Test storage</HeadingSText>
+      <View style={styles.row}>
+        <BodyText>{`Lancements sur l'appareil : ${launchCount ?? 0}`}</BodyText>
+      </View>
+      <View style={styles.row}>
+        <BodyText>{`Stockage compte : ${favoriteNumber ?? 0}`}</BodyText>
+        <PrimaryButton testID="favorite" text="Compte +1" onPress={() => setFavoriteNumber((favoriteNumber ?? 0) + 1)} />
+      </View>
+    </ScrollView>
   );
-}
+});
+
+export const userButtonStyle = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: UI_SIZES.spacing.minor,
+    minHeight: UI_SIZES.navigation.headerButtonSizeAndroid,
+    minWidth: UI_SIZES.navigation.headerButtonSizeAndroid,
+  },
+});
 
 const AModuleHomeScreenDeclaration = defineScreen({
+  options: ({ navigation }) => ({
+    headerLeft: () => (
+      <Pressable
+        accessible
+        accessibilityLabel={I18n.get('user-profile-myaccount')}
+        accessibilityRole="button"
+        android_ripple={{ borderless: true, color: UI_SIZES.navigation.headerButtonRippleColor.light, radius: 20 }}
+        hitSlop={16}
+        style={userButtonStyle.button}
+        onPress={() => navigation.navigate('user')}
+        testID="timeline-profile-button">
+        <SelfAvatar size="sm" />
+      </Pressable>
+    ),
+    title: 'Un super écran de test',
+    unstable_headerLeftItems: () => [
+      {
+        element: (
+          <Pressable
+            accessible
+            accessibilityLabel={I18n.get('user-profile-myaccount')}
+            accessibilityRole="button"
+            android_ripple={{ borderless: true, color: UI_SIZES.navigation.headerButtonRippleColor.light, radius: 20 }}
+            hitSlop={16}
+            onPress={() => navigation.navigate('user')}
+            testID="timeline-profile-button">
+            <SelfAvatar size="sm" />
+          </Pressable>
+        ),
+        type: 'custom',
+      },
+    ],
+  }),
   screen: AModuleHomeScreen,
 });
 
@@ -49,53 +156,48 @@ function AModuleDetailsScreen({}: StaticScreenProps<{
 }>) {
   const navigation = useNavigation<StackNavigation>();
   return (
-    <View style={{ alignItems: 'center', borderWidth: 4, flex: 1, justifyContent: 'center' }}>
-      <Animated.Image
-        source={{ uri: 'https://picsum.photos/id/39/200' }}
-        style={{ height: 300, width: 300 }}
-        sharedTransitionTag="sharedTag"
-        sharedTransitionStyle={sharedTransitions.default}
-      />
-      <BodyText>A Details Screen</BodyText>
+    <ScrollView contentContainerStyle={styles.contentContainer}>
+      <HeadingSText>Détails</HeadingSText>
+      <View style={styles.rowCenter}>
+        <Animated.Image
+          source={{ uri: 'https://picsum.photos/id/39/200' }}
+          style={styles.imageFull}
+          sharedTransitionTag="sharedTag"
+          sharedTransitionStyle={sharedTransitions.default}
+        />
+      </View>
       <PrimaryButton
         testID="1"
-        text="Push a new details"
+        text="Ouvrir écran"
         onPress={() => {
           navigation.push('amodule/details', { aId: 4 });
         }}
       />
-    </View>
+    </ScrollView>
   );
 }
 
 const AModuleDetailsScreenDeclaration = defineScreen({
-  options: ({
-    route: {
-      params: { aId },
-    },
-  }) => ({ title: aId.toString() + 'Un nom particulièrement long pour rentrer dans un header title' }),
+  options: () => ({ title: 'Écran de détails avec un nom vraiment très très long' }),
   screen: AModuleDetailsScreen,
 });
 
 function AModuleModalScreen({}: StaticScreenProps<{
   skibidi: string;
 }>) {
+  const insets = useSafeAreaInsets();
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom, paddingLeft: insets.left, paddingRight: insets.right }}>
       <BodyText>A Modal Screen</BodyText>
-      {new Array(20).fill(true).map((_, index) => (
-        <BodyText key={index}>{index}</BodyText>
+      {new Array(40).fill(true).map((_, index) => (
+        <HeadingSText key={index}>{index}</HeadingSText>
       ))}
     </ScrollView>
   );
 }
 
 const AModuleModalScreenDeclaration = defineModal({
-  options: ({
-    route: {
-      params: { skibidi },
-    },
-  }) => ({ title: skibidi }),
+  options: ({}) => ({ title: 'Une modale wow !' }),
   screen: AModuleModalScreen,
 });
 
@@ -108,5 +210,6 @@ export default new EntModule({
     'amodule/details': AModuleDetailsScreenDeclaration,
     'amodule/home': AModuleHomeScreenDeclaration,
   },
-  tab: { iconActive: 'ui-camera', iconInactive: 'ui-anniversary', order: 1, route: 'amodule/home', testId: 'a' },
+  storages: [storage, preferences],
+  tab: { iconActive: 'home-fill', iconInactive: 'home-outline', order: 10, route: 'amodule/home', testId: 'tabbar-timeline' },
 });

@@ -1,13 +1,9 @@
 import { ModuleScreenProps } from '~/app/navigation/types';
 import { AuthActiveAccount, UpdatableUserInfo } from '~/framework/modules/auth/model';
-import { refreshRequirementsAction } from '~/framework/modules/auth/thunks';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
 export interface AuthMFAScreenDispatchProps {
-  tryRefreshRequirements: (
-    ...args: Parameters<typeof refreshRequirementsAction>
-  ) => ReturnType<ReturnType<typeof refreshRequirementsAction>>;
   tryUpdateProfile: (updatedProfileValues: Partial<UpdatableUserInfo>) => Promise<void>;
 }
 

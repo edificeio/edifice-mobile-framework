@@ -7,11 +7,11 @@ import React from 'react';
 
 import DeviceInfo from 'react-native-device-info';
 
-import { FetchErrorCode } from './transport/error';
-
-import { I18n } from '~/util/i18n';
-import { AccountErrorCode } from '~/framework/modules/auth/model/error';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';
+import { AccountErrorCode } from '~/modules/auth/model/error';
+import { I18n } from '~/util/i18n';
+
+import { FetchErrorCode } from './transport/error';
 
 export namespace Error {
   /**
@@ -144,6 +144,10 @@ export namespace Error {
         return I18n.get('auth-error-notpremium');
       case AccountErrorCode.ACCOUNT_INELIGIBLE_PRE_DELETED:
         return I18n.get('auth-error-predeleted', { currentplatform: platformUrl });
+      case AccountErrorCode.TOO_MANY_ACCOUNTS:
+        return I18n.get('auth-error-toomanyaccounts');
+      case AccountErrorCode.SESSION_SETUP_FAILED:
+        return I18n.get('auth-error-sessionsetup');
 
       case OAuth2ErrorCode.SAML_MULTIPLE_VECTOR:
       default:

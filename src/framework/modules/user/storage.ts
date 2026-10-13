@@ -1,7 +1,5 @@
 import { Storage } from '~/framework/util/storage';
 
-import moduleConfig from './module-config';
-
 export interface UserStorageData {}
 
-export const storage = Storage.create<UserStorageData>().setPrefix(moduleConfig.storageName);
+export const storage = Storage.device<UserStorageData>({ namespace: 'user' });

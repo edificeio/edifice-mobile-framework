@@ -4,7 +4,6 @@
 import React from 'react';
 
 // import IncludedModules from '~/app/override/modules';
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import {
   AnyModule,
   dynamiclyRegisterModules,
@@ -13,6 +12,7 @@ import {
   NavigableModule,
   NavigableModuleArray,
 } from '~/framework/util/moduleTool';
+import { AuthActiveAccount } from '~/modules/auth/model';
 
 // We first imports all modules and their code hierarchy. Registrations are executed,
 // and then, we call initModules to instanciate RootComponents for each module.

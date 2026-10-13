@@ -1,8 +1,4 @@
 /**
- * Register here actions that need to be called when a users logs in.
- * Be careful the calls are unordered and promises are not awaited.
+ * @deprecated moved to `~/modules/auth/calls-at-login`.
  */
-
-const callsAtLogin: (() => any)[] = [];
-export const callAtLogin = (callback: () => any) => callsAtLogin.push(callback);
-export const callRegisteredActionsAtLogin = () => callsAtLogin.forEach(callback => callback());
+export * from '~/modules/auth/calls-at-login';

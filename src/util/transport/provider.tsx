@@ -7,7 +7,7 @@ let GLOBAL_SCOPES: Set<string> = new Set();
  *
  * @deprecated build useFetch hook to inject modules and scope information;
  */
-export const getModulesScopes = () => [...GLOBAL_SCOPES];
+export const getModulesScopes = () => GLOBAL_SCOPES;
 
 export const TransportProvider = React.memo(function ({ children }: React.PropsWithChildren) {
   // todo: build useFetch hook to inject modules and scope information

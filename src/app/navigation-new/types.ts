@@ -7,9 +7,9 @@ import type {
 
 import type { AllModulesNavigationParams } from '~/app/module';
 
-import type { useRootStackNavigation } from './rootStack';
+import type { useRootStackNavigation } from './root-stack';
+import type { createTabStackNavigation } from './tab-stack';
 import type { useTabNavigation } from './tabs';
-import type { createTabStackNavigation } from './tabStack';
 
 /**
  * Type of the root navigator, built from all modules screens and modals.
@@ -32,6 +32,17 @@ export type ScreenComponent = React.ComponentType<{
 }>;
 
 export type ScreenConfig<Component extends ScreenComponent> = Parameters<typeof createNativeStackScreen<Component>>[0];
+/**
+ * What a screen tells the telemetry about itself (read by the module that declares it, never given to the navigator).
+ */
+export type ScreenTelemetryConfig = {
+  /**
+   * The screen only hosts another navigation container (an independent one): the screens inside it are tracked by their own
+   * container, which also tracks this route, first. So the navigation of the app must not track it.
+   */
+  delegatesTelemetry?: boolean;
+};
+
 export type ScreenOptionsProps = Parameters<Extract<ScreenConfig<ScreenComponent>['options'], Function>>[0];
 
 type TabStackParamList = StaticParamList<ReturnType<typeof createTabStackNavigation>>;
