@@ -144,6 +144,10 @@ export const UI_SIZES = {
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
 
     navbarButtonSize: 36,
+    // What a finger needs, not what the icon measures. HeaderButton leaves iOS without any hitSlop,
+    // so the view itself has to be tall enough to be hit on the first try. Height only: widening
+    // the actions as well would push them apart from each other.
+    navbarButtonTouchSize: 44,
     /** @todo replace these constants by native ones. For the moment, use useHeaderHeight() instead if possible. */
     navbarHeight: Platform.select({ default: 56, ios: 44 }),
     navbarIconSize: 24,

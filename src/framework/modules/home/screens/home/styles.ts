@@ -13,6 +13,9 @@ export const styles = StyleSheet.create({
     gap: UI_SIZES.spacing.minor,
     height: ADD_BUTTON_SIZE,
     justifyContent: 'center',
+    // A drawn circle, not an icon sitting in a box: the navbar touch minimum would stretch it past
+    // its own radius and past the bar, so it keeps the height the design gave it.
+    minHeight: ADD_BUTTON_SIZE,
     padding: UI_SIZES.spacing.minor,
     width: ADD_BUTTON_SIZE,
   },
