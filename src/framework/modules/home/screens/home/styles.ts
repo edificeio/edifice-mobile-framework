@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import theme from '~/app/theme';
 import { getScaleFontSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
-export const ADD_BUTTON_SIZE = getScaleWidth(38);
+export const ADD_BUTTON_SIZE = getScaleWidth(UI_SIZES.dimensions.height.huge);
 
 export const styles = StyleSheet.create({
   addButton: {
@@ -25,11 +25,11 @@ export const styles = StyleSheet.create({
   },
   navBarTitleName: {
     color: theme.ui.navigation.navBar.tint.toString(),
-    lineHeight: getScaleFontSize(18),
+    lineHeight: getScaleFontSize(UI_SIZES.dimensions.height.medium),
   },
   navBarTitleType: {
     color: theme.ui.navigation.navBar.tint.toString(),
-    lineHeight: getScaleFontSize(16),
+    lineHeight: getScaleFontSize(UI_SIZES.dimensions.height.smallPlus),
   },
   page: {
     flex: 1,
