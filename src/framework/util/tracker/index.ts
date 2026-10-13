@@ -1,12 +1,14 @@
 import CookieManager from '@preeternal/react-native-cookie-manager';
-//import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
+import { initSdk, setIdentity, setProperties, trackEvent, trackScreen } from '@screeb/react-native';
 import DeviceInfo from 'react-native-device-info';
 
 import { EntModule } from '~/app/module';
 import { Modules } from '~/app/module/all';
 import AllModules from '~/app/modules';
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import appConf from '~/framework/util/appConf';
 import BuildInfo from '~/framework/util/build-info';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
 import { sessionFetch } from '~/framework/util/transport';
@@ -111,6 +113,7 @@ export abstract class AbstractTracker<OptionsType> {
     } catch (err) {
       console.error('trackEvent failed: ', (err as Error).message);
     }
+    t;
   }
 
   async trackEventOfModule(
@@ -341,6 +344,68 @@ export class ConcreteCrashsTracker extends AbstractTracker<undefined> {
   }
 }
 
+export class ConcreteScreebTracker extends AbstractTracker<undefined> {
+  async _init(): Promise<void> {
+    if (!appConf.screebEnabled) {
+      console.debug('[Screeb] init: Screeb not configured');
+      return;
+    }
+    initSdk(appConf.screeb!.channelId!);
+  }
+
+  async _setUserId(id: string) {
+    if (!appConf.screebEnabled) {
+      console.debug('[Screeb] setUserId: Screeb not configured');
+      return false;
+    }
+    const accountTypeCodes: Record<AccountType, string> = {
+      [AccountType.Student]: 'ELEVE',
+      [AccountType.Relative]: 'PERSRELELEVE',
+      [AccountType.Teacher]: 'ENSEIGNANT',
+      [AccountType.Personnel]: 'PERSEDUCNAT',
+      [AccountType.Guest]: 'GUEST',
+      [AccountType.External]: 'EXTERNAL',
+    };
+    const session = getSession();
+    // TODO: Encrypt used id as done in the web
+    setIdentity(id, {
+      device: `${DeviceInfo.getModel()} - ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`,
+      override: BuildInfo.BundleVersionOverride,
+      platform: session?.platform?.displayName ?? session?.platform?.name,
+      profile: session ? accountTypeCodes[session.user.type] : 'UNDEFINED',
+      version: `${DeviceInfo.getVersion()}-${BuildInfo.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
+    });
+    return true;
+  }
+
+  async _setCustomDimension(id: number, name: string, value: string) {
+    if (!appConf.screebEnabled) {
+      console.debug('[Screeb] setCustomDimension: Screeb not configured');
+      return false;
+    }
+    setProperties({ [name]: value });
+    return true;
+  }
+
+  protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
+    if (!appConf.screebEnabled) {
+      console.debug('[Screeb] trackEvent: Screeb not configured');
+      return false;
+    }
+    trackEvent(`[${category}] ${action}${name ? `:${name}` : ''}${value ? `:${value}` : ''}`);
+    return true;
+  }
+
+  async _trackView(path: string[]) {
+    if (!appConf.screebEnabled) {
+      console.debug('[Screeb] trackView: Screeb not configured');
+      return false;
+    }
+    trackScreen(path.join('/'));
+    return true;
+  }
+}
+
 export class ConcreteTrackerSet {
   private _trackers: AbstractTracker<any>[] = [];
 
@@ -421,6 +486,7 @@ export class ConcreteTrackerSet {
 export const Trackers = new ConcreteTrackerSet(
   new ConcreteEntcoreTracker('Entcore', undefined),
   new ConcreteCrashsTracker('Crashs', undefined),
+  new ConcreteScreebTracker('Screeb', undefined),
 );
 
 export const TRACKING_ACTION_SUFFIX_SUCCESS = 'Succès';

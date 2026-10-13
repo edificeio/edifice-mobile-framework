@@ -3,6 +3,7 @@ import { View, ViewStyle } from 'react-native';
 
 import { CommunityType, InvitationStatus } from '@edifice.io/community-client-rest-rn';
 import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
+import { useFocusEffect } from '@react-navigation/native';
 import type { FlashListRef } from '@shopify/flash-list';
 import { useSelector } from 'react-redux';
 

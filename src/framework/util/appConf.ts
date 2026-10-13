@@ -103,13 +103,16 @@ export interface IAppConfDeclaration {
     showDiscoveryClass?: boolean;
     showAppName?: boolean;
   };
+  platforms: IPlatformAccessDeclaration[];
   space?: {
     expirationDate?: string;
     userType?: AccountType;
     lang?: string;
     exceptionProject?: string[];
   };
-  platforms: IPlatformAccessDeclaration[];
+  screeb?: {
+    channelId?: string;
+  };
   splashads?: string;
   webviewIdentifier: string;
   whoAreWe?: {
@@ -132,28 +135,25 @@ export interface IAppConfDeclaration {
 export class AppConf {
   debugEnabled = false;
   i18nOTA = false;
-  level: '1d' | '2d' = '2d'; // 2d by default
+  level: '1d' | '2d' = '2d';
   matomo: { url: string; siteId: number };
-
   onboarding: {
     showDiscoverLink: { [p in PlatformOSType]?: boolean };
     showDiscoveryClass: boolean;
     showAppName: boolean;
   };
-
+  platforms: Platform[];
   space: {
     expirationDate: string;
     userType: AccountType;
     lang: string;
     exceptionProject: string[];
   };
-
-  platforms: Platform[];
-
   splashads?: string;
-
+  screeb?: {
+    channelId?: string;
+  };
   webviewIdentifier: string;
-
   whoAreWe?: {
     appleId?: string;
     discoverUrl?: string;
@@ -162,7 +162,6 @@ export class AppConf {
     illustration?: WhoAreWellustrationType;
     quote?: WhoAreWeQuoteType;
   };
-
   zendesk?: {
     appId?: string;
     clientId?: string;
@@ -216,6 +215,10 @@ export class AppConf {
     return __DEV__ || BuildInfo.BundleVersionType.toLowerCase().startsWith('alpha');
   }
 
+  get screebEnabled() {
+    return this.screeb && this.screeb.channelId;
+  }
+
   get splashadsEnabled() {
     return this.splashads;
   }
@@ -267,8 +270,8 @@ export class AppConf {
     this.onboarding = onboarding as AppConf['onboarding'];
     this.space = space as AppConf['space'];
     this.platforms = opts.platforms.map(pfd => new Platform(pfd));
+    this.screeb = opts.screeb ? { channelId: opts.screeb?.channelId } : undefined;
     this.webviewIdentifier = opts.webviewIdentifier;
-
     this.whoAreWe = opts.whoAreWe
       ? {
           appleId: opts.whoAreWe?.appleId,
@@ -279,7 +282,6 @@ export class AppConf {
           quote: opts.whoAreWe?.quote,
         }
       : undefined;
-
     this.zendesk = opts.zendesk
       ? {
           appId: opts.zendesk?.appId,

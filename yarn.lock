@@ -4502,6 +4502,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@screeb/react-native@npm:4.4.3":
+  version: 4.4.3
+  resolution: "@screeb/react-native@npm:4.4.3"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/9716e2d06b41dec3218573867f9775706b0b5b1fd08ed1d247aca792f47fcfa36cd8b687ffa0dac16aaa3904fc524a6d9311c0cd5e5007215dd15c3b4555dce7
+  languageName: node
+  linkType: hard
+
 "@selderee/plugin-htmlparser2@npm:~0.12.0":
   version: 0.12.0
   resolution: "@selderee/plugin-htmlparser2@npm:0.12.0"
@@ -5877,6 +5887,7 @@ __metadata:
     "@react-navigation/elements": "npm:2.9.25"
     "@react-navigation/native": "npm:7.3.3"
     "@react-navigation/native-stack": "npm:7.17.5"
+    "@screeb/react-native": "npm:4.4.3"
     "@shopify/flash-list": "npm:2.3.2"
     "@skele/components": "npm:1.0.0-alpha.40"
     "@trivago/prettier-plugin-sort-imports": "npm:6.0.2"
