@@ -18,4 +18,5 @@ export default new NavigableModuleConfig<'timeline', undefined>({
   // The timeline is always displayed
   storageName: 'timeline',
   testID: 'timeline-home',
+  trackingName: 'Timeline',
 });

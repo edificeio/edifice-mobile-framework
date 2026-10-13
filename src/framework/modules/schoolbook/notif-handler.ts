@@ -8,7 +8,7 @@ import { CommonActions } from '@react-navigation/native';
 
 import { AccountType } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
-import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTab';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import {
   handleNotificationNavigationAction,
