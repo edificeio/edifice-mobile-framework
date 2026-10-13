@@ -106,6 +106,7 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
     (id: string) =>
       new Promise<void>(resolve => {
         Alert.alert(I18n.get('home-notifications-delete-title'), I18n.get('home-notifications-delete-description'), [
+          { onPress: () => resolve(), style: 'cancel', text: I18n.get('common-cancel') },
           {
             onPress: async () => {
               try {
@@ -119,7 +120,6 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
             style: 'destructive',
             text: I18n.get('common-delete'),
           },
-          { onPress: () => resolve(), style: 'cancel', text: I18n.get('common-cancel') },
         ]);
       }),
     [dispatch],
