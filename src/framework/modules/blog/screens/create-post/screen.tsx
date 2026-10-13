@@ -24,8 +24,8 @@ import {
   submitBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/home/actions';
-import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { useRedirectActionOnSuccess } from '~/framework/navigation/redirection';
 
 import styles from './styles';
 import { BlogCreatePostScreenDataProps, BlogCreatePostScreenEventProps, BlogCreatePostScreenProps } from './types';
@@ -56,6 +56,8 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const { handleInitTimeline, handleSendBlogPost, navigation, route, session } = props;
   const blog = route.params.blog;
 
+  const dispatchActionOnSuccess = useRedirectActionOnSuccess(navigation);
+
   const doSendPost = async () => {
     try {
       const blogId = blog && blog.id;
@@ -73,7 +75,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
       // Create and submit/publish post
       await handleSendBlogPost(blog, title.trim(), htmlContent);
 
-      // Track action, load/navigate to timeline and display toast
+      // Track action, navigate where the caller asked, and display toast
       const blogPostDisplayRight = blogPostRight.displayRight;
       const toastSuccessText = {
         [createBlogPostResourceRight]: I18n.get('blog-createpost-create-success'),
@@ -82,14 +84,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
       }[blogPostDisplayRight];
 
       await handleInitTimeline();
-      navigation.navigate(
-        route.params.referrer ?? timelineRouteNames.Home,
-        {
-          ...(route.params.referrer ? { blogId: route.params.blog.id } : {}),
-          forceReload: true,
-        },
-        { pop: true },
-      );
+      dispatchActionOnSuccess(route.params.navActionOnSuccess);
       Toast.showSuccess(toastSuccessText);
     } catch (e: any) {
       if (e.response?.body === '{"error":"file.too.large"}') {

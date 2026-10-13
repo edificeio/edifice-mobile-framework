@@ -40,6 +40,7 @@ import TimelineNotification from '~/framework/modules/timeline/components/notifi
 import TimelineSpace from '~/framework/modules/timeline/components/space';
 import TimelineFlashMessage from '~/framework/modules/timeline/components/timeline-flash-message';
 import { WidgetChip } from '~/framework/modules/timeline/components/widget-chip';
+import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { openUrl } from '~/framework/util/linking';
@@ -367,7 +368,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     // The filters modal only saves the settings, so the screen showing them reloads on its own.
     if (this.props.notifFilterSettings !== prevProps.notifFilterSettings) this.doInit();
 
-    const workflows = session ? getTimelineWorkflows(session, navigation) : [];
+    const workflows = session ? getTimelineWorkflows(session, navigation, timelineModuleConfig.trackingName) : [];
 
     this.props.navigation.setOptions({
       headerRight: props => {

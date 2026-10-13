@@ -6,9 +6,7 @@ import { NavigationAction, NavigationProp, ParamListBase } from '@react-navigati
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import timelineModuleConfig from '~/framework/modules/timeline/module-config';
-import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
+import { navigateToHome } from '~/framework/navigation/homeTab';
 import { openUrl } from '~/framework/util/linking';
 
 import { getAsResourceUriNotification, IAbstractNotification } from '.';
@@ -53,15 +51,6 @@ export const getRegisteredNotifHandlers = () => registeredNotifHandlers;
 
 // Notif Handler Action
 
-const navigateToHome = (notification: IAbstractNotification, navigation: NavigationProp<ParamListBase>) => {
-  const home = getHomeTarget();
-  navigation.navigate(home.tab, {
-    initial: true,
-    params: { notification },
-    screen: home.screen,
-  });
-};
-
 const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   // Check for all module notif-handler that are registered.
   moduleRedirection: (n, trackCategory, navigation, navDispatch, allowSwitchTab) => async dispatch => {
@@ -82,13 +71,7 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
 
   // Only redirect to the home
   timelineRedirection: (n, trackCategory, navigation) => async () => {
-    navigation.navigate(computeTabRouteName(timelineModuleConfig.routeName), {
-      initial: true,
-      params: {
-        notification: n,
-      },
-      screen: timelineRouteNames.Home,
-    });
+    navigateToHome(navigation, { notification: n });
     return { managed: 1 };
   },
 
@@ -98,14 +81,9 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     if (!notifWithUri) {
       return { managed: 0 };
     }
-    // We want to navigate on timeline even if this is a web redirection.
-    navigation.navigate(computeTabRouteName(timelineModuleConfig.routeName), {
-      initial: true,
-      params: {
-        notification: n,
-      },
-      screen: timelineRouteNames.Home,
-    });
+
+    // We want to navigate on home even if this is a web redirection.
+    navigateToHome(navigation, { notification: n });
     openUrl(notifWithUri.resource.uri);
     return { managed: 1 };
   },

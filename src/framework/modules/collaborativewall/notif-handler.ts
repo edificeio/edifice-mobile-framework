@@ -8,7 +8,7 @@
 import { CommonActions } from '@react-navigation/native';
 
 import { collaborativewallRouteNames } from '~/framework/modules/collaborativewall/navigation';
-import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTab';
 import appConf from '~/framework/util/appConf';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import {

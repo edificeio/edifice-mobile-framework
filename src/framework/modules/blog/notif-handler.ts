@@ -8,7 +8,7 @@
 import { CommonActions } from '@react-navigation/native';
 
 import { blogRouteNames } from '~/framework/modules/blog/navigation';
-import { getHomeTabRouteName } from '~/framework/navigation/homeTarget';
+import { getHomeTabRouteName } from '~/framework/navigation/homeTab';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import {
   handleNotificationNavigationAction,

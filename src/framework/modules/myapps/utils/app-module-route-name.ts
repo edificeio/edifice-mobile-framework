@@ -1,10 +1,8 @@
 import { isNavigableModule } from '~/framework/modules/myapps/reducer/adapter';
-import { AnyModule, IEntcoreApp } from '~/framework/util/moduleTool';
+import { AnyModule, AnyNavigableModule, IEntcoreApp } from '~/framework/util/moduleTool';
 
-export const getModuleRouteName = (app: IEntcoreApp, modules: AnyModule[]): string | undefined => {
-  const navigableModules = modules.filter(isNavigableModule);
+export const getAppModule = (app: IEntcoreApp, modules: AnyModule[]): AnyNavigableModule | undefined =>
+  modules.filter(isNavigableModule).find(module => module.config.matchEntcoreApp === app.name);
 
-  const matchedModule = navigableModules.find(module => module.config.matchEntcoreApp === app.name);
-
-  return matchedModule?.config?.routeName;
-};
+export const getModuleRouteName = (app: IEntcoreApp, modules: AnyModule[]): string | undefined =>
+  getAppModule(app, modules)?.config?.routeName;

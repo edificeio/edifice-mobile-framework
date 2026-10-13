@@ -21,8 +21,9 @@ import {
   writeShowAllApps,
 } from '~/framework/modules/myapps/storage';
 import { AppsInfoAggregated, MyAppsFilter, MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
-import { getModuleRouteName } from '~/framework/modules/myapps/utils';
+import { getAppModule } from '~/framework/modules/myapps/utils';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
+import { getModuleTabRouteName } from '~/framework/navigation/tabTarget';
 import { openUrl } from '~/framework/util/linking';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 
@@ -141,9 +142,9 @@ export function useMyAppsHomeController() {
       if (app.routeName) {
         const session = assertSession();
         const modules = AllModules().filterAvailables(session!).filter(isNavigableModule);
-        const routeName = getModuleRouteName(app as IEntcoreApp, modules);
-        if (routeName) {
-          navigation.navigate(routeName);
+        const module = getAppModule(app as IEntcoreApp, modules);
+        if (module) {
+          navigation.navigate(getModuleTabRouteName(module.config.name, session) ?? module.config.routeName);
         }
       } else {
         const finalUrl = app.isConnector ? `/auth/redirect?url=${encodeURIComponent(app.address.trim())}` : app.address;
