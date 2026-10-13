@@ -6,4 +6,5 @@ export default [
   import('~/app/test/bmodule'),
   import('~/app/test/cmodule'),
   import('~/app/test/dmodule'),
+  import('~/modules/auth'),
 ] as const;
