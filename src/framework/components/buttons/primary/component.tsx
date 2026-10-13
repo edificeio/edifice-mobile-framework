@@ -1,35 +1,37 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-
-import styles from './styles';
-import { PrimaryButtonProps } from './types';
 
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 
+import styles from './styles';
+import { PrimaryButtonProps } from './types';
+
+const colors = theme.ui.button;
+
+// A filled button paints its body with the accent, and its content has to read on that body.
+const fill = (disabled?: boolean, pressed?: boolean) => {
+  if (disabled) return { background: colors.disabledBackground, content: colors.disabledContentOnFill };
+  return { background: pressed ? colors.pressedBackground : colors.background, content: colors.contentOnFill };
+};
+
 const PrimaryButton = (props: PrimaryButtonProps) => {
-  const initialBackgroundColor = theme.palette.primary.regular;
+  const [pressed, setPressed] = React.useState(false);
 
-  const [backgroundColor, setBackgroundColor] = useState(initialBackgroundColor);
+  const state = fill(props.disabled, pressed);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (props.disabled) setBackgroundColor(theme.palette.primary.light);
-    if (!props.disabled && backgroundColor === theme.palette.primary.light) setBackgroundColor(initialBackgroundColor);
-  });
   return (
     <DefaultButton
       {...props}
       activeOpacity={1}
-      onPressIn={() => setBackgroundColor(theme.palette.primary.dark)}
-      onPressOut={() => setBackgroundColor(initialBackgroundColor)}
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
       style={[
         styles.primary,
-        { backgroundColor, borderColor: backgroundColor },
+        { backgroundColor: state.background, borderColor: state.background },
         { ...(props.round ? styles.round : {}) },
         props.style,
       ]}
-      contentColor={theme.palette.grey.white}
+      contentColor={props.contentColor ?? state.content}
     />
   );
 };
