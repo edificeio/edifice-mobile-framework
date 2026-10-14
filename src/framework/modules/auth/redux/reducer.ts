@@ -1,490 +1,139 @@
-import { getStore, IGlobalState } from '~/app/store';
+/**
+ * Compatibility layer of the former auth redux reducer.
+ * The auth state now lives in the zustand stores of `~/modules/auth/store`.
+ * Everything below is kept for the not yet migrated modules, reads the zustand stores, and is deprecated.
+ *
+ * @deprecated use the stores of `~/modules/auth/store` directly.
+ */
+
+import type { IGlobalState } from '~/app/store';
+import type { HostId, Platform } from '~/framework/util/appConf';
 import {
-  accountIsActive,
-  AccountType,
-  ANONYMOUS_ACCOUNT_ID,
-  AuthActiveAccount,
-  AuthLoggedAccountMap,
-  AuthPendingRedirection,
-  AuthSavedLoggedInAccount,
-  getSerializedLoggedInAccountInfo,
-  getSerializedLoggedOutAccountInfo,
-} from '~/framework/modules/auth/model';
-import moduleConfig from '~/framework/modules/auth/module-config';
-import appConf, { HostId, Platform } from '~/framework/util/appConf';
-import createReducer from '~/framework/util/redux/reducerFactory';
+  assertSession as assertStoreSession,
+  getSession as getStoreSession,
+  useAccountsStore,
+} from '~/modules/auth/store/accounts';
+import { getPlatformContext as getStorePlatformContext, usePlatformContextStore } from '~/modules/auth/store/platform-context';
+import {
+  getPlatformLegalUrls as getStorePlatformLegalUrls,
+  usePlatformLegalUrlsStore,
+} from '~/modules/auth/store/platform-legal-urls';
+import { getPlatformReactionTypes } from '~/modules/auth/store/platform-reaction-types';
+import { useSignInStore } from '~/modules/auth/store/sign-in';
 
-import { ActionPayloads, actionTypes, ERASE_ALL_ACCOUNTS } from './actions';
-import { AuthPendingRestore, AuthState } from './types';
+import type { AuthState } from './types';
 
-export const initialState: AuthState = {
-  accounts: {},
-  deviceInfo: {},
-  lastAddAccount: 0,
-  platformContexts: {},
-  platformLegalUrls: {},
-  showOnboarding: true,
-  validReactionTypes: [],
-};
-
-const reducer = createReducer(initialState, {
-  [actionTypes.authInit]: (state, action) => {
-    const { accounts, deviceId, showOnboarding, startup } = action as unknown as ActionPayloads['authInit'];
-    let realAccounts = { ...accounts };
-    const pending: AuthPendingRestore | undefined = startup.platform
-      ? { platform: startup.platform, redirect: undefined }
-      : undefined;
-    if (pending && startup.account) {
-      (pending as AuthPendingRestore).account = startup.account;
-    }
-    const pendingPlatform = startup.platform ? appConf.getExpandedPlatform(startup.platform) : undefined;
-    if (pending && startup.anonymousToken && pendingPlatform) {
-      (pending as AuthPendingRestore).account = ANONYMOUS_ACCOUNT_ID;
-      realAccounts = {
-        ...realAccounts,
-        [ANONYMOUS_ACCOUNT_ID]: {
-          addTimestamp: 0,
-          method: undefined,
-          platform: pending.platform,
-          tokens: {
-            access: {
-              expiresAt: startup.anonymousToken.expires_at.toString(),
-              type: startup.anonymousToken.token_type as 'Bearer',
-              value: startup.anonymousToken.access_token,
-            },
-            origin: pendingPlatform.url,
-            refresh: {
-              value: startup.anonymousToken.refresh_token,
-            },
-            scope: startup.anonymousToken.scope.split(' '),
-          },
-          user: { displayName: '', id: ANONYMOUS_ACCOUNT_ID, loginUsed: '', type: AccountType.Guest },
-        },
-      };
-    }
-    return {
-      ...initialState,
-      accounts: realAccounts,
-      deviceInfo: { ...state.deviceInfo, uniqueId: deviceId },
-      pending,
-      showOnboarding,
-    };
-  },
-
-  [actionTypes.loadPfContext]: (state, action) => {
-    const { context, name } = action as unknown as ActionPayloads['loadPfContext'];
-    return { ...state, platformContexts: { ...state.platformContexts, [name]: context } };
-  },
-
-  [actionTypes.loadPfLegalUrls]: (state, action) => {
-    const { legalUrls, name } = action as unknown as ActionPayloads['loadPfLegalUrls'];
-    return { ...state, platformLegalUrls: { ...state.platformLegalUrls, [name]: legalUrls } };
-  },
-
-  [actionTypes.loadPfValidReactionTypes]: (state, action) => {
-    const { validReactionTypes } = action as unknown as ActionPayloads['loadPfValidReactionTypes'];
-    return { ...state, validReactionTypes: validReactionTypes['reaction-types'] };
-  },
-
-  [actionTypes.addAccount]: (state, action) => {
-    const { account } = action as unknown as ActionPayloads['addAccount'];
-    return {
-      ...state,
-      accounts: { ...state.accounts, [account.user.id]: account },
-      connected: account.user.id,
-      lastAddAccount: Date.now(),
-      lastDeletedAccount: undefined,
-      requirement: undefined,
-      showOnboarding: false,
-    };
-  },
-
-  [actionTypes.addAccountRequirement]: (state, action) => {
-    const { account, context, requirement } = action as unknown as ActionPayloads['addAccountRequirement'];
-    return {
-      ...state,
-      accounts: { ...state.accounts, [account.user.id]: account },
-      connected: account.user.id,
-      lastAddAccount: Date.now(),
-      lastDeletedAccount: undefined,
-      platformContexts: { ...state.platformContexts, [account.platform.name]: context },
-      requirement,
-      showOnboarding: false,
-    };
-  },
-
-  [actionTypes.removeAccount]: (state, action) => {
-    const { id } = action as unknown as ActionPayloads['removeAccount'];
-    const newAccounts = { ...state.accounts };
-    delete newAccounts[id];
-    return {
-      ...state,
-      accounts: newAccounts,
-      lastDeletedAccount: id,
-      requirement: undefined,
-    };
-  },
-
-  [actionTypes.replaceAccount]: (state, action) => {
-    const { account, id } = action as unknown as ActionPayloads['replaceAccount'];
-    const newAccounts = id === ERASE_ALL_ACCOUNTS ? {} : { ...state.accounts };
-    if (id !== ERASE_ALL_ACCOUNTS) delete newAccounts[id];
-    return {
-      ...state,
-      accounts: { ...newAccounts, [account.user.id]: account },
-      connected: account.user.id,
-      lastDeletedAccount: undefined,
-      requirement: undefined,
-      showOnboarding: false,
-    };
-  },
-
-  [actionTypes.replaceAccountRequirement]: (state, action) => {
-    const { account, context, id, requirement } = action as unknown as ActionPayloads['replaceAccountRequirement'];
-    const newAccounts = id === ERASE_ALL_ACCOUNTS ? {} : { ...state.accounts };
-    if (id !== ERASE_ALL_ACCOUNTS) delete newAccounts[id];
-    return {
-      ...state,
-      accounts: { ...newAccounts, [account.user.id]: account },
-      connected: account.user.id,
-      lastDeletedAccount: undefined,
-      platformContexts: { ...state.platformContexts, [account.platform.name]: context },
-      requirement,
-      showOnboarding: false,
-    };
-  },
-
-  [actionTypes.updateRequirement]: (state, action) => {
-    if (!state.connected) return state;
-    const { account, context, requirement } = action as unknown as ActionPayloads['updateRequirement'];
-    const id = account.user.id;
-    if (context)
-      return {
-        ...state,
-        accounts: { ...state.accounts, [id]: account },
-        platformContexts: { ...state.platformContexts, [account.platform.name]: context },
-        requirement,
-      };
-    else return { ...state, accounts: { ...state.accounts, [id]: account }, requirement };
-  },
-
-  [actionTypes.refreshToken]: (state, action) => {
-    const { id, tokens } = action as unknown as ActionPayloads['refreshToken'];
-    return { ...state, accounts: { ...state.accounts, [id]: { ...state.accounts[id], tokens } } };
-  },
-
-  [actionTypes.setQueryParamToken]: (state, action) => {
-    const { id, token } = action as unknown as ActionPayloads['setQueryParamToken'];
-    const tokens = (state.accounts[id] as Partial<AuthActiveAccount | AuthSavedLoggedInAccount>).tokens
-      ? { ...(state.accounts[id] as AuthActiveAccount | AuthSavedLoggedInAccount).tokens, queryParam: token }
-      : undefined;
-    return tokens
-      ? {
-          ...state,
-          accounts: {
-            ...state.accounts,
-            [id]: { ...state.accounts[id], tokens },
-          },
-        }
-      : state;
-  },
-
-  [actionTypes.setOneSessionId]: (state, action) => {
-    const { id, token } = action as unknown as ActionPayloads['setOneSessionId'];
-    const tokens = (state.accounts[id] as Partial<AuthActiveAccount | AuthSavedLoggedInAccount>).tokens
-      ? { ...(state.accounts[id] as AuthActiveAccount | AuthSavedLoggedInAccount).tokens, oneSessionId: token }
-      : undefined;
-    return tokens
-      ? {
-          ...state,
-          accounts: {
-            ...state.accounts,
-            [id]: { ...state.accounts[id], tokens },
-          },
-        }
-      : state;
-  },
-
-  [actionTypes.setCarbonioToken]: (state, action) => {
-    const { id, token } = action as unknown as ActionPayloads['setCarbonioToken'];
-    const tokens = (state.accounts[id] as Partial<AuthActiveAccount | AuthSavedLoggedInAccount>).tokens
-      ? { ...(state.accounts[id] as AuthActiveAccount | AuthSavedLoggedInAccount).tokens, carbonioToken: token }
-      : undefined;
-    return tokens ? { ...state, accounts: { ...state.accounts, [id]: { ...state.accounts[id], tokens } } } : state;
-  },
-  [actionTypes.setCarbonioUserInfos]: (state, action) => {
-    const { carbonioUserInfos, id } = action as unknown as ActionPayloads['setCarbonioUserInfos'];
-    return { ...state, accounts: { ...state.accounts, [id]: { ...state.accounts[id], carbonioUserInfos } } };
-  },
-  [actionTypes.authError]: (state, action) => {
-    const { error } = action as unknown as ActionPayloads['authError'];
-    return {
-      ...state,
-      error,
-      // connected: undefined, // This is a test : a priori, there is no need to erase this field as it will be undefined before any login task
-    };
-  },
-
-  [actionTypes.logout]: state => {
-    const currentAccount = (state.connected ? state.accounts[state.connected] : undefined) as AuthActiveAccount | undefined;
-    if (!currentAccount) return state;
-    return {
-      ...state,
-      accounts: { ...state.accounts, [currentAccount.user.id]: getSerializedLoggedOutAccountInfo(currentAccount) },
-      connected: undefined,
-      error: undefined,
-      lastDeletedAccount: undefined,
-      pending: undefined,
-      requirement: undefined,
-    };
-  },
-
-  [actionTypes.deactivate]: state => {
-    const currentAccount = (state.connected ? state.accounts[state.connected] : undefined) as AuthActiveAccount | undefined;
-    if (!currentAccount) return state;
-    return {
-      ...state,
-      accounts: { ...state.accounts, [currentAccount.user.id]: getSerializedLoggedInAccountInfo(currentAccount) },
-      connected: undefined,
-      error: undefined,
-      lastDeletedAccount: undefined,
-      pending: undefined,
-      requirement: undefined,
-    };
-  },
-
-  [actionTypes.redirectActivation]: (state, action) => {
-    const { code, login, platformName } = action as unknown as ActionPayloads['redirectActivation'];
-    return {
-      ...state,
-      connected: undefined,
-      error: undefined,
-      pending: {
-        code,
-        loginUsed: login,
-        platform: platformName,
-        redirect: AuthPendingRedirection.ACTIVATE as const,
-      },
-      requirement: undefined,
-    };
-  },
-
-  [actionTypes.redirectPasswordRenew]: (state, action) => {
-    const { accountId, accountTimestamp, code, login, platformName } = action as unknown as ActionPayloads['redirectPasswordRenew'];
-    return {
-      ...state,
-      connected: undefined,
-      error: undefined,
-      pending: {
-        accountId,
-        accountTimestamp,
-        code,
-        loginUsed: login,
-        platform: platformName,
-        redirect: AuthPendingRedirection.RENEW_PASSWORD as const,
-      },
-      requirement: undefined,
-    };
-  },
-
-  [actionTypes.redirectCancel]: (state, action) => {
-    const { accountId, accountTimestamp, login, platformName } = action as unknown as ActionPayloads['redirectCancel'];
-    return {
-      ...state,
-      connected: undefined,
-      pending: {
-        accountId,
-        accountTimestamp,
-        loginUsed: login,
-        platform: platformName,
-        redirect: undefined,
-      },
-      requirement: undefined,
-    };
-  },
-
-  [actionTypes.profileUpdate]: (state, action) => {
-    const { id, user } = action as unknown as ActionPayloads['profileUpdate'];
-    const account = state.accounts[id] as AuthActiveAccount;
-    if (!account || !accountIsActive(account)) return state;
-    const newAccount = { ...account, user: { ...account.user, ...user } } as AuthActiveAccount;
-    return { ...state, accounts: { ...state.accounts, [id]: newAccount } };
-  },
-
-  [actionTypes.addAccountInit]: state => {
-    return { ...state, error: undefined, pendingAddAccount: undefined };
-  },
-
-  [actionTypes.addAccountActivation]: (state, action) => {
-    const { code, login, platformName } = action as unknown as ActionPayloads['redirectActivation'];
-    return {
-      ...state,
-      error: undefined,
-      pendingAddAccount: {
-        code,
-        loginUsed: login,
-        platform: platformName,
-        redirect: AuthPendingRedirection.ACTIVATE as const,
-      },
-      requirement: undefined,
-    };
-  },
-
-  [actionTypes.addAccountPasswordRenew]: (state, action) => {
-    const { accountId, accountTimestamp, code, login, platformName } = action as unknown as ActionPayloads['redirectPasswordRenew'];
-    return {
-      ...state,
-      error: undefined,
-      pendingAddAccount: {
-        accountId,
-        accountTimestamp,
-        code,
-        loginUsed: login,
-        platform: platformName,
-        redirect: AuthPendingRedirection.RENEW_PASSWORD as const,
-      },
-      requirement: undefined,
-    };
-  },
-
-  [actionTypes.addAccountRedirectCancel]: (state, action) => {
-    const { login, platformName } = action as unknown as ActionPayloads['addAccountRedirectCancel'];
-    return {
-      ...state,
-      pendingAddAccount: {
-        loginUsed: login,
-        platform: platformName,
-        redirect: undefined,
-      },
-      requirement: undefined,
-    };
-  },
-
-  [actionTypes.invalidate]: state => {
-    const currentAccount = (state.connected ? state.accounts[state.connected] : undefined) as AuthActiveAccount | undefined;
-    if (!currentAccount) return state;
-    return {
-      ...state,
-      accounts: { ...state.accounts, [currentAccount.user.id]: getSerializedLoggedOutAccountInfo(currentAccount) },
-      connected: undefined,
-      lastDeletedAccount: undefined,
-      pending: { account: currentAccount.user.id, platform: currentAccount.platform.name, redirect: undefined },
-      requirement: undefined,
-    };
-  },
-});
-
-export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as AuthState;
-
-export const selectors = {
-  accounts: (state: IGlobalState) => getState(state).accounts,
-  connected: (state: IGlobalState) => getState(state).connected,
-  hostContext: (name: HostId) => (state: IGlobalState) => getState(state).platformContexts[name],
-  lastAddAccount: (state: IGlobalState) => getState(state).lastAddAccount,
-  lastDeletedAccount: (state: IGlobalState) => getState(state).lastDeletedAccount,
-  pending: (state: IGlobalState) => getState(state).pending,
-  requirement: (state: IGlobalState) => {
-    const authState = getState(state);
-    return authState.requirement;
-  },
-  session: (state: IGlobalState) => {
-    const authState = getState(state);
-    return authState.connected ? (authState.accounts as AuthLoggedAccountMap)[authState.connected] : undefined;
-  },
-  showOnboarding: (state: IGlobalState) => getState(state).showOnboarding,
+/**
+ * Builds the former redux state shape from the zustand stores. The given redux state is ignored.
+ * @deprecated use `useAccountsStore`, `usePlatformContextStore`, `usePlatformLegalUrlsStore`, `useSignInStore` from `~/modules/auth/store/*` depending on the field you need.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const getState = (_state?: IGlobalState): AuthState => {
+  const { accounts, connected, lastAddAccount, lastDeletedAccount } = useAccountsStore.getState();
+  const session = getStoreSession();
+  return {
+    accounts,
+    connected,
+    deviceInfo: {},
+    error: useSignInStore.getState().error,
+    lastAddAccount,
+    lastDeletedAccount,
+    pending: undefined,
+    platformContexts: usePlatformContextStore.getState().contexts,
+    platformLegalUrls: usePlatformLegalUrlsStore.getState().urls,
+    requirement: session?.requirement,
+    showOnboarding: true,
+    validReactionTypes: getPlatformReactionTypes(session?.platform.name) ?? [],
+  } as AuthState;
 };
 
 /**
- * Get the current active session from Redux state.
- * This is the recommended way to get the session in a component.
- * Though `assertSession` should work, `getSession` does NOT throw exceptions, and return undefined instead,
- * letting you deal with the undefined value as you wish.
- * @returns the active session present in redux state. Can be undefined.
- * @deprecated use the hook useSelector() or withSession() HOC.
+ * These selectors are NOT reactive : they read zustand whenever the redux store updates.
+ * They are kept as is for components not yet migrated.
  */
-export function getSession() {
-  return selectors.session(getStore().getState());
-}
+export const selectors = {
+  /** @deprecated use `useAccountsStore(s => s.accounts)`. */
+  accounts: () => useAccountsStore.getState().accounts,
+  /** @deprecated use `useAccountsStore(s => s.connected)`. */
+  connected: () => useAccountsStore.getState().connected,
+  /** @deprecated use `usePlatformContext(name)` from `~/modules/auth/store/platform-context`. */
+  hostContext: (name: HostId) => () => getStorePlatformContext(name),
+  /** @deprecated use `useAccountsStore(s => s.lastAddAccount)`. */
+  lastAddAccount: () => useAccountsStore.getState().lastAddAccount,
+  /** @deprecated use `useAccountsStore(s => s.lastDeletedAccount)`. */
+  lastDeletedAccount: () => useAccountsStore.getState().lastDeletedAccount,
+  /** @deprecated use `useSignInStore(s => s.status)`. */
+  pending: () => undefined,
+  /** @deprecated use `useRequirement()` from `~/modules/auth/store/accounts`. */
+  requirement: () => getStoreSession()?.requirement,
+  /** @deprecated use `useSession()` from `~/modules/auth/store/accounts`. */
+  session: () => getStoreSession(),
+  /** @deprecated onboarding is always shown. */
+  showOnboarding: () => true,
+};
 
+/** @deprecated use `getSession()` from `~/modules/auth/store/accounts`, or the hook `useSession()` in components. */
+export const getSession = () => getStoreSession();
+
+/** @deprecated use `assertSession()` from `~/modules/auth/store/accounts`. */
+export const assertSession = () => assertStoreSession();
+
+/** @deprecated use `getSession()?.platform` from `~/modules/auth/store/accounts`. */
 export function getPlatform() {
   return getSession()?.platform;
 }
 
 /**
  * get the platform context of the authentified user.
+ * @deprecated use `getPlatformContext(platformName)` from `~/modules/auth/store/platform-context`.
  */
 export function getPlatformContext() {
-  const state = getState(getStore().getState());
-  const session = getSession();
-  return session ? state.platformContexts[session.platform.name] : undefined;
+  return getStorePlatformContext(getSession()?.platform.name);
 }
 
 /**
  * get the platform context of the given platform
+ * @deprecated use `getPlatformContext(platformName)` from `~/modules/auth/store/platform-context`.
  */
 export function getPlatformContextOf(platform?: Platform) {
-  const state = getState(getStore().getState());
-  return platform ? state.platformContexts[platform.name] : undefined;
+  return getStorePlatformContext(platform?.name);
 }
 
+/** @deprecated use `getPlatformLegalUrls(platformName)` from `~/modules/auth/store/platform-legal-urls`. */
 export function getPlatformLegalUrls() {
-  const state = getState(getStore().getState());
-  const session = getSession();
-  return session ? state.platformLegalUrls[session.platform.name] : undefined;
+  return getStorePlatformLegalUrls(getSession()?.platform.name);
 }
 
+/** @deprecated use `getPlatformLegalUrls(platformName)` from `~/modules/auth/store/platform-legal-urls`. */
 export function getPlatformLegalUrlsOf(platform?: Platform) {
-  const state = getState(getStore().getState());
-  return platform ? state.platformLegalUrls[platform.name] : undefined;
+  return getStorePlatformLegalUrls(platform?.name);
 }
 
+/** @deprecated use `getPlatformReactionTypes(platformName)` from `~/modules/auth/store/platform-reaction-types`. */
 export function getValidReactionTypes() {
-  const state = getState(getStore().getState());
-  return state.validReactionTypes;
+  return getPlatformReactionTypes(getSession()?.platform.name) ?? [];
 }
 
+/** @deprecated use `Object.keys(useAccountsStore.getState().accounts).length`. */
 export function getAccountsNumber() {
-  const state = getState(getStore().getState());
-  return Object.keys(state.accounts).length;
+  return Object.keys(useAccountsStore.getState().accounts).length;
 }
 
+/** @deprecated use `Object.values(useAccountsStore.getState().accounts)`. */
 export function getAccounts() {
-  const state = getState(getStore().getState());
-  return Object.values(state.accounts);
+  return Object.values(useAccountsStore.getState().accounts);
 }
 
+/** @deprecated use `useAccountsStore.getState().accounts[id]`. */
 export function getAccountById(id?: keyof AuthState['accounts']) {
-  const state = getState(getStore().getState());
-  return id ? state.accounts[id] : undefined;
-}
-
-export function getDeviceId() {
-  return getState(getStore().getState()).deviceInfo.uniqueId;
+  return id ? useAccountsStore.getState().accounts[id] : undefined;
 }
 
 /**
  * Gets the currently stored query param token. Do NOT refresh it if expired.
  * Please use `getQueryParamToken` in `oauth.ts` instead.
- * @returns
+ * @deprecated use `getSession()?.tokens.queryParam` from `~/modules/auth/store/accounts`.
  */
 export function getCurrentQueryParamToken() {
   return getSession()?.tokens.queryParam;
 }
-
-/**
- * Get the current active session.
- * This IS NOT the recommended way to get the session information.
- * - In a component, use the below `getSession`
- * - In an action/thunk, use this only if you call your action with tryAction/callAction. Else, use the below `getSession`
- * - In a utility function, use this assertion.
- * Caution : this is an "assert" function. If session not present, this function will throw an error.
- * @returns the current session
- * @throws Error
- */
-export function assertSession() {
-  const session = getSession();
-  if (!session) throw new Error('[assertSession] no session');
-  return session;
-}
-
-export default reducer;

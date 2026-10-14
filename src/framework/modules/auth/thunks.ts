@@ -370,9 +370,12 @@ const getLoginFunctions = {
  */
 const loadMyAppsAtLogin = async (accountInfo: AuthActiveAccount, dispatch: AuthDispatch) => {
   try {
-    const myAppsServiceWithTokens = createMyAppsServiceWithTokenFetch(accountInfo.tokens);
-    const payload = await loadAppsDataFromService(myAppsServiceWithTokens, accountInfo);
-    dispatch(appInfoActions.fetchSuccess(payload));
+    // Note: this doesn't work for the moment (AllModules changes breakling things.)
+    // We skip it until myapps is migrated.
+    //
+    // const myAppsServiceWithTokens = createMyAppsServiceWithTokenFetch(accountInfo.tokens);
+    // const payload = await loadAppsDataFromService(myAppsServiceWithTokens, accountInfo);
+    // dispatch(appInfoActions.fetchSuccess(payload));
   } catch (error) {
     throw error;
   }

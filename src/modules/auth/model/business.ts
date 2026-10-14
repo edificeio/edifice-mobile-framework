@@ -1,4 +1,4 @@
-import { getAccountsNumber } from '~/framework/modules/auth/redux/reducer';
+import { useAccountsStore } from '../store/accounts';
 
 import { AccountType, AuthLoggedAccount } from '.';
 
@@ -7,8 +7,12 @@ const MAX_ACCOUNTS = 2;
 
 /**
  * As of 1.12.0, only Teachers and Personnel users can add only one another account.
- * As of 1.17.0, Parent users can  alsoadd only one another account.
+ * As of 1.17.0, Parent users can also add only one another account.
  */
 export const userCanAddAccount = (session?: AuthLoggedAccount) => {
-  return session && MULTIPLE_ACCOUNT_ELIGIBLE_TYPES.includes(session.user.type) && getAccountsNumber() < MAX_ACCOUNTS;
+  return (
+    session &&
+    MULTIPLE_ACCOUNT_ELIGIBLE_TYPES.includes(session.user.type) &&
+    Object.keys(useAccountsStore.getState().accounts).length < MAX_ACCOUNTS
+  );
 };

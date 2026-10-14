@@ -16,7 +16,6 @@ import { assertSession, getSession } from '~/framework/modules/auth/redux/reduce
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import Notifier from '~/framework/util/notifier';
 import { getPlatformUrl } from '~/framework/util/transport/common';
 import { I18n } from '~/util/i18n';
 
@@ -178,7 +177,6 @@ class Attachment extends React.PureComponent<
 
     return (
       <View style={{ ...style }}>
-        <Notifier id={notifierId} />
         <View
           style={{
             alignItems: 'center',

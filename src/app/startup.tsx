@@ -7,10 +7,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 // import { initEditor } from '~/framework/components/inputs/rich-text/editor/editor';
 import { useConstructor } from '~/framework/hooks/constructor';
-// import { accountIsLoggable } from '~/framework/modules/auth/model';
-// import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/thunks';
-// import track from '~/framework/modules/auth/tracking';
-// import { tryAction } from '~/framework/util/redux/actions';
+import { restoreAtStartup } from '~/modules/auth/flows';
 
 import { AppNavigation } from './navigation-new';
 import { appReadyAction, getState as getAppStartupState } from './store/startup';
@@ -21,13 +18,7 @@ import { appReadyAction, getState as getAppStartupState } from './store/startup'
 export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
   useConstructor(async () => {
     try {
-      // const tryRestore = tryAction(restoreAccountAction, {
-      //   track: track.loginRestore,
-      // });
-      // const startupAccount = await (dispatch(authInitAction()) as unknown as ReturnType<ReturnType<typeof authInitAction>>); // TS-issue with dispatch async
-      // if (startupAccount && accountIsLoggable(startupAccount)) {
-      //   await (dispatch(tryRestore(startupAccount)) as unknown as ReturnType<ReturnType<typeof restoreAccountAction>>); // TS-issue with dispatch async
-      // }
+      await restoreAtStartup();
     } catch (e) {
       console.error('[Startup] Startup failed. Cause :', e);
     } finally {

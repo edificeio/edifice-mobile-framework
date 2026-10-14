@@ -1,10 +1,11 @@
 import type { Moment } from 'moment';
 import { CountryCode } from 'react-native-phone-number-input';
 
-import type { IAuthorizedAction, UserPrivateData } from '~/framework/modules/auth/service';
-import { EmailState, MobileState } from '~/framework/modules/auth/templates/activation';
 import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
+
+import type { IAuthorizedAction, UserPrivateData } from '../service/types';
+import type { EmailState, MobileState } from '../sign-in/templates/activation/types';
 
 /**
  * Every profile type for accounts. Each account is of one type only.
@@ -110,6 +111,11 @@ export type AuthSavedLoggedOutAccount = AuthSavedLoggedOutAccountWithCredentials
 export type AuthSavedLoggedInAccount = AuthSavedLoggedInAccountWithCredentials | AuthSavedLoggedInAccountWithSaml;
 
 export type AuthSavedAccount = AuthSavedLoggedOutAccount | AuthSavedLoggedInAccount;
+/**
+ * Any account that has tokens: the active one (connected) or a saved one.
+ * ⚠️ Not the same meaning as the former `AuthLoggedAccount` (= active account only) of `~/framework/modules/auth/model`.
+ */
+export type AuthLoggedAccount = AuthActiveAccount | AuthSavedLoggedInAccount;
 
 // Active Account
 
@@ -173,6 +179,8 @@ interface AuthActiveAccountCommon {
   persist: SessionPersistence;
   addTimestamp: AuthSavedAccount['addTimestamp']; // date of the account addition into the app to preserve display order.
   logTimestamp: AuthSavedAccount['addTimestamp']; // date of the latest access to that account on this device.
+  carbonioUserInfos?: AuthCarbonioUserInfos; // Carbonio (mails) account information, once fetched.
+  requirement?: AuthRequirement; // Next action the user must perform before being able to use the app. Undefined if none.
 }
 
 interface AuthActiveUserInfoWithCredentialsSpecifics {
@@ -237,8 +245,17 @@ export interface AuthTokenSet {
   refresh: AuthToken;
   queryParam?: AuthQueryParamToken;
   oneSessionId?: AuthToken;
+  carbonioToken?: string;
   scope: string[];
   origin: string;
+}
+
+/**
+ * Carbonio user information, as returned by the mail backend
+ */
+export interface AuthCarbonioUserInfos {
+  name?: string;
+  [key: string]: unknown;
 }
 
 export interface AuthActiveAccountRights {
@@ -246,12 +263,6 @@ export interface AuthActiveAccountRights {
   widgets: IEntcoreWidget[];
   authorizedActions: IAuthorizedAction[];
 }
-
-/**
- * Every info the logged account contains
- * @deprecated use AuthActiveAccount instead.
- */
-export type AuthLoggedAccount = AuthActiveAccount;
 
 export const accountIsActive = (account: AuthActiveAccount | AuthSavedAccount | undefined): account is AuthActiveAccount => {
   // account that have rights object is currenty logged in & active.
@@ -507,16 +518,16 @@ export function getFlattenedChildren(children: ILoggedUser['children']): UserChi
 }
 
 /** Converts an actual logged account into a serialisable saved account information */
-export const getSerializedLoggedOutAccountInfo = (account: AuthActiveAccount) => {
+export const getSerializedLoggedOutAccountInfo = (account: AuthLoggedAccount) => {
   return {
     addTimestamp: account.addTimestamp,
     method: account.method,
-    platform: account.platform.name,
+    platform: isSerializedLoggedInAccount(account) ? account.platform : account.platform.name,
     user: {
       displayName: account.user.displayName,
       id: account.user.id,
       ...(account.method === InitialAuthenticationMethod.LOGIN_PASSWORD ? { loginUsed: account.user.loginUsed } : undefined),
-      avatar: account.user.avatar,
+      avatar: (account.user as Partial<AuthActiveUserInfo>).avatar,
       type: account.user.type,
     },
   } as AuthSavedLoggedOutAccount;

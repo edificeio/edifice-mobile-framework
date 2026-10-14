@@ -7,11 +7,11 @@ import React from 'react';
 
 import DeviceInfo from 'react-native-device-info';
 
-import { FetchErrorCode } from './transport/error';
-
-import { I18n } from '~/util/i18n';
-import { AccountErrorCode } from '~/framework/modules/auth/model/error';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';
+import { AccountErrorCode } from '~/modules/auth/model/error';
+import { I18n } from '~/util/i18n';
+
+import { FetchErrorCode } from './transport/error';
 
 export namespace Error {
   /**

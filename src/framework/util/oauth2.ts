@@ -1,22 +1,10 @@
 import moment from 'moment';
 
-// import { ModuleCompat } from '~/app/module/compat';
-import { getStore } from '~/app/store';
-import {
-  AuthActiveAccount,
-  AuthCredentials,
-  AuthSavedLoggedInAccount,
-  AuthTokenSet,
-  DateTimeString,
-  getSerializedLoggedInAccountInfo,
-  isSerializedLoggedInAccount,
-} from '~/framework/modules/auth/model';
-import { AccountError, AccountErrorCode } from '~/framework/modules/auth/model/error';
-import { actions as authActions } from '~/framework/modules/auth/redux/actions';
-import { writeUpdateAccount } from '~/framework/modules/auth/storage';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { FetchError, FetchErrorCode, HTTPError } from '~/framework/util/transport/error';
+import { AuthActiveAccount, AuthCredentials, AuthSavedLoggedInAccount, AuthTokenSet, DateTimeString } from '~/modules/auth/model';
+import { AccountError, AccountErrorCode } from '~/modules/auth/model/error';
 import { getModulesScopes } from '~/util/transport/provider';
 
 import { platformFetch } from './transport';
@@ -112,7 +100,6 @@ const fetchToken = async (platform: Platform, grantType: string, params: {}): Pr
       'Authorization': createDeviceAuthenticationHeader(platform.oauth.client_id, platform.oauth.client_secret),
       'Content-Type': 'application/x-www-form-urlencoded',
     };
-    console.info(new URLSearchParams(body).toString(), headers);
     const response = await platformFetch(platform, '/auth/oauth2/token', {
       body: new URLSearchParams(body).toString(),
       headers,
@@ -221,29 +208,17 @@ export const getOAuth2AccessToken = {
 };
 
 /**
- * Refreshes the OAuth2 token for the given account.
+ * Gets a new OAuth2 token set for the given account, using its refresh token.
+ * This does NOT update the account nor the store/storage : use `refreshAccountToken` of the auth module to do so.
  *
  * @param account - The account for which the token needs to be refreshed. This can be either an `AuthSavedLoggedInAccount` or an `AuthActiveAccount`.
- *
+ * @returns The new token set.
  * @throws {AccountError} If the platform configuration is invalid.
- *
- * The function performs the following steps:
- * 1. Retrieves a new token using the refresh token from the account.
- * 2. Updates the account in the store and storage with the new token.
- * 3. If the account is active, updates the legacy OAuth2 client with the new token.
- * 4. MUTATES THE ACCOUNT GIVEN AS PARAMETER WITH THE NEW TOKENS
  */
 export const refreshTokenForAccount = async (account: AuthSavedLoggedInAccount | AuthActiveAccount) => {
-  // 1. Get new token
   const platform = appConf.getExpandedPlatform(account.platform);
   if (!platform) throw new AccountError(AccountErrorCode.INVALID_PLATFORM_CONFIG, `Platform not foune: ${account.platform}`);
-  const newTokens = await getOAuth2AccessToken.withRefreshToken(platform, account.tokens.refresh);
-
-  // 2. Update account in store + storage + parameter
-  account.tokens = newTokens; // Update account in parameter
-  getStore().dispatch(authActions.refreshToken(account.user.id, newTokens)); // Update redux store
-  const serialisedAccount = isSerializedLoggedInAccount(account) ? account : getSerializedLoggedInAccountInfo(account);
-  writeUpdateAccount(serialisedAccount); // Update Storage
+  return getOAuth2AccessToken.withRefreshToken(platform, account.tokens.refresh);
 };
 
 export enum OAuth2ErrorCode {

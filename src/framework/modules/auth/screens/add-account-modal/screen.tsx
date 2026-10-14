@@ -31,7 +31,6 @@ export default function AuthAddAccountModalScreen() {
   const navigationKey = React.useMemo(() => JSON.stringify(navigationState), [navigationState]);
   const initialNavigationDone = React.useRef(false);
   React.useEffect(() => {
-    __DEV__ && console.info('[Navigation] Auth nav key changed ', navigationKey);
     initialNavigationDone.current && navigationRef.isReady() && navigationState && navigationRef.reset(navigationState);
     initialNavigationDone.current = true;
     // Do not depend on `navigationState` since it can be recreated when session updates while being logged in
