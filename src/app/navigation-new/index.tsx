@@ -23,7 +23,12 @@ export * from './types';
 export * from './confirm-remove';
 export { getTabScreenName } from './tabs';
 
-export const AppNavigation = React.memo(function () {
+export interface AppNavigationProps {
+  /** Called once the navigation is ready, after the telemetry. Must be stable (the navigation is not meant to re-render). */
+  onReady?: () => void;
+}
+
+export const AppNavigation = React.memo(function ({ onReady: _onReady }: AppNavigationProps) {
   // Ensure static navigation is only created once.
   const isMounted = React.useRef(false);
   if (isMounted.current) {
@@ -44,7 +49,11 @@ export const AppNavigation = React.memo(function () {
     </ConfirmRemoveProvider>
   ));
   const Navigation = createStaticNavigation(rootStack);
-  const { onReady, onScreenChange, onUnhandledAction } = useScreenTelemetry();
+  const { onReady: onReadyTelemetry, onScreenChange, onUnhandledAction } = useScreenTelemetry();
+  const onReady = React.useCallback(() => {
+    onReadyTelemetry();
+    _onReady?.();
+  }, [_onReady, onReadyTelemetry]);
   return (
     <Navigation
       theme={navigationLightTheme}
