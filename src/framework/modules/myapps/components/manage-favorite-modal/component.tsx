@@ -38,6 +38,8 @@ export const computeNavBar = modalScreenOptions('modal', () => ({
   },
   headerTintColor: theme.ui.text.regular.toString(),
   headerTitle: '',
+  // This screen lays its own light header instead of the themed navigation bar, so the style the
+  // theme gives for that bar would read white on white here.
   statusBarStyle: 'dark',
 }));
 export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenProps.AllProps) => {
