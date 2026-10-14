@@ -12,7 +12,6 @@ import { Trackers } from '~/framework/util/tracker';
 
 import ErrorScreenView, { withErrorBoundary } from './error';
 import styles from './styles';
-import { ScreenViewProps } from './types';
 
 // ToDo manage keyboard
 
@@ -20,7 +19,7 @@ import { ScreenViewProps } from './types';
  * @deprecated no need screenView anymore
  */
 export const ScreenView = withErrorBoundary(
-  function ({ children }: PropsWithChildren<ScreenViewProps>) {
+  function ({ children }: PropsWithChildren) {
     const route = useRoute();
     const isModal = isModalModeOnThisRoute(route.name);
 
