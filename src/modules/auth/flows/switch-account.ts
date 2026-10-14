@@ -7,4 +7,4 @@ import { setAccount } from './set-account';
  * The previously connected account is put to sleep. If anything fails, it stays connected and the error is thrown.
  */
 export const switchAccount = async (account: AuthSavedLoggedInAccount | AuthActiveAccount) =>
-  setAccount(await signIn.restore(account));
+  setAccount(await signIn.restore(account), account.user.id);

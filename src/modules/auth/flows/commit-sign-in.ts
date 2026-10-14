@@ -8,7 +8,7 @@ import { useSignInStore } from '../store/sign-in';
 /**
  * Makes the signed-in account the connected one, steps in order.
  */
-export const commitSignIn = async ({ legalUrls, platformContext, replacedAccountId, session }: SignInResult) => {
+export const commitSignIn = async ({ legalUrls, platformContext, session }: SignInResult, accountToReplaceId?: string) => {
   // 1. What may fail comes first, so a failure changes nothing
   if (!session.requirement) await prepareSession(session);
 
@@ -18,7 +18,7 @@ export const commitSignIn = async ({ legalUrls, platformContext, replacedAccount
 
   // 3. Commit the account. If another one is connected, it is put to sleep.
   await sleepCurrentSession();
-  useAccountsStore.getState().setAccount(session, replacedAccountId);
+  useAccountsStore.getState().setAccount(session, accountToReplaceId);
   useSignInStore.getState().reset();
 
   // 4. Effects of the new session. With a requirement, the app can't be used yet: they'll run once it is fulfilled.

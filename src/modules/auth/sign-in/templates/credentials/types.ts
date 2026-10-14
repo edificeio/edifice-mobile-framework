@@ -33,9 +33,5 @@ export interface SignInCredentialsScreenTemplateProps {
   loginUsed?: string;
   platform: Platform['name'];
   lockLogin?: boolean;
-  handleSignIn: (
-    credentials: AuthCredentials,
-    screenKey: number,
-    accountToReplace?: AuthSavedAccount | AuthActiveAccount,
-  ) => Promise<void>;
+  handleSignIn: (credentials: AuthCredentials, screenKey: number, accountToReplaceId?: string) => Promise<void>;
 }
