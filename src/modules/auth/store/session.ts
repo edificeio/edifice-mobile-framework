@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 
+import { AuthActiveAccount } from '../model';
+
 type State = {
-  session?: {
-    id: string;
-  };
+  session?: AuthActiveAccount;
   requirement?: 'password';
 };
 
