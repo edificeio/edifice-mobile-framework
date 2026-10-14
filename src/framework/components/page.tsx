@@ -20,12 +20,10 @@ import Notifier from '~/framework/util/notifier';
 
 import { UI_SIZES } from './constants';
 import { ScreenView } from './screen';
-import { ScreenViewProps } from './screen/types';
 
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
   showNetworkBar?: boolean;
-  statusBar?: ScreenViewProps['statusBar'];
   showToast?: boolean;
 }
 
@@ -54,7 +52,7 @@ export const PageViewStyle = styled.View({
  * @returns
  */
 export const PageView = (props: PageViewProps) => {
-  const { children, gutters, statusBar, ...viewProps } = props;
+  const { children, gutters, ...viewProps } = props;
   const route = useRoute();
   const gutterStyle = React.useMemo(
     () => ({
@@ -71,7 +69,7 @@ export const PageView = (props: PageViewProps) => {
       </>
     </PageViewStyle>
   );
-  return <ScreenView statusBar={statusBar}>{page}</ScreenView>;
+  return <ScreenView>{page}</ScreenView>;
 };
 
 /**
