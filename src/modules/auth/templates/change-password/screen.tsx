@@ -11,10 +11,8 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { OAuth2Error } from '~/framework/util/oauth2';
 import { usePlatformAuthContext } from '~/modules/auth/hooks/use-platform-config';
 import { IChangePasswordError } from '~/modules/auth/model';
-import { AccountError } from '~/modules/auth/model/error';
 import { Loading } from '~/ui/Loading';
 import { ValueChangeArgs } from '~/util/form';
 import { I18n } from '~/util/i18n';
@@ -60,9 +58,7 @@ const ChangePasswordScreen = (props: AuthChangePasswordScreenProps) => {
     } catch (e) {
       const changePwdError = e as IChangePasswordError;
       // We don't show toaster if it's login error since that case is handled by redirecting the user to the login page, with error displayed.
-      if (!(e instanceof AccountError) && !(e instanceof OAuth2Error)) {
-        Toast.showError(I18n.get('toast-error-text'), { testID: 'toaster-error-password' });
-      }
+      Toast.showError(I18n.get('toast-error-text'), { testID: 'toaster-error-password' });
       setError(changePwdError.error);
       setSumitState('IDLE');
       setTyping(false);

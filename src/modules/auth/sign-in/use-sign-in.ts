@@ -136,11 +136,7 @@ export const useSignIn = () => {
    * @throws a change password error if the password change fails, or the sign-in error.
    */
   const changePassword = React.useCallback(
-    async (
-      platform: string,
-      payload: IChangePasswordPayload,
-      options?: { forceChange?: boolean; passwordRegex?: string; accountToReplaceId?: string },
-    ) => {
+    async (platform: string, payload: IChangePasswordPayload, options?: { forceChange?: boolean; accountToReplaceId?: string }) => {
       await changePasswordService(platform, payload, options);
       await signInAfterSetup(platform, { password: payload.newPassword, username: payload.login }, options?.accountToReplaceId);
     },
