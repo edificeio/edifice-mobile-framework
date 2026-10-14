@@ -11,6 +11,7 @@ import React from 'react';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { createStaticNavigation } from '@react-navigation/native';
 
+import { ToastContainer } from '~/framework/components/toast';
 import { CloudMessagingProvider } from '~/framework/util/notifications/cloudMessaging';
 
 import { ConfirmRemoveProvider } from './confirm-remove';
@@ -43,7 +44,10 @@ export const AppNavigation = React.memo(function ({ onReady: _onReady }: AppNavi
     <ConfirmRemoveProvider>
       <BottomSheetModalProvider>
         <CloudMessagingProvider>
-          <Navigator />
+          <BottomSheetModalProvider>
+            <Navigator />
+            <ToastContainer />
+          </BottomSheetModalProvider>
         </CloudMessagingProvider>
       </BottomSheetModalProvider>
     </ConfirmRemoveProvider>
