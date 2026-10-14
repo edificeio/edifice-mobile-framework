@@ -98,7 +98,7 @@ export const defaultScreenOptions = ({ theme: navTheme }) =>
     }),
     headerTintColor: navTheme.colors.text,
     headerTitleAlign: 'center',
-    statusBarStyle: 'light',
+    statusBarStyle: theme.ui.navigation.statusBarStyle,
   }) satisfies NativeStackNavigatorProps['screenOptions'];
 
 // for a screen drawing its own content behind the navBar. Use this instead of `headerTransparent`
