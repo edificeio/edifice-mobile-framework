@@ -25,7 +25,6 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
       // ToDo: put these custom logic bits where it belongs to
       // initEditor().finally(null); // -> rich-editor
       dispatch(appReadyAction()); // -> switch to async component
-      BootSplash.hide({ fade: true }); // -> switch to async component
       setMessagesDisplaySuppressed(getInAppMessaging(), false).catch(e =>
         console.warn('[InAppMessaging] Unable to change messages display suppression:', e),
       ); // -> refacto with app.tsx logic
@@ -33,8 +32,18 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
   });
 }
 
+/**
+ * Hides the splash screen once the navigation is ready, so there is no blank frame while it is rendering.
+ * Declared outside of the component to be a stable reference.
+ */
+const hideSplashScreen = () => {
+  requestAnimationFrame(() => {
+    BootSplash.hide({ fade: true });
+  });
+};
+
 export function AppStartupHandler() {
   useAppStartup(useDispatch());
   const isAppReady = useSelector(getAppStartupState).isReady;
-  return isAppReady && <AppNavigation />;
+  return isAppReady && <AppNavigation onReady={hideSplashScreen} />;
 }
