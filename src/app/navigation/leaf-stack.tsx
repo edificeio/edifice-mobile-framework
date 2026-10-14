@@ -50,7 +50,6 @@ export const leafStackScreenOptions = (props: Parameters<Extract<NativeStackNavi
     headerShown: true,
     headerTintColor: props.theme.colors.text,
     headerTitleAlign: 'center',
-    statusBarStyle: 'light',
   }) satisfies NativeStackNavigatorProps['screenOptions'];
 
 export function LeafStackScreenLayout({ ...props }: Parameters<NonNullable<NativeStackNavigatorProps['screenLayout']>>[0]) {
