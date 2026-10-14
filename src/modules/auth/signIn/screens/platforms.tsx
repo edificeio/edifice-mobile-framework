@@ -15,7 +15,7 @@ const AuthPlatformsScreen = React.memo(function ({}: StaticScreenProps<undefined
   return (
     <AuthPlatformsScreenTemplate
       onOpenItem={platform => {
-        navigate('signIn/credentiens', { platform });
+        navigate('signIn/credentiens', { platform: platform.name });
       }}
       contentContainerStyle={React.useMemo(() => ({ paddingTop }), [paddingTop])}
     />

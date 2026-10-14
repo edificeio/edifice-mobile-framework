@@ -178,7 +178,12 @@ export function formatStructuresWithClasses(
     classes: structuresWithClasses?.find(sc => sc.id === structure.id)?.classes ?? [],
   }));
 }
-
+/**
+ * @deprecated
+ * @param platform
+ * @param credentials
+ * @returns
+ */
 export async function getToken(platform: Platform, credentials: AuthCredentials | AuthFederationCredentials) {
   if (credentialsAreLoginPassword(credentials)) {
     return getOAuth2AccessToken.withLoginPassword(platform, credentials);
