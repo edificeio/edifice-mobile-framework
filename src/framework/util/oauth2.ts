@@ -88,7 +88,7 @@ const createDeviceAuthenticationHeader = (clientId: string, clientSecret: string
  *
  * @returns A space-separated string of OAuth2 scopes.
  */
-const createScope = (): string => [getModulesScopes()].join(' ');
+const createScope = (): string => [...getModulesScopes()].join(' ');
 
 /**
  * Fetches an OAuth2 token for the specified platform using the given grant type and parameters.
@@ -112,6 +112,7 @@ const fetchToken = async (platform: Platform, grantType: string, params: {}): Pr
       'Authorization': createDeviceAuthenticationHeader(platform.oauth.client_id, platform.oauth.client_secret),
       'Content-Type': 'application/x-www-form-urlencoded',
     };
+    console.info(new URLSearchParams(body).toString(), headers);
     const response = await platformFetch(platform, '/auth/oauth2/token', {
       body: new URLSearchParams(body).toString(),
       headers,

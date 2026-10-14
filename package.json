@@ -103,6 +103,7 @@
     "i18next": "26.7.1",
     "i18next-chained-backend": "5.0.8",
     "i18next-resources-to-backend": "1.2.4",
+    "immer": "11.1.21",
     "jail-monkey": "3.0.0",
     "lodash.debounce": "4.0.8",
     "lottie-ios": "4.6.0",
