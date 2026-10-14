@@ -8,7 +8,6 @@ import {
   AuthFederationCredentials,
   AuthLoggedAccount,
   AuthRequirement,
-  AuthSavedAccount,
   AuthSavedLoggedInAccount,
   InitialAuthenticationMethod,
 } from '../model';
@@ -58,7 +57,6 @@ const createSession = async (
   tokens: AuthLoggedAccount['tokens'],
   loginUsed: string | undefined,
   method: InitialAuthenticationMethod | undefined,
-  accountToReplace?: Pick<AuthSavedAccount, 'addTimestamp' | 'user'>,
 ): Promise<SignInResult> => {
   const platform = appConf.assertPlatformOfName(platformName);
   const requirement = await step('getRequirement', () => requirements.get({ tokens }));
@@ -66,7 +64,7 @@ const createSession = async (
   const logTimestamp = Date.now();
   const session: AuthActiveAccount = formatSession(
     tokens,
-    accountToReplace?.addTimestamp ?? logTimestamp,
+    logTimestamp, // addTimestamp: renewed only if the account is not already among the accounts, which is decided when it is set (see accounts store)
     logTimestamp,
     platform,
     loginUsed,
@@ -75,7 +73,7 @@ const createSession = async (
     publicInfos.userData,
     publicInfos.userPublicInfo,
   );
-  const result: SignInResult = { replacedAccountId: accountToReplace?.user.id, session };
+  const result: SignInResult = { session };
 
   if (requirement) {
     session.requirement = requirement;
@@ -100,28 +98,20 @@ export const signIn = {
   restore: async (account: AuthSavedLoggedInAccount | AuthActiveAccount) => {
     const platformName = typeof account.platform === 'string' ? account.platform : account.platform.name;
     const tokens = await step('refreshToken', () => refreshTokenForAccount(account));
-    return createSession(platformName, tokens, (account.user as { loginUsed?: string }).loginUsed, account.method, account);
+    return createSession(platformName, tokens, (account.user as { loginUsed?: string }).loginUsed, account.method);
   },
 
   /** With login & password. */
-  withCredentials: async (
-    platformName: string,
-    credentials: AuthCredentials,
-    accountToReplace?: Pick<AuthSavedAccount, 'addTimestamp' | 'user'>,
-  ) => {
+  withCredentials: async (platformName: string, credentials: AuthCredentials) => {
     const tokens = await step('getToken', () => getToken(appConf.assertPlatformOfName(platformName), credentials));
-    return createSession(platformName, tokens, credentials.username, InitialAuthenticationMethod.LOGIN_PASSWORD, accountToReplace);
+    return createSession(platformName, tokens, credentials.username, InitialAuthenticationMethod.LOGIN_PASSWORD);
   },
 
   /** With a federation (SAML assertion or custom token). */
-  withFederation: async (
-    platformName: string,
-    credentials: AuthFederationCredentials,
-    accountToReplace?: Pick<AuthSavedAccount, 'addTimestamp' | 'user'>,
-  ) => {
+  withFederation: async (platformName: string, credentials: AuthFederationCredentials) => {
     try {
       const tokens = await step('getToken', () => getToken(appConf.assertPlatformOfName(platformName), credentials));
-      return await createSession(platformName, tokens, undefined, InitialAuthenticationMethod.WAYF_SAML, accountToReplace);
+      return await createSession(platformName, tokens, undefined, InitialAuthenticationMethod.WAYF_SAML);
     } catch (e) {
       // "CREDENTIALS_MISMATCH" is the errcode obtained if the saml token does not link to an actual user account.
       // We override the error type to "SAML_INVALID" in this case.

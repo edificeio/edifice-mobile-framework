@@ -8,7 +8,6 @@ import { I18n } from '~/util/i18n';
 
 import { usePlatformAuthContext } from '../../hooks/use-platform-config';
 import type { AuthCredentials } from '../../model';
-import { useAccountsStore } from '../../store/accounts';
 import ChangePasswordScreen, { type AuthChangePasswordScreenProps } from '../../templates/change-password';
 import { useSignIn } from '../use-sign-in';
 
@@ -21,7 +20,6 @@ const SignInRenewPasswordScreen = React.memo(function ({
   credentials: AuthCredentials;
   accountId?: string;
 }>) {
-  const accountToReplace = useAccountsStore(s => (accountId ? s.accounts[accountId] : undefined));
   const context = usePlatformAuthContext(platform);
   const { changePassword } = useSignIn();
   const onSubmit: AuthChangePasswordScreenProps['onSubmit'] = React.useCallback(
@@ -34,9 +32,9 @@ const SignInRenewPasswordScreen = React.memo(function ({
           newPassword: payload.newPassword,
           resetCode: credentials.password,
         },
-        { accountToReplace, passwordRegex: context?.passwordRegex },
+        { accountToReplaceId: accountId, passwordRegex: context?.passwordRegex },
       ),
-    [accountToReplace, changePassword, context?.passwordRegex, credentials.password, credentials.username, platform],
+    [accountId, changePassword, context?.passwordRegex, credentials.password, credentials.username, platform],
   );
   return (
     <ChangePasswordScreen onSubmit={onSubmit} platform={platform} prefill={credentials.username} prefillType="login" prefillLock />

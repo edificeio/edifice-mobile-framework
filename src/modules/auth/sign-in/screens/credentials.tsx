@@ -18,7 +18,7 @@ const SignInCredentialsScreen = React.memo(function ({
   const account = useAccountsStore(s => (accountId ? s.accounts[accountId] : undefined));
   const { withCredentials } = useSignIn();
   const handleSignIn = React.useCallback<SignInCredentialsScreenTemplateProps['handleSignIn']>(
-    (credentials, key, accountToReplace) => withCredentials(platform, credentials, key, accountToReplace),
+    (credentials, key, accountToReplaceId) => withCredentials(platform, credentials, key, accountToReplaceId),
     [platform, withCredentials],
   );
   return (

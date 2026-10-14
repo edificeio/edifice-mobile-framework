@@ -27,10 +27,10 @@ type Action = {
   /** Replaces the whole state with data read from the storage. */
   hydrate: (accounts: AuthMixedAccountMap) => void;
   /**
-   * Makes the given account the connected one, in place of the saved account of id `replacedId`.
-   * If `replacedId` is not provided, the account is simply added to the existing ones.
+   * Makes the given account the connected one, in place of the saved account of id `accountToReplaceId`.
+   * If `accountToReplaceId` is not provided, the account is simply added to the existing ones.
    */
-  setAccount: (account: AuthActiveAccount, replacedId?: string) => void;
+  setAccount: (account: AuthActiveAccount, accountToReplaceId?: string) => void;
   /** Replaces the connected account with a fresher version of it (e.g. after its requirement was refreshed). */
   updateSession: (account: AuthActiveAccount) => void;
   /** Disconnects the connected account and removes its tokens. */
@@ -82,15 +82,17 @@ export const useAccountsStore = create<State & Action>()(set => ({
       delete accounts[id];
       return { accounts, connected: state.connected === id ? undefined : state.connected, lastDeletedAccount: id };
     }),
-  setAccount: (account, replacedId) =>
+  setAccount: (account, accountToReplaceId) =>
     set(state => {
       const accounts = { ...state.accounts };
-      if (replacedId !== undefined) delete accounts[replacedId];
-      accounts[account.user.id] = account;
+      // The addTimestamp (display order) is renewed only for an account that is not among the accounts yet.
+      const addTimestamp = accounts[account.user.id]?.addTimestamp ?? account.logTimestamp;
+      if (accountToReplaceId !== undefined) delete accounts[accountToReplaceId];
+      accounts[account.user.id] = { ...account, addTimestamp };
       return {
         accounts,
         connected: account.user.id,
-        lastAddAccount: replacedId === undefined ? Date.now() : state.lastAddAccount,
+        lastAddAccount: accountToReplaceId === undefined ? Date.now() : state.lastAddAccount,
         lastDeletedAccount: undefined,
       };
     }),

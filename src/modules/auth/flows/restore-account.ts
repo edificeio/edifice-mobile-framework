@@ -10,7 +10,7 @@ import { useSignInStore } from '../store/sign-in';
  */
 export const restoreAccount = async (account: AuthSavedLoggedInAccount | AuthActiveAccount) => {
   try {
-    return await setAccount(await signIn.restore(account));
+    return await setAccount(await signIn.restore(account), account.user.id);
   } catch (e) {
     console.error('[Auth] Restore error :', e);
     const { setError, setStatus } = useSignInStore.getState();

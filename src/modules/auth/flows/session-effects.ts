@@ -24,6 +24,7 @@ import { usePlatformReactionTypesStore } from '../store/platform-reaction-types'
  *
  * ToDo: MyApps data is loaded at login then enriched with module info, it belongs to `myapps` (use `callAtLogin`).
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- unused while the myapps loading below is skipped
 export const prepareSession = async (session: AuthActiveAccount) => {
   // Note: this doesn't work for the moment (AllModules changes breakling things.)
   // We skip it until myapps is migrated.
