@@ -162,6 +162,7 @@ export interface ITheme {
         tint: ColorValue;
         background: ColorValue;
       };
+      statusBarStyle: 'light' | 'dark';
       tabBar: {
         tintFocus: ColorValue;
         tintBlur: ColorValue;
@@ -305,6 +306,7 @@ export const defaultTheme: ThemeInitializer = {
           background: this.palette.primary.regular,
           tint: this.palette.grey.white,
         },
+        statusBarStyle: 'light',
         tabBar: {
           background: this.palette.grey.white,
           tintBlur: this.palette.grey.graphite,
