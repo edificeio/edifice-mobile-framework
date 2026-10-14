@@ -8,7 +8,7 @@ import React from 'react';
 import { createNativeStackNavigator, NativeStackNavigatorProps } from '@react-navigation/native-stack';
 
 import { useCoreModuleModals, useCoreModuleScreens, useModuleModals } from '~/app/module';
-import { useSessionStore } from '~/modules/auth/store/session';
+import { selectIsSignedInAndReady, useAccountsStore } from '~/modules/auth/store/accounts';
 
 import { BaseStackScreenLayout } from './layout';
 import { hiddenStackScreenOptions, rootStackOptions, visibleStackScreenOptions } from './options';
@@ -23,8 +23,9 @@ type RootStackGroups = Record<
   }
 >;
 
-const useIsSignedIn = () => useSessionStore(s => !!s.session);
-const useIsSignedOut = () => useSessionStore(s => !s.session);
+// A connected account that still has a requirement to fulfill is not considered signed in: it stays on the auth screens.
+const useIsSignedIn = () => useAccountsStore(selectIsSignedInAndReady);
+const useIsSignedOut = () => useAccountsStore(s => !selectIsSignedInAndReady(s));
 
 const GUEST_START_SCREEN: keyof ReturnType<typeof useCoreModuleScreens> = 'auth/load-account';
 

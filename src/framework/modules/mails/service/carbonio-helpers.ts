@@ -1,6 +1,5 @@
 import RNFS from 'react-native-fs';
 
-import { getStore } from '~/app/store';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 
@@ -18,7 +17,7 @@ export function getCarbonioEmailDomain(): string | undefined {
 export function getCarbonioTokenFromStore(): string {
   const session = getSession();
   if (!session) return '';
-  return getStore().getState().auth.accounts[session.user.id]?.tokens?.carbonioToken ?? '';
+  return session.tokens.carbonioToken ?? '';
 }
 
 /**

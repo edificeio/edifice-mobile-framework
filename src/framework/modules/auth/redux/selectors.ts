@@ -1,26 +1,15 @@
-import type { IGlobalState } from '~/app/store';
-import { accountIsActive } from '~/framework/modules/auth/model';
-import moduleConfig from '~/framework/modules/auth/module-config';
-import type { AuthState } from '~/framework/modules/auth/redux/types';
+import { getSession } from '~/modules/auth/store/accounts';
 
-export const authState = (s: IGlobalState) => s[moduleConfig.reducerName] as AuthState;
+/**
+ * Not reactive : reads zustand whenever the redux store updates.
+ * @deprecated use `useSession()` from `~/modules/auth/store/accounts`.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const session = (_state?: unknown) => getSession();
 
-export const session = (s: IGlobalState) => {
-  const connectedId = authState(s).connected;
-  const account = connectedId !== undefined ? authState(s).accounts[connectedId] : undefined;
-  if (account && !accountIsActive(account)) {
-    console.warn(`[Auth | session] Store corruption : account ${connectedId} is logged but does not have rights.`);
-    return undefined;
-  }
-  return account;
-};
-
-export const oneSessionId = (s: IGlobalState) => {
-  const connectedId = authState(s).connected;
-  const account = connectedId !== undefined ? authState(s).accounts[connectedId] : undefined;
-  if (account && !accountIsActive(account)) {
-    console.warn(`[Auth | session] Store corruption : account ${connectedId} is logged but does not have rights.`);
-    return undefined;
-  }
-  return account?.tokens.oneSessionId;
-};
+/**
+ * Not reactive : reads zustand whenever the redux store updates.
+ * @deprecated use `useSession()?.tokens.oneSessionId` from `~/modules/auth/store/accounts`.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const oneSessionId = (_state?: unknown) => getSession()?.tokens.oneSessionId;

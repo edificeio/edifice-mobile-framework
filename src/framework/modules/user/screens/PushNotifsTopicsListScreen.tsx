@@ -9,7 +9,6 @@ import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/util/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -33,7 +32,7 @@ import {
 import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import Notifier from '~/framework/util/notifier';
+import { I18n } from '~/util/i18n';
 
 export interface IPushNotifsTopicsListScreenDataProps {
   timelineState: TimelineState;
@@ -104,7 +103,6 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
     const settings = timelineState.notifSettings.pushNotifsSettings;
     return (
       <PageView>
-        <Notifier id="timeline/push-notifications" />
         {[PushNotifsTopicsListLoadingState.PRISTINE, PushNotifsTopicsListLoadingState.INIT].includes(loadingState) ? (
           <LoadingIndicator />
         ) : settings.error && !settings.lastSuccess ? (

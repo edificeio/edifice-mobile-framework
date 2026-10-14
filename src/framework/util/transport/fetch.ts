@@ -1,13 +1,14 @@
 import CookieManager from '@preeternal/react-native-cookie-manager';
 
-import { I18n } from '~/util/i18n';
 import { AuthActiveAccount, AuthSavedLoggedInAccount, AuthTokenSet } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
-import { isTokenExpired, refreshTokenForAccount } from '~/framework/util/oauth2';
+import { isTokenExpired } from '~/framework/util/oauth2';
 import { Trackers } from '~/framework/util/tracker';
 import { FetchError, FetchErrorCode, HTTPError } from '~/framework/util/transport/error';
+import { refreshAccountToken } from '~/modules/auth/flows/refresh-token';
+import { I18n } from '~/util/i18n';
 
 import {
   getAuthenticationHeaderForAccount,
@@ -224,7 +225,7 @@ export function getAccountFetch(account: AuthSavedLoggedInAccount | AuthActiveAc
     // 3. Refresh token if needed
     if (isTokenExpired(account.tokens.access)) {
       Trackers.handleRefreshToken();
-      await refreshTokenForAccount(account);
+      await refreshAccountToken(account);
       // ToDo: What to do if the refresh token fails?
     }
     // 4. Send request

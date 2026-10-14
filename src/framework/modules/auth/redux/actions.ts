@@ -1,5 +1,6 @@
 import type { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
 import { Platform } from '~/framework/util/appConf';
+import { useAccountsStore } from '~/modules/auth/store/accounts';
 
 import type { AuthActiveAccount, AuthRequirement, AuthTokenSet, LegalUrls, PlatformAuthContext } from '../model';
 import moduleConfig from '../module-config';
@@ -173,11 +174,14 @@ export const actions = {
     type: actionTypes.logout,
   }),
 
-  profileUpdate: (id: string, user: Partial<AuthActiveAccount['user']>) => ({
-    id,
-    type: actionTypes.profileUpdate,
-    user,
-  }),
+  /**
+   * Updates the user profile of the account in the zustand store, then returns an action with no effect on redux.
+   * @deprecated use `useAccountsStore.getState().updateProfile(id, user)` from `~/modules/auth/store/accounts`.
+   */
+  profileUpdate: (id: string, user: Partial<AuthActiveAccount['user']>) => {
+    useAccountsStore.getState().updateProfile(id, user);
+    return { id, type: actionTypes.profileUpdate, user };
+  },
 
   redirectActivation: (platformName: Platform['name'], login: string, code: string) => ({
     code,
@@ -244,17 +248,23 @@ export const actions = {
     type: actionTypes.replaceAccountRequirement,
   }),
 
-  setCarbonioToken: (id: string, token: string) => ({
-    id,
-    token,
-    type: actionTypes.setCarbonioToken,
-  }),
+  /**
+   * Sets the carbonio token in the zustand store, then returns an action with no effect on redux.
+   * @deprecated use `useAccountsStore.getState().setCarbonioToken(id, token)` from `~/modules/auth/store/accounts`.
+   */
+  setCarbonioToken: (id: string, token: string) => {
+    useAccountsStore.getState().setCarbonioToken(id, token);
+    return { id, token, type: actionTypes.setCarbonioToken };
+  },
 
-  setCarbonioUserInfos: (id: string, carbonioUserInfos: any) => ({
-    carbonioUserInfos,
-    id,
-    type: actionTypes.setCarbonioUserInfos,
-  }),
+  /**
+   * Sets the carbonio user infos in the zustand store, then returns an action with no effect on redux.
+   * @deprecated use `useAccountsStore.getState().setCarbonioUserInfos(id, infos)` from `~/modules/auth/store/accounts`.
+   */
+  setCarbonioUserInfos: (id: string, carbonioUserInfos: any) => {
+    useAccountsStore.getState().setCarbonioUserInfos(id, carbonioUserInfos);
+    return { carbonioUserInfos, id, type: actionTypes.setCarbonioUserInfos };
+  },
 
   setOneSessionId: (id: string, token: AuthTokenSet['oneSessionId']) => ({
     id,
