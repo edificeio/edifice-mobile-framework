@@ -8,13 +8,12 @@ import { CoreModule, EntModule } from '~/app/module';
 import { defineModal, defineScreen, sharedTransitions, StackNavigation, useConfirmRemove } from '~/app/navigation-new';
 import { PrimaryButton } from '~/framework/components/button';
 import { BodyText } from '~/framework/components/text';
-import { useSessionStore } from '~/modules/auth/store/session';
+import { logout } from '~/modules/auth/flows';
 
 function AModuleHomeScreen({}: StaticScreenProps<{
   aParam: boolean;
 }>) {
   const navigation = useNavigation();
-  const { signOut } = useSessionStore();
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
       <BodyText>A Home Screen</BodyText>
@@ -42,7 +41,7 @@ function AModuleHomeScreen({}: StaticScreenProps<{
         testID="login"
         text="Se déconnecter"
         onPress={() => {
-          signOut();
+          logout();
         }}
       />
     </View>
@@ -104,7 +103,7 @@ const AModuleModalScreenDeclaration = defineModal({
   screen: AModuleModalScreen,
 });
 
-export default new CoreModule({
+export default new EntModule({
   modals: {
     'amodule/modal': AModuleModalScreenDeclaration,
   },
@@ -113,5 +112,5 @@ export default new CoreModule({
     'amodule/details': AModuleDetailsScreenDeclaration,
     'amodule/home': AModuleHomeScreenDeclaration,
   },
-  // tab: { iconActive: 'ui-camera', iconInactive: 'ui-anniversary', order: 1, route: 'amodule/home', testId: 'a' },
+  tab: { iconActive: 'ui-camera', iconInactive: 'ui-anniversary', order: 1, route: 'amodule/home', testId: 'a' },
 });

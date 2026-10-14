@@ -13,7 +13,6 @@ export const TransportProvider = React.memo(function ({ children }: React.PropsW
   // todo: build useFetch hook to inject modules and scope information
   const scopes = useModuleScopes();
   GLOBAL_SCOPES = scopes;
-  console.info('SCOPES', GLOBAL_SCOPES);
   return <>{children}</>;
 });
 TransportProvider.displayName = 'TransportProvider';

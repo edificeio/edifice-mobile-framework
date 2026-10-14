@@ -31,7 +31,6 @@ import {
 import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import Notifier from '~/framework/util/notifier';
 import { shallowEqual } from '~/framework/util/object';
 import { I18n } from '~/util/i18n';
 
@@ -144,7 +143,6 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
       <>
         <PreventBack hasChanged={!this.state.arePrefsUnchanged} />
         <PageView>
-          <Notifier id="timeline/push-notifications" />
           {[PushNotifsItemsListLoadingState.PRISTINE, PushNotifsItemsListLoadingState.INIT].includes(this.state.loadingState) ? (
             <LoadingIndicator />
           ) : this.settings.error && !this.settings.lastSuccess ? (

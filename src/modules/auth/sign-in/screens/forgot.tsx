@@ -1,0 +1,34 @@
+import React from 'react';
+
+import { StaticScreenProps } from '@react-navigation/native';
+
+import { defineModal } from '~/app/navigation-new';
+import type { Platform } from '~/framework/util/appConf';
+import { ForgotMode } from '~/modules/auth/model';
+import { forgot } from '~/modules/auth/service';
+import { I18n } from '~/util/i18n';
+
+import SignInForgotScreenTemplate, { SignInForgotScreenTemplateProps } from '../templates/forgot';
+
+const SignInForgotScreen = React.memo(function ({
+  route: {
+    params: { login, mode, platform },
+  },
+}: StaticScreenProps<{ platform: Platform['name']; mode: ForgotMode; login?: string }>) {
+  const handleSubmit = React.useCallback<SignInForgotScreenTemplateProps['handleSubmit']>(
+    ({ firstName, login: submittedLogin, structureId }) =>
+      mode === 'id'
+        ? forgot(platform, mode, { firstName, mail: submittedLogin, structureId })
+        : forgot(platform, mode, { login: submittedLogin }),
+    [mode, platform],
+  );
+  return <SignInForgotScreenTemplate handleSubmit={handleSubmit} login={login} mode={mode} platform={platform} />;
+});
+SignInForgotScreen.displayName = 'SignInForgotScreen';
+
+export default defineModal({
+  options: ({ route }) => ({
+    title: route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
+  }),
+  screen: SignInForgotScreen,
+});

@@ -21,6 +21,7 @@ export default new CoreModule({
     'infra', // seems to be tracking related
     'portal', // dont know if used somewhere
     'userinfo', // wtf is this thing ?
+    'timeline', // needed for push-notifications at login
   ],
   screens: {
     'auth/load-account': AuthLoadAccountScreen,

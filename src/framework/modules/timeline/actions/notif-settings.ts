@@ -1,5 +1,6 @@
 import { ThunkDispatch } from 'redux-thunk';
 
+import toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { TimelineState } from '~/framework/modules/timeline/reducer';
@@ -14,7 +15,6 @@ import {
 } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { pushNotifsService } from '~/framework/modules/timeline/service';
 import { preferences } from '~/framework/modules/timeline/storage';
-import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { I18n } from '~/util/i18n';
 
 import { loadNotificationsDefinitionsAction } from './notif-definitions';
@@ -79,23 +79,16 @@ export const loadPushNotifsSettingsAction = () => async (dispatch: ThunkDispatch
   }
 };
 
-export const updatePushNotifsSettingsAction =
-  (changes: IPushNotifsSettings) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    try {
-      dispatch(pushNotifsSettingsActions.setRequest(changes));
-      const session = assertSession();
-      await pushNotifsService.set(session, changes);
-      dispatch(pushNotifsSettingsActions.setReceipt(changes));
-      dispatch(loadPushNotifsSettingsAction()); // no await here it's for refreshing datas
-    } catch (e) {
-      // ToDo: Error handling
-      dispatch(pushNotifsSettingsActions.setError(e as INotifFilterSettings));
-      dispatch(
-        notifierShowAction({
-          id: 'timeline/push-notifications',
-          text: I18n.get('timeline-notifsettings-error-text'),
-          type: 'error',
-        }),
-      );
-    }
-  };
+export const updatePushNotifsSettingsAction = (changes: IPushNotifsSettings) => async (dispatch: ThunkDispatch<any, any, any>) => {
+  try {
+    dispatch(pushNotifsSettingsActions.setRequest(changes));
+    const session = assertSession();
+    await pushNotifsService.set(session, changes);
+    dispatch(pushNotifsSettingsActions.setReceipt(changes));
+    dispatch(loadPushNotifsSettingsAction()); // no await here it's for refreshing datas
+  } catch (e) {
+    // ToDo: Error handling
+    dispatch(pushNotifsSettingsActions.setError(e as INotifFilterSettings));
+    toast.showError(I18n.get('timeline-notifsettings-error-text'));
+  }
+};
