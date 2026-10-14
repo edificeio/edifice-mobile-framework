@@ -134,6 +134,4 @@ export interface SignInResult {
   platformContext?: PlatformAuthContext;
   /** Platform legal urls. Only fetched when the session requirement needs them. */
   legalUrls?: LegalUrls;
-  /** Id of the saved account this sign-in is meant to replace, if any. */
-  replacedAccountId?: string;
 }

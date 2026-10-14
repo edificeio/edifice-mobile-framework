@@ -9,7 +9,6 @@ import {
   AuthCredentials,
   AuthFederationCredentials,
   AuthPendingRedirection,
-  AuthSavedAccount,
   createActivationError,
   type IActivationError,
   type IActivationPayload,
@@ -20,8 +19,6 @@ import type { SignInResult } from '../service/types';
 import { useSignInStore } from '../store/sign-in';
 import track from '../tracking';
 import { useSignInContext } from './context';
-
-type AccountToReplace = Pick<AuthSavedAccount, 'addTimestamp' | 'user'>;
 
 /**
  * A sign-in attempt either gives a session, or ends up on a redirection (activation / password renew code was used).
@@ -44,11 +41,11 @@ export const useSignIn = () => {
   const { onSignedIn } = useSignInContext();
 
   const withCredentials = React.useCallback(
-    async (platform: string, credentials: AuthCredentials, screenKey?: number, accountToReplace?: AccountToReplace) => {
+    async (platform: string, credentials: AuthCredentials, screenKey?: number, accountToReplaceId?: string) => {
       try {
         const outcome = await withTracking(track.loginCredentials, async () => {
           try {
-            return await signIn.withCredentials(platform, credentials, accountToReplace);
+            return await signIn.withCredentials(platform, credentials);
           } catch (e) {
             // "CREDENTIALS_MISMATCH" caused by the use of an activation / renew code
             if (hasOAuth2Code(e, OAuth2ErrorCode.ACTIVATION_CODE)) {
@@ -58,7 +55,7 @@ export const useSignIn = () => {
               return AuthPendingRedirection.ACTIVATE;
             } else if (hasOAuth2Code(e, OAuth2ErrorCode.PASSWORD_RESET)) {
               useSignInStore.getState().setStatus({
-                accountId: accountToReplace?.user.id,
+                accountId: accountToReplaceId,
                 code: credentials.password,
                 loginUsed: credentials.username,
                 platform,
@@ -69,7 +66,7 @@ export const useSignIn = () => {
             throw e;
           }
         });
-        if (isSignInResult(outcome)) await onSignedIn(outcome);
+        if (isSignInResult(outcome)) await onSignedIn(outcome, accountToReplaceId);
       } catch (e) {
         console.error('[Auth] Login credentials error :', e);
         useSignInStore.getState().setError({ info: e as Error, key: screenKey });
@@ -80,12 +77,10 @@ export const useSignIn = () => {
   );
 
   const withFederation = React.useCallback(
-    async (platform: string, credentials: AuthFederationCredentials, screenKey?: number, accountToReplace?: AccountToReplace) => {
+    async (platform: string, credentials: AuthFederationCredentials, screenKey?: number, accountToReplaceId?: string) => {
       try {
-        const result = await withTracking(track.loginFederation, () =>
-          signIn.withFederation(platform, credentials, accountToReplace),
-        );
-        await onSignedIn(result);
+        const result = await withTracking(track.loginFederation, () => signIn.withFederation(platform, credentials));
+        await onSignedIn(result, accountToReplaceId);
       } catch (e) {
         console.error('[Auth] Login federation error :', e);
         useSignInStore.getState().setError({ info: e as Error, key: screenKey });
@@ -100,9 +95,9 @@ export const useSignIn = () => {
    * If it fails, the user is sent back to the login screen of the platform, where the error is shown.
    */
   const signInAfterSetup = React.useCallback(
-    async (platform: string, credentials: AuthCredentials, accountToReplace?: AccountToReplace) => {
+    async (platform: string, credentials: AuthCredentials, accountToReplaceId?: string) => {
       try {
-        await onSignedIn(await signIn.withCredentials(platform, credentials, accountToReplace));
+        await onSignedIn(await signIn.withCredentials(platform, credentials), accountToReplaceId);
       } catch (e) {
         console.error('[Auth] Sign in after setup error :', e);
         const { setError, setStatus } = useSignInStore.getState();
@@ -144,10 +139,10 @@ export const useSignIn = () => {
     async (
       platform: string,
       payload: IChangePasswordPayload,
-      options?: { forceChange?: boolean; passwordRegex?: string; accountToReplace?: AccountToReplace },
+      options?: { forceChange?: boolean; passwordRegex?: string; accountToReplaceId?: string },
     ) => {
       await changePasswordService(platform, payload, options);
-      await signInAfterSetup(platform, { password: payload.newPassword, username: payload.login }, options?.accountToReplace);
+      await signInAfterSetup(platform, { password: payload.newPassword, username: payload.login }, options?.accountToReplaceId);
     },
     [signInAfterSetup],
   );

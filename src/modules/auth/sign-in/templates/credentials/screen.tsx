@@ -59,7 +59,7 @@ export const SignInCredentialsScreenTemplate = React.memo(function ({
         username: login,
       };
 
-      await handleSignIn(loginCredentials, errkey, account);
+      await handleSignIn(loginCredentials, errkey, account?.user.id);
 
       if (mounted) {
         setTyping(false);
@@ -78,7 +78,7 @@ export const SignInCredentialsScreenTemplate = React.memo(function ({
         setLoginState(LoginState.IDLE);
       }
     }
-  }, [password, login, handleSignIn, errkey, account, mounted]);
+  }, [password, login, handleSignIn, errkey, account?.user.id, mounted]);
 
   const goToWeb = React.useCallback(() => {
     openUrl(platform.url);
