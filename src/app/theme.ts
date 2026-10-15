@@ -28,6 +28,48 @@ export interface IShades {
   regular: ColorValue;
   light: ColorValue;
   pale: ColorValue;
+  feather?: ColorValue;
+}
+
+export interface IControlColors {
+  /** A filled control paints its body with it, a hollow one its stroke. */
+  background: ColorValue;
+  disabledBackground: ColorValue;
+  content: ColorValue;
+  disabledContent: ColorValue;
+  /** Themes that light nothing up on press leave it out, and nothing is drawn. */
+  highlight?: ColorValue;
+}
+
+export interface IButtonColors extends IControlColors {
+  pressedBackground: ColorValue;
+  contentOnFill: ColorValue;
+  disabledContentOnFill: ColorValue;
+  pressedContent: ColorValue;
+}
+
+export interface ISelectionColors extends IControlColors {
+  border: ColorValue;
+  disabledOffBorder: ColorValue;
+  disabledOffContent: ColorValue;
+  offBackground: ColorValue;
+  offBorder: ColorValue;
+  offContent: ColorValue;
+  pressedOffBorder: ColorValue;
+}
+
+/**
+ * The mixed state is the one thing the two design levels draw differently: 1D keeps the white
+ * background of an unchecked box and only accents its border and dash, 2D paints it like a checked
+ * box. Aligning them would remove these six fields.
+ */
+export interface ICheckboxColors extends ISelectionColors {
+  disabledIndeterminateBackground: ColorValue;
+  disabledIndeterminateBorder: ColorValue;
+  disabledIndeterminateContent: ColorValue;
+  indeterminateBackground: ColorValue;
+  indeterminateBorder: ColorValue;
+  indeterminateContent: ColorValue;
 }
 
 export type IntentIcon =
@@ -93,6 +135,9 @@ export interface ITheme {
   };
   // UI usage of the color palette
   ui: {
+    account: {
+      headerImage: SvgIconName;
+    };
     notificationBadge: ColorValue;
     shadowColor: ColorValue;
     shadowColorTransparent: ColorValue;
@@ -105,6 +150,12 @@ export interface ITheme {
       listItem: ColorValue;
       input: ColorValue;
     };
+    button: IButtonColors & {
+      danger: IButtonColors;
+    };
+    checkbox: ICheckboxColors;
+    radio: ISelectionColors;
+    toggle: ISelectionColors;
     navigation: {
       line?: SvgIconName;
       navBar: {
@@ -198,6 +249,9 @@ export const defaultTheme: ThemeInitializer = {
       video: { name: 'ui-recordVideo', type: 'Svg' },
     };
     (this as Partial<ITheme>).ui = {
+      account: {
+        headerImage: 'userpage-header',
+      },
       background: {
         card: this.palette.grey.white,
         empty: this.palette.grey.fog,
@@ -206,6 +260,45 @@ export const defaultTheme: ThemeInitializer = {
       border: {
         input: this.palette.grey.cloudy,
         listItem: this.palette.grey.cloudy,
+      },
+      button: {
+        background: this.palette.primary.regular,
+        content: this.palette.primary.regular,
+        contentOnFill: this.palette.grey.white,
+        danger: {
+          background: this.palette.status.failure.regular,
+          content: this.palette.status.failure.regular,
+          contentOnFill: this.palette.grey.white,
+          disabledBackground: this.palette.status.failure.light,
+          disabledContent: this.palette.status.failure.light,
+          disabledContentOnFill: this.palette.grey.white,
+          pressedBackground: this.palette.status.failure.dark,
+          pressedContent: this.palette.status.failure.dark,
+        },
+        disabledBackground: this.palette.primary.light,
+        disabledContent: this.palette.primary.light,
+        disabledContentOnFill: this.palette.grey.white,
+        pressedBackground: this.palette.primary.dark,
+        pressedContent: this.palette.primary.dark,
+      },
+      checkbox: {
+        background: this.palette.primary.regular,
+        border: this.palette.primary.regular,
+        content: this.palette.grey.white,
+        disabledBackground: this.palette.primary.light,
+        disabledContent: this.palette.grey.white,
+        disabledIndeterminateBackground: this.palette.grey.white,
+        disabledIndeterminateBorder: this.palette.primary.light,
+        disabledIndeterminateContent: this.palette.primary.light,
+        disabledOffBorder: this.palette.grey.grey,
+        disabledOffContent: this.palette.grey.grey,
+        indeterminateBackground: this.palette.grey.white,
+        indeterminateBorder: this.palette.primary.regular,
+        indeterminateContent: this.palette.primary.regular,
+        offBackground: this.palette.grey.white,
+        offBorder: this.palette.grey.graphite,
+        offContent: this.palette.grey.stone,
+        pressedOffBorder: this.palette.grey.graphite,
       },
       navigation: {
         navBar: {
@@ -224,12 +317,38 @@ export const defaultTheme: ThemeInitializer = {
         light: '#0000008c',
         medium: '#000000af',
       },
+      radio: {
+        background: this.palette.primary.regular,
+        border: this.palette.primary.regular,
+        content: this.palette.grey.white,
+        disabledBackground: this.palette.primary.light,
+        disabledContent: this.palette.grey.white,
+        disabledOffBorder: this.palette.grey.grey,
+        disabledOffContent: this.palette.grey.grey,
+        offBackground: this.palette.grey.white,
+        offBorder: this.palette.grey.graphite,
+        offContent: this.palette.grey.stone,
+        pressedOffBorder: this.palette.grey.graphite,
+      },
       shadowColor: '#000',
       shadowColorTransparent: '#000000af',
       text: {
         inverse: this.palette.grey.white,
         light: this.palette.grey.graphite,
         regular: this.palette.grey.black,
+      },
+      toggle: {
+        background: this.palette.primary.regular,
+        border: this.palette.primary.regular,
+        content: this.palette.grey.white,
+        disabledBackground: this.palette.primary.light,
+        disabledContent: this.palette.grey.white,
+        disabledOffBorder: this.palette.grey.grey,
+        disabledOffContent: this.palette.grey.grey,
+        offBackground: this.palette.grey.white,
+        offBorder: this.palette.grey.graphite,
+        offContent: this.palette.grey.stone,
+        pressedOffBorder: this.palette.grey.graphite,
       },
     };
 

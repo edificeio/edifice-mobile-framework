@@ -156,7 +156,7 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
                     {isLast ? getLang('myapp-onboarding-complete') : getLang('myapp-onboarding-next')}
                   </BodyBoldText>
 
-                  {!isLast && <Svg name="ui-chevron-right" width={14} height={14} fill={theme.palette.primary.regular} />}
+                  {!isLast && <Svg name="ui-chevron-right" width={14} height={14} fill={theme.ui.button.content} />}
                 </Pressable>
               </View>
             </View>
