@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
+import { UI_SIZES } from '~/framework/components/constants';
 
 import styles from './styles';
 import { PrimaryButtonProps } from './types';
@@ -10,8 +11,12 @@ const colors = theme.ui.button;
 
 // A filled button paints its body with the accent, and its content has to read on that body.
 const fill = (disabled?: boolean, pressed?: boolean) => {
-  if (disabled) return { background: colors.disabledBackground, content: colors.disabledContentOnFill };
-  return { background: pressed ? colors.pressedBackground : colors.background, content: colors.contentOnFill };
+  if (disabled) return { background: colors.disabledBackground, borderWidth: 0, content: colors.disabledContentOnFill };
+  return {
+    background: pressed ? colors.pressedBackground : colors.background,
+    borderWidth: UI_SIZES.elements.border.default,
+    content: colors.contentOnFill,
+  };
 };
 
 const PrimaryButton = (props: PrimaryButtonProps) => {
@@ -27,7 +32,7 @@ const PrimaryButton = (props: PrimaryButtonProps) => {
       onPressOut={() => setPressed(false)}
       style={[
         styles.primary,
-        { backgroundColor: state.background, borderColor: state.background },
+        { backgroundColor: state.background, borderColor: state.background, borderWidth: state.borderWidth },
         { ...(props.round ? styles.round : {}) },
         props.style,
       ]}
