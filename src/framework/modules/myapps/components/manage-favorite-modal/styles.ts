@@ -15,7 +15,6 @@ export const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    paddingBottom: UI_SIZES.screen.bottomInset,
   },
   search: {
     borderColor: theme.palette.primary.regular,
