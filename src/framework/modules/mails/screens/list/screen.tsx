@@ -99,6 +99,13 @@ const MailsListScreen = (props: MailsListScreenPrivateProps) => {
   const [isSelectionMode, setIsSelectionMode] = React.useState<boolean>(false);
   const [isSearchMode, setIsSearchMode] = React.useState<boolean>(false);
   const [selectedMails, setSelectedMails] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    navigation.setOptions({
+      statusBarStyle: isSelectionMode || isSearchMode ? 'dark' : theme.ui.navigation.statusBarStyle,
+    });
+  }, [isSearchMode, isSelectionMode, navigation]);
+
   const [search, setSearch] = React.useState<string>('');
   const [isDeletingFolder, setIsDeletingFolder] = React.useState<boolean>(false);
   const mailsRef = React.useRef<IMailsMailPreview[]>(mails);
