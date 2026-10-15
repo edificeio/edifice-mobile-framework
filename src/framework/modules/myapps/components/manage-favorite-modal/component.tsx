@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { I18n } from '~/app/i18n';
 import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
@@ -38,9 +40,12 @@ export const computeNavBar = modalScreenOptions('modal', () => ({
   },
   headerTintColor: theme.ui.text.regular.toString(),
   headerTitle: '',
+  // This screen lays its own light header instead of the themed navigation bar, so the style the
+  // theme gives for that bar would read white on white here.
   statusBarStyle: 'dark',
 }));
 export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenProps.AllProps) => {
+  const { bottom } = useSafeAreaInsets();
   const searchRef = React.useRef<SearchBarHandle>(null);
   const [searchFocused, setSearchFocused] = React.useState<boolean>(false);
 
@@ -79,7 +84,7 @@ export const ManageFavoritesModalScreen = ({ navigation }: ManageFavoriteScreenP
         />
       </View>
 
-      <View style={styles.listContainer}>
+      <View style={[styles.listContainer, { paddingBottom: bottom }]}>
         <MyAppsList
           apps={displayApps}
           emptyScreenConfig={EMPTY_SCREEN_CONFIG.search}
