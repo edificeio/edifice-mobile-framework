@@ -26,7 +26,6 @@ import {
 import { startLoadNotificationsAction } from '~/framework/modules/home/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { useRedirectActionOnSuccess } from '~/framework/navigation/redirection';
-import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
 import { BlogCreatePostScreenDataProps, BlogCreatePostScreenEventProps, BlogCreatePostScreenProps } from './types';
@@ -78,19 +77,12 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
 
       // Track action, navigate where the caller asked, and display toast
       const blogPostDisplayRight = blogPostRight.displayRight;
-      const event = {
-        [createBlogPostResourceRight]: 'Enregistrer',
-        [publishBlogPostResourceRight]: 'Publier',
-        [submitBlogPostResourceRight]: 'Soumettre',
-      }[blogPostDisplayRight];
-      const eventName = `Rédaction blog - ${event}`;
       const toastSuccessText = {
         [createBlogPostResourceRight]: I18n.get('blog-createpost-create-success'),
         [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish-success'),
         [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit-success'),
       }[blogPostDisplayRight];
 
-      Trackers.trackEvent(route.params.source, 'Créer un billet', eventName);
       await handleInitTimeline();
       dispatchActionOnSuccess(route.params.navActionOnSuccess);
       Toast.showSuccess(toastSuccessText);

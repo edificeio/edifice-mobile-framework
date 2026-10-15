@@ -23,6 +23,7 @@ const hydrateTimestamp = (timestamp: unknown): Temporal.Instant | undefined => {
   return undefined;
 };
 
+
 const hydrateFolder = (data: ArrayElement<API.Explorer.ResourcesPageOK['folders']>): ArrayElement<ExplorerPageData['folders']> => ({
   id: data.id,
   title: data.name,

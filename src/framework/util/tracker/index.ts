@@ -122,7 +122,7 @@ export abstract class AbstractTracker<OptionsType> {
     await this.trackEvent(moduleConfig.trackingName, action, name, value);
   }
 
-  // Track debug event procedure. Override _trackEvent() function to create custom trackers.
+  // Track debug event procedure. Override _trackDebugEvent() function to create custom trackers.
   protected async _trackDebugEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
     return false;
   }

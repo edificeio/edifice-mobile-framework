@@ -8,7 +8,6 @@ import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { navigateToHome } from '~/framework/navigation/homeTab';
 import { openUrl } from '~/framework/util/linking';
-import { Trackers } from '~/framework/util/tracker';
 
 import { getAsResourceUriNotification, IAbstractNotification } from '.';
 
@@ -62,8 +61,6 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
         if (eventTypeArray !== undefined && !eventTypeArray.includes(n['event-type'])) return false;
         const thunkAction = def.notifHandlerAction(n, trackCategory, navigation, navDispatch, allowSwitchTab);
         const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
-        if (trackCategory && ret.trackInfo)
-          Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n['event-type']}`, ret.trackInfo.value);
         return ret;
       }),
     );
@@ -74,7 +71,6 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
 
   // Only redirect to the home
   timelineRedirection: (n, trackCategory, navigation) => async () => {
-    if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
     navigateToHome(navigation, { notification: n });
     return { managed: 1 };
   },
@@ -85,7 +81,7 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     if (!notifWithUri) {
       return { managed: 0 };
     }
-    if (trackCategory) Trackers.trackEvent(trackCategory, 'Browser', `${n.type}.${n['event-type']}`);
+
     // We want to navigate on home even if this is a web redirection.
     navigateToHome(navigation, { notification: n });
     openUrl(notifWithUri.resource.uri);
@@ -116,8 +112,6 @@ export const handleNotificationAction =
         action(notification, trackCategory, navigation, navDispatch, allowSwitchTab),
       )) as unknown as INotifHandlerReturnType;
       manageCount += ret.managed;
-      if (ret.trackInfo && trackCategory)
-        Trackers.trackEvent(trackCategory, ret.trackInfo.action, 'Post-routing', ret.trackInfo.value);
     }
   };
 

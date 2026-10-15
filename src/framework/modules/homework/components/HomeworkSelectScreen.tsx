@@ -13,7 +13,6 @@ import { IHomeworkDiary } from '~/framework/modules/homework/reducers/diaryList'
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { Trackers } from '~/framework/util/tracker';
 
 export interface HomeworkSelectScreenDataProps {
   diaryList: {
@@ -61,7 +60,6 @@ function HomeworkSelectScreenComponent(props: HomeworkSelectScreenProps) {
       diaryId: diary.id,
       navActionOnSuccess: goToHomeworkTasksAction(session!),
     });
-    Trackers.trackEvent('Homework', 'SELECT');
   };
 
   const renderEmptyDiaryList = () => {
@@ -74,7 +72,9 @@ function HomeworkSelectScreenComponent(props: HomeworkSelectScreenProps) {
         text={I18n.get('homework-select-emptyscreen-text')}
         buttonText={hasCreateHomeworkResourceRight ? I18n.get('homework-select-creatediary') : undefined}
         buttonUrl="/homeworks"
-        buttonAction={() => Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser')}
+        buttonAction={() => {
+          //Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser');
+        }}
       />
     );
   };

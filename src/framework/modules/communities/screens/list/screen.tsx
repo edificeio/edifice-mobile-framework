@@ -184,6 +184,25 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
     }
   }, [loadData]);
 
+  // loadData is read through a ref: the focus effect keeps empty deps so it doesn't re-run on
+  // every filters change, and the ref keeps it from calling a stale loadData (old filters).
+  const loadDataRef = React.useRef(loadData);
+  loadDataRef.current = loadData;
+
+  // Skip the first focus, already handled by ContentLoader
+  const isFirstFocusRef = React.useRef(true);
+
+  // Reload the list when coming back to this screen
+  useFocusEffect(
+    React.useCallback(() => {
+      if (isFirstFocusRef.current) {
+        isFirstFocusRef.current = false;
+        return;
+      }
+      loadDataRef.current(0, true).catch(e => console.error('Error while refreshing communities list', e));
+    }, []),
+  );
+
   return (
     <>
       {isLoading ? (
