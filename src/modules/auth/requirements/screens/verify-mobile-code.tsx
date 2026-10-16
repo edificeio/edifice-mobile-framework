@@ -3,12 +3,11 @@ import React from 'react';
 import type { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
+import { refreshRequirements } from '~/modules/auth/flows';
+import { mobileValidation } from '~/modules/auth/service/validation';
+import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
+import MFAScreenTemplate, { getMobileMFATexts, mobileMFATestIds } from '~/modules/auth/templates/mfa';
 import { I18n } from '~/util/i18n';
-
-import { refreshRequirements } from '../../flows';
-import { mobileValidation } from '../../service/validation';
-import { useAccountWithRequirement } from '../../store/accounts';
-import RequirementMFAScreenTemplate from '../templates/mfa';
 
 type RequirementMobileCodeScreenProps = StaticScreenProps<{ mobile: string }>;
 
@@ -28,12 +27,13 @@ const RequirementMobileCodeScreen = React.memo(function ({ route }: RequirementM
     await refreshRequirements();
   }, []);
   return (
-    <RequirementMFAScreenTemplate
+    <MFAScreenTemplate
       kind="mobile"
-      target={mobile}
       onResendCode={onResendCode}
       onVerified={onVerified}
       onVerifyCode={onVerifyCode}
+      testIds={mobileMFATestIds}
+      texts={getMobileMFATexts(mobile)}
     />
   );
 });

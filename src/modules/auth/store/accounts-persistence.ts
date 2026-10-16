@@ -7,7 +7,6 @@
  */
 
 import appConf from '~/framework/util/appConf';
-
 import {
   accountIsActive,
   accountIsLoggable,
@@ -16,7 +15,7 @@ import {
   AuthMixedAccountMap,
   AuthSavedAccount,
   getSerializedLoggedInAccountInfo,
-} from '../model';
+} from '~/modules/auth/model';
 import {
   AuthStorageData,
   eraseAccountPreferences,
@@ -24,7 +23,8 @@ import {
   readSavedStartup,
   writeAccounts,
   writeStartup,
-} from '../storage';
+} from '~/modules/auth/storage';
+
 import { useAccountsStore } from './accounts';
 
 /** Pre-1.12 versions only saved a token, to which we give an anonymous account to be restored. */

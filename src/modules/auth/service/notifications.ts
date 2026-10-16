@@ -4,8 +4,7 @@
  */
 
 import firebaseService from '~/framework/util/notifications/service';
-
-import type { AuthLoggedAccount } from '../model';
+import type { AuthLoggedAccount } from '~/modules/auth/model';
 
 export const notifications = {
   /** Stops pushing notifications of the account to this device. */

@@ -1,7 +1,6 @@
 import appConf from '~/framework/util/appConf';
 import { platformFetch } from '~/framework/util/transport';
-
-import type { ForgotMode } from '../model';
+import type { ForgotMode } from '~/modules/auth/model';
 
 export interface ForgotResponse {
   ok: boolean;

@@ -4,11 +4,10 @@ import { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
 import type { Platform } from '~/framework/util/appConf';
+import { useSignInNavigation } from '~/modules/auth/sign-in/navigation';
+import SignInWayfIntroScreenTemplate from '~/modules/auth/sign-in/templates/wayf-intro';
+import { useSignInStore } from '~/modules/auth/store/sign-in';
 import { I18n } from '~/util/i18n';
-
-import { useSignInStore } from '../../store/sign-in';
-import { useSignInNavigation } from '../navigation';
-import SignInWayfIntroScreenTemplate from '../templates/wayf-intro';
 
 const SignInWayfIntroScreen = React.memo(function ({
   route: {

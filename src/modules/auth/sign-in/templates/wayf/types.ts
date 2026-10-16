@@ -1,8 +1,7 @@
 import type { Platform } from '~/framework/util/appConf';
 import type { Error } from '~/framework/util/error';
 import type { AuthFederationCredentials } from '~/modules/auth/model';
-
-import type { SignInNavigation } from '../../navigation';
+import type { SignInNavigation } from '~/modules/auth/sign-in/navigation';
 
 export enum WAYFPageMode {
   EMPTY = 0,

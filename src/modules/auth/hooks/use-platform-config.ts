@@ -1,10 +1,9 @@
 import React from 'react';
 
 import appConf from '~/framework/util/appConf';
-
-import { platformConfig } from '../service';
-import { usePlatformContextStore } from '../store/platform-context';
-import { usePlatformLegalUrlsStore } from '../store/platform-legal-urls';
+import { platformConfig } from '~/modules/auth/service';
+import { usePlatformContextStore } from '~/modules/auth/store/platform-context';
+import { usePlatformLegalUrlsStore } from '~/modules/auth/store/platform-legal-urls';
 
 /**
  * Remote config of a platform that auth screens may need before any account is signed in.

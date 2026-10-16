@@ -1,10 +1,11 @@
-import type { IChangePasswordFormData } from '../model';
-import { changePassword, signIn } from '../service';
+import type { IChangePasswordFormData } from '~/modules/auth/model';
+import { changePassword, signIn } from '~/modules/auth/service';
+import { assertConnectedAccount } from '~/modules/auth/store/accounts';
+import { usePlatformContextStore } from '~/modules/auth/store/platform-context';
+import { useSignInStore } from '~/modules/auth/store/sign-in';
+
 import { logout } from './logout';
 import { setAccount } from './set-account';
-import { assertConnectedAccount } from '../store/accounts';
-import { usePlatformContextStore } from '../store/platform-context';
-import { useSignInStore } from '../store/sign-in';
 
 /**
  * The connected account changes its password because the platform requires it (requirement `MUST_CHANGE_PASSWORD`).

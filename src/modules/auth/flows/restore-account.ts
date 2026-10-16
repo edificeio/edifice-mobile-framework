@@ -1,7 +1,8 @@
-import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '../model';
-import { signIn } from '../service';
+import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/modules/auth/model';
+import { signIn } from '~/modules/auth/service';
+import { useSignInStore } from '~/modules/auth/store/sign-in';
+
 import { setAccount } from './set-account';
-import { useSignInStore } from '../store/sign-in';
 
 /**
  * Signs the given saved account in with its saved tokens, no user interaction involved.

@@ -5,12 +5,11 @@ import { defineScreen } from '~/app/navigation-new';
 import AlertCard from '~/framework/components/alert';
 import { TerciaryButton } from '~/framework/components/button';
 import { UI_SIZES } from '~/framework/components/constants';
+import { changeRequiredPassword, logout } from '~/modules/auth/flows';
+import type { IChangePasswordFormData } from '~/modules/auth/model';
+import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
+import ChangePasswordScreenTemplate from '~/modules/auth/templates/change-password';
 import { I18n } from '~/util/i18n';
-
-import { changeRequiredPassword, logout } from '../../flows';
-import type { IChangePasswordFormData } from '../../model';
-import { useAccountWithRequirement } from '../../store/accounts';
-import ChangePasswordScreenTemplate from '../../templates/change-password';
 
 const styles = StyleSheet.create({
   alert: {

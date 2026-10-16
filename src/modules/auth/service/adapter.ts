@@ -3,7 +3,6 @@ import moment from 'moment';
 import { AccountTypeBackend } from '~/framework/modules/auth/service';
 import { Platform } from '~/framework/util/appConf';
 import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
-
 import {
   AccountType,
   AuthActiveAccount,
@@ -18,7 +17,8 @@ import {
   StructureNode,
   UserChild,
   UserChildren,
-} from '../model';
+} from '~/modules/auth/model';
+
 import { IUserInfoBackend, UserPersonDataBackend, UserPersonDataStructureWithClasses, UserPrivateData } from './types';
 
 export function formatSession(

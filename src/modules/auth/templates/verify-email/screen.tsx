@@ -17,7 +17,7 @@ import { ValidatorBuilder } from '~/util/form';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';
-import { EmailState, type PageTexts, type RequirementVerifyEmailScreenTemplateProps } from './types';
+import { EmailState, type VerifyEmailScreenTemplateProps } from './types';
 
 // Framework `ScrollView` instance type lacks `scrollToEnd`: loosened locally.
 type ScrollViewRef = { scrollToEnd: () => void };
@@ -25,19 +25,14 @@ type ScrollViewRef = { scrollToEnd: () => void };
 /**
  * The user must verify its email. The template does not know what happens next: it only calls the given actions.
  */
-export const RequirementVerifyEmailScreenTemplate = React.memo(function ({
+export const VerifyEmailScreenTemplate = React.memo(function ({
+  confirmLeaveWhenEdited = false,
   defaultEmail,
   onRefuse,
   onSubmit,
-}: RequirementVerifyEmailScreenTemplateProps) {
+  texts,
+}: VerifyEmailScreenTemplateProps) {
   const isScreenFocused = useIsFocused();
-
-  const texts: PageTexts = {
-    button: I18n.get('auth-change-email-verify-button'),
-    label: I18n.get('auth-change-email-verify-label'),
-    message: I18n.get('auth-change-email-verify-message'),
-    title: I18n.get('auth-change-email-verify-title'),
-  };
 
   const [isSendingCode, setIsSendingCode] = React.useState(false);
   const [email, setEmail] = React.useState(defaultEmail || '');
@@ -53,7 +48,8 @@ export const RequirementVerifyEmailScreenTemplate = React.memo(function ({
     }
     try {
       setIsSendingCode(true);
-      await onSubmit(email);
+      const result = await onSubmit(email);
+      if (result === EmailState.EMAIL_ALREADY_VERIFIED) setEmailState(EmailState.EMAIL_ALREADY_VERIFIED);
     } catch {
       Toast.showError(I18n.get('auth-change-email-error-text'));
     } finally {
@@ -71,14 +67,14 @@ export const RequirementVerifyEmailScreenTemplate = React.memo(function ({
 
   const refuseEmailVerification = React.useCallback(async () => {
     try {
-      await onRefuse();
+      await onRefuse?.();
     } catch {
       Toast.showError(I18n.get('auth-change-email-error-text'));
     }
   }, [onRefuse]);
 
   usePreventBack({
-    showAlert: !isEmailEmpty && isScreenFocused,
+    showAlert: confirmLeaveWhenEdited && !isEmailEmpty && isScreenFocused,
     text: I18n.get('auth-change-email-edit-alert-message'),
     title: I18n.get('auth-change-email-edit-alert-title'),
   });
@@ -136,7 +132,11 @@ export const RequirementVerifyEmailScreenTemplate = React.memo(function ({
             />
           </View>
           <CaptionItalicText style={styles.errorText} testID="email-field-error">
-            {isEmailStatePristine ? I18n.get('common-space') : I18n.get('auth-change-email-error-invalid')}
+            {isEmailStatePristine
+              ? I18n.get('common-space')
+              : emailState === EmailState.EMAIL_ALREADY_VERIFIED
+                ? I18n.get('auth-change-email-error-same')
+                : I18n.get('auth-change-email-error-invalid')}
           </CaptionItalicText>
           <PrimaryButton
             style={styles.sendButton}
@@ -146,12 +146,14 @@ export const RequirementVerifyEmailScreenTemplate = React.memo(function ({
             action={sendEmail}
             testID="email-check"
           />
-          <TouchableOpacity style={styles.logoutButton} onPress={refuseEmailVerification}>
-            <SmallBoldText style={styles.logoutText}>{I18n.get('auth-change-email-verify-disconnect')}</SmallBoldText>
-          </TouchableOpacity>
+          {onRefuse ? (
+            <TouchableOpacity style={styles.logoutButton} onPress={refuseEmailVerification}>
+              <SmallBoldText style={styles.logoutText}>{I18n.get('auth-change-email-verify-disconnect')}</SmallBoldText>
+            </TouchableOpacity>
+          ) : null}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 });
-RequirementVerifyEmailScreenTemplate.displayName = 'RequirementVerifyEmailScreenTemplate';
+VerifyEmailScreenTemplate.displayName = 'VerifyEmailScreenTemplate';

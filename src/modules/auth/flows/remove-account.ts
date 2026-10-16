@@ -1,7 +1,8 @@
-import type { AuthActiveAccount, AuthSavedAccount } from '../model';
+import type { AuthActiveAccount, AuthSavedAccount } from '~/modules/auth/model';
+import { getConnectedAccount, useAccountsStore } from '~/modules/auth/store/accounts';
+import { useSignInStore } from '~/modules/auth/store/sign-in';
+
 import { logout } from './logout';
-import { getConnectedAccount, useAccountsStore } from '../store/accounts';
-import { useSignInStore } from '../store/sign-in';
 
 /**
  * Removes the account from the saved ones (and its preferences from the storage). Logs it out first if it is the connected one.

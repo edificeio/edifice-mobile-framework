@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 
 import type { Platform } from '~/framework/util/appConf';
-
-import type { PlatformAuthContext } from '../model';
+import type { PlatformAuthContext } from '~/modules/auth/model';
 
 type State = {
   /** Auth context (password rules, cgu...) of each platform, by platform name. Remote config of the platform: does not depend on the session. */
