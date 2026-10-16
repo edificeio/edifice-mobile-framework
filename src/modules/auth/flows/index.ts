@@ -15,7 +15,7 @@
  *   Once the user did what is asked, `refreshRequirements` checks again: either another requirement comes, or none is left.
  * - `signedIn`: the session started (`startSession`) and the app can be used. Use `getSession()` to get it:
  *   it returns nothing before that, so code that needs a session never gets an unfinished one.
- *   Only code that must handle both (logout, requirement screens) uses `getConnectedAccount()`.
+ *   Only code that must handle both (logout, requirement screens) uses `getActiveAccount()`.
  */
 
 export { changeRequiredPassword } from './change-required-password';

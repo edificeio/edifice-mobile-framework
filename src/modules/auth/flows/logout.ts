@@ -1,6 +1,6 @@
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import service from '~/modules/auth/service';
-import { assertConnectedAccount, useAccountsStore } from '~/modules/auth/store/accounts';
+import { assertActiveAccount, useAccountsStore } from '~/modules/auth/store/accounts';
 import { useSignInStore } from '~/modules/auth/store/sign-in';
 
 import { dispatchToLegacyStore } from './legacy-redux';
@@ -11,7 +11,7 @@ import { dispatchToLegacyStore } from './legacy-redux';
  * @throws if there is no connected account.
  */
 export const logout = async () => {
-  const account = assertConnectedAccount();
+  const account = assertActiveAccount();
   if (account.requirement === undefined) await service.notifications.disableForAccount(account);
   useAccountsStore.getState().logout();
   useSignInStore.getState().reset();

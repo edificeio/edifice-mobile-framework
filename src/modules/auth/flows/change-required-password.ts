@@ -1,6 +1,6 @@
 import type { IChangePasswordFormData } from '~/modules/auth/model';
 import service from '~/modules/auth/service';
-import { assertConnectedAccount } from '~/modules/auth/store/accounts';
+import { assertActiveAccount } from '~/modules/auth/store/accounts';
 import { usePlatformContextStore } from '~/modules/auth/store/platform-context';
 import { useSignInStore } from '~/modules/auth/store/sign-in';
 
@@ -14,7 +14,7 @@ import { setAccount } from './set-account';
  * @throws a change password error if the change is refused, else the sign-in error.
  */
 export const changeRequiredPassword = async ({ confirm, newPassword, oldPassword }: IChangePasswordFormData) => {
-  const account = assertConnectedAccount();
+  const account = assertActiveAccount();
   const platform = typeof account.platform === 'string' ? account.platform : account.platform.name;
   const login = account.user.login;
 

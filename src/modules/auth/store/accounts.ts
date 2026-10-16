@@ -44,7 +44,8 @@ type Action = {
   updateProfile: (id: string, user: Partial<AuthActiveAccount['user']>) => void;
 };
 
-const getConnected = (state: State) => {
+/** Active account, whatever its stage. Prefer `selectSession` or `selectAccountWithRequirement`: this one is for the code that handles both. */
+export const selectActiveAccount = (state: State) => {
   const account = state.connected !== undefined ? state.accounts[state.connected] : undefined;
   return accountIsActive(account) ? account : undefined;
 };
@@ -65,7 +66,7 @@ export const useAccountsStore = create<State & Action>()(set => ({
   lastDeletedAccount: undefined,
   logout: () =>
     set(state => {
-      const account = getConnected(state);
+      const account = selectActiveAccount(state);
       if (!account) return state;
       return {
         accounts: { ...state.accounts, [account.user.id]: getSerializedLoggedOutAccountInfo(account) },
@@ -105,7 +106,7 @@ export const useAccountsStore = create<State & Action>()(set => ({
   setQueryParamToken: (id, token) => set(state => withTokens(state, id, { queryParam: token })),
   sleep: () =>
     set(state => {
-      const account = getConnected(state);
+      const account = selectActiveAccount(state);
       if (!account) return state;
       return {
         accounts: { ...state.accounts, [account.user.id]: getSerializedLoggedInAccountInfo(account) },
@@ -132,21 +133,18 @@ export type AuthStage =
   /** An account is signed in and ready: its session has started. */
   | 'signedIn';
 
-/** Connected account, whatever its stage. Prefer `selectSession` or `selectAccountWithRequirement`: this one is for the code that handles both. */
-export const selectConnectedAccount = (state: State) => getConnected(state);
-
 export const selectAuthStage = (state: State): AuthStage => {
-  const account = getConnected(state);
+  const account = selectActiveAccount(state);
   if (!account) return 'signedOut';
   return account.requirement === undefined ? 'signedIn' : 'requirement';
 };
 
 /** The session: the connected account, only if it is signed in AND ready (session started). */
-export const selectSession = (state: State) => (selectAuthStage(state) === 'signedIn' ? getConnected(state) : undefined);
+export const selectSession = (state: State) => (selectAuthStage(state) === 'signedIn' ? selectActiveAccount(state) : undefined);
 
 /** The connected account, only if it is signed in with a requirement to fulfill (session not started). */
 export const selectAccountWithRequirement = (state: State) =>
-  selectAuthStage(state) === 'requirement' ? (getConnected(state) as AuthActiveAccountWithRequirement) : undefined;
+  selectAuthStage(state) === 'requirement' ? (selectActiveAccount(state) as AuthActiveAccountWithRequirement) : undefined;
 
 // Hooks
 
@@ -156,7 +154,7 @@ export const useAccountWithRequirement = () => useAccountsStore(selectAccountWit
 
 // Non-reactive accessors (for services / non-react code)
 
-export const getConnectedAccount = () => selectConnectedAccount(useAccountsStore.getState());
+export const getActiveAccount = () => selectActiveAccount(useAccountsStore.getState());
 export const getSession = () => selectSession(useAccountsStore.getState());
 export const getAccountWithRequirement = () => selectAccountWithRequirement(useAccountsStore.getState());
 
@@ -166,8 +164,8 @@ export const assertSession = () => {
   return session;
 };
 
-export const assertConnectedAccount = () => {
-  const account = getConnectedAccount();
-  if (!account) throw new global.Error('[assertConnectedAccount] no connected account');
+export const assertActiveAccount = () => {
+  const account = getActiveAccount();
+  if (!account) throw new global.Error('[assertActiveAccount] no active account');
   return account;
 };
