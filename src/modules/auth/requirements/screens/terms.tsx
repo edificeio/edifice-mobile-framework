@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { type NavigationProp, useNavigation } from '@react-navigation/native';
+import { type NavigationProp, type StaticScreenProps, useNavigation } from '@react-navigation/native';
 
 import type { NavigationRootParams } from '~/app/navigation/types';
 import { defineScreen } from '~/app/navigation-new';
@@ -15,7 +15,7 @@ import { I18n } from '~/util/i18n';
  * Requirement: the user must accept the (new) terms of use.
  * Once accepted, the requirement is checked again (see `revalidateTerms`) and the app shows the next step by itself.
  */
-const RequirementTermsScreen = React.memo(function ({}) {
+const RequirementTermsScreen = React.memo(function ({}: StaticScreenProps<undefined>) {
   // This screen only shows while there is a connected account with a requirement.
   const platform = useAccountWithRequirement()!.platform.name;
   const legalUrls = usePlatformAuthLegalUrls(platform);

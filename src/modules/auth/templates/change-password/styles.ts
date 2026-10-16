@@ -6,6 +6,15 @@ export default StyleSheet.create({
   buttons: {
     marginTop: UI_SIZES.spacing.big,
   },
+  /** Slot under the form (a secondary action...), centered. */
+  formFooter: {
+    alignItems: 'center',
+    marginTop: UI_SIZES.spacing.minor,
+  },
+  /** Slot above the form (a message...). */
+  formHeader: {
+    marginBottom: UI_SIZES.spacing.medium,
+  },
   infos: {
     alignItems: 'center',
   },

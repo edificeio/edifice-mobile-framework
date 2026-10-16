@@ -1,35 +1,20 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+
+import type { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
 import AlertCard from '~/framework/components/alert';
 import { TerciaryButton } from '~/framework/components/button';
-import { UI_SIZES } from '~/framework/components/constants';
 import { changeRequiredPassword, logout } from '~/modules/auth/flows';
-import type { IChangePasswordFormData } from '~/modules/auth/model';
 import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
 import ChangePasswordScreenTemplate from '~/modules/auth/templates/change-password';
 import { I18n } from '~/util/i18n';
-
-const styles = StyleSheet.create({
-  alert: {
-    marginBottom: UI_SIZES.spacing.medium,
-  },
-  button: {
-    alignSelf: 'center',
-    marginTop: UI_SIZES.spacing.minor,
-  },
-});
-
-const onSubmit = async (payload: IChangePasswordFormData) => {
-  await changeRequiredPassword(payload);
-};
 
 /**
  * Requirement: the user must change its password.
  * Once changed, the user is signed in again (see `changeRequiredPassword`) and the app shows the next step by itself.
  */
-const RequirementResetPasswordScreen = React.memo(function ({}) {
+const RequirementResetPasswordScreen = React.memo(function ({}: StaticScreenProps<undefined>) {
   // This screen only shows while there is a connected account with a requirement.
   const platform = useAccountWithRequirement()!.platform.name;
   const onCancel = React.useCallback(() => {
@@ -37,16 +22,15 @@ const RequirementResetPasswordScreen = React.memo(function ({}) {
   }, []);
   return (
     <ChangePasswordScreenTemplate
-      FormHeaderComponent={<AlertCard style={styles.alert} type="warning" text={I18n.get('auth-changepassword-warning')} />}
+      FormHeaderComponent={<AlertCard type="warning" text={I18n.get('auth-changepassword-warning')} />}
       FormFooterComponent={
         <TerciaryButton
-          style={styles.button}
           text={I18n.get('user-revalidateterms-refuseanddisconnect')}
           onPress={onCancel}
           testID="requirement-reset-password-logout"
         />
       }
-      onSubmit={onSubmit}
+      onSubmit={changeRequiredPassword}
       platform={platform}
       prefillType="password"
     />

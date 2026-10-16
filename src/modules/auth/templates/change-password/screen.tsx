@@ -109,7 +109,11 @@ const ChangePasswordScreen = (props: AuthChangePasswordScreenProps) => {
     <KeyboardPageView scrollable safeArea={false}>
       <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.page}>
         <Pressable onPress={onFormBlur} style={styles.pressable}>
-          {FormHeaderComponent && (React.isValidElement(FormHeaderComponent) ? FormHeaderComponent : <FormHeaderComponent />)}
+          {FormHeaderComponent ? (
+            <View style={styles.formHeader}>
+              {React.isValidElement(FormHeaderComponent) ? FormHeaderComponent : <FormHeaderComponent />}
+            </View>
+          ) : null}
           {passwordRules}
           <InputContainer
             label={{
@@ -216,7 +220,11 @@ const ChangePasswordScreen = (props: AuthChangePasswordScreenProps) => {
             />
           ) : null}*/}
           </View>
-          {FormFooterComponent && (React.isValidElement(FormFooterComponent) ? FormFooterComponent : <FormFooterComponent />)}
+          {FormFooterComponent ? (
+            <View style={styles.formFooter}>
+              {React.isValidElement(FormFooterComponent) ? FormFooterComponent : <FormFooterComponent />}
+            </View>
+          ) : null}
         </Pressable>
       </SafeAreaView>
     </KeyboardPageView>

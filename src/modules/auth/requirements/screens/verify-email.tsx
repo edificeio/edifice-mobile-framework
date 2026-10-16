@@ -1,5 +1,7 @@
 import React from 'react';
 
+import type { StaticScreenProps } from '@react-navigation/native';
+
 import { defineScreen } from '~/app/navigation-new';
 import { logout } from '~/modules/auth/flows';
 import { useRequirementsNavigation } from '~/modules/auth/requirements/navigation';
@@ -12,7 +14,7 @@ import { I18n } from '~/util/i18n';
  * Requirement: the user must verify its email.
  * A validation code is requested, then the user types it in the next screen, where the requirement is checked again.
  */
-const RequirementVerifyEmailScreen = React.memo(function ({}) {
+const RequirementVerifyEmailScreen = React.memo(function ({}: StaticScreenProps<undefined>): React.JSX.Element {
   // This screen only shows while there is a connected account with a requirement.
   const account = useAccountWithRequirement()!;
   const navigation = useRequirementsNavigation();
