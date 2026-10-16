@@ -3,8 +3,11 @@ import { Alert, FlatList, RefreshControl, ScrollView, View } from 'react-native'
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
+import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
@@ -13,20 +16,29 @@ import { PageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
 import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
+import {
+  fetchPresencesCallAction,
+  fetchPresencesCoursesAction,
+  fetchPresencesMultipleSlotSettingAction,
+  fetchPresencesRegisterPreferenceAction,
+} from '~/framework/modules/viescolaire/presences/actions';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
 import CallSummary from '~/framework/modules/viescolaire/presences/components/call-summary';
 import CallListPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call-list';
 import CallSummaryPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call-summary';
 import { Call, CallState, Course } from '~/framework/modules/viescolaire/presences/model';
+import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { subtractTime, today } from '~/framework/util/date';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import type { PresencesCallListScreenPrivateProps } from './types';
+import type { PresencesCallListScreenDispatchProps, PresencesCallListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -156,6 +168,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
       if (course.callStateId === CallState.DONE && props.session) {
         const call = await props.tryFetchCall(course.callId);
         setBottomSheetCall(call);
+      }
     } else {
       openCall(course);
     }
