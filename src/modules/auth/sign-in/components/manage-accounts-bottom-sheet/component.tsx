@@ -5,9 +5,15 @@ import type { AccountListProps } from '~/framework/components/list/account/types
 import type { AuthLoggedAccount, AuthSavedAccount } from '~/modules/auth/model';
 import { I18n } from '~/util/i18n';
 
-import type { HandleAccountListProps } from './types';
+import type { ManageAccountsBottomSheetProps } from './types';
 
-const HandleAccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(props: HandleAccountListProps<ItemT>, ref) => {
+/**
+ * Bottom sheet that lists the saved accounts and lets the user remove them. Open it with `ref.present()`, close it with `ref.dismiss()`.
+ */
+const ManageAccountsBottomSheet = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(
+  props: ManageAccountsBottomSheetProps<ItemT>,
+  ref,
+) => {
   return (
     <AccountList
       ref={ref}
@@ -19,4 +25,4 @@ const HandleAccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(p
   );
 };
 
-export default React.forwardRef(HandleAccountList);
+export default React.forwardRef(ManageAccountsBottomSheet);
