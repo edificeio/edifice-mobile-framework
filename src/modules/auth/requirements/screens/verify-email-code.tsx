@@ -9,13 +9,11 @@ import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
 import MFAScreenTemplate, { emailMFATestIds, getEmailMFATexts } from '~/modules/auth/templates/mfa';
 import { I18n } from '~/util/i18n';
 
-type RequirementEmailCodeScreenProps = StaticScreenProps<{ email: string }>;
-
 /**
  * Requirement: the user types the code sent to their email.
  * Once the code is correct, the requirement is checked again (see `refreshRequirements`) and the app shows the next step by itself.
  */
-const RequirementEmailCodeScreen = React.memo(function ({ route }: RequirementEmailCodeScreenProps) {
+const RequirementEmailCodeScreen = React.memo(function ({ route }: StaticScreenProps<{ email: string }>) {
   const { email } = route.params;
   // This screen only shows while there is a connected account with a requirement.
   const account = useAccountWithRequirement()!;

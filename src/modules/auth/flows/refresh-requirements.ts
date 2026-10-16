@@ -1,7 +1,7 @@
 import service from '~/modules/auth/service';
 import { assertActiveAccount } from '~/modules/auth/store/accounts';
 
-import { commitSignIn } from './commit-sign-in';
+import { setAccount } from './set-account';
 
 /**
  * Checks again the requirement of the connected account (and updates its user data).
@@ -13,7 +13,7 @@ import { commitSignIn } from './commit-sign-in';
 export const refreshRequirements = async () => {
   const account = assertActiveAccount();
   const { session, ...result } = await service.signIn.refresh(account);
-  return commitSignIn(
+  return setAccount(
     { ...result, session: { ...session, addTimestamp: account.addTimestamp, logTimestamp: account.logTimestamp } },
     account.user.id,
   );

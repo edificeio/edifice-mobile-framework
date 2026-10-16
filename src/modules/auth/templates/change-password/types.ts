@@ -14,7 +14,8 @@ export interface AuthChangePasswordScreenStoreProps {
 }
 
 export interface AuthChangePasswordScreenDispatchProps {
-  onSubmit: (payload: IChangePasswordFormData) => Promise<void>;
+  /** The user submits the new password. The result is ignored. Throws if it fails (the template shows the error). */
+  onSubmit: (payload: IChangePasswordFormData) => Promise<unknown>;
 }
 
 export interface AuthChangePasswordScreenProps extends AuthChangePasswordScreenStoreProps, AuthChangePasswordScreenDispatchProps {
@@ -22,7 +23,9 @@ export interface AuthChangePasswordScreenProps extends AuthChangePasswordScreenS
   prefill?: string;
   prefillType: 'login' | 'password';
   prefillLock?: boolean;
+  /** Shown above the form, in a slot with its own spacing: give it unstyled. */
   FormHeaderComponent?: React.ComponentType | React.ReactElement;
+  /** Shown under the form, centered, in a slot with its own spacing: give it unstyled. */
   FormFooterComponent?: React.ComponentType | React.ReactElement;
 }
 

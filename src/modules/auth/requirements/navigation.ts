@@ -1,13 +1,20 @@
-import { type NavigationProp, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+import type { ModuleModals, ModuleScreens, NavigationParamsOfScreens } from '~/app/module';
+
+import type requirementsModule from '.';
 
 /**
- * Params of the requirement screens that are reached from another requirement screen (never from the outside).
- * The screens that are shown by themselves, because the requirement of the account is the one they are for, have none.
+ * Params of every route of the requirements module, inferred from the `StaticScreenProps` of its screens (see `index.ts`).
  */
-export type RequirementsParamList = {
-  'requirements/verify-email-code': { email: string };
-  'requirements/verify-mobile-code': { mobile: string };
-};
+type RequirementsParamList = NavigationParamsOfScreens<ModuleScreens<typeof requirementsModule>> &
+  NavigationParamsOfScreens<ModuleModals<typeof requirementsModule>>;
 
-/** Same as `useNavigation`, typed with the requirement screens that can be navigated to from another requirement screen. */
-export const useRequirementsNavigation = () => useNavigation<NavigationProp<RequirementsParamList>>();
+export type RequirementsNavigation = NativeStackNavigationProp<RequirementsParamList, keyof RequirementsParamList>;
+
+/**
+ * Same as `useNavigation`, but typed with the screens of the requirements module.
+ * A screen that uses it must annotate its return type (`: React.JSX.Element`), else TypeScript can't infer the screens' types.
+ */
+export const useRequirementsNavigation = () => useNavigation<RequirementsNavigation>();
