@@ -21,6 +21,9 @@ import {
   AuthSavedLoggedInAccountWithCredentials,
   getOrderedAccounts,
 } from '~/modules/auth/model';
+import HandleAccountList from '~/modules/auth/sign-in/components/handle-account-list';
+import { LargeHorizontalUserList } from '~/modules/auth/sign-in/components/large-horizontal-user-list';
+import { getRouteForAccountLoad, useSignInNavigation } from '~/modules/auth/sign-in/navigation';
 import { useAccountsStore } from '~/modules/auth/store/accounts';
 import track, { trackingAccountEvents } from '~/modules/auth/tracking';
 import { Loading } from '~/ui/Loading';
@@ -28,9 +31,6 @@ import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { LoginState } from './types';
-import HandleAccountList from '../../components/handle-account-list';
-import { LargeHorizontalUserList } from '../../components/large-horizontal-user-list';
-import { getRouteForAccountLoad, useSignInNavigation } from '../../navigation';
 
 const SignInAccountsScreen = React.memo(function ({}: StaticScreenProps<undefined>) {
   const navigation = useSignInNavigation();

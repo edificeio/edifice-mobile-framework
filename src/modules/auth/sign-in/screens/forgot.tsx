@@ -6,9 +6,8 @@ import { defineModal } from '~/app/navigation-new';
 import type { Platform } from '~/framework/util/appConf';
 import { ForgotMode } from '~/modules/auth/model';
 import { forgot } from '~/modules/auth/service';
+import SignInForgotScreenTemplate, { SignInForgotScreenTemplateProps } from '~/modules/auth/sign-in/templates/forgot';
 import { I18n } from '~/util/i18n';
-
-import SignInForgotScreenTemplate, { SignInForgotScreenTemplateProps } from '../templates/forgot';
 
 const SignInForgotScreen = React.memo(function ({
   route: {

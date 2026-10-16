@@ -25,7 +25,7 @@ import { isEmpty } from '~/framework/util/object';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';
-import type { MobileState, PageTexts, RequirementVerifyMobileScreenTemplateProps } from './types';
+import type { MobileState, VerifyMobileScreenTemplateProps } from './types';
 
 const countryListLanguages = {
   DEFAULT: 'common',
@@ -40,11 +40,13 @@ const countryListLanguages = {
  * The user must verify its mobile number: it gives it (prefilled with the one the platform knows), then asks for a code.
  * The template does not know what happens next: it only calls the given actions.
  */
-export const RequirementVerifyMobileScreenTemplate = React.memo(function ({
+export const VerifyMobileScreenTemplate = React.memo(function ({
+  confirmLeaveWhenEdited = false,
   defaultMobile,
   onRefuse,
   onSubmit,
-}: RequirementVerifyMobileScreenTemplateProps) {
+  texts,
+}: VerifyMobileScreenTemplateProps) {
   const isScreenFocused = useIsFocused();
   const phoneInputRef = React.useRef<PhoneInput>(null);
 
@@ -54,13 +56,6 @@ export const RequirementVerifyMobileScreenTemplate = React.memo(function ({
   const [mobileState, setMobileState] = React.useState<MobileState>('PRISTINE');
   const isMobileEmpty = isEmpty(mobile);
   const isMobileStateClean = mobileState === 'STALE' || mobileState === 'PRISTINE';
-
-  const texts: PageTexts = {
-    button: I18n.get('auth-change-mobile-verify-button'),
-    label: I18n.get('auth-change-mobile-verify-label'),
-    message: I18n.get('auth-change-mobile-verify-message'),
-    title: I18n.get('auth-change-mobile-verify-title'),
-  };
 
   React.useEffect(() => {
     if (defaultMobile) {
@@ -124,15 +119,14 @@ export const RequirementVerifyMobileScreenTemplate = React.memo(function ({
 
   const refuseMobileVerification = React.useCallback(async () => {
     try {
-      await onRefuse();
+      await onRefuse?.();
     } catch {
       Toast.showError(I18n.get('auth-change-mobile-error-text'));
     }
   }, [onRefuse]);
 
-  // In the old screen, leaving was only prevented when the user modified its mobile from its profile (never for the requirement).
   usePreventBack({
-    showAlert: false,
+    showAlert: confirmLeaveWhenEdited && !isMobileEmpty && mobileState !== 'PRISTINE' && isScreenFocused,
     text: I18n.get('auth-change-mobile-edit-alert-message'),
     title: I18n.get('auth-change-mobile-edit-alert-title'),
   });
@@ -251,15 +245,17 @@ export const RequirementVerifyMobileScreenTemplate = React.memo(function ({
             action={onSendSMS}
             testID="phone-change"
           />
-          <DefaultButton
-            style={styles.logoutButton}
-            text={I18n.get('auth-change-mobile-verify-disconnect')}
-            contentColor={theme.palette.status.failure.regular}
-            action={onRefuseMobileVerification}
-          />
+          {onRefuse ? (
+            <DefaultButton
+              style={styles.logoutButton}
+              text={I18n.get('auth-change-mobile-verify-disconnect')}
+              contentColor={theme.palette.status.failure.regular}
+              action={onRefuseMobileVerification}
+            />
+          ) : null}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 });
-RequirementVerifyMobileScreenTemplate.displayName = 'RequirementVerifyMobileScreenTemplate';
+VerifyMobileScreenTemplate.displayName = 'VerifyMobileScreenTemplate';

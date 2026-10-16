@@ -4,9 +4,8 @@ import { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
 import type { Platform } from '~/framework/util/appConf';
+import SignInRedirectScreenTemplate from '~/modules/auth/sign-in/templates/redirect';
 import { I18n } from '~/util/i18n';
-
-import SignInRedirectScreenTemplate from '../templates/redirect';
 
 const SignInRedirectScreen = React.memo(function ({
   route: {

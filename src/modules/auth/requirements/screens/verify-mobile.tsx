@@ -1,13 +1,12 @@
 import React from 'react';
 
 import { defineScreen } from '~/app/navigation-new';
+import { logout } from '~/modules/auth/flows';
+import { useRequirementsNavigation } from '~/modules/auth/requirements/navigation';
+import { mobileValidation } from '~/modules/auth/service';
+import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
+import VerifyMobileScreenTemplate, { getVerifyMobileTexts } from '~/modules/auth/templates/verify-mobile';
 import { I18n } from '~/util/i18n';
-
-import { logout } from '../../flows';
-import { mobileValidation } from '../../service';
-import { useAccountWithRequirement } from '../../store/accounts';
-import { useRequirementsNavigation } from '../navigation';
-import RequirementVerifyMobileScreenTemplate from '../templates/verify-mobile';
 
 /**
  * Requirement: the user must verify its mobile number.
@@ -24,7 +23,14 @@ const RequirementVerifyMobileScreen = React.memo(function ({}) {
     },
     [account, navigation],
   );
-  return <RequirementVerifyMobileScreenTemplate defaultMobile={account.user.mobile} onRefuse={logout} onSubmit={onSubmit} />;
+  return (
+    <VerifyMobileScreenTemplate
+      defaultMobile={account.user.mobile}
+      onRefuse={logout}
+      onSubmit={onSubmit}
+      texts={getVerifyMobileTexts()}
+    />
+  );
 });
 RequirementVerifyMobileScreen.displayName = 'RequirementVerifyMobileScreen';
 

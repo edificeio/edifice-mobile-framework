@@ -1,6 +1,6 @@
 import { tokenFetch } from '~/framework/util/transport';
+import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/modules/auth/model';
 
-import { AuthActiveAccount, AuthSavedLoggedInAccount } from '../model';
 import {
   IEntcoreEmailValidationInfos,
   IEntcoreEmailValidationState,

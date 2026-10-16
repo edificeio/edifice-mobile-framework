@@ -3,11 +3,10 @@ import React from 'react';
 import { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
-
-import { setAccount } from '../flows';
-import { AuthNavigationWrapper } from '../navigation/navigation-container';
-import type { SignInResult } from '../service/types';
-import { useAccountsStore } from '../store/accounts';
+import { setAccount } from '~/modules/auth/flows';
+import { AuthNavigationWrapper } from '~/modules/auth/navigation/navigation-container';
+import type { SignInResult } from '~/modules/auth/service/types';
+import { useAccountsStore } from '~/modules/auth/store/accounts';
 
 /**
  * Signing in from here (no account connected) sets the account as the connected one:

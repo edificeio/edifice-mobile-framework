@@ -1,9 +1,10 @@
+import type { SignInResult } from '~/modules/auth/service/types';
+import { useAccountsStore } from '~/modules/auth/store/accounts';
+import { usePlatformContextStore } from '~/modules/auth/store/platform-context';
+import { usePlatformLegalUrlsStore } from '~/modules/auth/store/platform-legal-urls';
+import { useSignInStore } from '~/modules/auth/store/sign-in';
+
 import { prepareSession, sleepCurrentSession, startSession } from './session-effects';
-import type { SignInResult } from '../service/types';
-import { useAccountsStore } from '../store/accounts';
-import { usePlatformContextStore } from '../store/platform-context';
-import { usePlatformLegalUrlsStore } from '../store/platform-legal-urls';
-import { useSignInStore } from '../store/sign-in';
 
 /**
  * Makes the signed-in account the connected one, steps in order.

@@ -2,9 +2,8 @@ import DeviceInfo from 'react-native-device-info';
 
 import appConf from '~/framework/util/appConf';
 import { platformFetch } from '~/framework/util/transport';
+import { createChangePasswordError, type IChangePasswordError, type IChangePasswordPayload } from '~/modules/auth/model';
 import { I18n } from '~/util/i18n';
-
-import { createChangePasswordError, type IChangePasswordError, type IChangePasswordPayload } from '../model';
 
 interface ChangePasswordSubmitPayload {
   oldPassword?: string;

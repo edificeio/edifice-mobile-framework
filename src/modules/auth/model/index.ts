@@ -3,9 +3,8 @@ import { CountryCode } from 'react-native-phone-number-input';
 
 import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import type { IAuthorizedAction, UserPrivateData } from '../service/types';
-import type { EmailState, MobileState } from '../sign-in/templates/activation/types';
+import type { IAuthorizedAction, UserPrivateData } from '~/modules/auth/service/types';
+import type { EmailState, MobileState } from '~/modules/auth/sign-in/templates/activation/types';
 
 /**
  * Every profile type for accounts. Each account is of one type only.

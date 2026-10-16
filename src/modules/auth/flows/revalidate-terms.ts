@@ -1,6 +1,7 @@
-import { revalidateTerms as revalidateTermsOfPlatform } from '../service';
+import { revalidateTerms as revalidateTermsOfPlatform } from '~/modules/auth/service';
+import { assertConnectedAccount } from '~/modules/auth/store/accounts';
+
 import { refreshRequirements } from './refresh-requirements';
-import { assertConnectedAccount } from '../store/accounts';
 
 /**
  * The connected account accepts the (new) terms of use, then its requirement is checked again.

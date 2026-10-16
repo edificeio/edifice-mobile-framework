@@ -1,7 +1,6 @@
 import { refreshTokenForAccount } from '~/framework/util/oauth2';
 import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/modules/auth/model';
-
-import { useAccountsStore } from '../store/accounts';
+import { useAccountsStore } from '~/modules/auth/store/accounts';
 
 /**
  * Refreshes the oAuth2 tokens of the given account and updates the `accounts` store (the storage follows).

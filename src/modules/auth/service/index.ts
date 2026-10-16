@@ -1,7 +1,6 @@
 import appConf from '~/framework/util/appConf';
 import { OAuth2Error, OAuth2ErrorCode, refreshTokenForAccount } from '~/framework/util/oauth2';
 import { Trackers } from '~/framework/util/tracker';
-
 import {
   AuthActiveAccount,
   AuthCredentials,
@@ -10,7 +9,8 @@ import {
   AuthRequirement,
   AuthSavedLoggedInAccount,
   InitialAuthenticationMethod,
-} from '../model';
+} from '~/modules/auth/model';
+
 import { formatSession } from './adapter';
 import { platformConfig } from './platform';
 import { requirements, requirementsThatNeedLegalUrls } from './requirements';

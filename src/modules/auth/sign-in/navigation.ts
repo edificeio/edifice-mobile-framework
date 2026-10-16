@@ -5,10 +5,9 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import type { ModuleModals, ModuleScreens, NavigationParamsOfScreens } from '~/app/module';
 import appConf, { Platform } from '~/framework/util/appConf';
-
-import type { AuthMixedAccountMap } from '../model';
-import { useAccountsStore } from '../store/accounts';
-import { type SignInStatus, useSignInStore } from '../store/sign-in';
+import type { AuthMixedAccountMap } from '~/modules/auth/model';
+import { useAccountsStore } from '~/modules/auth/store/accounts';
+import { type SignInStatus, useSignInStore } from '~/modules/auth/store/sign-in';
 
 import type signInModule from '.';
 

@@ -1,6 +1,7 @@
-import { signIn } from '../service';
+import { signIn } from '~/modules/auth/service';
+import { assertConnectedAccount } from '~/modules/auth/store/accounts';
+
 import { commitSignIn } from './commit-sign-in';
-import { assertConnectedAccount } from '../store/accounts';
 
 /**
  * Checks again the requirement of the connected account (and updates its user data).

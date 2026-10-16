@@ -1,4 +1,4 @@
-import { useAccountsStore } from '../store/accounts';
+import { useAccountsStore } from '~/modules/auth/store/accounts';
 
 import { AccountType, AuthLoggedAccount } from '.';
 

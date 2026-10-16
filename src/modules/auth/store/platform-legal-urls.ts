@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 
 import type { Platform } from '~/framework/util/appConf';
-
-import type { LegalUrls } from '../model';
+import type { LegalUrls } from '~/modules/auth/model';
 
 type State = {
   /** Legal urls (cgu, cookies...) of each platform, by platform name. Remote config of the platform: does not depend on the session. */

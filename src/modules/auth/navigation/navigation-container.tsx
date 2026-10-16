@@ -17,10 +17,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BaseStackScreenLayout } from '~/app/navigation-new/layout';
 import { visibleStackScreenOptions } from '~/app/navigation-new/options';
 import { navigationLightTheme } from '~/app/navigation-new/theme';
-
-import signInModule from '../sign-in';
-import { SignInContext, type SignInContextValue } from '../sign-in/context';
-import { useSignInNavigationState } from '../sign-in/navigation';
+import signInModule from '~/modules/auth/sign-in';
+import { SignInContext, type SignInContextValue } from '~/modules/auth/sign-in/context';
+import { useSignInNavigationState } from '~/modules/auth/sign-in/navigation';
 
 export function AuthNavigationWrapper({ onSignedIn }: SignInContextValue) {
   const { modals, screens } = signInModule;

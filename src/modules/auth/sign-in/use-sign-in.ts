@@ -2,9 +2,7 @@ import React from 'react';
 
 import { Error } from '~/framework/util/error';
 import { OAuth2Error, OAuth2ErrorCode } from '~/framework/util/oauth2';
-import { I18n } from '~/util/i18n';
-
-import { withTracking } from '../flows/track';
+import { withTracking } from '~/modules/auth/flows/track';
 import {
   AuthCredentials,
   AuthFederationCredentials,
@@ -13,11 +11,13 @@ import {
   type IActivationError,
   type IActivationPayload,
   type IChangePasswordPayload,
-} from '../model';
-import { activateAccount, changePassword as changePasswordService, signIn } from '../service';
-import type { SignInResult } from '../service/types';
-import { useSignInStore } from '../store/sign-in';
-import track from '../tracking';
+} from '~/modules/auth/model';
+import { activateAccount, changePassword as changePasswordService, signIn } from '~/modules/auth/service';
+import type { SignInResult } from '~/modules/auth/service/types';
+import { useSignInStore } from '~/modules/auth/store/sign-in';
+import track from '~/modules/auth/tracking';
+import { I18n } from '~/util/i18n';
+
 import { useSignInContext } from './context';
 
 /**

@@ -3,9 +3,8 @@ import { getFormattedNumber, isMobileNumber, isValidNumber } from 'react-native-
 
 import appConf from '~/framework/util/appConf';
 import { platformFetch } from '~/framework/util/transport';
+import { createActivationError, type IActivationPayload } from '~/modules/auth/model';
 import { I18n } from '~/util/i18n';
-
-import { createActivationError, type IActivationPayload } from '../model';
 
 interface ActivationSubmitPayload extends IActivationPayload {
   callBack: string;
