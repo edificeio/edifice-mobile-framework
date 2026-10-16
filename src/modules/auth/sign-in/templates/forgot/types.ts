@@ -1,6 +1,6 @@
 import type { Platform } from '~/framework/util/appConf';
 import type { ForgotMode } from '~/modules/auth/model';
-import type { ForgotResponse } from '~/modules/auth/service';
+import type { ForgotResponse } from '~/modules/auth/service/types';
 
 export type ForgotScreenStructure = {
   structureId: string;

@@ -1,4 +1,4 @@
-import { signIn } from '~/modules/auth/service';
+import service from '~/modules/auth/service';
 import { assertConnectedAccount } from '~/modules/auth/store/accounts';
 
 import { commitSignIn } from './commit-sign-in';
@@ -12,7 +12,7 @@ import { commitSignIn } from './commit-sign-in';
  */
 export const refreshRequirements = async () => {
   const account = assertConnectedAccount();
-  const { session, ...result } = await signIn.refresh(account);
+  const { session, ...result } = await service.signIn.refresh(account);
   return commitSignIn(
     { ...result, session: { ...session, addTimestamp: account.addTimestamp, logTimestamp: account.logTimestamp } },
     account.user.id,

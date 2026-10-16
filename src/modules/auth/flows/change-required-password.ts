@@ -1,5 +1,5 @@
 import type { IChangePasswordFormData } from '~/modules/auth/model';
-import { changePassword, signIn } from '~/modules/auth/service';
+import service from '~/modules/auth/service';
 import { assertConnectedAccount } from '~/modules/auth/store/accounts';
 import { usePlatformContextStore } from '~/modules/auth/store/platform-context';
 import { useSignInStore } from '~/modules/auth/store/sign-in';
@@ -18,13 +18,16 @@ export const changeRequiredPassword = async ({ confirm, newPassword, oldPassword
   const platform = typeof account.platform === 'string' ? account.platform : account.platform.name;
   const login = account.user.login;
 
-  await changePassword(
+  await service.changePassword(
     platform,
     { confirm, login, newPassword, oldPassword },
     { forceChange: true, passwordRegex: usePlatformContextStore.getState().contexts[platform]?.passwordRegex },
   );
   try {
-    return await setAccount(await signIn.withCredentials(platform, { password: newPassword, username: login }), account.user.id);
+    return await setAccount(
+      await service.signIn.withCredentials(platform, { password: newPassword, username: login }),
+      account.user.id,
+    );
   } catch (e) {
     console.error('[Auth] Sign in after required password change error :', e);
     await logout();

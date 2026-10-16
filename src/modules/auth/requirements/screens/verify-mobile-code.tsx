@@ -4,7 +4,7 @@ import type { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
 import { refreshRequirements } from '~/modules/auth/flows';
-import { mobileValidation } from '~/modules/auth/service/validation';
+import service from '~/modules/auth/service';
 import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
 import MFAScreenTemplate, { getMobileMFATexts, mobileMFATestIds } from '~/modules/auth/templates/mfa';
 import { I18n } from '~/util/i18n';
@@ -19,9 +19,9 @@ const RequirementMobileCodeScreen = React.memo(function ({ route }: RequirementM
   const { mobile } = route.params;
   // This screen only shows while there is a connected account with a requirement.
   const account = useAccountWithRequirement()!;
-  const onVerifyCode = React.useCallback((code: string) => mobileValidation.validate(account, code), [account]);
+  const onVerifyCode = React.useCallback((code: string) => service.mobileValidation.validate(account, code), [account]);
   const onResendCode = React.useCallback(async () => {
-    await mobileValidation.requestCode(account, mobile);
+    await service.mobileValidation.requestCode(account, mobile);
   }, [account, mobile]);
   const onVerified = React.useCallback(async () => {
     await refreshRequirements();

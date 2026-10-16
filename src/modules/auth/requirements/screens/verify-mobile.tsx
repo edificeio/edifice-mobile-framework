@@ -3,7 +3,7 @@ import React from 'react';
 import { defineScreen } from '~/app/navigation-new';
 import { logout } from '~/modules/auth/flows';
 import { useRequirementsNavigation } from '~/modules/auth/requirements/navigation';
-import { mobileValidation } from '~/modules/auth/service';
+import service from '~/modules/auth/service';
 import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
 import VerifyMobileScreenTemplate, { getVerifyMobileTexts } from '~/modules/auth/templates/verify-mobile';
 import { I18n } from '~/util/i18n';
@@ -18,7 +18,7 @@ const RequirementVerifyMobileScreen = React.memo(function ({}) {
   const navigation = useRequirementsNavigation();
   const onSubmit = React.useCallback(
     async (mobile: string) => {
-      await mobileValidation.requestCode(account, mobile);
+      await service.mobileValidation.requestCode(account, mobile);
       navigation.navigate('requirements/verify-mobile-code', { mobile });
     },
     [account, navigation],

@@ -1,4 +1,4 @@
-import { revalidateTerms as revalidateTermsOfPlatform } from '~/modules/auth/service';
+import service from '~/modules/auth/service';
 import { assertConnectedAccount } from '~/modules/auth/store/accounts';
 
 import { refreshRequirements } from './refresh-requirements';
@@ -7,6 +7,6 @@ import { refreshRequirements } from './refresh-requirements';
  * The connected account accepts the (new) terms of use, then its requirement is checked again.
  */
 export const revalidateTerms = async () => {
-  await revalidateTermsOfPlatform(assertConnectedAccount());
+  await service.revalidateTerms(assertConnectedAccount());
   return refreshRequirements();
 };

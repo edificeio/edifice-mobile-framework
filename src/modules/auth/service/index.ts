@@ -11,13 +11,17 @@ import {
   InitialAuthenticationMethod,
 } from '~/modules/auth/model';
 
-import { formatSession } from './adapter';
+import { activateAccount } from './activation';
+import { formatSession, formatStructuresWithClasses, parseAccountType } from './adapter';
+import { changePassword } from './change-password';
+import { forgot } from './forgot';
+import { notifications } from './notifications';
 import { platformConfig } from './platform';
-import { requirements, requirementsThatNeedLegalUrls } from './requirements';
-import { getToken } from './token';
+import { requirements, requirementsThatNeedLegalUrls, revalidateTerms } from './requirements';
+import { getOneSessionId, getQueryParamToken, getToken } from './token';
 import type { SignInResult } from './types';
 import * as userinfo from './userinfo';
-import { emailValidation, mobileValidation } from './validation';
+import { emailValidation, mfaValidation, mobileValidation } from './validation';
 
 /** Runs a sign-in step, tracking its failure and logging its duration. */
 const step = async <T>(name: string, fn: () => Promise<T>) => {
@@ -93,7 +97,7 @@ const createSession = async (
  * Errors are thrown as is. In particular, `OAuth2ErrorCode.ACTIVATION_CODE` and `OAuth2ErrorCode.PASSWORD_RESET`
  * mean that given password was in fact an activation / password renew code.
  */
-export const signIn = {
+const signIn = {
   /**
    * With the tokens the account already has: gets a fresh session of the account (requirement, user data).
    * Not a sign-in: the tokens are not renewed, and it is up to the caller to keep the timestamps of the account.
@@ -132,13 +136,36 @@ export const signIn = {
   },
 };
 
-export * from './adapter';
-export * from './platform';
-export * from './requirements';
-export * from './token';
-export * from './types';
-export * from './userinfo';
-export * from './validation';
-export * from './activation';
-export * from './change-password';
-export * from './forgot';
+/**
+ * Everything the auth module asks to the outside world: the backend of the platform, and the notification service.
+ * No store is touched here (see `flows/` for what is done with the answers).
+ * Import it as a whole, so the calls read `service.xxx`:
+ * `import service from '~/modules/auth/service';`
+ * Types are in `./types`.
+ */
+const service = {
+  activateAccount,
+  assertNotPredeleted: userinfo.assertNotPredeleted,
+  changePassword,
+  emailValidation,
+  fetchUserInfo: userinfo.fetchUserInfo,
+  fetchUserPublicInfo: userinfo.fetchUserPublicInfo,
+  forgot,
+  formatSession,
+  formatStructuresWithClasses,
+  getOneSessionId,
+  getQueryParamToken,
+  getToken,
+  getUserData: userinfo.getUserData,
+  mfaValidation,
+  mobileValidation,
+  notifications,
+  parseAccountType,
+  platformConfig,
+  requirements,
+  requirementsThatNeedLegalUrls,
+  revalidateTerms,
+  signIn,
+};
+
+export default service;

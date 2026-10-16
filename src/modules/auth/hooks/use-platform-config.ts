@@ -1,7 +1,7 @@
 import React from 'react';
 
 import appConf from '~/framework/util/appConf';
-import { platformConfig } from '~/modules/auth/service';
+import service from '~/modules/auth/service';
 import { usePlatformContextStore } from '~/modules/auth/store/platform-context';
 import { usePlatformLegalUrlsStore } from '~/modules/auth/store/platform-legal-urls';
 
@@ -13,7 +13,7 @@ export const loadPlatformContext = async (platformName: string) => {
   const store = usePlatformContextStore.getState();
   const cached = store.contexts[platformName];
   if (cached) return cached;
-  const context = await platformConfig.context(appConf.assertPlatformOfName(platformName));
+  const context = await service.platformConfig.context(appConf.assertPlatformOfName(platformName));
   if (context) store.setContext(platformName, context);
   return context;
 };
@@ -22,7 +22,7 @@ export const loadPlatformLegalUrls = async (platformName: string) => {
   const store = usePlatformLegalUrlsStore.getState();
   const cached = store.urls[platformName];
   if (cached) return cached;
-  const urls = await platformConfig.authI18n(appConf.assertPlatformOfName(platformName));
+  const urls = await service.platformConfig.authI18n(appConf.assertPlatformOfName(platformName));
   if (urls) store.setLegalUrls(platformName, urls);
   return urls;
 };

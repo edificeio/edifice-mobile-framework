@@ -3,7 +3,7 @@ import React from 'react';
 import { defineScreen } from '~/app/navigation-new';
 import { logout } from '~/modules/auth/flows';
 import { useRequirementsNavigation } from '~/modules/auth/requirements/navigation';
-import { emailValidation } from '~/modules/auth/service';
+import service from '~/modules/auth/service';
 import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
 import VerifyEmailScreenTemplate, { getVerifyEmailTexts } from '~/modules/auth/templates/verify-email';
 import { I18n } from '~/util/i18n';
@@ -18,7 +18,7 @@ const RequirementVerifyEmailScreen = React.memo(function ({}) {
   const navigation = useRequirementsNavigation();
   const onSubmit = React.useCallback(
     async (email: string) => {
-      await emailValidation.requestCode(account, email);
+      await service.emailValidation.requestCode(account, email);
       navigation.navigate('requirements/verify-email-code', { email });
     },
     [account, navigation],
