@@ -5,7 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/util/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import InputContainer from '~/framework/components/inputs/container';
 import PasswordInput from '~/framework/components/inputs/password';
@@ -24,6 +23,7 @@ import appConf from '~/framework/util/appConf';
 import { OAuth2Error } from '~/framework/util/oauth2';
 import { Loading } from '~/ui/Loading';
 import { ValueChangeArgs } from '~/util/form';
+import { I18n } from '~/util/i18n';
 
 import ChangePasswordFormModel from './form-model';
 import styles from './styles';
