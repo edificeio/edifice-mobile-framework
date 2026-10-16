@@ -206,6 +206,12 @@ export interface AuthActiveAccountWithSaml extends AuthActiveAccountCommon {
 export type AuthActiveAccount = AuthActiveAccountWithCredentials | AuthActiveAccountWithSaml;
 
 /**
+ * Account that is signed in, but cannot be used yet: the user must fulfill the requirement first (see `AuthRequirement`).
+ * Its session has not started (see `flows/index.ts` for the lifecycle).
+ */
+export type AuthActiveAccountWithRequirement = AuthActiveAccount & { requirement: AuthRequirement };
+
+/**
  * @deprecated use AuthActiveUserInfo;
  */
 export type AuthLoggedUserInfo = AuthActiveUserInfoForTypes;
