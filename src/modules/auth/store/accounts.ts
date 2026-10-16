@@ -21,11 +21,16 @@ type State = {
   lastDeletedAccount?: string;
   /** Timestamp of the last account addition. */
   lastAddAccount: number;
+  /**
+   * Tells if the welcome screen (onboarding) must be shown.
+   * True until the first account is added, then false for ever (even if all the accounts are removed).
+   */
+  showWelcome: boolean;
 };
 
 type Action = {
   /** Replaces the whole state with data read from the storage. */
-  hydrate: (accounts: AuthMixedAccountMap) => void;
+  hydrate: (accounts: AuthMixedAccountMap, showWelcome: boolean) => void;
   /**
    * Makes the given account the connected one, in place of the saved account of id `accountToReplaceId`.
    * If `accountToReplaceId` is not provided, the account is simply added to the existing ones.
@@ -61,7 +66,7 @@ const withTokens = (state: State, id: string, patch: Partial<AuthTokenSet>): Par
 export const useAccountsStore = create<State & Action>()(set => ({
   accounts: {},
   connected: undefined,
-  hydrate: accounts => set({ accounts, connected: undefined, lastDeletedAccount: undefined }),
+  hydrate: (accounts, showWelcome) => set({ accounts, connected: undefined, lastDeletedAccount: undefined, showWelcome }),
   lastAddAccount: 0,
   lastDeletedAccount: undefined,
   logout: () =>
@@ -93,6 +98,8 @@ export const useAccountsStore = create<State & Action>()(set => ({
         connected: account.user.id,
         lastAddAccount: accountToReplaceId === undefined ? Date.now() : state.lastAddAccount,
         lastDeletedAccount: undefined,
+        // Once an account was signed in, the welcome screen is never shown again.
+        showWelcome: false,
       };
     }),
   setCarbonioToken: (id, token) => set(state => withTokens(state, id, { carbonioToken: token })),
@@ -104,6 +111,7 @@ export const useAccountsStore = create<State & Action>()(set => ({
     }),
   setOneSessionId: (id, token) => set(state => withTokens(state, id, { oneSessionId: token })),
   setQueryParamToken: (id, token) => set(state => withTokens(state, id, { queryParam: token })),
+  showWelcome: true,
   sleep: () =>
     set(state => {
       const account = selectActiveAccount(state);

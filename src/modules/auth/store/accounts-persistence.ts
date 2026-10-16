@@ -21,7 +21,9 @@ import {
   eraseAccountPreferences,
   readSavedAccounts,
   readSavedStartup,
+  readShowWelcome,
   writeAccounts,
+  writeShowWelcome,
   writeStartup,
 } from '~/modules/auth/storage';
 
@@ -82,7 +84,7 @@ export const initAccountsStore = () => {
   );
   const anonymous = getAnonymousAccount(startup);
   if (anonymous) accounts[ANONYMOUS_ACCOUNT_ID] = anonymous;
-  useAccountsStore.getState().hydrate(accounts);
+  useAccountsStore.getState().hydrate(accounts, readShowWelcome());
 
   unsubscribe?.();
   unsubscribe = useAccountsStore.subscribe((state, prev) => {
@@ -101,6 +103,9 @@ export const initAccountsStore = () => {
             }
           : undefined,
       );
+    }
+    if (state.showWelcome !== prev.showWelcome) {
+      writeShowWelcome(state.showWelcome);
     }
     if (state.lastDeletedAccount !== undefined && state.lastDeletedAccount !== prev.lastDeletedAccount) {
       eraseAccountPreferences(state.lastDeletedAccount);
