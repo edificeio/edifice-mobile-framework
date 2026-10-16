@@ -30,3 +30,10 @@ export const requirements = {
   getState: async ({ tokens }: Pick<AuthLoggedAccount, 'tokens'>) =>
     tokenFetch.json<IUserRequirements>(tokens, '/auth/user/requirements'),
 };
+
+/** Tells the platform that the user accepted the (new) terms of use. */
+export async function revalidateTerms({ tokens }: Pick<AuthLoggedAccount, 'tokens'>) {
+  await tokenFetch(tokens, '/auth/cgu/revalidate', {
+    method: 'PUT',
+  });
+}

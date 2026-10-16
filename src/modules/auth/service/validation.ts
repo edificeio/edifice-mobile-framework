@@ -4,6 +4,8 @@ import { AuthActiveAccount, AuthSavedLoggedInAccount } from '../model';
 import {
   IEntcoreEmailValidationInfos,
   IEntcoreEmailValidationState,
+  IEntcoreMFAValidationInfos,
+  IEntcoreMFAValidationState,
   IEntcoreMobileValidationInfos,
   IEntcoreMobileValidationState,
 } from './types';
@@ -33,6 +35,16 @@ export const emailValidation = {
     }),
   validate: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>, key: string) =>
     tokenFetch.json<IEntcoreEmailValidationState>(tokens, '/directory/user/mailstate', {
+      body: JSON.stringify({ key }),
+      method: 'POST',
+    }),
+};
+
+export const mfaValidation = {
+  getValidationState: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>) =>
+    tokenFetch.json<IEntcoreMFAValidationInfos>(tokens, '/auth/user/mfa/code'),
+  validate: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>, key: string) =>
+    tokenFetch.json<IEntcoreMFAValidationState>(tokens, '/auth/user/mfa/code', {
       body: JSON.stringify({ key }),
       method: 'POST',
     }),
