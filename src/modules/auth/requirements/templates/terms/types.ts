@@ -1,4 +1,4 @@
-import type { LegalUrls } from '../../../model';
+import type { LegalUrls } from '~/modules/auth/model';
 
 export interface RequirementTermsScreenTemplateProps {
   /** Legal documents of the platform. Their links are inactive until they are known. */

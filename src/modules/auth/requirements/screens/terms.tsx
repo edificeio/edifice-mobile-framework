@@ -5,12 +5,11 @@ import { type NavigationProp, useNavigation } from '@react-navigation/native';
 import type { NavigationRootParams } from '~/app/navigation/types';
 import { defineScreen } from '~/app/navigation-new';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
+import { logout, revalidateTerms } from '~/modules/auth/flows';
+import { usePlatformAuthLegalUrls } from '~/modules/auth/hooks/use-platform-config';
+import RequirementTermsScreenTemplate from '~/modules/auth/requirements/templates/terms';
+import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
 import { I18n } from '~/util/i18n';
-
-import { logout, revalidateTerms } from '../../flows';
-import { usePlatformAuthLegalUrls } from '../../hooks/use-platform-config';
-import { useAccountWithRequirement } from '../../store/accounts';
-import RequirementTermsScreenTemplate from '../templates/terms';
 
 /**
  * Requirement: the user must accept the (new) terms of use.

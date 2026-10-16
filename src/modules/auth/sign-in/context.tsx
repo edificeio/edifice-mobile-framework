@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { SignInResult } from '../service/types';
+import type { SignInResult } from '~/modules/auth/service/types';
 
 export interface SignInContextValue {
   /**

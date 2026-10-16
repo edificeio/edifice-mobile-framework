@@ -1,7 +1,6 @@
 import { IUserRequirements } from '~/framework/modules/auth/service';
 import { tokenFetch } from '~/framework/util/transport';
-
-import { AuthLoggedAccount, AuthRequirement } from '../model';
+import { AuthLoggedAccount, AuthRequirement } from '~/modules/auth/model';
 
 export const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
 

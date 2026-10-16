@@ -1,6 +1,5 @@
+import type { IChangePasswordModel } from '~/modules/auth/templates/change-password/types';
 import { IValidatorContext, ValidatorBuilder, ValueGetter } from '~/util/form';
-
-import type { IChangePasswordModel } from '../types';
 
 /** What the form needs from an input: `TextInput` instance type does not declare `blur` in the current RN types. */
 type Blurrable = { blur: () => void };

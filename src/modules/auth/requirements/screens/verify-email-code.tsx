@@ -3,12 +3,11 @@ import React from 'react';
 import type { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
+import { refreshRequirements } from '~/modules/auth/flows';
+import { emailValidation } from '~/modules/auth/service/validation';
+import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
+import MFAScreenTemplate, { emailMFATestIds, getEmailMFATexts } from '~/modules/auth/templates/mfa';
 import { I18n } from '~/util/i18n';
-
-import { refreshRequirements } from '../../flows';
-import { emailValidation } from '../../service/validation';
-import { useAccountWithRequirement } from '../../store/accounts';
-import RequirementMFAScreenTemplate from '../templates/mfa';
 
 type RequirementEmailCodeScreenProps = StaticScreenProps<{ email: string }>;
 
@@ -28,12 +27,13 @@ const RequirementEmailCodeScreen = React.memo(function ({ route }: RequirementEm
     await refreshRequirements();
   }, []);
   return (
-    <RequirementMFAScreenTemplate
+    <MFAScreenTemplate
       kind="email"
-      target={email}
       onResendCode={onResendCode}
       onVerified={onVerified}
       onVerifyCode={onVerifyCode}
+      testIds={emailMFATestIds}
+      texts={getEmailMFATexts(email)}
     />
   );
 });

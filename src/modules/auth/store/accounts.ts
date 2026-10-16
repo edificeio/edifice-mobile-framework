@@ -10,7 +10,7 @@ import {
   AuthTokenSet,
   getSerializedLoggedInAccountInfo,
   getSerializedLoggedOutAccountInfo,
-} from '../model';
+} from '~/modules/auth/model';
 
 type State = {
   /** Every account known by the app : saved ones, and the active one if connected. */

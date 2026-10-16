@@ -1,5 +1,6 @@
-import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '../model';
-import { signIn } from '../service';
+import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/modules/auth/model';
+import { signIn } from '~/modules/auth/service';
+
 import { setAccount } from './set-account';
 
 /**

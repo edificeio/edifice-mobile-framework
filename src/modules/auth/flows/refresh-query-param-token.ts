@@ -1,8 +1,7 @@
 import { isTokenExpired } from '~/framework/util/oauth2';
-
-import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '../model';
-import { getQueryParamToken } from '../service/token';
-import { useAccountsStore } from '../store/accounts';
+import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/modules/auth/model';
+import { getQueryParamToken } from '~/modules/auth/service/token';
+import { useAccountsStore } from '~/modules/auth/store/accounts';
 
 /**
  * Gets the query param token of the account (a new one if absent or expired) and puts it into the `accounts` store.

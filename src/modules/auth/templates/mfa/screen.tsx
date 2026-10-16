@@ -21,7 +21,7 @@ import Toast from '~/framework/components/toast';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';
-import { CodeState, MFATestIds, PageTexts, RequirementMFAScreenTemplateProps } from './types';
+import { CodeState, MFAScreenTemplateProps, PageTexts } from './types';
 
 const animationSources = {
   [CodeState.CODE_CORRECT]: require('ASSETS/animations/mfa/code-correct.json'),
@@ -35,35 +35,18 @@ const CODE_RESEND_DELAY = 15000;
 const CODE_VALIDATION_DELAY = 500;
 const CODE_REDIRECTION_DELAY = 500;
 
-const feedbackTexts = {
-  mfa: {
-    [CodeState.CODE_CORRECT]: 'auth-mfa-feedback-codecorrect',
-    [CodeState.CODE_EXPIRED]: 'auth-mfa-feedback-codeexpired',
-    [CodeState.CODE_WRONG]: 'auth-mfa-feedback-codewrong',
-  },
-  mfaEmail: {
-    [CodeState.CODE_CORRECT]: 'auth-mfa-email-feedback-codecorrect',
-    [CodeState.CODE_EXPIRED]: 'auth-mfa-email-feedback-codeexpired',
-    [CodeState.CODE_WRONG]: 'auth-mfa-email-feedback-codewrong',
-  },
-  mfaMobile: {
-    [CodeState.CODE_CORRECT]: 'auth-mfa-mobile-feedback-codecorrect',
-    [CodeState.CODE_EXPIRED]: 'auth-mfa-mobile-feedback-codeexpired',
-    [CodeState.CODE_WRONG]: 'auth-mfa-mobile-feedback-codewrong',
-  },
-};
-
 /**
  * The user types the code that was sent to them. The template does not know what the code is for nor what happens next:
  * it only calls the given actions.
  */
-export const RequirementMFAScreenTemplate = React.memo(function ({
+export const MFAScreenTemplate = React.memo(function ({
   kind,
   onResendCode,
   onVerified,
   onVerifyCode,
-  target,
-}: RequirementMFAScreenTemplateProps) {
+  testIds,
+  texts,
+}: MFAScreenTemplateProps) {
   const isEmailMFA = kind === 'email';
   const isMobileMFA = kind === 'mobile';
   const isEmailOrMobileMFA = isEmailMFA || isMobileMFA;
@@ -94,56 +77,7 @@ export const RequirementMFAScreenTemplate = React.memo(function ({
   const codeStateColor = theme.palette.status[isCodeCorrect ? 'success' : 'failure'].regular;
   const resendOpacity = isResendInactive ? UI_VALUES.opacity.half : UI_VALUES.opacity.opaque;
 
-  const texts: PageTexts = isEmailMFA
-    ? {
-        feedback: I18n.get(feedbackTexts.mfaEmail[codeState]),
-        message: I18n.get('auth-mfa-email-message'),
-        messageSent: `${I18n.get('auth-mfa-email-message-sent')} ${target}.`,
-        resendToast: I18n.get('auth-mfa-email-toast'),
-        title: I18n.get('auth-mfa-email-title'),
-      }
-    : isMobileMFA
-      ? {
-          feedback: I18n.get(feedbackTexts.mfaMobile[codeState]),
-          message: I18n.get('auth-mfa-mobile-message'),
-          messageSent: `${I18n.get('auth-mfa-mobile-message-sent')} ${target}.`,
-          resendToast: I18n.get('auth-mfa-mobile-toast'),
-          title: I18n.get('auth-mfa-mobile-title'),
-        }
-      : {
-          feedback: I18n.get(feedbackTexts.mfa[codeState]),
-          message: I18n.get('auth-mfa-message'),
-          messageSent: `${I18n.get('auth-mfa-message-sent')} ${target}.`,
-          resendToast: I18n.get('auth-mfa-toast'),
-          title: I18n.get('auth-mfa-title'),
-        };
-
-  const testIds: MFATestIds = isEmailMFA
-    ? {
-        code: 'email-code',
-        codeError: 'email-code-error',
-        codeIssues: 'email-code-issues',
-        resend: 'email-code-send-again',
-        subtitle: 'email-code-subtitle',
-        title: 'email-code-title',
-      }
-    : isMobileMFA
-      ? {
-          code: 'phone-code',
-          codeError: 'phone-code-error',
-          codeIssues: 'phone-code-issues',
-          resend: 'phone-code-send-again',
-          subtitle: 'phone-code-subtitle',
-          title: 'phone-code-title',
-        }
-      : {
-          code: '',
-          codeError: '',
-          codeIssues: '',
-          resend: '',
-          subtitle: '',
-          title: '',
-        };
+  const feedback = codeState in texts.feedback ? texts.feedback[codeState as keyof PageTexts['feedback']] : '';
 
   const setResendTimer = () => {
     setIsResendDisabled(true);
@@ -233,6 +167,11 @@ export const RequirementMFAScreenTemplate = React.memo(function ({
     }
   }, [onVerified]);
 
+  // For kind `mfa` (no delay), the same is done once the success animation ends.
+  const onAnimationFinish = useCallback(() => {
+    if (isCodeCorrect) redirectEmailOrMobileMFA();
+  }, [isCodeCorrect, redirectEmailOrMobileMFA]);
+
   useEffect(() => setResendTimer(), []);
 
   useEffect(() => {
@@ -272,7 +211,14 @@ export const RequirementMFAScreenTemplate = React.memo(function ({
                 height={UI_SIZES.elements.thumbnail}
               />
             ) : (
-              <LottieView ref={animationRef} source={animationSource} style={styles.animation} loop={false} speed={0.5} />
+              <LottieView
+                ref={animationRef}
+                source={animationSource}
+                style={styles.animation}
+                loop={false}
+                speed={0.5}
+                onAnimationFinish={onAnimationFinish}
+              />
             )}
           </View>
           <HeadingSText style={styles.title} testID={testIds.title}>
@@ -331,7 +277,7 @@ export const RequirementMFAScreenTemplate = React.memo(function ({
                   height={33}
                 />
                 <BodyText style={[styles.codeStateText, { color: codeStateColor }]} testID={testIds.codeError}>
-                  {texts.feedback}
+                  {feedback}
                 </BodyText>
               </>
             ) : null}
@@ -360,4 +306,4 @@ export const RequirementMFAScreenTemplate = React.memo(function ({
     </KeyboardAvoidingView>
   );
 });
-RequirementMFAScreenTemplate.displayName = 'RequirementMFAScreenTemplate';
+MFAScreenTemplate.displayName = 'MFAScreenTemplate';

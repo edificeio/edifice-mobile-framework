@@ -1,6 +1,5 @@
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-
-import type { AuthActiveAccount, LegalUrls, PlatformAuthContext, StructureNode } from '../model';
+import type { AuthActiveAccount, LegalUrls, PlatformAuthContext, StructureNode } from '~/modules/auth/model';
 
 export interface IUserRequirements {
   forceChangePassword?: boolean;

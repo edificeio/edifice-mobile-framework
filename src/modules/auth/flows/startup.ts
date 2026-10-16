@@ -1,7 +1,8 @@
-import { accountIsLoggable } from '../model';
-import { initAccountsStore } from '../store/accounts-persistence';
-import { useSignInStore } from '../store/sign-in';
-import track from '../tracking';
+import { accountIsLoggable } from '~/modules/auth/model';
+import { initAccountsStore } from '~/modules/auth/store/accounts-persistence';
+import { useSignInStore } from '~/modules/auth/store/sign-in';
+import track from '~/modules/auth/tracking';
+
 import { restoreAccount } from './restore-account';
 import { withTracking } from './track';
 

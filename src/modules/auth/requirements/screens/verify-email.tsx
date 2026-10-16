@@ -1,13 +1,12 @@
 import React from 'react';
 
 import { defineScreen } from '~/app/navigation-new';
+import { logout } from '~/modules/auth/flows';
+import { useRequirementsNavigation } from '~/modules/auth/requirements/navigation';
+import { emailValidation } from '~/modules/auth/service';
+import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
+import VerifyEmailScreenTemplate, { getVerifyEmailTexts } from '~/modules/auth/templates/verify-email';
 import { I18n } from '~/util/i18n';
-
-import { logout } from '../../flows';
-import { emailValidation } from '../../service';
-import { useAccountWithRequirement } from '../../store/accounts';
-import { useRequirementsNavigation } from '../navigation';
-import RequirementVerifyEmailScreenTemplate from '../templates/verify-email';
 
 /**
  * Requirement: the user must verify its email.
@@ -24,7 +23,15 @@ const RequirementVerifyEmailScreen = React.memo(function ({}) {
     },
     [account, navigation],
   );
-  return <RequirementVerifyEmailScreenTemplate defaultEmail={account.user.email} onRefuse={logout} onSubmit={onSubmit} />;
+  return (
+    <VerifyEmailScreenTemplate
+      confirmLeaveWhenEdited
+      defaultEmail={account.user.email}
+      onRefuse={logout}
+      onSubmit={onSubmit}
+      texts={getVerifyEmailTexts()}
+    />
+  );
 });
 RequirementVerifyEmailScreen.displayName = 'RequirementVerifyEmailScreen';
 

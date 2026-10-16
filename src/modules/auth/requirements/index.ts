@@ -20,9 +20,9 @@
  */
 
 import { CoreModule } from '~/app/module';
+import { AuthRequirement } from '~/modules/auth/model';
+import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
 
-import { AuthRequirement } from '../model';
-import { useAccountWithRequirement } from '../store/accounts';
 import RequirementResetPasswordScreen from './screens/reset-password';
 import RequirementTermsScreen from './screens/terms';
 import RequirementVerifyEmailScreen from './screens/verify-email';

@@ -1,9 +1,9 @@
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
+import { notifications } from '~/modules/auth/service/notifications';
+import { assertConnectedAccount, useAccountsStore } from '~/modules/auth/store/accounts';
+import { useSignInStore } from '~/modules/auth/store/sign-in';
 
 import { dispatchToLegacyStore } from './legacy-redux';
-import { notifications } from '../service/notifications';
-import { assertConnectedAccount, useAccountsStore } from '../store/accounts';
-import { useSignInStore } from '../store/sign-in';
 
 /**
  * Disconnects the connected account and removes its tokens (the account stays among the saved ones).

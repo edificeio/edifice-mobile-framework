@@ -2,7 +2,6 @@ import { Platform } from '~/framework/util/appConf';
 import { expirableTokenFactory, getOAuth2AccessToken } from '~/framework/util/oauth2';
 import { tokenFetch } from '~/framework/util/transport';
 import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
-
 import {
   AuthActiveAccount,
   AuthCredentials,
@@ -11,7 +10,7 @@ import {
   credentialsAreCustomToken,
   credentialsAreLoginPassword,
   credentialsAreSaml,
-} from '../model';
+} from '~/modules/auth/model';
 
 export async function getToken(platform: Platform, credentials: AuthCredentials | AuthFederationCredentials) {
   if (credentialsAreLoginPassword(credentials)) {

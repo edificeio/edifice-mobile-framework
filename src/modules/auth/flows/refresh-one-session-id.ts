@@ -1,6 +1,6 @@
-import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '../model';
-import { getOneSessionId } from '../service/token';
-import { useAccountsStore } from '../store/accounts';
+import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/modules/auth/model';
+import { getOneSessionId } from '~/modules/auth/service/token';
+import { useAccountsStore } from '~/modules/auth/store/accounts';
 
 /**
  * Gets a new oneSessionId (cookie) for the account and puts it into the `accounts` store.

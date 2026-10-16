@@ -2,9 +2,8 @@ import { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { platformFetch } from '~/framework/util/transport';
 import { getUrlWithBase } from '~/framework/util/transport/common';
+import { LegalUrls, PlatformAuthContext } from '~/modules/auth/model';
 import { I18n } from '~/util/i18n';
-
-import { LegalUrls, PlatformAuthContext } from '../model';
 
 export const platformConfig = {
   authI18n: async (platform: Platform): Promise<LegalUrls> => {

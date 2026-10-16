@@ -9,14 +9,14 @@ import { audienceService } from '~/framework/modules/audience/service';
 // import { createMyAppsServiceWithTokenFetch } from '~/framework/modules/myapps/service';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { Trackers } from '~/framework/util/tracker';
+import { callRegisteredActionsAtLogin } from '~/modules/auth/calls-at-login';
+import type { AuthActiveAccount } from '~/modules/auth/model';
+import { notifications } from '~/modules/auth/service/notifications';
+import { getSession, useAccountsStore } from '~/modules/auth/store/accounts';
+import { usePlatformReactionTypesStore } from '~/modules/auth/store/platform-reaction-types';
 
-import { callRegisteredActionsAtLogin } from '../calls-at-login';
-import type { AuthActiveAccount } from '../model';
 import { dispatchToLegacyStore } from './legacy-redux';
 import { refreshOneSessionId } from './refresh-one-session-id';
-import { notifications } from '../service/notifications';
-import { getSession, useAccountsStore } from '../store/accounts';
-import { usePlatformReactionTypesStore } from '../store/platform-reaction-types';
 
 /**
  * Loads what the app needs before it can be shown to the user, and that the session must provide.

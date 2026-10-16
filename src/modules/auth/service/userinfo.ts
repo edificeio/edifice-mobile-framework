@@ -1,9 +1,9 @@
 import { Error } from '~/framework/util/error';
 import { tokenFetch } from '~/framework/util/transport';
+import { AuthLoggedAccount, AuthRequirement } from '~/modules/auth/model';
+import { AccountError, AccountErrorCode } from '~/modules/auth/model/error';
 
-import { AuthLoggedAccount, AuthRequirement } from '../model';
 import { AccountTypeBackend, IUserInfoBackend, UserPersonDataBackend, UserPrivateData } from './types';
-import { AccountError, AccountErrorCode } from '../model/error';
 
 export async function fetchUserInfo({ tokens }: Pick<AuthLoggedAccount, 'tokens'>) {
   try {

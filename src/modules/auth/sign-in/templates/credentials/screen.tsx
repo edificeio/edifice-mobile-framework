@@ -20,12 +20,12 @@ import appConf from '~/framework/util/appConf';
 import { useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';
+import { useSignInNavigation } from '~/modules/auth/sign-in/navigation';
 import { useSignInStore } from '~/modules/auth/store/sign-in';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { LoginState, SignInCredentialsScreenTemplateProps } from './types';
-import { useSignInNavigation } from '../../navigation';
 
 export const SignInCredentialsScreenTemplate = React.memo(function ({
   account,
