@@ -1,5 +1,5 @@
 import service from '~/modules/auth/service';
-import { assertConnectedAccount } from '~/modules/auth/store/accounts';
+import { assertActiveAccount } from '~/modules/auth/store/accounts';
 
 import { commitSignIn } from './commit-sign-in';
 
@@ -11,7 +11,7 @@ import { commitSignIn } from './commit-sign-in';
  * @throws if there is no connected account.
  */
 export const refreshRequirements = async () => {
-  const account = assertConnectedAccount();
+  const account = assertActiveAccount();
   const { session, ...result } = await service.signIn.refresh(account);
   return commitSignIn(
     { ...result, session: { ...session, addTimestamp: account.addTimestamp, logTimestamp: account.logTimestamp } },
