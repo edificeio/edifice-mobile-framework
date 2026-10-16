@@ -10,6 +10,7 @@ import type { IGlobalState } from '~/app/store';
 import type { HostId, Platform } from '~/framework/util/appConf';
 import {
   assertSession as assertStoreSession,
+  getConnectedAccount,
   getSession as getStoreSession,
   useAccountsStore,
 } from '~/modules/auth/store/accounts';
@@ -41,7 +42,7 @@ export const getState = (_state?: IGlobalState): AuthState => {
     pending: undefined,
     platformContexts: usePlatformContextStore.getState().contexts,
     platformLegalUrls: usePlatformLegalUrlsStore.getState().urls,
-    requirement: session?.requirement,
+    requirement: getConnectedAccount()?.requirement,
     showOnboarding: true,
     validReactionTypes: getPlatformReactionTypes(session?.platform.name) ?? [],
   } as AuthState;
@@ -64,8 +65,8 @@ export const selectors = {
   lastDeletedAccount: () => useAccountsStore.getState().lastDeletedAccount,
   /** @deprecated use `useSignInStore(s => s.status)`. */
   pending: () => undefined,
-  /** @deprecated use `useRequirement()` from `~/modules/auth/store/accounts`. */
-  requirement: () => getStoreSession()?.requirement,
+  /** @deprecated use `useAccountWithRequirement()` from `~/modules/auth/store/accounts`. */
+  requirement: () => getConnectedAccount()?.requirement,
   /** @deprecated use `useSession()` from `~/modules/auth/store/accounts`. */
   session: () => getStoreSession(),
   /** @deprecated onboarding is always shown. */

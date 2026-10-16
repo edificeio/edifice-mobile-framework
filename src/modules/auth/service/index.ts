@@ -94,6 +94,15 @@ const createSession = async (
  * mean that given password was in fact an activation / password renew code.
  */
 export const signIn = {
+  /**
+   * With the tokens the account already has: gets a fresh session of the account (requirement, user data).
+   * Not a sign-in: the tokens are not renewed, and it is up to the caller to keep the timestamps of the account.
+   */
+  refresh: async (account: AuthActiveAccount) => {
+    const platformName = typeof account.platform === 'string' ? account.platform : account.platform.name;
+    return createSession(platformName, account.tokens, (account.user as { loginUsed?: string }).loginUsed, account.method);
+  },
+
   /** With the refresh token of a saved account. */
   restore: async (account: AuthSavedLoggedInAccount | AuthActiveAccount) => {
     const platformName = typeof account.platform === 'string' ? account.platform : account.platform.name;

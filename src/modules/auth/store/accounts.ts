@@ -3,9 +3,9 @@ import { create } from 'zustand';
 import {
   accountIsActive,
   AuthActiveAccount,
+  type AuthActiveAccountWithRequirement,
   AuthCarbonioUserInfos,
   AuthMixedAccountMap,
-  AuthRequirement,
   AuthSavedLoggedInAccount,
   AuthTokenSet,
   getSerializedLoggedInAccountInfo,
@@ -31,8 +31,6 @@ type Action = {
    * If `accountToReplaceId` is not provided, the account is simply added to the existing ones.
    */
   setAccount: (account: AuthActiveAccount, accountToReplaceId?: string) => void;
-  /** Replaces the connected account with a fresher version of it (e.g. after its requirement was refreshed). */
-  updateSession: (account: AuthActiveAccount) => void;
   /** Disconnects the connected account and removes its tokens. */
   logout: () => void;
   /** Puts the connected account to sleep : it is disconnected (notifications are off) but keeps its tokens, so it can be woken up later (account switch). */
@@ -121,34 +119,55 @@ export const useAccountsStore = create<State & Action>()(set => ({
       if (!accountIsActive(account)) return state;
       return { accounts: { ...state.accounts, [id]: { ...account, user: { ...account.user, ...user } } as AuthActiveAccount } };
     }),
-  updateSession: account =>
-    set(state => (state.connected === account.user.id ? { accounts: { ...state.accounts, [account.user.id]: account } } : state)),
 }));
 
 // Selectors
 
-/** Connected account, even if it still has a requirement to fulfill. */
-export const selectSession = (state: State) => getConnected(state);
+/** The three situations of the connected account, see `flows/index.ts` for the lifecycle. */
+export type AuthStage =
+  /** No connected account. */
+  | 'signedOut'
+  /** An account is signed in but has a requirement to fulfill: its session has not started. */
+  | 'requirement'
+  /** An account is signed in and ready: its session has started. */
+  | 'signedIn';
 
-/** Tells if the user is signed in AND ready to navigate in the app : a connected account with no requirement left. */
-export const selectIsSignedInAndReady = (state: State) => {
-  const session = getConnected(state);
-  return session !== undefined && session.requirement === undefined;
+/** Connected account, whatever its stage. Prefer `selectSession` or `selectAccountWithRequirement`: this one is for the code that handles both. */
+export const selectConnectedAccount = (state: State) => getConnected(state);
+
+export const selectAuthStage = (state: State): AuthStage => {
+  const account = getConnected(state);
+  if (!account) return 'signedOut';
+  return account.requirement === undefined ? 'signedIn' : 'requirement';
 };
 
-export const selectRequirement = (state: State): AuthRequirement | undefined => getConnected(state)?.requirement;
+/** The session: the connected account, only if it is signed in AND ready (session started). */
+export const selectSession = (state: State) => (selectAuthStage(state) === 'signedIn' ? getConnected(state) : undefined);
+
+/** The connected account, only if it is signed in with a requirement to fulfill (session not started). */
+export const selectAccountWithRequirement = (state: State) =>
+  selectAuthStage(state) === 'requirement' ? (getConnected(state) as AuthActiveAccountWithRequirement) : undefined;
 
 // Hooks
 
+export const useAuthStage = () => useAccountsStore(selectAuthStage);
 export const useSession = () => useAccountsStore(selectSession);
-export const useRequirement = () => useAccountsStore(selectRequirement);
+export const useAccountWithRequirement = () => useAccountsStore(selectAccountWithRequirement);
 
 // Non-reactive accessors (for services / non-react code)
 
+export const getConnectedAccount = () => selectConnectedAccount(useAccountsStore.getState());
 export const getSession = () => selectSession(useAccountsStore.getState());
+export const getAccountWithRequirement = () => selectAccountWithRequirement(useAccountsStore.getState());
 
 export const assertSession = () => {
   const session = getSession();
   if (!session) throw new global.Error('[assertSession] no session');
   return session;
+};
+
+export const assertConnectedAccount = () => {
+  const account = getConnectedAccount();
+  if (!account) throw new global.Error('[assertConnectedAccount] no connected account');
+  return account;
 };

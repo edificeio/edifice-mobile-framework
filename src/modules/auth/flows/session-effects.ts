@@ -60,8 +60,9 @@ export const startSession = async (session: AuthActiveAccount) => {
 };
 
 /**
- * Puts the connected account (if any) to sleep: its notifications are disabled and the data of the session are flushed,
- * but it stays in the accounts with its tokens.
+ * Puts the session (if any) to sleep: its notifications are disabled and the data of the session are flushed,
+ * but the account stays in the accounts with its tokens.
+ * An account with a requirement has no session to put to sleep (it never started), so it is left as is.
  */
 export const sleepCurrentSession = async () => {
   const session = getSession();
