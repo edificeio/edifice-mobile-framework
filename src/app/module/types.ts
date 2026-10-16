@@ -6,7 +6,7 @@ import type { Action, Reducer } from 'redux';
 import type importModules from '~/app/config/modules';
 import type { ScreenComponent } from '~/app/navigation-new/types';
 import type { SvgIconName } from '~/framework/components/picture';
-import type { AuthActiveAccount } from '~/framework/modules/auth/model';
+import type { AuthActiveAccount } from '~/modules/auth/model';
 
 import { EntModule, Module } from '.';
 

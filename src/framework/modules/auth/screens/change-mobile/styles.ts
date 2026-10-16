@@ -27,7 +27,7 @@ export default StyleSheet.create({
     marginVertical: UI_SIZES.spacing.minor,
   },
   // We allow use of 'transparent' to erase default color provided by third-party component
-  // eslint-disable-next-line react-native/no-color-literals
+
   inputTextContainer: {
     backgroundColor: 'transparent',
     borderLeftWidth: 1,

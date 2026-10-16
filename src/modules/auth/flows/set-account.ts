@@ -4,6 +4,7 @@ import { usePlatformContextStore } from '~/modules/auth/store/platform-context';
 import { usePlatformLegalUrlsStore } from '~/modules/auth/store/platform-legal-urls';
 import { useSignInStore } from '~/modules/auth/store/sign-in';
 
+import { notifyLegacyAccountSet } from './legacy-redux';
 import { prepareSession, sleepCurrentSession, startSession } from './session-effects';
 
 /**
@@ -26,6 +27,9 @@ export const setAccount = async ({ legalUrls, platformContext, session }: SignIn
   useSignInStore.getState().reset();
 
   // 4. Effects of the new session. With a requirement, the app can't be used yet: they'll run once it is fulfilled.
-  if (!session.requirement) await startSession(session);
+  if (!session.requirement) {
+    notifyLegacyAccountSet(session, accountToReplaceId);
+    await startSession(session);
+  }
   return session;
 };
