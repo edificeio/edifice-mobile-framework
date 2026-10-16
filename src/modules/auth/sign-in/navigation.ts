@@ -12,12 +12,6 @@ import { type SignInStatus, useSignInStore } from '~/modules/auth/store/sign-in'
 import type signInModule from '.';
 
 /**
- * Tells if the welcome screen (onboarding) is shown first.
- * It always is, but keep the information here in case it must be skipped some day (e.g. once the user has seen it).
- */
-export const SHOW_ONBOARDING = true;
-
-/**
  * Params of every route of the auth navigator (sign-in screens + sign-in modals), see `navigation/navigation-container.tsx`.
  */
 type AuthParamList = NavigationParamsOfScreens<ModuleScreens<typeof signInModule>> &
@@ -106,21 +100,26 @@ export const getRouteForAccountLoad = (account: {
  * Get the navigation state of the sign-in navigator from the sign-in situation (accounts + sign-in status).
  * If newly returned state differs from the previous one, it must be reset into navigation container (see `navigation-container.tsx`).
  *
- * The welcome screen always comes first so the user can go back to it, but the user lands on the screen of its situation:
- * - fresh start (no account, no status): welcome screen
+ * While `showWelcome` is true (until the user signed in once), the welcome screen comes first, so the user can go back to it.
+ * Then the user lands on the screen of its situation:
+ * - fresh start (no account, no status): welcome screen, or platforms / login screen if the welcome screen is not shown anymore
+ *   (e.g. all the accounts were removed)
  * - activation / password renew code: matching screen
  * - saved accounts: accounts selection (several accounts) or login screen of the account / platform
  */
 export const getSignInNavigationState = ({
   accounts,
   lastDeletedAccount,
+  showWelcome,
   status,
 }: {
   accounts: AuthMixedAccountMap;
   lastDeletedAccount?: string;
+  /** The welcome screen comes first, until the user signed in once (see `showWelcome` of the accounts store). */
+  showWelcome: boolean;
   status?: SignInStatus;
 }): PartialState<NavigationState> => {
-  const routes: PartialState<NavigationState>['routes'] = SHOW_ONBOARDING ? [{ name: 'sign-in/welcome' }] : [];
+  const routes: PartialState<NavigationState>['routes'] = showWelcome ? [{ name: 'sign-in/welcome' }] : [];
   const accountIds = Object.keys(accounts);
   const nbAccounts = accountIds.length;
 
@@ -130,9 +129,9 @@ export const getSignInNavigationState = ({
     return { routes, stale: true };
   }
 
-  // B. Fresh start: nothing more than the welcome screen.
+  // B. Nothing to start from: the welcome screen, or if it is not shown anymore the way to log in.
   if (nbAccounts === 0 && !status) {
-    if (!SHOW_ONBOARDING) routes.push(getRouteForOnboarding());
+    if (!showWelcome) routes.push(getRouteForOnboarding());
     return { routes, stale: true };
   }
 
@@ -168,9 +167,10 @@ export const getSignInNavigationState = ({
 export const useSignInNavigationState = () => {
   const accounts = useAccountsStore(s => s.accounts);
   const lastDeletedAccount = useAccountsStore(s => s.lastDeletedAccount);
+  const showWelcome = useAccountsStore(s => s.showWelcome);
   const status = useSignInStore(s => s.status);
   const attempt = useSignInStore(s => s.attempt);
-  const state = getSignInNavigationState({ accounts, lastDeletedAccount, status });
+  const state = getSignInNavigationState({ accounts, lastDeletedAccount, showWelcome, status });
   // `attempt` makes the state change when the same status is set again (e.g. a second failed restore of the same account).
   const key = `${attempt}:${JSON.stringify(state)}`;
   // eslint-disable-next-line react-hooks/exhaustive-deps

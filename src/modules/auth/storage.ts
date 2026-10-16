@@ -29,7 +29,7 @@ export interface AuthStorageData {
     /** used to migrate pre-1.12 automatic connections */
     anonymousToken?: Pre_1_12_OAuthToken;
   };
-  /** @deprecated not used anymore : onboarding is always shown. The key is left untouched in the storage. */
+  /** Tells if the welcome screen must be shown. True until the user signed in for the first time (then false for ever). */
   'show-onboarding': boolean;
 }
 
@@ -64,6 +64,13 @@ export const readSavedStartup = () => {
   const oldCurrentToken = Storage.global.getString('token'); // pre-1.12 storage
   if (!startup?.account && oldCurrentToken) startup = { ...startup, anonymousToken: JSON.parse(oldCurrentToken) };
   return { ...startup } as AuthStorageData['startup'];
+};
+
+/** Defaults to true: the welcome screen is shown at the first launch of the app. */
+export const readShowWelcome = () => storage.getBoolean('show-onboarding') ?? true;
+
+export const writeShowWelcome = (showWelcome: boolean) => {
+  storage.set('show-onboarding', showWelcome);
 };
 
 export const writeAccounts = (accounts: Record<string, AuthSavedAccount>) => {

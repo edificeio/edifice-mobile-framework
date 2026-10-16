@@ -43,7 +43,7 @@ export const getState = (_state?: IGlobalState): AuthState => {
     platformContexts: usePlatformContextStore.getState().contexts,
     platformLegalUrls: usePlatformLegalUrlsStore.getState().urls,
     requirement: getActiveAccount()?.requirement,
-    showOnboarding: true,
+    showOnboarding: useAccountsStore.getState().showWelcome,
     validReactionTypes: getPlatformReactionTypes(session?.platform.name) ?? [],
   } as AuthState;
 };
@@ -69,8 +69,8 @@ export const selectors = {
   requirement: () => getActiveAccount()?.requirement,
   /** @deprecated use `useSession()` from `~/modules/auth/store/accounts`. */
   session: () => getStoreSession(),
-  /** @deprecated onboarding is always shown. */
-  showOnboarding: () => true,
+  /** @deprecated use `useAccountsStore(s => s.showWelcome)`. Not reactive. */
+  showOnboarding: () => useAccountsStore.getState().showWelcome,
 };
 
 /** @deprecated use `getSession()` from `~/modules/auth/store/accounts`, or the hook `useSession()` in components. */
