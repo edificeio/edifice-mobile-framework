@@ -15,7 +15,7 @@ import { Svg } from '~/framework/components/picture';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 import { containsKey } from '~/framework/util/object';
-import type { ForgotResponse } from '~/modules/auth/service';
+import type { ForgotResponse } from '~/modules/auth/service/types';
 import { useSignInNavigation } from '~/modules/auth/sign-in/navigation';
 import { ValidatorBuilder } from '~/util/form';
 import { I18n } from '~/util/i18n';

@@ -1,6 +1,6 @@
 import { isTokenExpired } from '~/framework/util/oauth2';
 import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/modules/auth/model';
-import { getQueryParamToken } from '~/modules/auth/service/token';
+import service from '~/modules/auth/service';
 import { useAccountsStore } from '~/modules/auth/store/accounts';
 
 /**
@@ -10,7 +10,7 @@ export const refreshQueryParamToken = async (account: AuthSavedLoggedInAccount |
   if (account.tokens.queryParam && !isTokenExpired(account.tokens.queryParam)) {
     return account.tokens.queryParam;
   }
-  const queryParam = await getQueryParamToken(account);
+  const queryParam = await service.getQueryParamToken(account);
   useAccountsStore.getState().setQueryParamToken(account.user.id, queryParam);
   return queryParam;
 };

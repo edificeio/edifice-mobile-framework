@@ -11,7 +11,7 @@ import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { Trackers } from '~/framework/util/tracker';
 import { callRegisteredActionsAtLogin } from '~/modules/auth/calls-at-login';
 import type { AuthActiveAccount } from '~/modules/auth/model';
-import { notifications } from '~/modules/auth/service/notifications';
+import service from '~/modules/auth/service';
 import { getSession, useAccountsStore } from '~/modules/auth/store/accounts';
 import { usePlatformReactionTypesStore } from '~/modules/auth/store/platform-reaction-types';
 
@@ -43,7 +43,7 @@ export const startSession = async (session: AuthActiveAccount) => {
   Trackers.setCustomDimension(3, 'Project', new URL(session.platform.url).hostname);
 
   // Setup push-notifications for the account. No `await` as it is non-blocking for login process
-  notifications.enableForAccount(session);
+  service.notifications.enableForAccount(session);
 
   // Call registered callbacks at login
   callRegisteredActionsAtLogin();
@@ -67,7 +67,7 @@ export const startSession = async (session: AuthActiveAccount) => {
 export const sleepCurrentSession = async () => {
   const session = getSession();
   if (!session) return;
-  await notifications.disableForAccount(session);
+  await service.notifications.disableForAccount(session);
   dispatchToLegacyStore(createEndSessionAction()); // flush sessionReducers of not yet migrated modules
   useAccountsStore.getState().sleep();
 };

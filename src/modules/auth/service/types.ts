@@ -134,3 +134,9 @@ export interface SignInResult {
   /** Platform legal urls. Only fetched when the session requirement needs them. */
   legalUrls?: LegalUrls;
 }
+
+export interface ForgotResponse {
+  ok: boolean;
+  structures?: any[];
+  error?: string;
+}
