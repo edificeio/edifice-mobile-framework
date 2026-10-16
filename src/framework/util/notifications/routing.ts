@@ -2,17 +2,14 @@
  * Notification routing
  * Router operations on opeening a notification
  */
-import { NavigationAction, NavigationProp, ParamListBase, StackActions } from '@react-navigation/native';
+import { NavigationAction, NavigationProp, ParamListBase } from '@react-navigation/native';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
-import { setConfirmQuitAction, setModalCloseAction } from '~/framework/navigation/nextTabJump';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { openUrl } from '~/framework/util/linking';
-import { Trackers } from '~/framework/util/tracker';
 
 import { getAsResourceUriNotification, IAbstractNotification } from '.';
 
@@ -66,8 +63,6 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
         if (eventTypeArray !== undefined && !eventTypeArray.includes(n['event-type'])) return false;
         const thunkAction = def.notifHandlerAction(n, trackCategory, navigation, navDispatch, allowSwitchTab);
         const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
-        if (trackCategory && ret.trackInfo)
-          Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n['event-type']}`, ret.trackInfo.value);
         return ret;
       }),
     );
@@ -78,7 +73,6 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
 
   // Only redirect to the timeline
   timelineRedirection: (n, trackCategory, navigation) => async () => {
-    if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
     navigation.navigate(computeTabRouteName(timelineModuleConfig.routeName), {
       initial: true,
       params: {
@@ -95,7 +89,6 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     if (!notifWithUri) {
       return { managed: 0 };
     }
-    if (trackCategory) Trackers.trackEvent(trackCategory, 'Browser', `${n.type}.${n['event-type']}`);
     // We want to navigate on timeline even if this is a web redirection.
     navigation.navigate(computeTabRouteName(timelineModuleConfig.routeName), {
       initial: true,
@@ -132,8 +125,6 @@ export const handleNotificationAction =
         action(notification, trackCategory, navigation, navDispatch, allowSwitchTab),
       )) as unknown as INotifHandlerReturnType;
       manageCount += ret.managed;
-      if (ret.trackInfo && trackCategory)
-        Trackers.trackEvent(trackCategory, ret.trackInfo.action, 'Post-routing', ret.trackInfo.value);
     }
   };
 

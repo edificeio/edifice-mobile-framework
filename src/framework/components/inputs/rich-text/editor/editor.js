@@ -87,6 +87,8 @@ async function initEditor() {
     //Ecriture A
     { cursive: true, fontFamily: 'Ecriture A', fontFile: 'ecriturea_regular.woff' },
     { cursive: true, fontFamily: 'Ecriture A', fontFile: 'ecriturea_italic.woff', italic: true },
+    //Marelle
+    { fontFamily: 'Marelle', fontFile: 'marelle_regular.woff' },
   ];
   await Promise.all(fontItems.map(loadFont));
   attachmentIcon = await loadIcon('attachment.svg');

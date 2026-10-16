@@ -17,7 +17,6 @@ import moduleConfig from '~/framework/modules/homework/module-config';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { selectors } from '~/framework/modules/homework/reducers';
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
-import { Trackers } from '~/framework/util/tracker';
 
 // # Props
 
@@ -68,7 +67,9 @@ export default sessionScreen<HomeworkExplorerScreen.AllProps>(({ navigation, rou
         text={I18n.get('homework-explorer-emptyscreen-text')}
         buttonText={hasCreateHomeworkResourceRight ? I18n.get('homework-explorer-creatediary') : undefined}
         buttonUrl="/homeworks"
-        buttonAction={() => Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser')}
+        buttonAction={() => {
+          //Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser');
+        }}
       />
     );
   }, [session]);

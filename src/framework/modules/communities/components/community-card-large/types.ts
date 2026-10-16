@@ -3,10 +3,11 @@ import { ImageSourcePropType } from 'react-native';
 import { MembershipRole } from '@edifice.io/community-client-rest-rn';
 
 export interface CommunityCardLargeProps {
+  hasJoinedWithCode?: boolean;
   image?: ImageSourcePropType;
   membersCount?: number;
-  title?: string;
+  role: MembershipRole;
   senderId: string;
   senderName: string;
-  role: MembershipRole;
+  title?: string;
 }

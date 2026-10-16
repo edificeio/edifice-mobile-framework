@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { StackActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -12,8 +13,6 @@ import { IHomeworkDiary } from '~/framework/modules/homework/reducers/diaryList'
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { Trackers } from '~/framework/util/tracker';
-import { StackActions } from '@react-navigation/native';
 
 export interface HomeworkSelectScreenDataProps {
   diaryList: {
@@ -58,7 +57,6 @@ function HomeworkSelectScreenComponent(props: HomeworkSelectScreenProps) {
   const onPressDiary = (diary: IHomeworkDiary) => {
     onSelect(diary.id);
     navigation.navigate(homeworkRouteNames.homeworkCreate, { diaryId: diary.id, navActionOnSuccess: StackActions.popToTop() });
-    Trackers.trackEvent('Homework', 'SELECT');
   };
 
   const renderEmptyDiaryList = () => {
@@ -71,7 +69,9 @@ function HomeworkSelectScreenComponent(props: HomeworkSelectScreenProps) {
         text={I18n.get('homework-select-emptyscreen-text')}
         buttonText={hasCreateHomeworkResourceRight ? I18n.get('homework-select-creatediary') : undefined}
         buttonUrl="/homeworks"
-        buttonAction={() => Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser')}
+        buttonAction={() => {
+          //Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser');
+        }}
       />
     );
   };

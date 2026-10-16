@@ -6,9 +6,6 @@ import moment, { Moment } from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import type { PresencesCallListScreenDispatchProps, PresencesCallListScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -39,7 +36,9 @@ import appConf from '~/framework/util/appConf';
 import { subtractTime, today } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { Trackers } from '~/framework/util/tracker';
+
+import styles from './styles';
+import type { PresencesCallListScreenDispatchProps, PresencesCallListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -162,7 +161,6 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   const onPressCourse = async (course: Course) => {
     if (subtractTime(course.startDate, 15, 'minutes').isAfter(moment())) {
       Alert.alert(I18n.get('presences-calllist-unavailablealert-title'), I18n.get('presences-calllist-unavailablealert-message'));
-      Trackers.trackEvent('Présences', 'choix-séance', 'futur');
     } else if (course.callStateId === CallState.DONE || moment().isAfter(course.endDate)) {
       setSelectedCourseId(course.id);
       bottomSheetModalRef.current?.present();
@@ -170,17 +168,9 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
       if (course.callStateId === CallState.DONE && props.session) {
         const call = await props.tryFetchCall(course.callId);
         setBottomSheetCall(call);
-        if (moment().isAfter(course.endDate)) {
-          Trackers.trackEvent('Présences', 'choix-séance', 'ancien-validé');
-        } else {
-          Trackers.trackEvent('Présences', 'choix-séance', 'courant-validé');
-        }
-      } else {
-        Trackers.trackEvent('Présences', 'choix-séance', 'ancien-non-validé');
       }
     } else {
       openCall(course);
-      Trackers.trackEvent('Présences', 'choix-séance', 'courant-non-validé');
     }
   };
 

@@ -17,6 +17,9 @@ phrase:
       - file: ./assets/i18n/fr.json
         params:
           locale_id: a3f0ad82fbd7ad5c3f72d15c1c66a60d
+      - file: ./assets/i18n/fr-MQ.json
+        params:
+          locale_id: 4c1828710b13da9d7bf71678b6985725
       - file: ./assets/i18n/it.json
         params:
           locale_id: f314cbcc1eb240bf4620f7c3e88a531e
@@ -36,6 +39,9 @@ phrase:
       - file: ./assets/i18n/fr.json
         params:
           locale_id: a3f0ad82fbd7ad5c3f72d15c1c66a60d
+      - file: ./assets/i18n/fr-MQ.json
+        params:
+          locale_id: 4c1828710b13da9d7bf71678b6985725
       - file: ./assets/i18n/it.json
         params:
           locale_id: f314cbcc1eb240bf4620f7c3e88a531e

@@ -35,6 +35,7 @@
 		91D2CEFB28D0D33A00A1A1C2 /* Font-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF728D0D33A00A1A1C2 /* Font-BoldItalic.ttf */; };
 		91D2CEFC28D0D33A00A1A1C2 /* Font-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */; };
 		91D2CEFD28D0D33A00A1A1C2 /* Font-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */; };
+		A6C891CC3077C82F00BA7D11 /* marelle_regular.woff in Resources */ = {isa = PBXBuildFile; fileRef = A6C891CB3077C82F00BA7D11 /* marelle_regular.woff */; };
 		AF3322982DB137020021465B /* NabookPoppinsBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322932DB137020021465B /* NabookPoppinsBoldItalic.ttf */; };
 		AF3322992DB137020021465B /* NabookPoppinsSemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322962DB137020021465B /* NabookPoppinsSemiBold.ttf */; };
 		AF33229A2DB137020021465B /* NabookRoboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3322972DB137020021465B /* NabookRoboto.ttf */; };
@@ -100,6 +101,7 @@
 		91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Bold.ttf"; sourceTree = "<group>"; };
 		91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Regular.ttf"; sourceTree = "<group>"; };
 		95CC73870D22D38A2E17B6AA /* libPods-appe-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-appe-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6C891CB3077C82F00BA7D11 /* marelle_regular.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = marelle_regular.woff; sourceTree = "<group>"; };
 		AF3322932DB137020021465B /* NabookPoppinsBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NabookPoppinsBoldItalic.ttf; sourceTree = "<group>"; };
 		AF3322942DB137020021465B /* NabookPoppinsItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NabookPoppinsItalic.ttf; sourceTree = "<group>"; };
 		AF3322952DB137020021465B /* NabookPoppinsRegular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NabookPoppinsRegular.ttf; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 		74EC2C3F26E63F04008EB301 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				A6C891CB3077C82F00BA7D11 /* marelle_regular.woff */,
 				AF3322932DB137020021465B /* NabookPoppinsBoldItalic.ttf */,
 				AF3322942DB137020021465B /* NabookPoppinsItalic.ttf */,
 				AF3322952DB137020021465B /* NabookPoppinsRegular.ttf */,
@@ -352,6 +355,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D20447F2B6BD70B0020EABA /* ecriturea_italic.woff in Resources */,
+				A6C891CC3077C82F00BA7D11 /* marelle_regular.woff in Resources */,
 				1D2044802B6BD70B0020EABA /* ecriturea_regular.woff in Resources */,
 				1D20446B2B6BD1810020EABA /* font_bold.woff in Resources */,
 				1D20446C2B6BD1810020EABA /* font_bolditalic.woff in Resources */,
