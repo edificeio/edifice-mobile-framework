@@ -4,7 +4,7 @@ import type { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
 import { refreshRequirements } from '~/modules/auth/flows';
-import { emailValidation } from '~/modules/auth/service/validation';
+import service from '~/modules/auth/service';
 import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
 import MFAScreenTemplate, { emailMFATestIds, getEmailMFATexts } from '~/modules/auth/templates/mfa';
 import { I18n } from '~/util/i18n';
@@ -19,9 +19,9 @@ const RequirementEmailCodeScreen = React.memo(function ({ route }: RequirementEm
   const { email } = route.params;
   // This screen only shows while there is a connected account with a requirement.
   const account = useAccountWithRequirement()!;
-  const onVerifyCode = React.useCallback((code: string) => emailValidation.validate(account, code), [account]);
+  const onVerifyCode = React.useCallback((code: string) => service.emailValidation.validate(account, code), [account]);
   const onResendCode = React.useCallback(async () => {
-    await emailValidation.requestCode(account, email);
+    await service.emailValidation.requestCode(account, email);
   }, [account, email]);
   const onVerified = React.useCallback(async () => {
     await refreshRequirements();

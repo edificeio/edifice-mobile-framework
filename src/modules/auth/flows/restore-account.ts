@@ -1,5 +1,5 @@
 import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/modules/auth/model';
-import { signIn } from '~/modules/auth/service';
+import service from '~/modules/auth/service';
 import { useSignInStore } from '~/modules/auth/store/sign-in';
 
 import { setAccount } from './set-account';
@@ -11,7 +11,7 @@ import { setAccount } from './set-account';
  */
 export const restoreAccount = async (account: AuthSavedLoggedInAccount | AuthActiveAccount) => {
   try {
-    return await setAccount(await signIn.restore(account), account.user.id);
+    return await setAccount(await service.signIn.restore(account), account.user.id);
   } catch (e) {
     console.error('[Auth] Restore error :', e);
     const { setError, setStatus } = useSignInStore.getState();

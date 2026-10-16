@@ -1,6 +1,5 @@
 import moment from 'moment';
 
-import { AccountTypeBackend } from '~/framework/modules/auth/service';
 import { Platform } from '~/framework/util/appConf';
 import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
 import {
@@ -19,7 +18,13 @@ import {
   UserChildren,
 } from '~/modules/auth/model';
 
-import { IUserInfoBackend, UserPersonDataBackend, UserPersonDataStructureWithClasses, UserPrivateData } from './types';
+import {
+  AccountTypeBackend,
+  IUserInfoBackend,
+  UserPersonDataBackend,
+  UserPersonDataStructureWithClasses,
+  UserPrivateData,
+} from './types';
 
 export function formatSession(
   tokens: (AuthActiveAccount | AuthSavedLoggedInAccount)['tokens'],

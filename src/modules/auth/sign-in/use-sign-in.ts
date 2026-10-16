@@ -12,7 +12,7 @@ import {
   type IActivationPayload,
   type IChangePasswordPayload,
 } from '~/modules/auth/model';
-import { activateAccount, changePassword as changePasswordService, signIn } from '~/modules/auth/service';
+import service from '~/modules/auth/service';
 import type { SignInResult } from '~/modules/auth/service/types';
 import { useSignInStore } from '~/modules/auth/store/sign-in';
 import track from '~/modules/auth/tracking';
@@ -45,7 +45,7 @@ export const useSignIn = () => {
       try {
         const outcome = await withTracking(track.loginCredentials, async () => {
           try {
-            return await signIn.withCredentials(platform, credentials);
+            return await service.signIn.withCredentials(platform, credentials);
           } catch (e) {
             // "CREDENTIALS_MISMATCH" caused by the use of an activation / renew code
             if (hasOAuth2Code(e, OAuth2ErrorCode.ACTIVATION_CODE)) {
@@ -79,7 +79,7 @@ export const useSignIn = () => {
   const withFederation = React.useCallback(
     async (platform: string, credentials: AuthFederationCredentials, screenKey?: number, accountToReplaceId?: string) => {
       try {
-        const result = await withTracking(track.loginFederation, () => signIn.withFederation(platform, credentials));
+        const result = await withTracking(track.loginFederation, () => service.signIn.withFederation(platform, credentials));
         await onSignedIn(result, accountToReplaceId);
       } catch (e) {
         console.error('[Auth] Login federation error :', e);
@@ -97,7 +97,7 @@ export const useSignIn = () => {
   const signInAfterSetup = React.useCallback(
     async (platform: string, credentials: AuthCredentials, accountToReplaceId?: string) => {
       try {
-        await onSignedIn(await signIn.withCredentials(platform, credentials), accountToReplaceId);
+        await onSignedIn(await service.signIn.withCredentials(platform, credentials), accountToReplaceId);
       } catch (e) {
         console.error('[Auth] Sign in after setup error :', e);
         const { setError, setStatus } = useSignInStore.getState();
@@ -117,7 +117,7 @@ export const useSignIn = () => {
     async (platform: string, model: IActivationPayload) => {
       try {
         await withTracking(track.activation, async () => {
-          await activateAccount(platform, model);
+          await service.activateAccount(platform, model);
           await signInAfterSetup(platform, { password: model.password, username: model.login });
         });
       } catch (e) {
@@ -137,7 +137,7 @@ export const useSignIn = () => {
    */
   const changePassword = React.useCallback(
     async (platform: string, payload: IChangePasswordPayload, options?: { forceChange?: boolean; accountToReplaceId?: string }) => {
-      await changePasswordService(platform, payload, options);
+      await service.changePassword(platform, payload, options);
       await signInAfterSetup(platform, { password: payload.newPassword, username: payload.login }, options?.accountToReplaceId);
     },
     [signInAfterSetup],
