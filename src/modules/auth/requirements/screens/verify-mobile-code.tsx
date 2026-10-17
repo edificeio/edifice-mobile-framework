@@ -38,6 +38,6 @@ const RequirementMobileCodeScreen = React.memo(function ({ route }: StaticScreen
 RequirementMobileCodeScreen.displayName = 'RequirementMobileCodeScreen';
 
 export default defineScreen({
-  options: { title: I18n.get('auth-change-mobile-verify') },
+  options: () => ({ title: I18n.get('auth-change-mobile-verify') }),
   screen: RequirementMobileCodeScreen,
 });

@@ -28,4 +28,4 @@ const SignInCredentialsScreen = React.memo(function ({
 });
 SignInCredentialsScreen.displayName = 'SignInCredentialsScreen';
 
-export default defineScreen({ options: { title: I18n.get('auth-login-title') }, screen: SignInCredentialsScreen });
+export default defineScreen({ options: () => ({ title: I18n.get('auth-login-title') }), screen: SignInCredentialsScreen });

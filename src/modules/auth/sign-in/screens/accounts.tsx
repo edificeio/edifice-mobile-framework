@@ -58,4 +58,4 @@ const SignInAccountsScreen = React.memo(function ({}: StaticScreenProps<undefine
 });
 SignInAccountsScreen.displayName = 'SignInAccountsScreen';
 
-export default defineScreen({ options: { title: I18n.get('auth-accountselection-title') }, screen: SignInAccountsScreen });
+export default defineScreen({ options: () => ({ title: I18n.get('auth-accountselection-title') }), screen: SignInAccountsScreen });

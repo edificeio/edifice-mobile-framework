@@ -39,4 +39,4 @@ const SignInRenewPasswordScreen = React.memo(function ({
 });
 SignInRenewPasswordScreen.displayName = 'SignInRenewPasswordScreen';
 
-export default defineScreen({ options: { title: I18n.get('user-page-editpassword') }, screen: SignInRenewPasswordScreen });
+export default defineScreen({ options: () => ({ title: I18n.get('user-page-editpassword') }), screen: SignInRenewPasswordScreen });

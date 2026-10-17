@@ -37,6 +37,6 @@ const RequirementVerifyMobileScreen = React.memo(function ({}: StaticScreenProps
 RequirementVerifyMobileScreen.displayName = 'RequirementVerifyMobileScreen';
 
 export default defineScreen({
-  options: { animation: 'slide_from_bottom', title: I18n.get('auth-change-mobile-verify') },
+  options: () => ({ animation: 'slide_from_bottom', title: I18n.get('auth-change-mobile-verify') }),
   screen: RequirementVerifyMobileScreen,
 });

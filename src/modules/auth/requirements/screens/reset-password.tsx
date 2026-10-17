@@ -39,6 +39,6 @@ const RequirementResetPasswordScreen = React.memo(function ({}: StaticScreenProp
 RequirementResetPasswordScreen.displayName = 'RequirementResetPasswordScreen';
 
 export default defineScreen({
-  options: { animation: 'slide_from_bottom', title: I18n.get('user-page-editpassword') },
+  options: () => ({ animation: 'slide_from_bottom', title: I18n.get('user-page-editpassword') }),
   screen: RequirementResetPasswordScreen,
 });

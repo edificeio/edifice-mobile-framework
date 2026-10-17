@@ -38,6 +38,6 @@ const RequirementEmailCodeScreen = React.memo(function ({ route }: StaticScreenP
 RequirementEmailCodeScreen.displayName = 'RequirementEmailCodeScreen';
 
 export default defineScreen({
-  options: { title: I18n.get('auth-change-email-verify') },
+  options: () => ({ title: I18n.get('auth-change-email-verify') }),
   screen: RequirementEmailCodeScreen,
 });

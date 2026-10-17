@@ -27,4 +27,7 @@ const SignInActivationScreen = React.memo(function ({
 });
 SignInActivationScreen.displayName = 'SignInActivationScreen';
 
-export default defineScreen({ options: { title: I18n.get('auth-navigation-activation-title') }, screen: SignInActivationScreen });
+export default defineScreen({
+  options: () => ({ title: I18n.get('auth-navigation-activation-title') }),
+  screen: SignInActivationScreen,
+});

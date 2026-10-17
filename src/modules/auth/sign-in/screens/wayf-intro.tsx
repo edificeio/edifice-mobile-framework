@@ -26,4 +26,4 @@ const SignInWayfIntroScreen = React.memo(function ({
 });
 SignInWayfIntroScreen.displayName = 'SignInWayfIntroScreen';
 
-export default defineScreen({ options: { title: I18n.get('auth-wayf-main-title') }, screen: SignInWayfIntroScreen });
+export default defineScreen({ options: () => ({ title: I18n.get('auth-wayf-main-title') }), screen: SignInWayfIntroScreen });

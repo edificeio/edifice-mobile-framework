@@ -38,6 +38,6 @@ const RequirementVerifyEmailScreen = React.memo(function ({}: StaticScreenProps<
 RequirementVerifyEmailScreen.displayName = 'RequirementVerifyEmailScreen';
 
 export default defineScreen({
-  options: { animation: 'slide_from_bottom', title: I18n.get('auth-change-email-verify') },
+  options: () => ({ animation: 'slide_from_bottom', title: I18n.get('auth-change-email-verify') }),
   screen: RequirementVerifyEmailScreen,
 });
