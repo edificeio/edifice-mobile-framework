@@ -209,7 +209,7 @@ export const getOAuth2AccessToken = {
 
 /**
  * Gets a new OAuth2 token set for the given account, using its refresh token.
- * This does NOT update the account nor the store/storage : use `refreshAccountToken` of the auth module to do so.
+ * This does NOT update the account nor the store/storage : use `refreshOAuth2Token` of the auth module to do so.
  *
  * @param account - The account for which the token needs to be refreshed. This can be either an `AuthSavedLoggedInAccount` or an `AuthActiveAccount`.
  * @returns The new token set.

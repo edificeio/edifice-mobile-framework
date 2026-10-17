@@ -7,7 +7,7 @@ import { Error } from '~/framework/util/error';
 import { isTokenExpired } from '~/framework/util/oauth2';
 import { Trackers } from '~/framework/util/tracker';
 import { FetchError, FetchErrorCode, HTTPError } from '~/framework/util/transport/error';
-import { refreshAccountToken } from '~/modules/auth/flows/refresh-token';
+import { refreshOAuth2Token } from '~/modules/auth/flows/refresh-oauth2-token';
 import { I18n } from '~/util/i18n';
 
 import {
@@ -225,7 +225,7 @@ export function getAccountFetch(account: AuthSavedLoggedInAccount | AuthActiveAc
     // 3. Refresh token if needed
     if (isTokenExpired(account.tokens.access)) {
       Trackers.handleRefreshToken();
-      await refreshAccountToken(account);
+      await refreshOAuth2Token(account);
       // ToDo: What to do if the refresh token fails?
     }
     // 4. Send request

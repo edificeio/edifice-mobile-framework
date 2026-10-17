@@ -8,6 +8,7 @@ import { CoreModule, EntModule } from '~/app/module';
 import { defineModal, defineScreen, sharedTransitions, StackNavigation, useConfirmRemove } from '~/app/navigation-new';
 import { PrimaryButton } from '~/framework/components/button';
 import { BodyText } from '~/framework/components/text';
+import { AccountsButton } from '~/modules/auth/components/accounts-button';
 import { logout } from '~/modules/auth/flows';
 
 function AModuleHomeScreen({}: StaticScreenProps<{
@@ -37,6 +38,7 @@ function AModuleHomeScreen({}: StaticScreenProps<{
           navigation.navigate('amodule/details', { aId: 2 });
         }}
       />
+      <AccountsButton />
       <PrimaryButton
         testID="login"
         text="Se déconnecter"

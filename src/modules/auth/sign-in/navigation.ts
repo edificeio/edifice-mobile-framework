@@ -85,18 +85,6 @@ export const getRouteForOneTimeCode = (status: Extract<SignInStatus, { type: 'ac
 };
 
 /**
- * Return the navigation route to be performed when loading an existing account from account selection screen.
- */
-export const getRouteForAccountLoad = (account: {
-  id: string;
-  platform: Platform['name'] | undefined;
-  login: string | undefined;
-}) => {
-  if (!account.platform) return undefined;
-  return getRouteForLoginRedirection(account.platform, account.id, account.login);
-};
-
-/**
  * Get the navigation state of the sign-in navigator from the sign-in situation (accounts + sign-in status).
  * If newly returned state differs from the previous one, it must be reset into navigation container (see `navigation-container.tsx`).
  *
@@ -159,20 +147,40 @@ export const getSignInNavigationState = ({
   return { routes, stale: true };
 };
 
+/** Keeps the same navigation state object while the screens to show do not change, so the navigation is not reset for nothing. */
+const useStableNavigationState = (state: PartialState<NavigationState>, attempt: number) => {
+  // `attempt` makes the state change when the same status is set again (e.g. a second failed restore of the same account).
+  const key = `${attempt}:${JSON.stringify(state)}`;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return React.useMemo(() => state, [key]);
+};
+
 /**
- * Navigation state of the sign-in screens, computed from the sign-in situation (accounts + sign-in status).
+ * Navigation state of the sign-in screens when an account is loaded (no account connected), computed from the sign-in
+ * situation (accounts + sign-in status).
  * The state only changes if the screens to show actually change, so the navigation is not reset by unrelated store updates
  * (token refresh...).
  */
-export const useSignInNavigationState = () => {
+export const useLoadAccountNavigationState = () => {
   const accounts = useAccountsStore(s => s.accounts);
   const lastDeletedAccount = useAccountsStore(s => s.lastDeletedAccount);
   const showWelcome = useAccountsStore(s => s.showWelcome);
   const status = useSignInStore(s => s.status);
   const attempt = useSignInStore(s => s.attempt);
-  const state = getSignInNavigationState({ accounts, lastDeletedAccount, showWelcome, status });
-  // `attempt` makes the state change when the same status is set again (e.g. a second failed restore of the same account).
-  const key = `${attempt}:${JSON.stringify(state)}`;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return React.useMemo(() => state, [key]);
+  return useStableNavigationState(getSignInNavigationState({ accounts, lastDeletedAccount, showWelcome, status }), attempt);
+};
+
+/**
+ * Navigation state of the sign-in screens when an account is added to the existing ones: the saved accounts and the welcome
+ * screen are ignored, the user starts from the platforms / login screen.
+ * Only an activation / password renew code changes that: it leads to its own screen.
+ */
+export const useAddAccountNavigationState = () => {
+  const status = useSignInStore(s => s.status);
+  const attempt = useSignInStore(s => s.attempt);
+  const oneTimeCodeStatus = status?.type === 'activation' || status?.type === 'passwordRenew' ? status : undefined;
+  return useStableNavigationState(
+    getSignInNavigationState({ accounts: {}, showWelcome: false, status: oneTimeCodeStatus }),
+    attempt,
+  );
 };

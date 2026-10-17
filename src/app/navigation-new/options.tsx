@@ -84,17 +84,17 @@ const modalCloseButtonStyle = StyleSheet.create({
 });
 
 /**
- * Options automatically applied to every modal defiend with `defineModal`
- * A modal is presented by UIKit outside of the navigation stack, so the native back button never exists there
- * (even when `canGoBack` is true): `headerBackIcon` has no effect and the close button must be provided as a header item.
+ * The close button of a modal, as its header items (the native back button never exists in a modal, see `modalOptions`).
+ * It only shows when the screen can go back, unless `always` is set: a screen that is the first of a navigator nested in a modal
+ * can't go back inside its own navigator, but still must close the modal (the go back is forwarded to the parent navigation).
  */
-export const modalOptions = ({ navigation }: ScreenOptionsProps): NativeStackNavigationOptions => ({
-  // Animation for android. On iOS, the native animation is used.
-  animation: 'fade_from_bottom',
-
+export const modalCloseButtonOptions = (
+  { navigation }: Pick<ScreenOptionsProps, 'navigation'>,
+  { always = false }: { always?: boolean } = {},
+): NativeStackNavigationOptions => ({
   // Android (and iOS fallback) close button : `unstable_headerLeftItems` overrides this one on iOS.
   headerLeft: ({ canGoBack, tintColor }) =>
-    canGoBack ? (
+    always || canGoBack ? (
       <HeaderButton
         accessibilityLabel="Close"
         onPress={() => navigation.goBack()}
@@ -104,12 +104,24 @@ export const modalOptions = ({ navigation }: ScreenOptionsProps): NativeStackNav
       </HeaderButton>
     ) : null,
 
-  // Default modal mode that can be overriden for each modal.
-  presentation: 'modal',
-
   // iOS Close button
   unstable_headerLeftItems: ({ canGoBack }) =>
-    canGoBack
+    always || canGoBack
       ? [{ icon: { name: 'xmark', type: 'sfSymbol' }, label: 'Close', onPress: () => navigation.goBack(), type: 'button' }]
       : [],
+});
+
+/**
+ * Options automatically applied to every modal defiend with `defineModal`
+ * A modal is presented by UIKit outside of the navigation stack, so the native back button never exists there
+ * (even when `canGoBack` is true): `headerBackIcon` has no effect and the close button must be provided as a header item.
+ */
+export const modalOptions = (props: ScreenOptionsProps): NativeStackNavigationOptions => ({
+  // Animation for android. On iOS, the native animation is used.
+  animation: 'fade_from_bottom',
+
+  ...modalCloseButtonOptions(props),
+
+  // Default modal mode that can be overriden for each modal.
+  presentation: 'modal',
 });

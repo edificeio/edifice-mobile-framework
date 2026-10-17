@@ -13,13 +13,13 @@ export default StyleSheet.create({
   },
   heading: {
     color: theme.ui.text.regular,
-    marginBottom: UI_SIZES.spacing.big,
     textAlign: 'center',
     verticalAlign: 'middle',
   },
   lightP: {
     color: theme.palette.primary.regular,
     marginBottom: UI_SIZES.spacing.small,
+    marginTop: UI_SIZES.spacing.big,
     textAlign: 'center',
   },
   picture: { height: getScaleHeight(50), maxWidth: getScaleWidth(112), width: '100%' },
