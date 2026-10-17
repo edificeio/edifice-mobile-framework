@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
 import { HeaderButton } from '@react-navigation/elements';
@@ -124,4 +124,7 @@ export const modalOptions = (props: ScreenOptionsProps): NativeStackNavigationOp
 
   // Default modal mode that can be overriden for each modal.
   presentation: 'modal',
+
+  // Default sheet options for Android. iOS uses the native radii by default.
+  sheetCornerRadius: Platform.OS === 'android' ? UI_SIZES.radius.mediumPlus : undefined,
 });

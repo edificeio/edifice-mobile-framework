@@ -68,7 +68,8 @@ export function BaseStackScreenLayout({
 }
 
 /**
- * On ios, formSheets have by default bottom spacing equals to the bottom inset.
+ * On ios, formSheets have by default bottom spacing equals to the bottom inset that we need to remove.
+ * On android, formSheets have by default NEGATIVE bottom spacing equals to the bottom inset that we need to nullish.
  * This fix compensates the default behaviour to let us manage our magins ourselves.
  * You NEED to use this style on every formSheet on a wrapper View, until this is fixed in react-native-screens.
  * No need to include ios/android logic, it is handled here.
@@ -76,7 +77,7 @@ export function BaseStackScreenLayout({
  */
 export const useFormSheetStyleFix = (): ViewStyle => {
   const insets = useSafeAreaInsets();
-  return React.useMemo(() => ({ flex: 1, marginBottom: Platform.OS === 'ios' ? -insets.bottom : 0 }), [insets.bottom]);
+  return React.useMemo(() => ({ flex: 1, marginBottom: Platform.OS === 'ios' ? -insets.bottom : insets.bottom }), [insets.bottom]);
 };
 
 /**
