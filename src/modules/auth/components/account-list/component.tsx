@@ -12,8 +12,8 @@ import styles from './styles';
 export interface AccountListProps extends Pick<FlatListProps<AuthSavedAccount | AuthLoggedAccount>, 'contentContainerStyle'> {
   ListComponent?: React.ComponentType<FlatListProps<AuthSavedAccount | AuthLoggedAccount>>;
   accounts: (AuthSavedAccount | AuthLoggedAccount)[];
-  description: string;
-  title: string;
+  description?: string;
+  title?: string;
   /** Called when the user chooses an account. */
   onPress?: (account: AuthSavedAccount | AuthLoggedAccount) => Promise<void>;
   /** Called when the user confirmed the removal of an account. */
@@ -54,10 +54,12 @@ export const AccountList = ({
   return (
     <ListComponent
       ListHeaderComponent={
-        <View style={styles.textContainer}>
-          <HeadingSText>{title}</HeadingSText>
-          <SmallText>{description}</SmallText>
-        </View>
+        title || description ? (
+          <View style={styles.textContainer}>
+            {title ? <HeadingSText>{title}</HeadingSText> : null}
+            {description ? <SmallText>{description}</SmallText> : null}
+          </View>
+        ) : undefined
       }
       alwaysBounceVertical={false}
       data={accounts}

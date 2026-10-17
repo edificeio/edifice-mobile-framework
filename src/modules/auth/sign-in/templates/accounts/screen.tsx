@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { FlatListProps, TouchableOpacity, View } from 'react-native';
 
+import { useNavigation } from '@react-navigation/native';
+
 import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { getScaleWidth } from '~/framework/components/constants';
-import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { Svg } from '~/framework/components/picture';
 import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { accountIsLoggable, AuthSavedLoggedInAccountWithCredentials } from '~/modules/auth/model';
 import { LargeHorizontalUserList } from '~/modules/auth/sign-in/components/large-horizontal-user-list';
-import ManageAccountsBottomSheet from '~/modules/auth/sign-in/components/manage-accounts-bottom-sheet';
 import { Loading } from '~/ui/Loading';
 import { I18n } from '~/util/i18n';
 
@@ -24,24 +24,7 @@ export const AccountsScreenTemplate = React.memo(function ({
   onOpenManageAccounts,
   onSelectAccount,
 }: AccountsScreenTemplateProps) {
-  const manageAccountsRef = React.useRef<BottomSheetModalMethods>(null);
-
-  const openManageAccounts = React.useCallback(() => {
-    onOpenManageAccounts?.();
-    manageAccountsRef.current?.present();
-  }, [onOpenManageAccounts]);
-
-  const deleteAccount = React.useCallback(
-    async (account: (typeof accounts)[0]) => {
-      try {
-        await onDeleteAccount?.(account);
-        manageAccountsRef.current?.dismiss();
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    [onDeleteAccount],
-  );
+  const navigation = useNavigation();
 
   const items = React.useMemo(
     () =>
@@ -101,9 +84,11 @@ export const AccountsScreenTemplate = React.memo(function ({
             style={styles.button}
             text={I18n.get('auth-accountselection-button')}
             iconLeft="ui-settings"
-            action={openManageAccounts}
+            action={() => {
+              onOpenManageAccounts?.();
+              navigation.navigate('auth/manage-accounts');
+            }}
           />
-          <ManageAccountsBottomSheet ref={manageAccountsRef} data={accounts} onDelete={deleteAccount} />
         </View>
       ) : null}
     </View>
