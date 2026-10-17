@@ -58,4 +58,7 @@ const SignInDiscoveryClassScreen = React.memo(function ({}: StaticScreenProps<un
 });
 SignInDiscoveryClassScreen.displayName = 'SignInDiscoveryClassScreen';
 
-export default defineScreen({ options: { title: I18n.get('auth-discovery-class-title') }, screen: SignInDiscoveryClassScreen });
+export default defineScreen({
+  options: () => ({ title: I18n.get('auth-discovery-class-title') }),
+  screen: SignInDiscoveryClassScreen,
+});

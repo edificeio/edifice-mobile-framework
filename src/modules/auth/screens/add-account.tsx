@@ -18,6 +18,6 @@ const AuthAddAccountScreen = React.memo(function ({}: StaticScreenProps<undefine
 });
 AuthAddAccountScreen.displayName = 'AuthAddAccountScreen';
 export default defineModal({
-  options: { headerShown: false },
+  options: () => ({ headerShown: false }),
   screen: AuthAddAccountScreen,
 });

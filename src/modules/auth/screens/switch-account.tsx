@@ -76,6 +76,11 @@ const styles = StyleSheet.create({
 });
 
 export default defineModal({
-  options: { headerShown: false, presentation: 'formSheet', sheetAllowedDetents: 'fitToContents', sheetGrabberVisible: true },
+  options: () => ({
+    headerShown: false,
+    presentation: 'formSheet',
+    sheetAllowedDetents: 'fitToContents',
+    sheetGrabberVisible: true,
+  }),
   screen: AuthSwitchAccountScreen,
 });
