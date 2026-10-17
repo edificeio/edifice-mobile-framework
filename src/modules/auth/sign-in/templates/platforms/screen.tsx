@@ -19,6 +19,7 @@ import type { AuthPlatformsScreenProps } from './types';
 export function AuthPlatformsScreenTemplate({
   contentContainerStyle: _contentContainerStyle,
   onOpenItem,
+  showWelcome = true,
   style: _style,
 }: AuthPlatformsScreenProps & Pick<ScrollViewProps, 'style' | 'contentContainerStyle'>) {
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -28,8 +29,9 @@ export function AuthPlatformsScreenTemplate({
     [_contentContainerStyle, bottomInset],
   );
 
-  const { top } = useSafeAreaInsets();
+  const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const welcomeStyle = React.useMemo(() => [{ lineHeight: headerHeight - insets.top }, styles.heading], [headerHeight, insets.top]);
 
   return (
     <GridList
@@ -49,11 +51,11 @@ export function AuthPlatformsScreenTemplate({
       keyExtractor={item => item.url}
       ListHeaderComponent={
         <>
-          <HeadingSText
-            style={React.useMemo(() => [{ lineHeight: headerHeight - top }, styles.heading], [headerHeight, top])}
-            testID="network-welcome-title">
-            {I18n.get('auth-platformselect-welcome')}
-          </HeadingSText>
+          {showWelcome && (
+            <HeadingSText style={welcomeStyle} testID="network-welcome-title">
+              {I18n.get('auth-platformselect-welcome')}
+            </HeadingSText>
+          )}
           <SmallText style={styles.lightP} testID="network-welcome-subtitle">
             {I18n.get('auth-platformselect-select')}
           </SmallText>

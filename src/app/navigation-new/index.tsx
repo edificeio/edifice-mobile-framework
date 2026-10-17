@@ -19,6 +19,7 @@ import { useRootStackNavigation } from './rootStack';
 import { useScreenTelemetry } from './telemetry';
 import { navigationLightTheme } from './theme';
 
+export { useIsModal } from './layout';
 export * from './screen';
 export * from './types';
 export * from './confirm-remove';

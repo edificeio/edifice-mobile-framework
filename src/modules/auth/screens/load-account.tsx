@@ -6,6 +6,7 @@ import { defineScreen } from '~/app/navigation-new';
 import { setAccount } from '~/modules/auth/flows';
 import { AuthNavigationWrapper } from '~/modules/auth/navigation/navigation-container';
 import type { SignInResult } from '~/modules/auth/service/types';
+import { useLoadAccountNavigationState } from '~/modules/auth/sign-in/navigation';
 import { useAccountsStore } from '~/modules/auth/store/accounts';
 
 /**
@@ -21,7 +22,8 @@ const onSignedIn = (result: SignInResult, accountToReplaceId?: string) => {
 };
 
 const AuthLoadAccountScreen = React.memo(function ({}: StaticScreenProps<undefined>) {
-  return <AuthNavigationWrapper onSignedIn={onSignedIn} />;
+  const navigationState = useLoadAccountNavigationState();
+  return <AuthNavigationWrapper navigationState={navigationState} onSignedIn={onSignedIn} />;
 });
 AuthLoadAccountScreen.displayName = 'AuthLoadAccountScreen';
 export default defineScreen({

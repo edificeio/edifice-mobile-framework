@@ -8,13 +8,13 @@
 
 import type { Platform } from '~/framework/util/appConf';
 import {
+  changePassword,
   logout,
   refreshOneSessionId,
   refreshQueryParamToken,
   refreshRequirements,
   removeAccount,
-  setAccount,
-  switchAccount,
+  restoreAccount,
 } from '~/modules/auth/flows';
 import type { AuthActiveAccount, AuthSavedAccount, AuthSavedLoggedInAccount, IChangePasswordPayload } from '~/modules/auth/model';
 import service from '~/modules/auth/service';
@@ -49,9 +49,9 @@ export const loadPlatformLegalUrlsAction = (platform: Platform) => async () => {
   return legalUrls;
 };
 
-/** @deprecated use `switchAccount` from `~/modules/auth/flows`. */
-export const switchAccountAction = (account: AuthSavedLoggedInAccount | AuthActiveAccount) => async () => {
-  await switchAccount(account);
+/** @deprecated use `restoreAccount` from `~/modules/auth/flows`. */
+export const switchAccountAction = (account: AuthSavedAccount | AuthActiveAccount) => async () => {
+  await restoreAccount(account);
 };
 
 /** @deprecated use `refreshRequirements` from `~/modules/auth/flows`. */
@@ -77,22 +77,15 @@ export const refreshSessionIdForAccountAction = (account: AuthSavedLoggedInAccou
 export const refreshQueryParamTokenAction = (account: AuthSavedLoggedInAccount | AuthActiveAccount) => async () =>
   refreshQueryParamToken(account);
 
-/* eslint-disable @typescript-eslint/no-unused-vars -- `_timestamp` and `_rememberMe` are kept for the callers */
+/* eslint-disable @typescript-eslint/no-unused-vars -- the parameters are kept for the callers */
 /**
- * Changes the password of the user (not forced), then signs in again with it to replace the account of the given id.
- * @deprecated use `service.changePassword` then `setAccount` from `~/modules/auth/flows`.
+ * Changes the password of the connected user, then signs in again with it.
+ * Only the connected account is concerned: the account id and the platform given are those of the connected account.
+ * @deprecated use `changePassword` from `~/modules/auth/flows`.
  */
 export const buildChangePasswordActionReplaceAccount =
-  (accountId: string, _timestamp: number) =>
-  (platform: Platform, p: IChangePasswordPayload, forceChange?: boolean, _rememberMe?: boolean) =>
+  (_accountId: string, _timestamp: number) =>
+  (_platform: Platform, p: IChangePasswordPayload, _forceChange?: boolean, _rememberMe?: boolean) =>
   async () => {
-    await service.changePassword(platform.name, p, {
-      forceChange,
-      passwordRegex: usePlatformContextStore.getState().contexts[platform.name]?.passwordRegex,
-    });
-    await setAccount(
-      await service.signIn.withCredentials(platform.name, { password: p.newPassword, username: p.login }),
-      accountId,
-    );
+    await changePassword({ confirm: p.confirm, newPassword: p.newPassword, oldPassword: 'oldPassword' in p ? p.oldPassword : '' });
   };
-/* eslint-enable @typescript-eslint/no-unused-vars */
