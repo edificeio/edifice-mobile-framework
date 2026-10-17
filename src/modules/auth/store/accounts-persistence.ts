@@ -28,6 +28,7 @@ import {
 } from '~/modules/auth/storage';
 
 import { useAccountsStore } from './accounts';
+import { useSignInStore } from './sign-in';
 
 /** Pre-1.12 versions only saved a token, to which we give an anonymous account to be restored. */
 const getAnonymousAccount = (startup: AuthStorageData['startup']): AuthSavedAccount | undefined => {
@@ -70,6 +71,21 @@ const serializeAccounts = (accounts: AuthMixedAccountMap) =>
       ]),
   ) as Record<string, AuthSavedAccount>;
 
+/**
+ * The `startup` to persist: the account (and platform) to restore at next launch.
+ * It is the connected account; without any, it is the one the sign-in is waiting to restore (`restore` status).
+ * So an account the user just left for another one that could not be restored is the one coming back at next launch.
+ */
+const getStartup = (): AuthStorageData['startup'] | undefined => {
+  const { accounts, connected } = useAccountsStore.getState();
+  const status = useSignInStore.getState().status;
+  const accountId = connected ?? (status?.type === 'restore' ? status.accountId : undefined);
+  const account = accountId !== undefined ? accounts[accountId] : undefined;
+  if (account)
+    return { account: account.user.id, platform: typeof account.platform === 'string' ? account.platform : account.platform.name };
+  return connected === undefined && status?.type === 'restore' ? { platform: status.platform } : undefined;
+};
+
 let unsubscribe: (() => void) | undefined;
 
 /**
@@ -87,30 +103,36 @@ export const initAccountsStore = () => {
   useAccountsStore.getState().hydrate(accounts, readShowWelcome());
 
   unsubscribe?.();
-  unsubscribe = useAccountsStore.subscribe((state, prev) => {
+  // `startup` is only written when what it is made of changes: other changes of the stores don't touch it,
+  // so a pending restore survives them.
+  let lastStartup = JSON.stringify(getStartup());
+  const syncStartup = () => {
+    const startupToWrite = getStartup();
+    const key = JSON.stringify(startupToWrite);
+    if (key === lastStartup) return;
+    lastStartup = key;
+    writeStartup(startupToWrite);
+  };
+  const unsubscribeAccounts = useAccountsStore.subscribe((state, prev) => {
     if (state.accounts !== prev.accounts) {
       writeAccounts(serializeAccounts(state.accounts));
-    }
-    // `startup` (account to restore at next launch) only follows the connected account:
-    // it is not touched by other changes, so a pending restore survives them.
-    if (state.connected !== prev.connected) {
-      const connected = state.connected !== undefined ? state.accounts[state.connected] : undefined;
-      writeStartup(
-        connected
-          ? {
-              account: connected.user.id,
-              platform: typeof connected.platform === 'string' ? connected.platform : connected.platform.name,
-            }
-          : undefined,
-      );
+      // An account that disappears (removed, or replaced by another one) takes its preferences with it.
+      Object.keys(prev.accounts)
+        .filter(id => !(id in state.accounts) && id !== ANONYMOUS_ACCOUNT_ID)
+        .forEach(eraseAccountPreferences);
     }
     if (state.showWelcome !== prev.showWelcome) {
       writeShowWelcome(state.showWelcome);
     }
-    if (state.lastDeletedAccount !== undefined && state.lastDeletedAccount !== prev.lastDeletedAccount) {
-      eraseAccountPreferences(state.lastDeletedAccount);
-    }
+    syncStartup();
   });
+  const unsubscribeSignIn = useSignInStore.subscribe((state, prev) => {
+    if (state.status !== prev.status) syncStartup();
+  });
+  unsubscribe = () => {
+    unsubscribeAccounts();
+    unsubscribeSignIn();
+  };
 
   const accountIds = Object.keys(accounts);
   const startupAccountId = anonymous

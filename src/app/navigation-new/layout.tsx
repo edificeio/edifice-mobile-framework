@@ -24,6 +24,27 @@ const modalPresentations: (StackPresentationTypes | 'card')[] = [
   'transparentModal',
 ];
 
+const IsModalContext = React.createContext(false);
+
+/**
+ * Tells whether the screen is presented as a modal (`modal`, `formSheet`, `pageSheet`...) or as a card.
+ * A screen of a navigator nested in a modal (e.g. the sign-in screens in the add-account modal) is in a modal too.
+ * Use it to adjust insets and margins: a modal has no status bar nor home indicator zone under it, a card does.
+ *
+ * The presentation is a screen option, and options are not reachable from the screens (`useNavigation` can only set them):
+ * `BaseStackScreenLayout` gives them through this context.
+ */
+export const useIsModal = () => React.useContext(IsModalContext);
+
+/**
+ * Provides `useIsModal` to the screen it wraps. Used by `BaseStackScreenLayout`.
+ * It is a component (not a hook) because the screen layout is called as a function by the navigator, hooks can't be used there.
+ */
+export function IsModalProvider({ children, presentedAsModal }: React.PropsWithChildren<{ presentedAsModal: boolean }>) {
+  const insideModal = useIsModal();
+  return <IsModalContext.Provider value={presentedAsModal || insideModal}>{children}</IsModalContext.Provider>;
+}
+
 export function BaseStackScreenLayout({
   children,
   options,
@@ -34,9 +55,11 @@ export function BaseStackScreenLayout({
 
   return (
     <Wrapper>
-      <ErrorBoundary FallbackComponent={ErrorScreenView}>
-        <React.Suspense fallback={<ActivityIndicator color={theme.palette.primary.regular} />}>{children}</React.Suspense>
-      </ErrorBoundary>
+      <IsModalProvider presentedAsModal={!!isModal}>
+        <ErrorBoundary FallbackComponent={ErrorScreenView}>
+          <React.Suspense fallback={<ActivityIndicator color={theme.palette.primary.regular} />}>{children}</React.Suspense>
+        </ErrorBoundary>
+      </IsModalProvider>
       {isModal && <ToastContainer />}
     </Wrapper>
   );

@@ -18,9 +18,10 @@
  *   Only code that must handle both (logout, requirement screens) uses `getActiveAccount()`.
  */
 
-export { changeRequiredPassword } from './change-required-password';
+export { changePassword } from './change-password';
+export { changePasswordRequirement } from './change-password-requirement';
 export { logout } from './logout';
-export { refreshAccountToken } from './refresh-token';
+export { refreshOAuth2Token } from './refresh-oauth2-token';
 export { refreshOneSessionId } from './refresh-one-session-id';
 export { refreshQueryParamToken } from './refresh-query-param-token';
 export { refreshRequirements } from './refresh-requirements';
@@ -29,4 +30,3 @@ export { setAccount } from './set-account';
 export { restoreAccount } from './restore-account';
 export { restoreAtStartup } from './startup';
 export { revalidateTerms } from './revalidate-terms';
-export { switchAccount } from './switch-account';

@@ -507,6 +507,23 @@ export function createChangePasswordError(type: string, error: string, descripti
 }
 
 /**
+ * The password was changed, but signing in again with the new one failed (the cause is the sign-in error).
+ * The change did succeed: the user must know it, and sign in with the new password.
+ * Same shape as `IChangePasswordError` so a change password screen shows its `error` the same way.
+ */
+export interface IChangePasswordSignInError extends Omit<IChangePasswordError, 'name'> {
+  name: 'ECHANGEPWD_SIGNIN';
+}
+
+export function createChangePasswordSignInError(error: string, cause: Error): IChangePasswordSignInError {
+  const err = new global.Error('CHANGE PWD: password changed but sign in failed', { cause }) as any;
+  err.name = 'ECHANGEPWD_SIGNIN';
+  err.type = 'sign in';
+  err.error = error;
+  return err as IChangePasswordSignInError;
+}
+
+/**
  * returns all the children in a single array.
  * @param children children as it exists in session
  * @returns children in a array, not regrouped by structure.

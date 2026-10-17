@@ -144,6 +144,8 @@ export namespace Error {
         return I18n.get('auth-error-notpremium');
       case AccountErrorCode.ACCOUNT_INELIGIBLE_PRE_DELETED:
         return I18n.get('auth-error-predeleted', { currentplatform: platformUrl });
+      case AccountErrorCode.TOO_MANY_ACCOUNTS:
+        return I18n.get('auth-error-toomanyaccounts');
 
       case OAuth2ErrorCode.SAML_MULTIPLE_VECTOR:
       default:

@@ -57,6 +57,7 @@ const ChangePasswordScreen = (props: AuthChangePasswordScreenProps) => {
       Toast.showSuccess(I18n.get('auth-changepassword-success'));
     } catch (e) {
       const changePwdError = e as IChangePasswordError;
+      // @todo `ECHANGEPWD_SIGNIN` means the password WAS changed (see `changePassword` flow): a generic error toast is misleading, decide the UX.
       // We don't show toaster if it's login error since that case is handled by redirecting the user to the login page, with error displayed.
       Toast.showError(I18n.get('toast-error-text'), { testID: 'toaster-error-password' });
       setError(changePwdError.error);

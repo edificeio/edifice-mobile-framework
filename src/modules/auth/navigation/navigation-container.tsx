@@ -9,6 +9,8 @@ import React from 'react';
 import {
   createStaticNavigation,
   NavigationIndependentTree,
+  type NavigationState,
+  type PartialState,
   useNavigation,
   useNavigationContainerRef,
 } from '@react-navigation/native';
@@ -19,12 +21,19 @@ import { visibleStackScreenOptions } from '~/app/navigation-new/options';
 import { navigationLightTheme } from '~/app/navigation-new/theme';
 import signInModule from '~/modules/auth/sign-in';
 import { SignInContext, type SignInContextValue } from '~/modules/auth/sign-in/context';
-import { useSignInNavigationState } from '~/modules/auth/sign-in/navigation';
 
-export function AuthNavigationWrapper({ onSignedIn }: SignInContextValue) {
+export interface AuthNavigationWrapperProps extends SignInContextValue {
+  /**
+   * Navigation state of the sign-in screens: where the user starts from, and where to go when it changes
+   * (see `useLoadAccountNavigationState` and `useAddAccountNavigationState`, to be called by the screen that renders this wrapper).
+   * It must keep the same reference while the screens to show don't change.
+   */
+  navigationState: PartialState<NavigationState>;
+}
+
+export function AuthNavigationWrapper({ navigationState, onSignedIn }: AuthNavigationWrapperProps) {
   const { modals, screens } = signInModule;
 
-  const navigationState = useSignInNavigationState();
   const signInContext = React.useMemo(() => ({ onSignedIn }), [onSignedIn]);
 
   // Note: `useState` is used here only to prevent re-renders

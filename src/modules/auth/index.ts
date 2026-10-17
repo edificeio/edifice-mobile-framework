@@ -7,10 +7,12 @@ import { CoreModule } from '~/app/module';
 
 import AuthAddAccountScreen from './screens/add-account';
 import AuthLoadAccountScreen from './screens/load-account';
+import AuthSwitchAccountScreen from './screens/switch-account';
 
 export default new CoreModule({
   modals: {
     'auth/add-account': AuthAddAccountScreen,
+    'auth/switch-account': AuthSwitchAccountScreen,
   },
   name: 'auth',
   scope: [

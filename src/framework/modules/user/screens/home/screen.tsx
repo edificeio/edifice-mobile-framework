@@ -7,8 +7,6 @@ import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { I18n } from '~/util/i18n';
-import { navigationDispatchMultiple } from '~/app/navigation';
 import { screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
@@ -23,17 +21,8 @@ import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import { default as Toast, default as toast } from '~/framework/components/toast';
-import {
-  accountIsLoggable,
-  AccountType,
-  AuthActiveAccount,
-  AuthSavedLoggedInAccount,
-  getOrderedAccounts,
-  InitialAuthenticationMethod,
-  PlatformAuthContext,
-} from '~/framework/modules/auth/model';
+import { AccountType, getOrderedAccounts, InitialAuthenticationMethod, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { userCanAddAccount } from '~/framework/modules/auth/model/business';
-import { getNavActionForAccountSwitch } from '~/framework/modules/auth/navigation/main-account/router';
 import { assertSession, getState as getAuthState, getSession } from '~/framework/modules/auth/redux/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
@@ -59,6 +48,7 @@ import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { platformURISource } from '~/framework/util/transport';
 import { useZendesk } from '~/framework/util/zendesk';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
@@ -440,32 +430,18 @@ function useAccountsFeature(
 
       if (activeSession.user.id === item.user.id) return;
 
-      const redirect = (i: typeof item) => {
-        const navAction = getNavActionForAccountSwitch(i);
-        if (!navAction) {
-          console.warn('AccountSelectionScreen: Missing platform for this account');
-          toast.showError(I18n.get('auth-account-select-error'));
-          return;
-        }
-        navigationDispatchMultiple(navigation, navAction);
-      };
       if (loadingState !== LoginState.IDLE) return;
-      if (accountIsLoggable(item)) {
-        try {
-          setLoadingState(LoginState.RUNNING);
-          const account = accounts[item.user.id];
-          await trySwitch(account as AuthSavedLoggedInAccount | AuthActiveAccount);
-          setLoadingState(LoginState.DONE);
-        } catch (e) {
-          setLoadingState(LoginState.IDLE);
-          console.error(e);
-          redirect(item);
-        }
-      } else {
-        redirect(item);
+      try {
+        setLoadingState(LoginState.RUNNING);
+        // If the account can't be signed in, the switch sends the user to the sign-in screens by itself.
+        await trySwitch(accounts[item.user.id]);
+        setLoadingState(LoginState.DONE);
+      } catch (e) {
+        setLoadingState(LoginState.IDLE);
+        console.error(e);
       }
     },
-    [accounts, loadingState, navigation, trySwitch],
+    [accounts, loadingState, trySwitch],
   );
 
   const onDeleteItem = React.useCallback(

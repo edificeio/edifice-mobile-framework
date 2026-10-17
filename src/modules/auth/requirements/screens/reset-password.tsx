@@ -5,14 +5,14 @@ import type { StaticScreenProps } from '@react-navigation/native';
 import { defineScreen } from '~/app/navigation-new';
 import AlertCard from '~/framework/components/alert';
 import { TerciaryButton } from '~/framework/components/button';
-import { changeRequiredPassword, logout } from '~/modules/auth/flows';
+import { changePasswordRequirement, logout } from '~/modules/auth/flows';
 import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
 import ChangePasswordScreenTemplate from '~/modules/auth/templates/change-password';
 import { I18n } from '~/util/i18n';
 
 /**
  * Requirement: the user must change its password.
- * Once changed, the user is signed in again (see `changeRequiredPassword`) and the app shows the next step by itself.
+ * Once changed, the user is signed in again (see `changePasswordRequirement`) and the app shows the next step by itself.
  */
 const RequirementResetPasswordScreen = React.memo(function ({}: StaticScreenProps<undefined>) {
   // This screen only shows while there is a connected account with a requirement.
@@ -30,7 +30,7 @@ const RequirementResetPasswordScreen = React.memo(function ({}: StaticScreenProp
           testID="requirement-reset-password-logout"
         />
       }
-      onSubmit={changeRequiredPassword}
+      onSubmit={changePasswordRequirement}
       platform={platform}
       prefillType="password"
     />
