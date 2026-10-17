@@ -14,7 +14,7 @@ import {
   useNavigation,
   useNavigationContainerRef,
 } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator, type NativeStackNavigatorProps } from '@react-navigation/native-stack';
 
 import { BaseStackScreenLayout } from '~/app/navigation-new/layout';
 import { visibleStackScreenOptions } from '~/app/navigation-new/options';
@@ -29,10 +29,25 @@ export interface AuthNavigationWrapperProps extends SignInContextValue {
    * It must keep the same reference while the screens to show don't change.
    */
   navigationState: PartialState<NavigationState>;
+  /**
+   * Screens of the sign-in navigator, if some must differ from the ones of the sign-in module (same route names).
+   * It must be a stable reference (the navigator is created once).
+   */
+  screens?: Record<keyof typeof signInModule.screens, unknown>;
+  /**
+   * Options for all the screens of the sign-in navigator, added to the default ones and overridden by the options of each screen.
+   * It must be a stable reference (the navigator is created once).
+   */
+  screenOptions?: NativeStackNavigatorProps['screenOptions'];
 }
 
-export function AuthNavigationWrapper({ navigationState, onSignedIn }: AuthNavigationWrapperProps) {
-  const { modals, screens } = signInModule;
+export function AuthNavigationWrapper({
+  navigationState,
+  onSignedIn,
+  screenOptions,
+  screens = signInModule.screens,
+}: AuthNavigationWrapperProps) {
+  const { modals } = signInModule;
 
   const signInContext = React.useMemo(() => ({ onSignedIn }), [onSignedIn]);
 
@@ -42,10 +57,13 @@ export function AuthNavigationWrapper({ navigationState, onSignedIn }: AuthNavig
       createNativeStackNavigator({
         groups: {
           Modals: { screens: modals },
-          Screens: { screens },
+          Screens: { screens: screens as typeof signInModule.screens },
         },
         screenLayout: BaseStackScreenLayout,
-        screenOptions: visibleStackScreenOptions,
+        screenOptions: props => ({
+          ...visibleStackScreenOptions,
+          ...(typeof screenOptions === 'function' ? screenOptions(props) : screenOptions),
+        }),
       }),
     ),
   );

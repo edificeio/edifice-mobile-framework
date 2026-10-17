@@ -1,22 +1,22 @@
 import * as React from 'react';
 import { Alert, TouchableOpacity, View } from 'react-native';
 
-import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import IconButton from '~/framework/components/buttons/icon';
-import styles from '~/framework/components/list/account/item/styles';
 import { AccountListItemProps } from '~/framework/components/list/account/item/types';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { i18nAccountTypes } from '~/framework/components/text/account-type';
-import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
+import styles from '~/modules/auth/components/account-list/styles';
+import { AuthLoggedAccount, AuthSavedAccount } from '~/modules/auth/model';
+import { I18n } from '~/util/i18n';
 
 const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
   getAvatarSource,
   index,
   item,
   item: {
-    user: { displayName, id, loginUsed, type },
+    user: { displayName, id, type },
   },
   onDelete,
   onPress,
@@ -50,9 +50,9 @@ const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
   );
 
   return (
-    <TouchableOpacity style={[styles.container, containerBackgroundColor]} onPress={onSelectAccount}>
+    <TouchableOpacity style={[styles.itemContainer, containerBackgroundColor]} onPress={onSelectAccount}>
       <SingleAvatar size="lg" {...avatarProps} border />
-      <View style={styles.textContainer}>
+      <View style={styles.itemTextContainer}>
         <SmallText numberOfLines={numberOfLines}>{displayName}</SmallText>
         <SmallBoldText numberOfLines={numberOfLines} style={typeColor}>
           {typeText}

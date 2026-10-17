@@ -3,14 +3,16 @@
  */
 
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, ViewStyle } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { NativeStackNavigatorProps } from '@react-navigation/native-stack';
 import ErrorBoundary from 'react-native-error-boundary';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StackPresentationTypes } from 'react-native-screens';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import ErrorScreenView from '~/framework/components/screen/error';
 import { ToastContainer } from '~/framework/components/toast';
 
@@ -64,3 +66,29 @@ export function BaseStackScreenLayout({
     </Wrapper>
   );
 }
+
+/**
+ * On ios, formSheets have by default bottom spacing equals to the bottom inset.
+ * This fix compensates the default behaviour to let us manage our magins ourselves.
+ * You NEED to use this style on every formSheet on a wrapper View, until this is fixed in react-native-screens.
+ * No need to include ios/android logic, it is handled here.
+ * @returns style to apply to the top-level view of a formSheet.
+ */
+export const useFormSheetStyleFix = (): ViewStyle => {
+  const insets = useSafeAreaInsets();
+  return React.useMemo(() => ({ flex: 1, marginBottom: Platform.OS === 'ios' ? -insets.bottom : 0 }), [insets.bottom]);
+};
+
+/**
+ * Default spacing helpers to have a single source of truth for bottom sheet paddings.
+ */
+const sheetStylePadding = UI_SIZES.spacing.big;
+export const sheetSpacingStyles = StyleSheet.create({
+  padding: { padding: sheetStylePadding },
+  paddingBottom: { paddingBottom: sheetStylePadding },
+  paddingHorizontal: { paddingHorizontal: sheetStylePadding },
+  paddingLeft: { paddingLeft: sheetStylePadding },
+  paddingRight: { paddingRight: sheetStylePadding },
+  paddingTop: { paddingTop: sheetStylePadding },
+  paddingVertical: { paddingVertical: sheetStylePadding },
+});

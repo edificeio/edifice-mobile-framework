@@ -1,5 +1,5 @@
-import AccountListItem from '~/framework/components/list/account/item/component';
 import type { AccountListItemProps } from '~/framework/components/list/account/item/types';
+import AccountListItem from '~/modules/auth/components/account-list/item-component';
 
 export { AccountListItem };
 export type { AccountListItemProps };
