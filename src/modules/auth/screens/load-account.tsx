@@ -27,6 +27,6 @@ const AuthLoadAccountScreen = React.memo(function ({}: StaticScreenProps<undefin
 });
 AuthLoadAccountScreen.displayName = 'AuthLoadAccountScreen';
 export default defineScreen({
-  options: { headerShown: false, title: 'Connexion' },
+  options: () => ({ headerShown: false, title: 'Connexion' }),
   screen: AuthLoadAccountScreen,
 });

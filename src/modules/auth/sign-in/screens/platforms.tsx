@@ -39,10 +39,10 @@ const AuthPlatformsScreen = React.memo(function ({}: StaticScreenProps<undefined
 AuthPlatformsScreen.displayName = 'AuthPlatformsScreen';
 
 export default defineScreen({
-  options: {
+  options: () => ({
     headerTitle: () => '', // Hide header title but still have it defined (for back menu)
     headerTransparent: true,
     title: I18n.get('auth-platformselect-welcome'),
-  },
+  }),
   screen: AuthPlatformsScreen,
 });

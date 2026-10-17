@@ -92,10 +92,10 @@ export const AuthWelcomeScreen = React.memo(function ({}: StaticScreenProps<unde
 AuthWelcomeScreen.displayName = 'AuthWelcomeScreen';
 
 export default defineScreen({
-  options: {
+  options: () => ({
     headerShown: false,
     statusBarStyle: 'dark',
     title: deviceInfoModule.getApplicationName(),
-  },
+  }),
   screen: AuthWelcomeScreen,
 });

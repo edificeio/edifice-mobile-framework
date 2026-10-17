@@ -36,6 +36,6 @@ const RequirementTermsScreen = React.memo(function ({}: StaticScreenProps<undefi
 RequirementTermsScreen.displayName = 'RequirementTermsScreen';
 
 export default defineScreen({
-  options: { animation: 'slide_from_bottom', title: I18n.get('user-revalidateterms-title') },
+  options: () => ({ animation: 'slide_from_bottom', title: I18n.get('user-revalidateterms-title') }),
   screen: RequirementTermsScreen,
 });

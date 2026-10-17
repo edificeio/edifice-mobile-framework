@@ -16,4 +16,4 @@ const SignInRedirectScreen = React.memo(function ({
 });
 SignInRedirectScreen.displayName = 'SignInRedirectScreen';
 
-export default defineScreen({ options: { title: I18n.get('auth-wayf-main-title') }, screen: SignInRedirectScreen });
+export default defineScreen({ options: () => ({ title: I18n.get('auth-wayf-main-title') }), screen: SignInRedirectScreen });
