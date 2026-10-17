@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FlatList } from 'react-native-gesture-handler';
 
 import { defineModal } from '~/app/navigation-new';
-import { UI_SIZES } from '~/framework/components/constants';
+import { sheetSpacingStyles, useFormSheetStyleFix } from '~/app/navigation-new/layout';
 import toast from '~/framework/components/toast';
 import { AccountList } from '~/modules/auth/components/account-list';
 import { removeAccount, restoreAccount } from '~/modules/auth/flows';
@@ -21,7 +21,6 @@ import { I18n } from '~/util/i18n';
  */
 const AuthSwitchAccountScreen = React.memo(function ({}: StaticScreenProps<undefined>) {
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
   const accounts = useAccountsStore(s => s.accounts);
   const data = React.useMemo(() => getOrderedAccounts(accounts), [accounts]);
   const [loading, setLoading] = React.useState(false);
@@ -58,22 +57,20 @@ const AuthSwitchAccountScreen = React.memo(function ({}: StaticScreenProps<undef
   }, []);
 
   return (
-    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, UI_SIZES.spacing.big) }]}>
+    <View style={useFormSheetStyleFix()}>
       <AccountList
+        ListComponent={FlatList}
         accounts={data}
         description={I18n.get('auth-accountlist-change-description')}
         onDelete={onDelete}
         onPress={onPress}
         title={I18n.get('auth-accountlist-change-title')}
+        contentContainerStyle={sheetSpacingStyles.padding}
       />
     </View>
   );
 });
 AuthSwitchAccountScreen.displayName = 'AuthSwitchAccountScreen';
-
-const styles = StyleSheet.create({
-  container: { paddingHorizontal: UI_SIZES.spacing.big, paddingTop: UI_SIZES.spacing.big },
-});
 
 export default defineModal({
   options: () => ({

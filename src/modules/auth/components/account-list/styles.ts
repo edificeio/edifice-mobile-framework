@@ -15,20 +15,34 @@ export default StyleSheet.create({
     width: UI_SIZES.elements.avatar.lg + UI_SIZES.border.small / 2,
     zIndex: 1,
   },
-  container: {
+  iconButton: {
+    backgroundColor: theme.ui.background.card,
+    borderRadius: UI_SIZES.radius.extraLarge,
+    padding: UI_SIZES.spacing.minor,
+  },
+  itemContainer: {
     alignItems: 'center',
     borderRadius: UI_SIZES.radius.selector,
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: UI_SIZES.spacing.minor,
   },
-  iconButton: {
-    backgroundColor: theme.ui.background.card,
-    borderRadius: UI_SIZES.radius.extraLarge,
-    padding: UI_SIZES.spacing.minor,
-  },
-  textContainer: {
+  itemTextContainer: {
     flex: 1,
     marginHorizontal: UI_SIZES.spacing.small,
+  },
+  listContainer: {
+    // empty
+  },
+  separator: {
+    backgroundColor: theme.palette.grey.cloudy,
+    height: UI_SIZES.border.thin,
+  },
+  separatorContainer: {
+    paddingHorizontal: UI_SIZES.spacing.minor,
+    paddingVertical: UI_SIZES.spacing.small,
+  },
+  textContainer: {
+    marginBottom: UI_SIZES.spacing.big,
   },
 });
