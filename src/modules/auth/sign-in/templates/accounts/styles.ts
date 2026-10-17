@@ -34,8 +34,8 @@ export default StyleSheet.create({
     color: theme.palette.grey.graphite,
   },
   page: {
+    flex: 1,
     paddingVertical: UI_SIZES.spacing.big,
-    // paddingHorizontal: UI_SIZES.spacing.large,
   },
   textContainer: {
     alignItems: 'center',

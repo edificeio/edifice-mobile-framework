@@ -49,8 +49,10 @@ const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
     [getAvatarSource, id, index, item, separators],
   );
 
+  const WrapperComponent = onPress ? TouchableOpacity : View;
+
   return (
-    <TouchableOpacity style={[styles.itemContainer, containerBackgroundColor]} onPress={onSelectAccount}>
+    <WrapperComponent style={[styles.itemContainer, containerBackgroundColor]} onPress={onSelectAccount}>
       <SingleAvatar size="lg" {...avatarProps} border />
       <View style={styles.itemTextContainer}>
         <SmallText numberOfLines={numberOfLines}>{displayName}</SmallText>
@@ -58,13 +60,15 @@ const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
           {typeText}
         </SmallBoldText>
       </View>
-      <IconButton
-        style={styles.iconButton}
-        color={theme.palette.complementary.red.regular}
-        icon="ui-delete"
-        action={onRemoveAccount}
-      />
-    </TouchableOpacity>
+      {onDelete ? (
+        <IconButton
+          style={styles.iconButton}
+          color={theme.palette.complementary.red.regular}
+          icon="ui-delete"
+          action={onRemoveAccount}
+        />
+      ) : null}
+    </WrapperComponent>
   );
 };
 

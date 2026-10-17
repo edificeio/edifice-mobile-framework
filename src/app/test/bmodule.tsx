@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 import { StaticScreenProps } from '@react-navigation/native';
 
 import { EntModule } from '~/app/module';
+import { AccountsButton } from '~/modules/auth/components/accounts-button';
 
 function BModuleHomeScreen({}: StaticScreenProps<{
   bParam: boolean;
@@ -11,6 +12,7 @@ function BModuleHomeScreen({}: StaticScreenProps<{
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
       <Text>B Home Screen</Text>
+      <AccountsButton />
     </View>
   );
 }
@@ -21,6 +23,7 @@ function BModuleDetailsScreen({}: StaticScreenProps<{
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
       <Text>B Details Screen</Text>
+      <AccountsButton />
     </View>
   );
 }
@@ -37,12 +40,12 @@ function BModuleModalScreen({}: StaticScreenProps<{
 
 export default new EntModule({
   modals: {
-    'bmodule/modal': { screen: BModuleHomeScreen },
+    'bmodule/modal': { screen: BModuleModalScreen },
   },
   name: 'bmodule',
   screens: {
     'bmodule/details': { screen: BModuleDetailsScreen },
-    'bmodule/home': { screen: BModuleModalScreen },
+    'bmodule/home': { screen: BModuleHomeScreen },
   },
   tab: { iconActive: 'ui-eyeSlash', iconInactive: 'ui-eye', order: 1, route: 'bmodule/home', testId: 'b' },
 });
