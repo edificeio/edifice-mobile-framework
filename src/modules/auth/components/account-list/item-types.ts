@@ -1,7 +1,7 @@
 import { FlatListProps, ListRenderItemInfo } from 'react-native';
 
 import { SingleSourceAvatarSpecificProps } from '~/framework/components/avatar/types';
-import type { AuthActiveAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
+import type { AuthActiveAccount, AuthSavedAccount } from '~/modules/auth/model';
 
 type Account = AuthSavedAccount | AuthActiveAccount;
 export interface AccountListItemProps<ItemT extends Account> extends ListRenderItemInfo<ItemT> {

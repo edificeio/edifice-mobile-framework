@@ -8,45 +8,39 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { screenOptions } from '~/app/navigation/util';
-import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import DefaultButton from '~/framework/components/buttons/default';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
-import { default as Toast, default as toast } from '~/framework/components/toast';
-import { AccountType, getOrderedAccounts, InitialAuthenticationMethod, PlatformAuthContext } from '~/framework/modules/auth/model';
-import { userCanAddAccount } from '~/framework/modules/auth/model/business';
-import { assertSession, getState as getAuthState, getSession } from '~/framework/modules/auth/redux/reducer';
+import Toast from '~/framework/components/toast';
+import { AccountType, InitialAuthenticationMethod, PlatformAuthContext } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
-import { LoginState } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { mfaValidation, platformConfig, requirements } from '~/framework/modules/auth/service';
-import { logoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/thunks';
-import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
+import { logoutAction } from '~/framework/modules/auth/thunks';
+import track from '~/framework/modules/auth/tracking';
 import { DebugOptions } from '~/framework/modules/debug';
 import { toURISource } from '~/framework/modules/media';
 import { showSplashadsOnUserScreen } from '~/framework/modules/splashads';
 import { readSplashadsData } from '~/framework/modules/splashads/storage';
-import ChangeAccountList from '~/framework/modules/user/components/account-list/change';
 import BottomRoundDecoration from '~/framework/modules/user/components/bottom-round-decoration';
-import AddAccountButton from '~/framework/modules/user/components/buttons/add-account';
-import ChangeAccountButton from '~/framework/modules/user/components/buttons/change-account';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { UserPreferences, userService } from '~/framework/modules/user/service';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import appConf from '~/framework/util/appConf';
 import BuildInfo from '~/framework/util/build-info';
-import { handleAction, tryAction } from '~/framework/util/redux/actions';
+import { handleAction } from '~/framework/util/redux/actions';
 import { platformURISource } from '~/framework/util/transport';
 import { useZendesk } from '~/framework/util/zendesk';
+import { AccountsButton } from '~/modules/auth/components/accounts-button';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 import { I18n } from '~/util/i18n';
 
@@ -395,82 +389,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
 }
 
 /**
- * Setup an Accounts button feature that opens up an account list
- * @param session
- * @param accountListRef
- * @returns the React Elements of the account button and list
- */
-function useAccountsFeature(
-  navigation: UserHomeScreenPrivateProps['navigation'],
-  session: UserHomeScreenPrivateProps['session'],
-  accounts: UserHomeScreenPrivateProps['accounts'],
-  trySwitch: UserHomeScreenPrivateProps['trySwitch'],
-  tryRemoveAccount: UserHomeScreenPrivateProps['tryRemoveAccount'],
-) {
-  const accountListRef = React.useRef<BottomSheetModalMethods>(null);
-  const accountsArray = React.useMemo(() => Object.values(accounts), [accounts]);
-  const canManageAccounts = userCanAddAccount(session);
-  const showAccountList = React.useCallback(() => {
-    trackingAccountEvents.switchAccountPressButton();
-    accountListRef.current?.present();
-  }, [accountListRef]);
-  const addAccount = React.useCallback(() => {
-    navigation.navigate('auth/add-account');
-  }, [navigation]);
-
-  const [loadingState, setLoadingState] = React.useState<LoginState>(LoginState.IDLE);
-
-  const data = React.useMemo(() => getOrderedAccounts(accounts), [accounts]);
-
-  const onPressItem = React.useCallback(
-    async (item: (typeof data)[0]) => {
-      const activeSession = assertSession();
-
-      accountListRef.current?.dismiss();
-
-      if (activeSession.user.id === item.user.id) return;
-
-      if (loadingState !== LoginState.IDLE) return;
-      try {
-        setLoadingState(LoginState.RUNNING);
-        // If the account can't be signed in, the switch sends the user to the sign-in screens by itself.
-        await trySwitch(accounts[item.user.id]);
-        setLoadingState(LoginState.DONE);
-      } catch (e) {
-        setLoadingState(LoginState.IDLE);
-        console.error(e);
-      }
-    },
-    [accounts, loadingState, trySwitch],
-  );
-
-  const onDeleteItem = React.useCallback(
-    async (item: (typeof data)[0]) => {
-      try {
-        trackingAccountEvents.deleteAccountFromSwitchAccount();
-        const account = accounts[item.user.id];
-        await tryRemoveAccount(account);
-        if (session?.user.id !== item.user.id) toast.showSuccess(I18n.get('auth-accountlist-delete-success'));
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    [accounts, session?.user.id, tryRemoveAccount],
-  );
-
-  return React.useMemo(() => {
-    return canManageAccounts && accountsArray.length === 1 ? (
-      <AddAccountButton action={addAccount} style={styles.accountButton} testID="account-add-account" />
-    ) : accountsArray.length > 1 ? (
-      <>
-        <ChangeAccountButton action={showAccountList} style={styles.accountButton} />
-        <ChangeAccountList ref={accountListRef} data={data} onPress={onPressItem} onDelete={onDeleteItem} />
-      </>
-    ) : null;
-  }, [canManageAccounts, accountsArray, addAccount, showAccountList, data, onPressItem, onDeleteItem]);
-}
-
-/**
  * Setup a Logout button feature
  * @param handleLogout a callback supposed to log the user out.
  * @returns the React Element of the logout button
@@ -587,7 +505,7 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const [debugVisible, setDebugVisible] = React.useState<boolean>(false);
   const [userPreferences, setUserPreferences] = React.useState<UserPreferences | null>(null);
-  const { accounts, handleLogout, navigation, session, tryRemoveAccount, trySwitch } = props;
+  const { handleLogout, session } = props;
 
   const scrollViewRef = React.useRef(null);
   // Manages focus to send to others features in this screen.
@@ -634,7 +552,6 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
-  const accountsButton = useAccountsFeature(navigation, session, accounts, trySwitch, tryRemoveAccount);
   const logoutButton = useLogoutFeature(handleLogout);
   const versionDetails = useVersionDetailsFeature(session, debugVisible);
   const versionButton = useVersionFeature(setDebugVisible, scrollViewRef);
@@ -667,7 +584,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
         </View>
         {accountMenu}
         <View style={styles.sectionBottom}>
-          {accountsButton}
+          <AccountsButton style={styles.accountButton} />
           {logoutButton}
           {versionDetails}
           <BottomRoundDecoration style={styles.bottomRoundDecoration} child={versionButton} />
@@ -678,9 +595,8 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
 }
 
 export default connect(
-  (state: IGlobalState) => {
+  () => {
     return {
-      accounts: getAuthState(state).accounts,
       session: getSession(),
     };
   },
@@ -688,10 +604,6 @@ export default connect(
     bindActionCreators<UserHomeScreenDispatchProps>(
       {
         handleLogout: handleAction(logoutAction, { track: track.logout }),
-        tryRemoveAccount: handleAction(removeAccountAction),
-        trySwitch: tryAction(switchAccountAction, {
-          track: track.loginRestore,
-        }),
       },
       dispatch,
     ),
