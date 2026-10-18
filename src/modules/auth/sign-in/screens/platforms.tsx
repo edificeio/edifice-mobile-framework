@@ -20,7 +20,8 @@ const PlatformsScreenContent = ({ showWelcome }: { showWelcome: boolean }) => {
     <AuthPlatformsScreenTemplate
       showWelcome={showWelcome}
       onOpenItem={platform => {
-        navigate(getRouteForPlatformSelect(platform.name));
+        const route = getRouteForPlatformSelect(platform.name);
+        navigate(route.name, route.params);
       }}
       contentContainerStyle={React.useMemo(() => ({ paddingTop: !isModal ? insets.top : undefined }), [isModal, insets.top])}
     />
