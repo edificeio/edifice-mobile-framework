@@ -7,16 +7,8 @@
  */
 
 import type { Platform } from '~/framework/util/appConf';
-import {
-  changePassword,
-  logout,
-  refreshOneSessionId,
-  refreshQueryParamToken,
-  refreshRequirements,
-  removeAccount,
-  restoreAccount,
-} from '~/modules/auth/flows';
-import type { AuthActiveAccount, AuthSavedAccount, AuthSavedLoggedInAccount, IChangePasswordPayload } from '~/modules/auth/model';
+import { changePassword, logout, refreshOneSessionId, refreshQueryParamToken, refreshRequirements } from '~/modules/auth/flows';
+import type { AuthActiveAccount, AuthSavedLoggedInAccount, IChangePasswordPayload } from '~/modules/auth/model';
 import service from '~/modules/auth/service';
 import { usePlatformContextStore } from '~/modules/auth/store/platform-context';
 import { usePlatformLegalUrlsStore } from '~/modules/auth/store/platform-legal-urls';
@@ -49,11 +41,6 @@ export const loadPlatformLegalUrlsAction = (platform: Platform) => async () => {
   return legalUrls;
 };
 
-/** @deprecated use `restoreAccount` from `~/modules/auth/flows`. */
-export const switchAccountAction = (account: AuthSavedAccount | AuthActiveAccount) => async () => {
-  await restoreAccount(account);
-};
-
 /** @deprecated use `refreshRequirements` from `~/modules/auth/flows`. */
 export const refreshRequirementsAction = () => async () => {
   await refreshRequirements();
@@ -62,11 +49,6 @@ export const refreshRequirementsAction = () => async () => {
 /** @deprecated use `logout` from `~/modules/auth/flows`. */
 export const logoutAction = () => async () => {
   await logout();
-};
-
-/** @deprecated use `removeAccount` from `~/modules/auth/flows`. */
-export const removeAccountAction = (account: AuthActiveAccount | AuthSavedAccount) => async () => {
-  await removeAccount(account);
 };
 
 /** @deprecated use `refreshOneSessionId` from `~/modules/auth/flows`. */
