@@ -1,12 +1,11 @@
 import React from 'react';
 
-import { CommonActions, StaticScreenProps } from '@react-navigation/native';
+import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
 import toast from '~/framework/components/toast';
 import { removeAccount, restoreAccount } from '~/modules/auth/flows';
 import { AuthActiveAccount, AuthSavedAccount, getOrderedAccounts } from '~/modules/auth/model';
-import { useSignInNavigation } from '~/modules/auth/sign-in/navigation';
 import AccountsScreenTemplate from '~/modules/auth/sign-in/templates/accounts';
 import { useAccountsStore } from '~/modules/auth/store/accounts';
 import { trackingAccountEvents } from '~/modules/auth/tracking';
@@ -16,7 +15,7 @@ import { I18n } from '~/util/i18n';
  * The user chooses the account to sign in among the saved ones.
  */
 const SignInAccountsScreen = React.memo(function ({}: StaticScreenProps<undefined>) {
-  const navigation = useSignInNavigation();
+  const navigation = useNavigation();
   const accounts = useAccountsStore(s => s.accounts);
   const orderedAccounts = React.useMemo(() => getOrderedAccounts(accounts), [accounts]);
   const [loading, setLoading] = React.useState(false);
@@ -39,10 +38,7 @@ const SignInAccountsScreen = React.memo(function ({}: StaticScreenProps<undefine
   }, []);
 
   // The sign-in navigator doesn't know this route: the action is forwarded to the parent navigation.
-  const onAddAccount = React.useCallback(
-    () => navigation.dispatch(CommonActions.navigate({ name: 'auth/add-account' })),
-    [navigation],
-  );
+  const onAddAccount = React.useCallback(() => navigation.navigate('auth/add-account'), [navigation]);
 
   return (
     <AccountsScreenTemplate
