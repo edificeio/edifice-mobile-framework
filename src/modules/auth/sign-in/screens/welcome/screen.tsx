@@ -42,7 +42,8 @@ export const AuthWelcomeScreen = React.memo(function ({}: StaticScreenProps<unde
         key="user-onboarding-joinmynetwork"
         text={I18n.get('user-onboarding-joinmynetwork')}
         onPress={() => {
-          navigate(nextRoute);
+          if (nextRoute.name === 'sign-in/platforms') navigate(nextRoute.name);
+          else navigate(nextRoute.name, nextRoute.params);
         }}
         testID="onboarding-join"
       />,
