@@ -3350,7 +3350,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/react-is-19@npm:react-is@^19.2.5, react-is@npm:^19.1.0, react-is@npm:^19.2.8":
+"@jest/react-is-19@npm:react-is@^19.2.5, react-is@npm:^19.1.0":
   version: 19.3.0
   resolution: "react-is@npm:19.3.0"
   checksum: 10/69cfafcab48caac03da35fb17e640a2a2de8299a3cd699da720e671a22231fc7179c77c82e379826728857f9cc45cb56ff1e7f5d607acdd48fe151417a2a388f
@@ -6167,6 +6167,7 @@ __metadata:
     scaffolder-cli: "npm:1.10.3"
     set-value: "npm:4.1.0"
     set.prototype.isdisjointfrom: "npm:1.1.5"
+    test-renderer: "npm:1.3.1"
     ts-polyfill: "npm:3.8.2"
     typescript: "npm:6.0.3"
     unorm: "npm:1.6.0"
@@ -14570,6 +14571,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"scheduler@npm:^0.28.0":
+  version: 0.28.0
+  resolution: "scheduler@npm:0.28.0"
+  checksum: 10/2a936a3729df438bd42e6af7a16a62b83543796209c9d2e637f3d7b198bd5c25c5909478a9da4f66923d290e01997816338cf740587c440448863783bd33d31d
+  languageName: node
+  linkType: hard
+
 "selderee@npm:~0.12.0":
   version: 0.12.0
   resolution: "selderee@npm:0.12.0"
@@ -15504,6 +15512,18 @@ __metadata:
     glob: "npm:^10.4.1"
     minimatch: "npm:^10.2.2"
   checksum: 10/45920af7556a58333c75c3d5011b4087f7ac41366319fb0f6ccc4ac8d0e9d2c81442d7ebf6efd13813dcf18c135eda3c52e4ad3e00407a3ee041d8dec6bfd753
+  languageName: node
+  linkType: hard
+
+"test-renderer@npm:1.3.1":
+  version: 1.3.1
+  resolution: "test-renderer@npm:1.3.1"
+  dependencies:
+    "@types/react-reconciler": "npm:~0.34.0"
+    react-reconciler: "npm:~0.34.0"
+  peerDependencies:
+    react: ^19.0.0
+  checksum: 10/9af4e4e371dd9eaf81707f8a454fd02accaf43eb0f4c27bce0025adc6a9ecd974722ddee607635e0ce90076bf21ca1d7a026515adabe14d9c842f21ffec49a77
   languageName: node
   linkType: hard
 
