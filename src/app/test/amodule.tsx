@@ -4,8 +4,8 @@ import { ScrollView, View } from 'react-native';
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import Animated from 'react-native-reanimated';
 
-import { CoreModule, EntModule } from '~/app/module';
-import { defineModal, defineScreen, sharedTransitions, StackNavigation, useConfirmRemove } from '~/app/navigation-new';
+import { EntModule } from '~/app/module';
+import { defineModal, defineScreen, sharedTransitions, StackNavigation } from '~/app/navigation-new';
 import { PrimaryButton } from '~/framework/components/button';
 import { BodyText } from '~/framework/components/text';
 import { useStorageNumber } from '~/framework/util/storage/hooks';
@@ -67,6 +67,7 @@ const AModuleHomeScreen = withSession<
 });
 
 const AModuleHomeScreenDeclaration = defineScreen({
+  options: () => ({ title: 'Je suis le module 1' }),
   screen: AModuleHomeScreen,
 });
 
