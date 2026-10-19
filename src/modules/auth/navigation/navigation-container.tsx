@@ -60,10 +60,12 @@ export function AuthNavigationWrapper({
           Screens: { screens: screens as typeof signInModule.screens },
         },
         screenLayout: BaseStackScreenLayout,
-        screenOptions: props => ({
-          ...visibleStackScreenOptions,
-          ...(typeof screenOptions === 'function' ? screenOptions(props) : screenOptions),
-        }),
+        screenOptions: props => {
+          return {
+            ...(typeof visibleStackScreenOptions === 'function' ? visibleStackScreenOptions(props) : visibleStackScreenOptions),
+            ...(typeof screenOptions === 'function' ? screenOptions(props) : screenOptions),
+          };
+        },
       }),
     ),
   );

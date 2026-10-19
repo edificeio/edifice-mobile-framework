@@ -8,11 +8,22 @@ import theme from '../theme';
 
 export const navigationLightTheme: Theme = deepmerge<Theme, DeepPartial<Theme>>(DefaultTheme, {
   colors: {
+    /** Screen background */
     background: theme.ui.background.card?.toString(),
+
+    /** Tab Bar border (for non-native tab bar) */
     border: theme.palette.grey.cloudy?.toString(),
+
+    /** Header background */
     card: theme.palette.primary.regular?.toString(),
+
+    /** Notification badge on non-native tab bar */
     notification: theme.palette.primary.regular?.toString(),
-    primary: theme.palette.primary.regular?.toString(),
+
+    /** Tint color for title, buttons (except liquid glass), and active tab icon & text */
+    primary: theme.ui.text.inverse?.toString(),
+
+    /** Tint color inactive tab icon & text */
     text: theme.ui.text.inverse?.toString(),
   },
   dark: false,
