@@ -8,16 +8,32 @@ import { CoreModule, EntModule } from '~/app/module';
 import { defineModal, defineScreen, sharedTransitions, StackNavigation, useConfirmRemove } from '~/app/navigation-new';
 import { PrimaryButton } from '~/framework/components/button';
 import { BodyText } from '~/framework/components/text';
+import { useStorageNumber } from '~/framework/util/storage/hooks';
 import { AccountsButton } from '~/modules/auth/components/accounts-button';
 import { logout } from '~/modules/auth/flows';
+import { withSession } from '~/modules/auth/hoc/with-session';
 
-function AModuleHomeScreen({}: StaticScreenProps<{
-  aParam: boolean;
-}>) {
+import { preferences, storage } from './amodule-storage';
+
+// `withSession`: the hooks of an account storage work on the account of the session
+const AModuleHomeScreen = withSession<
+  StaticScreenProps<{
+    aParam: boolean;
+  }>
+>(function ({}) {
   const navigation = useNavigation();
+  // Pilot of the storage API: a counter of the device, and a number of the account. Both render again when they change.
+  const [launchCount] = useStorageNumber(storage, 'launch-count');
+  const [favoriteNumber, setFavoriteNumber] = useStorageNumber(preferences, 'favorite-number');
+  React.useEffect(() => {
+    storage.set('launch-count', (storage.getNumber('launch-count') ?? 0) + 1);
+  }, []);
+
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
       <BodyText>A Home Screen</BodyText>
+      <BodyText>{`Launch #${launchCount ?? 0}, favorite number: ${favoriteNumber ?? 0}`}</BodyText>
+      <PrimaryButton testID="favorite" text="Favorite number +1" onPress={() => setFavoriteNumber((favoriteNumber ?? 0) + 1)} />
       <PrimaryButton
         testID="1"
         text="Go to a modal"
@@ -48,7 +64,7 @@ function AModuleHomeScreen({}: StaticScreenProps<{
       />
     </View>
   );
-}
+});
 
 const AModuleHomeScreenDeclaration = defineScreen({
   screen: AModuleHomeScreen,
@@ -114,5 +130,6 @@ export default new EntModule({
     'amodule/details': AModuleDetailsScreenDeclaration,
     'amodule/home': AModuleHomeScreenDeclaration,
   },
+  storages: [storage, preferences],
   tab: { iconActive: 'ui-camera', iconInactive: 'ui-anniversary', order: 1, route: 'amodule/home', testId: 'a' },
 });

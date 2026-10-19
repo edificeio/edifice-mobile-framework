@@ -33,7 +33,7 @@ export interface AuthStorageData {
   'show-onboarding': boolean;
 }
 
-export const storage = Storage.create<AuthStorageData>().setPrefix(STORAGE_PREFIX);
+export const storage = Storage.device<AuthStorageData>({ namespace: STORAGE_PREFIX });
 // No storage init for auth, the functions below manage the item migration by custom logic.
 
 export const readSavedAccounts = () => {
@@ -88,6 +88,6 @@ export const writeStartup = (startup: AuthStorageData['startup'] | undefined) =>
 /**
  * Erase every preference (per-account storage) of the given account id.
  */
-export const eraseAccountPreferences = (id: string) => {
-  Storage.erasePreferences(id);
+export const eraseStorageForAccount = (id: string) => {
+  Storage.eraseForAccount(id);
 };

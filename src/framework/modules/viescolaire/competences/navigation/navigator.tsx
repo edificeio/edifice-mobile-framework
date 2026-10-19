@@ -1,13 +1,13 @@
 import * as React from 'react';
 
-import { CompetencesNavigationParams, competencesRouteNames } from '.';
-
 import moduleConfig from '~/framework/modules/viescolaire/competences/module-config';
 import CompetencesAssessmentScreen, {
   computeNavBar as assessmentNavBar,
 } from '~/framework/modules/viescolaire/competences/screens/assessment';
 import CompetencesHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/viescolaire/competences/screens/home';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
+
+import { CompetencesNavigationParams, competencesRouteNames } from '.';
 
 export default () =>
   createModuleNavigator<CompetencesNavigationParams>(moduleConfig.name, Stack => (

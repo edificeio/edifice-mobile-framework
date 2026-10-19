@@ -6,6 +6,7 @@ import type { Action, Reducer } from 'redux';
 import type importModules from '~/app/config/modules';
 import type { ScreenComponent } from '~/app/navigation-new/types';
 import type { SvgIconName } from '~/framework/components/picture';
+import type { StorageHandler } from '~/framework/util/storage/storage-handler';
 import type { AuthActiveAccount } from '~/modules/auth/model';
 
 import { EntModule, Module } from '.';
@@ -121,6 +122,10 @@ export interface ModuleConfig<
 
   // Redux configuration
   redux?: ConfigForRedux<ReduxState, ReduxAction>;
+
+  // The storages of this module that have migrations (given to `Storage.device` / `Storage.account`). They must be declared here:
+  // the migrations run at the app startup for the declared ones, and a storage with migrations that is not declared throws when used.
+  storages?: readonly StorageHandler<any>[];
 }
 
 export interface CoreModuleConfig<

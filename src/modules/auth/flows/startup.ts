@@ -1,3 +1,6 @@
+import { runAccountMigrations } from '~/framework/util/storage/migrations';
+import { ANONYMOUS_ACCOUNT_ID } from '~/modules/auth/model';
+import { useAccountsStore } from '~/modules/auth/store/accounts';
 import { initAccountsStore } from '~/modules/auth/store/accounts-persistence';
 import { useSignInStore } from '~/modules/auth/store/sign-in';
 
@@ -10,6 +13,10 @@ import { restoreAccount } from './restore-account';
  */
 export const restoreAtStartup = async () => {
   const { account, platform } = initAccountsStore();
+  // The preferences of every saved account are migrated before anything can read them
+  for (const id of Object.keys(useAccountsStore.getState().accounts)) {
+    if (id !== ANONYMOUS_ACCOUNT_ID) await runAccountMigrations(id);
+  }
   if (account) await restoreAccount(account);
   else if (platform) useSignInStore.getState().setStatus({ platform, type: 'restore' });
 };
