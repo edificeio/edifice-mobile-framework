@@ -1,3 +1,4 @@
+import { runAccountMigrations } from '~/framework/util/storage/migrations';
 import { MAX_ACCOUNTS } from '~/modules/auth/model/business';
 import { AccountError, AccountErrorCode } from '~/modules/auth/model/error';
 import type { SignInResult } from '~/modules/auth/service/types';
@@ -24,6 +25,8 @@ export const setAccount = async ({ legalUrls, platformContext, session }: SignIn
   if (accountIdsAfter.size > MAX_ACCOUNTS) {
     throw new AccountError(AccountErrorCode.TOO_MANY_ACCOUNTS, `Maximum of ${MAX_ACCOUNTS} accounts reached`);
   }
+  // The preferences of the account (new or not) are migrated before anything can read them
+  await runAccountMigrations(session.user.id);
   if (!session.requirement) await prepareSession(session);
 
   // 2. Platform config fetched during sign-in

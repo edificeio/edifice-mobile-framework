@@ -1,8 +1,8 @@
-import type { ICompetencesReduxState } from './reducer';
-
 import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
+
+import type { ICompetencesReduxState } from './reducer';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   const userType = getSession()?.user.type;
