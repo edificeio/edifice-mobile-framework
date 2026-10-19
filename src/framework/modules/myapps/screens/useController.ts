@@ -9,6 +9,7 @@ import { I18n } from '~/app/i18n';
 import AllModules from '~/app/modules';
 import { AppDispatch } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
+import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { MyAppsListItem } from '~/framework/modules/myapps/components/my-apps-list/types';
@@ -40,6 +41,7 @@ export function useMyAppsHomeController() {
   const dispatch = useDispatch<AppDispatch>();
 
   const modalRef = React.useRef<ModalBoxHandle>(null);
+  const bottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
   const pendingToastRef = React.useRef<null | { type: 'success' | 'error'; message: string }>(null);
   const pendingToggleRef = React.useRef<string | null>(null);
   const appsListRef = React.useRef<FlashListRef<MyAppsListItem>>(null);
@@ -49,7 +51,6 @@ export function useMyAppsHomeController() {
   const [bottomSheetMode, setBottomSheetMode] = React.useState<'home_menu' | 'app_actions'>('home_menu');
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
   const [hasFetchError, setHasFetchError] = React.useState<boolean>(false);
-  const [isBottomSheetVisible, setIsBottomSheetVisible] = React.useState<boolean>(false);
   const [areAppsShowed, setAreAppsShowed] = React.useState(() => readShowAllApps());
 
   const [hasSeenOnboarding, setHasSeenOnboarding] = React.useState<boolean>(() => {
@@ -120,8 +121,7 @@ export function useMyAppsHomeController() {
       handleDismissSearch();
       setSelectedApp(app ?? null);
       setBottomSheetMode(mode);
-      // navigation.setParams({ tabBarVisible: false });
-      setIsBottomSheetVisible(true);
+      bottomSheetRef.current?.present();
     },
     [handleDismissSearch],
   );
@@ -132,9 +132,8 @@ export function useMyAppsHomeController() {
   }, [handleDismissSearch]);
 
   const closeBottomSheet = React.useCallback(() => {
+    bottomSheetRef.current?.close();
     setSelectedApp(null);
-    // navigation.setParams({ tabBarVisible: true });
-    setIsBottomSheetVisible(false);
   }, []);
 
   const onPressApp = React.useCallback(
@@ -179,7 +178,6 @@ export function useMyAppsHomeController() {
     [closeBottomSheet],
   );
   const handleDismiss = React.useCallback(() => {
-    // navigation.setParams({ tabBarVisible: true });
     const appName = pendingToggleRef.current;
 
     if (!appName) {
@@ -237,6 +235,7 @@ export function useMyAppsHomeController() {
     appsListRef,
     areAppsShowed,
     bottomSheetMode,
+    bottomSheetRef,
     closeBottomSheet,
     completeOnboarding,
     filter,
@@ -246,7 +245,6 @@ export function useMyAppsHomeController() {
     hasSeenOnboarding,
     isAggregatedAppsEmpty,
     isAllAppsTab,
-    isBottomSheetVisible,
     isFavoritesFilter,
     loadingMenuItem,
     modalRef,
