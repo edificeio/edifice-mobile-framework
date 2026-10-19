@@ -2,12 +2,11 @@ import * as React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import { screenOptions } from '~/app/navigation/util';
+import { headerAction, screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
-import { NavBarAction } from '~/framework/components/navigation';
+import CustomBottomSheetModal from '~/framework/components/modals/bottom-sheet';
 import { Svg, SvgProps } from '~/framework/components/picture';
 import { Toggle } from '~/framework/components/toggle';
 import { MAOSProps, MyAppsFilters, MyAppsList, MyAppsMenuItem, MyAppsOnboardingModal } from '~/framework/modules/myapps/components';
@@ -34,6 +33,7 @@ const MyAppsHomeScreen = ({ navigation, route }: MyAppsHomeScreenProps) => {
     appsListRef,
     areAppsShowed,
     bottomSheetMode,
+    bottomSheetRef,
     closeBottomSheet,
     completeOnboarding,
     filter,
@@ -43,7 +43,6 @@ const MyAppsHomeScreen = ({ navigation, route }: MyAppsHomeScreenProps) => {
     hasSeenOnboarding,
     isAggregatedAppsEmpty,
     isAllAppsTab,
-    isBottomSheetVisible,
     isFavoritesFilter,
     loadingMenuItem,
     modalRef,
@@ -59,16 +58,6 @@ const MyAppsHomeScreen = ({ navigation, route }: MyAppsHomeScreenProps) => {
     selectedApp,
     setFilter,
   } = useMyAppsHomeController();
-
-  const bottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
-
-  React.useEffect(() => {
-    if (isBottomSheetVisible) {
-      bottomSheetRef.current?.present();
-    } else {
-      bottomSheetRef.current?.close();
-    }
-  }, [isBottomSheetVisible, navigation]);
 
   const slides: MAOSProps[] = [
     {
@@ -99,20 +88,30 @@ const MyAppsHomeScreen = ({ navigation, route }: MyAppsHomeScreenProps) => {
 
   React.useEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
+      headerRight: props => (
         <>
-          <NavBarAction
-            disabled={isAggregatedAppsEmpty}
-            icon={hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif'}
-            onPress={handleOpenOnboarding}
-            testID={hasSeenOnboarding ? 'myapps-navbar-notif-empty' : 'myapps-navbar-notif'}
-          />
-          <NavBarAction
-            disabled={isAggregatedAppsEmpty}
-            icon="ui-options"
-            onPress={() => openBottomSheet('home_menu')}
-            testID="myapps-navbar-context-menu"
-          />
+          {
+            headerAction(
+              {
+                disabled: isAggregatedAppsEmpty,
+                icon: hasSeenOnboarding ? 'ui-notif-empty' : 'ui-notif',
+                onPress: handleOpenOnboarding,
+                testID: hasSeenOnboarding ? 'myapps-navbar-notif-empty' : 'myapps-navbar-notif',
+              },
+              props,
+            ).element
+          }
+          {
+            headerAction(
+              {
+                disabled: isAggregatedAppsEmpty,
+                icon: 'ui-options',
+                onPress: () => openBottomSheet('home_menu'),
+                testID: 'myapps-navbar-context-menu',
+              },
+              props,
+            ).element
+          }
         </>
       ),
     });
@@ -266,7 +265,7 @@ const MyAppsHomeScreen = ({ navigation, route }: MyAppsHomeScreenProps) => {
         <View style={styles.bottomSheetContainer}>{renderBottomSheetContent()}</View>
       </CustomBottomSheetModal>
     ),
-    [handleDismissBottomSheet, renderBottomSheetContent],
+    [handleDismissBottomSheet, renderBottomSheetContent, bottomSheetRef],
   );
 
   const renderEmptyScreen = React.useCallback(
