@@ -19,6 +19,7 @@ module.exports = {
     '^~/(.*)$': '<rootDir>/src/$1',
     // Packages replaced by a fake: one line each, the file has the name of the package (see above)
     '^react-native-mmkv$': '<rootDir>/jest/mocks/react-native-mmkv.ts',
+    '^@react-navigation/native$': '<rootDir>/jest/mocks/@react-navigation/native.ts',
   },
   roots: ['<rootDir>/src'],
   setupFiles: ['<rootDir>/jest/setup.ts'],
