@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, View } from 'react-native';
+import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText } from '~/framework/components/text';
@@ -19,9 +20,11 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
 
     const modalBoxRef = React.useRef<ModalBoxHandle>(null);
     const scrollRef = React.useRef<ScrollView>(null);
-    const [index, setIndex] = React.useState(0);
-    const [layoutWidth, setLayoutWidth] = React.useState(0);
+    const [index, setIndex] = React.useState<number>(0);
 
+    // initialize the carousel width before the modal opens to avoid an empty first render.
+    const { width: screenWidth } = useWindowDimensions();
+    const [layoutWidth, setLayoutWidth] = React.useState<number>(screenWidth - 4 * UI_SIZES.spacing.medium);
     const isLast = index === slides.length - 1;
     const isFirst = index === 0;
 
@@ -98,9 +101,7 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
               if (width && width !== layoutWidth) {
                 setLayoutWidth(width);
 
-                requestAnimationFrame(() => {
-                  scrollRef.current?.scrollTo({ animated: false, x: index * width });
-                });
+                requestAnimationFrame(() => scrollRef.current?.scrollTo({ animated: false, x: index * width }));
               }
             }}>
             <View style={styles.top}>
@@ -115,21 +116,19 @@ export const MyAppsOnboardingModal = React.forwardRef<ModalBoxHandle, MyAppsOnbo
 
             <View style={styles.carousel}>
               <View style={styles.carouselInner}>
-                {layoutWidth > 0 && (
-                  <ScrollView
-                    ref={scrollRef}
-                    horizontal
-                    pagingEnabled
-                    bounces={false}
-                    showsHorizontalScrollIndicator={false}
-                    onMomentumScrollEnd={onMomentumEnd}>
-                    {slides.map((slide, i) => (
-                      <View key={slide.key ?? i} style={[styles.slide, { width: layoutWidth }]}>
-                        <MyAppsOnboardingSlide {...slide} key={slide.key} isActive={i === index} />
-                      </View>
-                    ))}
-                  </ScrollView>
-                )}
+                <ScrollView
+                  ref={scrollRef}
+                  horizontal
+                  pagingEnabled
+                  bounces={false}
+                  showsHorizontalScrollIndicator={false}
+                  onMomentumScrollEnd={onMomentumEnd}>
+                  {slides.map((slide, i) => (
+                    <View key={slide.key} style={[styles.slide, { width: layoutWidth }]}>
+                      <MyAppsOnboardingSlide {...slide} key={slide.key} isActive={i === index} />
+                    </View>
+                  ))}
+                </ScrollView>
               </View>
             </View>
 
