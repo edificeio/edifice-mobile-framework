@@ -5,7 +5,7 @@ import { createMMKV } from 'react-native-mmkv';
 
 import { getOverrideName } from '~/framework/util/string';
 
-import { StorageHandler } from './handler';
+import { StorageHandler } from './storage-handler';
 import type { StorageLib } from './types';
 
 export const mmkvInstance = createMMKV({
@@ -13,7 +13,4 @@ export const mmkvInstance = createMMKV({
   id: getOverrideName(),
 }) satisfies StorageLib;
 
-export const mmkvHandler = new StorageHandler(mmkvInstance, 'mmkv').setAppInit(async function () {
-  // Here goes any global migration
-  // But there is nothing for now
-});
+export const mmkvHandler = new StorageHandler(mmkvInstance);

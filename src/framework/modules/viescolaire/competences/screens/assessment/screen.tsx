@@ -5,9 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import type { CompetencesAssessmentScreenDispatchProps, CompetencesAssessmentScreenPrivateProps } from './types';
-
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -30,6 +27,9 @@ import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-co
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+
+import styles from './styles';
+import type { CompetencesAssessmentScreenDispatchProps, CompetencesAssessmentScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

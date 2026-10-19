@@ -34,13 +34,15 @@ export abstract class Module<
   name: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['name'];
   scope: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['scope'];
   redux: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['redux'];
+  storages: NonNullable<ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['storages']>;
   screens: ModuleStaticScreens<Screens>;
   modals: ModuleStaticScreens<Modals>;
 
-  constructor({ modals, name, redux, scope, screens }: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>) {
+  constructor({ modals, name, redux, scope, screens, storages }: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>) {
     this.name = name;
     this.scope = scope;
     this.redux = redux;
+    this.storages = storages ?? [];
     this.screens = Module.createScreens(screens);
     this.modals = Module.createScreens(modals);
   }

@@ -7,6 +7,7 @@
  */
 
 import appConf from '~/framework/util/appConf';
+import { Storage } from '~/framework/util/storage';
 import {
   accountIsActive,
   accountIsLoggable,
@@ -18,7 +19,7 @@ import {
 } from '~/modules/auth/model';
 import {
   AuthStorageData,
-  eraseAccountPreferences,
+  eraseStorageForAccount,
   readSavedAccounts,
   readSavedStartup,
   readShowWelcome,
@@ -27,7 +28,7 @@ import {
   writeStartup,
 } from '~/modules/auth/storage';
 
-import { useAccountsStore } from './accounts';
+import { getActiveAccount, useAccountsStore } from './accounts';
 import { useSignInStore } from './sign-in';
 
 /** Pre-1.12 versions only saved a token, to which we give an anonymous account to be restored. */
@@ -86,6 +87,9 @@ const getStartup = (): AuthStorageData['startup'] | undefined => {
   return connected === undefined && status?.type === 'restore' ? { platform: status.platform } : undefined;
 };
 
+// The preferences of the other modules belong to the active account.
+Storage.setAccountResolver(() => getActiveAccount()?.user.id);
+
 let unsubscribe: (() => void) | undefined;
 
 /**
@@ -119,7 +123,7 @@ export const initAccountsStore = () => {
       // An account that disappears (removed, or replaced by another one) takes its preferences with it.
       Object.keys(prev.accounts)
         .filter(id => !(id in state.accounts) && id !== ANONYMOUS_ACCOUNT_ID)
-        .forEach(eraseAccountPreferences);
+        .forEach(eraseStorageForAccount);
     }
     if (state.showWelcome !== prev.showWelcome) {
       writeShowWelcome(state.showWelcome);

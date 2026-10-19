@@ -1,20 +1,29 @@
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { AuthState } from '~/framework/modules/auth/redux/types';
 import { Trackers } from '~/framework/util/tracker';
 
-import { PreferenceHandler, StorageHandler } from './handler';
+import { AccountStorageHandler } from './account-storage-handler';
+import type { AccountStorageMigration, DeviceStorageMigration } from './migrations';
 import { mmkvHandler } from './mmkv';
+import { StorageHandler } from './storage-handler';
 import { StorageTypeMap } from './types';
-
-/**
- * Extract the StorageTypeMap of a StorageHandler (or any of its subclasses).
- */
-type StorageTypesOf<Handler extends StorageHandler<any>> = ReturnType<NonNullable<Handler['__types']>>;
 
 /**
  * Use MMKV as the storage technology.
  */
 const defaultStorageLib = mmkvHandler;
+
+export interface DeviceStorageOptions<Types extends StorageTypeMap> {
+  /** What the keys of the storage start with. Never change it once data was saved with it. */
+  namespace: string;
+  /** Steps that bring data of a former version to the shape read by the storage (see `migrations.ts`). They run at the app startup. */
+  migrations?: DeviceStorageMigration<StorageHandler<Types>>[];
+}
+
+export interface AccountStorageOptions<Types extends StorageTypeMap> {
+  /** What the keys of the storage start with. Never change it once data was saved with it. */
+  namespace: string;
+  /** Steps that bring data of a former version to the shape read by the storage (see `migrations.ts`). They run for each account. */
+  migrations?: AccountStorageMigration<AccountStorageHandler<Types>>[];
+}
 
 /**
  * Storage API
@@ -22,22 +31,54 @@ const defaultStorageLib = mmkvHandler;
 export class Storage {
   static global = defaultStorageLib;
 
-  static compose<Handler extends StorageHandler<any>>(subStorage: Handler) {
-    return new StorageHandler<StorageTypesOf<Handler>>(subStorage, subStorage.name);
+  /**
+   * Storage of what belongs to the device. Keys are typed (`Types`) and prefixed with `namespace` automatically.
+   * The namespace is what the keys of the storage start with in the device: choose it once and never change it (it is not the
+   * name of a module, so renaming a module leaves the keys alone).
+   * To bring data of a former version to the shape read here, give `migrations` (see `migrations.ts`): such a storage must
+   * then be declared in the `storages` of its module, or its use throws.
+   */
+  static device<Types extends StorageTypeMap>(options: DeviceStorageOptions<Types>) {
+    const handler = new StorageHandler<Types>(Storage.global).setPrefix(options.namespace);
+    return handler.setMigrations(
+      (options.migrations ?? []).map(migration => ({
+        id: migration.id,
+        namespace: options.namespace,
+        run: () => migration.run(handler),
+        type: 'device',
+      })),
+    );
   }
 
-  static create<Types extends StorageTypeMap>(initFn?: (this: StorageHandler<Types>) => Promise<void>) {
-    return new StorageHandler<Types>(Storage.global).setAppInit(initFn);
+  /**
+   * Same as `device`, for what belongs to the current account: its keys are also prefixed with the id of the account.
+   * The account is found when each key is read or written, so the same handler serves whichever account is signed in.
+   * To bring data of a former version to the shape read here, give `migrations` (see `migrations.ts`).
+   * @throws when used while there is no account.
+   */
+  static account<Types extends StorageTypeMap>(options: AccountStorageOptions<Types>) {
+    const handler = new AccountStorageHandler<Types>(Storage.global).setPrefix(options.namespace);
+    return handler.setMigrations(
+      (options.migrations ?? []).map(migration => ({
+        id: migration.id,
+        namespace: options.namespace,
+        run: accountId => migration.run(handler.for(accountId), { accountId }),
+        type: 'account',
+      })),
+    );
   }
 
-  static preferences<Types extends StorageTypeMap>(
-    initFn?: (this: PreferenceHandler<Types>, session: AuthActiveAccount) => Promise<void>,
-  ) {
-    return new PreferenceHandler<Types>(Storage.global).setSessionInit(initFn);
-  }
+  /**
+   * Tells how to get the id of the current account, for the account storages. Called once, by the module that manages the accounts.
+   */
+  static setAccountResolver = AccountStorageHandler.setAccountResolver;
 
-  static erasePreferences(id: keyof AuthState['accounts']) {
-    const keys = Storage.global.getAllKeys().filter(k => k.startsWith(`${PreferenceHandler.PREFIX_OWNER}${id}`));
+  /**
+   * Erases what the account storages hold for the account (and what comes with it, like the markers of its migrations).
+   */
+  static eraseForAccount(id: string) {
+    const prefix = `${AccountStorageHandler.PREFIX_ACCOUNT}${id}${StorageHandler.PREFIX_SEPARATOR}`;
+    const keys = Storage.global.getAllKeys().filter(k => k.startsWith(prefix));
     for (const key of keys) {
       Storage.global.remove(key);
     }
