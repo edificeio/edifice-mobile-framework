@@ -1,7 +1,7 @@
 import { Platform, StyleSheet } from 'react-native';
 
 import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
-import { HeaderButton } from '@react-navigation/elements';
+import { HeaderButton, HeaderTitle } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackNavigatorProps } from '@react-navigation/native-stack';
 
 import { UI_SIZES } from '~/framework/components/constants';
@@ -34,9 +34,9 @@ export const hiddenStackScreenOptions: NativeStackNavigatorProps['screenOptions'
  */
 export const visibleStackScreenOptions: NativeStackNavigatorProps['screenOptions'] = {
   headerBackButtonDisplayMode: 'minimal',
+  headerTitle: titleProps => <HeaderTitle {...titleProps} testID="header-title" />,
   headerTitleAlign: 'center',
 };
-
 /**
  * Only the root stack navigator have these options
  */
