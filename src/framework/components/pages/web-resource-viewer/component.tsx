@@ -12,6 +12,8 @@ import Orientation, {
   OrientationType,
   PORTRAIT,
 } from 'react-native-orientation-locker';
+import { EdgeInsets } from 'react-native-safe-area-context';
+import type { WebView as RNWebView } from 'react-native-webview';
 import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes';
 import { useDispatch, useSelector } from 'react-redux';
 import { Action } from 'redux';
@@ -45,6 +47,17 @@ export const computeNavBar = ({ navigation, route }: NativeStackScreenProps<Para
 });
 
 const renderLoading = () => <LoadingIndicator />;
+
+const contentInsetsScript = ({ bottom, left, right, top }: EdgeInsets) => `(function () {
+  var style = document.getElementById('edifice-content-insets');
+  if (!style) {
+    style = document.createElement('style');
+    style.id = 'edifice-content-insets';
+    (document.head || document.documentElement).appendChild(style);
+  }
+  style.textContent = 'body { padding: ${top}px ${right}px ${bottom}px ${left}px !important; box-sizing: border-box; }';
+})();
+true;`;
 
 const useScreenUnlockOrientation = () => {
   const [orientation, setOrientation] = React.useState<OrientationLockerProps['orientation']>(PORTRAIT);
@@ -81,7 +94,12 @@ const useScreenUnlockOrientation = () => {
   return [orientationElement, orientation, toggleOrientation] as const;
 };
 
-export default function WebviewResourceViewer({ fetchResource, navigation, source: _source }: WebResourceViewerPrivateProps) {
+export default function WebviewResourceViewer({
+  contentInsets,
+  fetchResource,
+  navigation,
+  source: _source,
+}: WebResourceViewerPrivateProps) {
   const session = useSelector(selectors.session);
   const sourceOrigin = new URL(_source.uri).origin;
   const dispatch = useDispatch<ThunkDispatch<IGlobalState, never, Action>>();
@@ -104,10 +122,21 @@ export default function WebviewResourceViewer({ fetchResource, navigation, sourc
   const [webviewError, setWebviewError] = React.useState(false);
   const onError = React.useCallback(() => setWebviewError(true), []);
 
+  const webviewRef = React.useRef<RNWebView>(null);
+  // Initial padding before the page renders, then updates through injectJavaScript
+  const [initialContentInsetsScript] = React.useState(() => (contentInsets ? contentInsetsScript(contentInsets) : undefined));
+  const injectContentInsets = React.useCallback(() => {
+    if (contentInsets) webviewRef.current?.injectJavaScript(contentInsetsScript(contentInsets));
+  }, [contentInsets]);
+  React.useEffect(() => {
+    injectContentInsets();
+  }, [injectContentInsets]);
+
   const firstLoadRef = React.useRef(true);
   const onLoad = React.useCallback(() => {
     firstLoadRef.current = false;
-  }, []);
+    injectContentInsets();
+  }, [injectContentInsets]);
 
   const onShouldStartLoadWithRequest: OnShouldStartLoadWithRequest = React.useCallback(
     request => {
@@ -137,6 +166,8 @@ export default function WebviewResourceViewer({ fetchResource, navigation, sourc
   const webviewElement = React.useMemo(
     () => (
       <WebView
+        ref={webviewRef}
+        injectedJavaScriptBeforeContentLoaded={initialContentInsetsScript}
         javaScriptEnabled
         renderLoading={renderLoading}
         scalesPageToFit
@@ -152,7 +183,7 @@ export default function WebviewResourceViewer({ fetchResource, navigation, sourc
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       />
     ),
-    [onError, onLoad, onShouldStartLoadWithRequest, source],
+    [initialContentInsetsScript, onError, onLoad, onShouldStartLoadWithRequest, source],
   );
 
   const closeButton = React.useMemo(

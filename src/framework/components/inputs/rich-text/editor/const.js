@@ -77,6 +77,9 @@ export const messages = {
 };
 
 export const ui = {
+  h5pPreview: {
+    height: 250,
+  },
   image: {
     class: 'custom-image',
     height: 'NaN',

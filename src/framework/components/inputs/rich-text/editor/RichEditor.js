@@ -4,7 +4,7 @@ import { Keyboard, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 import theme from '~/app/theme';
-import { isH5PContentId } from '~/framework/components/h5p-player/util';
+import { isH5PContentId, isH5PPreviewFrameUrl } from '~/framework/components/h5p-player/util';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { openUrl } from '~/framework/util/linking';
@@ -71,6 +71,7 @@ export default class RichEditor extends Component {
     that._onLinkTouched = that._onLinkTouched.bind(that);
     that._onMediaTouched = that._onMediaTouched.bind(that);
     that._onH5PTouched = that._onH5PTouched.bind(that);
+    that._onShouldStartLoadWithRequest = that._onShouldStartLoadWithRequest.bind(that);
     const {
       autoCapitalize,
       autoCorrect,
@@ -200,6 +201,11 @@ export default class RichEditor extends Component {
     if (disabled && isH5PContentId(contentId)) {
       this.props.navigation?.navigate(ModalsRouteNames.H5PPlayer, { contentId });
     }
+  }
+
+  _onShouldStartLoadWithRequest(request) {
+    // H5P previews are frames inserted once the content is read-only, so after the initial load
+    return !this.htmlLoaded || (request.isTopFrame === false && isH5PPreviewFrameUrl(request.url, this.pfUrl));
   }
 
   onMessage(event) {
@@ -343,7 +349,7 @@ export default class RichEditor extends Component {
           javaScriptEnabled
           source={viewHTML}
           onLoad={that.init}
-          onShouldStartLoadWithRequest={() => !that.htmlLoaded}
+          onShouldStartLoadWithRequest={that._onShouldStartLoadWithRequest}
           setSupportMultipleWindows={false}
           webviewDebuggingEnabled={__DEV__}
         />

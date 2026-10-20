@@ -173,10 +173,11 @@ function createHTML(options = {}) {
         ul, ol {list-style-position: outside; }
         li p {margin: 0; padding: 0;}
         .conversation-history > div {margin-left: 10px; padding-left: 10px; border-left: 1px ridge #C7C7C7;}
-        div[data-h5p-id] {position: relative; display: flex; align-items: center; min-height: ${playIconSize + UI_SIZES.spacing.small * 2}px; margin: ${UI_SIZES.spacing.minor}px 0; padding: ${UI_SIZES.spacing.small}px; padding-left: ${playIconSize + UI_SIZES.spacing.small * 2}px; background-color: ${theme.palette.grey.fog}; border: ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl}; border-radius: ${UI_SIZES.radius.newCard}px;}
-        div[data-h5p-id]::before {content: ""; position: absolute; left: ${UI_SIZES.spacing.small}px; top: 50%; transform: translateY(-50%); background-image: url(${playIcon}); background-size: cover; background-repeat: no-repeat; height: ${playIconSize}px; width: ${playIconSize}px;}
-        div[data-h5p-id] a {display: flex; flex-direction: column; font-size: 0; line-height: 0; text-decoration: none;}
+        div[data-h5p-id] {margin: ${UI_SIZES.spacing.minor}px 0; overflow: hidden; background-color: ${theme.palette.grey.fog}; border: ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl}; border-radius: ${UI_SIZES.radius.newCard}px;}
+        div[data-h5p-id] iframe.h5p-preview {display: block; width: 100% !important; height: ${ui.h5pPreview.height}px !important; pointer-events: none !important; background-color: ${theme.palette.grey.white}; border-bottom: ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl};}
+        div[data-h5p-id] a {display: flex; flex-direction: column; padding: ${UI_SIZES.spacing.minor}px ${UI_SIZES.spacing.small}px; font-size: 0; line-height: 0; text-decoration: none;}
         div[data-h5p-id] a::before {content: ${JSON.stringify(I18n.get('h5p-activity-title'))}; color: ${theme.palette.grey.black}; font-weight: 700; font-size: ${TextSizeStyle.Medium.fontSize}px; line-height: ${TextSizeStyle.Medium.lineHeight}px;}
+        div[data-h5p-id] iframe.h5p-preview + a::before {content: none;}
         div[data-h5p-id] a::after {content: ${JSON.stringify(I18n.get('h5p-activity-start'))}; color: ${theme.palette.primary.regular}; font-size: ${TextSizeStyle.Normal.fontSize}px; line-height: ${TextSizeStyle.Normal.lineHeight}px;}
         #content>p:first-child { margin-block-start: 0;}
         #content>p:last-child { margin-block-end: 0;}
@@ -546,7 +547,7 @@ function createHTML(options = {}) {
                 }
             },
             content: {
-                setDisable: function(dis){ this.blur(); editor.content.contentEditable = !dis},
+                setDisable: function(dis){ this.blur(); editor.content.contentEditable = !dis; Actions.FORMAT_H5P();},
                 setHtml: function(html) {
                     editor.content.innerHTML = html;
                     Actions.content.init();
@@ -583,6 +584,7 @@ function createHTML(options = {}) {
                     Actions.FORMAT_AUDIOS();
                     Actions.FORMAT_IMAGES();
                     Actions.FORMAT_VIDEOS();
+                    Actions.FORMAT_H5P();
                     Actions.GET_MEDIAS_URLS();
                     Actions.GET_LINKS_URLS();
                     for (var t=0; t < 5; t=t+2) {
@@ -620,6 +622,7 @@ function createHTML(options = {}) {
                     Actions.FORMAT_AUDIOS();
                     Actions.FORMAT_IMAGES();
                     Actions.FORMAT_VIDEOS();
+                    Actions.FORMAT_H5P();
                     Actions.GET_MEDIAS_URLS();
                     Actions.GET_LINKS_URLS();
                     for (var t=0; t <= 10; t=t+2) {
@@ -713,6 +716,29 @@ function createHTML(options = {}) {
                     iframe.style.height = width * 10 / 16 + 'px';
                     setTimeout(() => { Actions.UPDATE_HEIGHT(); }, ${ui.insertElementTimeout});
                 }
+            },
+
+            FORMAT_H5P: function() {
+                // Previews in read mode only, so that the edited HTML stays the one of the web editor
+                var readOnly = editor.content.contentEditable === 'false';
+                var blocks = document.querySelectorAll('div[data-h5p-id]');
+                for (var i = 0; i < blocks.length; i++) {
+                    const block = blocks[i];
+                    const preview = block.querySelector('iframe.h5p-preview');
+                    const contentId = block.getAttribute('data-h5p-id');
+                    if (!readOnly) {
+                        if (preview) preview.remove();
+                    } else if (!preview && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(contentId)) {
+                        const iframe = document.createElement('iframe');
+                        iframe.className = 'h5p-preview';
+                        iframe.setAttribute('src', '/h5p/embed/' + contentId);
+                        iframe.setAttribute('tabindex', '-1');
+                        iframe.setAttribute('scrolling', 'no');
+                        iframe.setAttribute('title', ${JSON.stringify(I18n.get('h5p-activity-title'))});
+                        block.insertBefore(iframe, block.firstChild);
+                    }
+                }
+                setTimeout(() => { Actions.UPDATE_HEIGHT(); }, ${ui.insertElementTimeout});
             },
 
             GET_MEDIAS_URLS: function() {

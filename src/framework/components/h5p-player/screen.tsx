@@ -1,10 +1,12 @@
 import * as React from 'react';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import type { H5PPlayerScreenProps } from './types';
 import { h5pEmbedPath } from './util';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { computeWebResourceViewerNavbar, WebResourceViewer } from '~/framework/components/pages/web-resource-viewer';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { toURISource } from '~/framework/modules/media';
@@ -18,8 +20,20 @@ export const computeNavBar = computeWebResourceViewerNavbar;
  */
 export default function H5PPlayerScreen({ navigation, route }: H5PPlayerScreenProps) {
   const session = assertSession();
+  const insets = useSafeAreaInsets();
+  // The page fills the screen: safe areas on all sides, plus side margins
+  const contentInsets = React.useMemo(
+    () => ({
+      bottom: insets.bottom,
+      left: insets.left + UI_SIZES.spacing.medium,
+      right: insets.right + UI_SIZES.spacing.medium,
+      top: insets.top,
+    }),
+    [insets.bottom, insets.left, insets.right, insets.top],
+  );
   return (
     <WebResourceViewer
+      contentInsets={contentInsets}
       navigation={navigation}
       source={React.useMemo(
         () => platformURISource(session.platform, toURISource<WebViewSourceUri>(h5pEmbedPath(route.params.contentId))),
