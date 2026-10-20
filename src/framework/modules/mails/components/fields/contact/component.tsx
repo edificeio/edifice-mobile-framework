@@ -37,6 +37,8 @@ function isValidEmail(value: string): boolean {
 
 const INITIAL_HEIGHT_INPUT = UI_SIZES.spacing.small * 2 + UI_SIZES.spacing.tiny * 2 + TextSizeStyle.Medium.lineHeight;
 
+const keyExtractor = (item: MailsVisible) => item.id;
+
 export const MailsContactField = (props: MailsContactFieldProps) => {
   const [search, setSearch] = React.useState('');
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -332,6 +334,22 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     [props, onRemoveContentAndExitInput],
   );
 
+  const renderResult = React.useCallback(
+    ({ item }: { item: MailsVisible }) => {
+      const Component = item.type === MailsVisibleType.USER ? MailsRecipientUserItem : MailsRecipientGroupItem;
+      const isSelected = props.recipients.some(selectedRecipient => selectedRecipient.id === item.id);
+      return (
+        <Component
+          item={item}
+          onPress={addUser}
+          selected={isSelected}
+          disabled={item.type === MailsVisibleType.BROADCASTGROUP && props.type !== MailsRecipientsType.CCI}
+        />
+      );
+    },
+    [addUser, props.recipients, props.type],
+  );
+
   const removeUser = React.useCallback(
     (user: MailsVisible) => {
       props.onChangeRecipient(
@@ -478,18 +496,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
                   </SmallBoldText>
                 ) : null
               }
-              renderItem={({ item }) => {
-                const Component = item.type === MailsVisibleType.USER ? MailsRecipientUserItem : MailsRecipientGroupItem;
-                const isSelected = props.recipients.some(selectedRecipient => selectedRecipient.id === item.id);
-                return (
-                  <Component
-                    item={item}
-                    onPress={addUser}
-                    selected={isSelected}
-                    disabled={item.type === MailsVisibleType.BROADCASTGROUP && props.type !== MailsRecipientsType.CCI}
-                  />
-                );
-              }}
+              keyExtractor={keyExtractor}
+              renderItem={renderResult}
               ListEmptyComponent={
                 <View style={styles.noResults}>
                   <HeadingSText style={styles.noResultsText}>{I18n.get('mails-edit-noresulttitle', { text: search })}</HeadingSText>
