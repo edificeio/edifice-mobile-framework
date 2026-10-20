@@ -8,7 +8,7 @@ import notifDefinitions, { NotifDefinitionsState } from './notif-definitions';
 import { NotificationFilter } from './notif-definitions/notif-filters';
 import notifSettings, { NotifSettingsState } from './notif-settings';
 import { IPushNotifsSettings } from './notif-settings/push-notifs-settings';
-import notifications, { NotificationsState } from './notifications';
+import notifications, { notificationsApiVersionReducer, NotificationsApiVersionState, NotificationsState } from './notifications';
 
 // State
 
@@ -17,6 +17,7 @@ export type TimelineState = {
   notifDefinitions: NotifDefinitionsState;
   notifSettings: NotifSettingsState;
   notifications: NotificationsState;
+  notificationsApiVersion: NotificationsApiVersionState;
   flashMessages: FlashMessagesState;
 };
 
@@ -34,6 +35,7 @@ const reducer = combineReducers({
   flashMessages,
   notifDefinitions,
   notifications,
+  notificationsApiVersion: notificationsApiVersionReducer,
   notifSettings,
 });
 
