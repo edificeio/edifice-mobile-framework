@@ -24,7 +24,22 @@ export function useHomeReloadValue(): HomeReloadValue {
 
   const bump = React.useCallback(() => setKey(value => value + 1), []);
 
-  React.useEffect(() => navigation.getParent()?.addListener('focus', bump), [bump, navigation]);
+  React.useEffect(() => {
+    const parent = navigation.getParent();
+    if (!parent) return;
+    let blurred = false;
+    const unsubscribeBlur = parent.addListener('blur', () => {
+      blurred = true;
+    });
+    const unsubscribeFocus = parent.addListener('focus', () => {
+      if (blurred) bump();
+      blurred = false;
+    });
+    return () => {
+      unsubscribeBlur();
+      unsubscribeFocus();
+    };
+  }, [bump, navigation]);
 
   return React.useMemo(() => ({ bump, key }), [bump, key]);
 }
