@@ -23,7 +23,12 @@ export const computeNavBar = screenOptions(() => ({
   title: I18n.get('myapp-appname'),
 }));
 
-const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
+const MyAppsHomeScreen = ({
+  navigation,
+  route: {
+    params: { initialScrollAppAddress },
+  },
+}: MyAppsHomeScreenProps) => {
   const {
     apps,
     appsListRef,
@@ -308,6 +313,7 @@ const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
         onRefresh={onRefresh}
         onLongPressApp={onCardLongPress}
         refreshing={refreshing}
+        initialScrollAppAddress={initialScrollAppAddress}
       />
     );
   }, [

@@ -1420,6 +1420,7 @@
   "pronote-cahierdetextes-empty": "Pas de travail pour les 7 prochains jours",
   "pronote-cahierdetextes-pourdate": "Pour {{date}}",
   "pronote-cahierdetextes-title": "Cahier de textes",
+  "pronote-carnet-de-bord-error-redirect": "Connecteur Pronote",
   "pronote-connectorselector-action": "Ouvrir Pronote",
   "pronote-connectorselector-placeholder": "Choisir l'établissement",
   "pronote-connectorselector-title": "Votre compte est relié à plusieurs établissements.\nChoisissez l'établissement avec lequel vous voulez vous connecter.",

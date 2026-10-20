@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ScrollView, ScrollViewProps, StyleSheet, View } from 'react-native';
 
+import { TabActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -21,6 +22,7 @@ import UserList, { IUserListItem } from '~/framework/components/UserList';
 import { ContentLoader } from '~/framework/hooks/loader';
 import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import myAppsModuleConfig from '~/framework/modules/myapps/module-config';
 import { loadCarnetDeBordAction } from '~/framework/modules/widgets/carnet-de-board/actions/carnet-de-bord';
 import {
   CarnetDeBordSection,
@@ -37,6 +39,7 @@ import { ICarnetDeBordStateData } from '~/framework/modules/widgets/carnet-de-bo
 import redirect from '~/framework/modules/widgets/carnet-de-board/service/redirect';
 import { preferences } from '~/framework/modules/widgets/carnet-de-board/storage';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { displayDate } from '~/framework/util/date';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 
@@ -114,6 +117,12 @@ function CarnetDeBordScreen({ data, error, handleLoadData, navigation, session, 
     [/*session, */ users],
   );
 
+  const pronoteConnectorsSorted = React.useMemo(() => {
+    const connectors = session?.rights.apps.filter(app => app.casType === 'PronoteRegisteredService');
+    connectors?.sort((a, b) => String(a.displayName ?? a.name).localeCompare(String(b.displayName ?? b.name)));
+    return connectors;
+  }, [session?.rights.apps]);
+
   // Data & content
   const loadData = React.useCallback(async () => {
     const savedSelectedId = preferences.getString('carnet-de-bord.selected-user');
@@ -144,19 +153,28 @@ function CarnetDeBordScreen({ data, error, handleLoadData, navigation, session, 
     [selectedCdbData, users, selectedId, selectUser, isUserListShown, isStructureShown, navigation, structures, session],
   );
 
-  const is50xError = React.useMemo(() => error instanceof PronoteCdbInitError, [error]);
-
   return (
     <PageView>
       <ContentLoader
         renderError={refreshControl => {
           return (
             <ScrollView refreshControl={refreshControl}>
-              {is50xError ? (
+              {error instanceof PronoteCdbInitError ? (
                 <EmptyScreen
                   svgImage="empty-pronote-uri"
                   title={I18n.get('pronote-initfailed-title')}
                   text={I18n.get('pronote-initfailed-text')}
+                  buttonAction={() => {
+                    navigation.goBack();
+                    navigation.dispatch(
+                      TabActions.jumpTo(computeTabRouteName(myAppsModuleConfig.routeName), {
+                        params: { initialScrollAppAddress: pronoteConnectorsSorted?.[0]?.address },
+                        screen: 'myapps',
+                      }),
+                    );
+                  }}
+                  buttonIcon="ui-arrowRight"
+                  buttonText={I18n.get('pronote-carnet-de-bord-error-redirect')}
                 />
               ) : (
                 <EmptyScreen

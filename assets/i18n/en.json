@@ -1420,6 +1420,7 @@
   "pronote-cahierdetextes-empty": "No work for the next 7 days",
   "pronote-cahierdetextes-pourdate": "For {{date}}",
   "pronote-cahierdetextes-title": "Homework Notebook",
+  "pronote-carnet-de-bord-error-redirect": "Pronote Connector",
   "pronote-connectorselector-action": "Open Pronote",
   "pronote-connectorselector-placeholder": "Select your school",
   "pronote-connectorselector-title": "Your account is connected to several schools.\nSelect the school you would like to connect to.",
