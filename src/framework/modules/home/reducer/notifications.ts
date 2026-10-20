@@ -6,11 +6,15 @@ import {
   createAsyncPagedActionTypes,
   createSessionAsyncPagedReducer,
 } from '~/framework/util/redux/asyncPaged';
+import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 
 // State
 
 export type NotificationsStateData = ITimelineNotification[];
 export type NotificationsState = AsyncPagedState<NotificationsStateData>;
+
+// Reused by reloads that do not set it, so one list never mixes two contracts.
+export type NotificationsApiVersionState = string | null;
 
 // Reducer
 
@@ -22,6 +26,7 @@ export const actionTypes = {
   deleteError: moduleConfig.namespaceActionType('NOTIFICATION_DELETE_ERROR'),
   deleteReceipt: moduleConfig.namespaceActionType('NOTIFICATION_DELETE_RECEIPT'),
   deleteRequest: moduleConfig.namespaceActionType('NOTIFICATION_DELETE_REQUEST'),
+  setApiVersion: moduleConfig.namespaceActionType('NOTIFICATIONS_API_VERSION_SET'),
 };
 
 export const actions = {
@@ -29,6 +34,7 @@ export const actions = {
   deleteError: (notificationId: string) => ({ notificationId, type: actionTypes.deleteError }),
   deleteReceipt: (notificationId: string) => ({ notificationId, type: actionTypes.deleteReceipt }),
   deleteRequest: (notificationId: string) => ({ notificationId, type: actionTypes.deleteRequest }),
+  setApiVersion: (apiVersion: string) => ({ apiVersion, type: actionTypes.setApiVersion }),
 };
 
 /**
@@ -45,5 +51,9 @@ const deleteNotificationActionsHandlerMap = {
 };
 
 export default createSessionAsyncPagedReducer(initialState, actionTypes, pageSize, deleteNotificationActionsHandlerMap);
+
+export const notificationsApiVersionReducer = createSessionReducer<NotificationsApiVersionState>(null, {
+  [actionTypes.setApiVersion]: (_state, action) => (action as ReturnType<typeof actions.setApiVersion>).apiVersion,
+});
 
 // Getters
