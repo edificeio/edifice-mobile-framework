@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Animated, Keyboard, Platform, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
 import debounce from 'lodash.debounce';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -15,7 +16,6 @@ import MailsContactItem from '~/framework/modules/mails/components/contact-item'
 import stylesContactItem from '~/framework/modules/mails/components/contact-item/styles';
 import styles from '~/framework/modules/mails/components/fields/styles';
 import { MailsRecipientGroupItem, MailsRecipientUserItem } from '~/framework/modules/mails/components/recipient-item';
-import { HEIGHT_RECIPIENT_CONTAINER } from '~/framework/modules/mails/components/recipient-item/container/styles';
 import { MailsRecipientsType, MailsVisible, MailsVisibleType } from '~/framework/modules/mails/model';
 import { mailsService } from '~/framework/modules/mails/service';
 import { readVisibles } from '~/framework/modules/mails/storage';
@@ -35,7 +35,6 @@ function isValidEmail(value: string): boolean {
   return emailRegex.test(trimmed);
 }
 
-const HEIGHT_HEADER_RESULTS = UI_SIZES.spacing.small + TextSizeStyle.Normal.lineHeight;
 const INITIAL_HEIGHT_INPUT = UI_SIZES.spacing.small * 2 + UI_SIZES.spacing.tiny * 2 + TextSizeStyle.Medium.lineHeight;
 
 export const MailsContactField = (props: MailsContactFieldProps) => {
@@ -51,8 +50,11 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   const [containerLayout, setContainerLayout] = React.useState({ height: 0, width: 0, x: 0, y: 0 });
   // field bottom in window coordinates.
   const [fieldBottomY, setFieldBottomY] = React.useState(0);
+  // bottom of the visible scroll area in window coordinates, above the keyboard when it is open.
+  const [scrollViewBottomY, setScrollViewBottomY] = React.useState(UI_SIZES.screen.height);
 
   const users: MailsVisible[] = React.useMemo(() => readVisibles(), []);
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const topPositionResults = React.useRef(new Animated.Value(0)).current;
 
@@ -63,38 +65,39 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
 
   const resultsHeight = React.useMemo(
     () =>
-      Math.max(
-        // Avoid double-subtracting bottom inset when keyboard is visible.
-        UI_SIZES.screen.height - fieldBottomY - keyboardHeight - (keyboardHeight > 0 ? 0 : UI_SIZES.screen.bottomInset),
-        UI_SIZES.screen.height / 4,
-      ),
-    [fieldBottomY, keyboardHeight],
+      // Both bounds in window space: the keyboard height, in screen space, was off by the status bar on Android.
+      Math.max(scrollViewBottomY - fieldBottomY, UI_SIZES.screen.height / 4),
+    [fieldBottomY, scrollViewBottomY],
   );
 
-  const measureFieldBottom = React.useCallback(() => {
+  const measureResultsBounds = React.useCallback(() => {
     viewContainerRef.current?.measureInWindow((_x, y, _width, height) => {
       if (height > 0) setFieldBottomY(y + height);
     });
-  }, []);
+    // Its bottom follows the keyboard, so the list stops right above it.
+    props.scrollViewRef.current?.getNativeScrollRef()?.measureInWindow((_x, y, _width, height) => {
+      if (height > 0) setScrollViewBottomY(y + height);
+    });
+  }, [props.scrollViewRef]);
 
   const clearPendingMeasures = React.useCallback(() => {
     measureTimeoutsRef.current.forEach(clearTimeout);
     measureTimeoutsRef.current = [];
   }, []);
 
-  const scheduleMeasureFieldBottom = React.useCallback(() => {
+  const scheduleMeasureResultsBounds = React.useCallback(() => {
     clearPendingMeasures();
     const measureDelays = Platform.OS === 'android' ? [0, 60, 140, 260] : [0, 60, 140];
     measureDelays.forEach(delay => {
-      const timer = setTimeout(measureFieldBottom, delay);
+      const timer = setTimeout(measureResultsBounds, delay);
       measureTimeoutsRef.current.push(timer);
     });
-  }, [clearPendingMeasures, measureFieldBottom]);
+  }, [clearPendingMeasures, measureResultsBounds]);
 
   // re-measure after layout/keyboard changes.
   React.useEffect(() => {
     if (!showList) return;
-    scheduleMeasureFieldBottom();
+    scheduleMeasureResultsBounds();
   }, [
     showList,
     keyboardHeight,
@@ -102,7 +105,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     containerLayout.y,
     inputFocused,
     props.recipients,
-    scheduleMeasureFieldBottom,
+    scheduleMeasureResultsBounds,
   ]);
 
   React.useEffect(() => {
@@ -130,19 +133,26 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
   React.useEffect(() => {
     const keyboardWillShow = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', e => {
       setKeyboardHeight(e.endCoordinates.height);
-      if (showList) scheduleMeasureFieldBottom();
     });
 
     const keyboardWillHide = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => {
       setKeyboardHeight(0);
-      if (showList) scheduleMeasureFieldBottom();
     });
+
+    // On iOS, the will events come before the scroll view is resized.
+    const measureIfShown = () => {
+      if (showList) scheduleMeasureResultsBounds();
+    };
+    const keyboardDidShow = Keyboard.addListener('keyboardDidShow', measureIfShown);
+    const keyboardDidHide = Keyboard.addListener('keyboardDidHide', measureIfShown);
 
     return () => {
       keyboardWillShow.remove();
       keyboardWillHide.remove();
+      keyboardDidShow.remove();
+      keyboardDidHide.remove();
     };
-  }, [scheduleMeasureFieldBottom, showList]);
+  }, [scheduleMeasureResultsBounds, showList]);
 
   React.useEffect(() => {
     if (props.isStartScroll && showList && search === '') {
@@ -182,10 +192,10 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
           animated: true,
           y: containerLayout.y + containerLayout.height - INITIAL_HEIGHT_INPUT,
         });
-        scheduleMeasureFieldBottom();
+        scheduleMeasureResultsBounds();
       }, 200);
     }
-  }, [containerLayout, props.scrollViewRef, scheduleMeasureFieldBottom, topPositionResults]);
+  }, [containerLayout, props.scrollViewRef, scheduleMeasureResultsBounds, topPositionResults]);
 
   React.useEffect(() => {
     if (containerLayout.height > 0 && inputFocused) {
@@ -216,8 +226,8 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     setInputFocused(true);
     if (!isOpen) setIsOpen(true);
     props.onFocus(props.type);
-    if (showList) scheduleMeasureFieldBottom();
-  }, [isOpen, props, scheduleMeasureFieldBottom, showList]);
+    if (showList) scheduleMeasureResultsBounds();
+  }, [isOpen, props, scheduleMeasureResultsBounds, showList]);
 
   const onBlur = React.useCallback(() => {
     setInputFocused(false);
@@ -382,16 +392,16 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
     return null;
   };
 
-  const heightResults = React.useMemo(() => {
-    return filteredUsers.length * HEIGHT_RECIPIENT_CONTAINER + HEIGHT_HEADER_RESULTS + UI_SIZES.spacing.small * 2 + 170;
-  }, [filteredUsers]);
-
   const conRenderRecipients = React.useMemo(() => props.recipients.length === 0 || isOpen, [props.recipients.length, isOpen]);
 
   return (
     <>
       <View
-        style={[styles.container, props.recipients.length === 0 ? styles.containerEmpty : {}]}
+        style={[
+          styles.container,
+          props.recipients.length === 0 ? styles.containerEmpty : {},
+          isOpen && props.recipients.length > 0 ? styles.containerIsEditing : {},
+        ]}
         ref={viewContainerRef}
         onLayout={e => {
           const { height, width, x, y } = e.nativeEvent.layout;
@@ -454,12 +464,11 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
               // keyboardDismissMode="on-drag" // if active dismisses keyboard on auto search when scrolling list
               showsVerticalScrollIndicator={false}
               bounces={false}
-              nestedScrollEnabled
               data={filteredUsers}
               contentContainerStyle={[
                 styles.results,
                 {
-                  minHeight: heightResults,
+                  paddingBottom: UI_SIZES.spacing.small + (keyboardHeight > 0 ? 0 : bottomInset),
                 },
               ]}
               ListHeaderComponent={
