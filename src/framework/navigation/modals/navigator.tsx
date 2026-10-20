@@ -4,6 +4,7 @@ import CarouselScreen from '~/framework/components/carousel';
 import MultimediaCarousel, { CarouselMultimediaNavBar } from '~/framework/components/carousel-multimedia/';
 // eslint-disable-next-line import/order
 import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel/screen';
+import H5PPlayerScreen, { computeNavBar as H5PPlayerNavBar } from '~/framework/components/h5p-player';
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
 import MediaPlayer from '~/framework/components/media/player';
 import DownloadModal from '~/framework/components/modals/download/component';
@@ -66,6 +67,7 @@ export default (
         component={FileImportScreen}
         initialParams={{}}
       />
+      <RootStack.Screen name={ModalsRouteNames.H5PPlayer} options={H5PPlayerNavBar} component={H5PPlayerScreen} />
       <RootStack.Screen name={ModalsRouteNames.Infos} options={infosNavBar} component={InfosScreen} />
       <RootStack.Screen name={ModalsRouteNames.MediaPlayer} options={{ headerShown: false }} component={MediaPlayer} />
       <RootStack.Screen name={ModalsRouteNames.Log} options={logNavBar} component={LogScreen} />
@@ -93,6 +95,7 @@ setModalModeForRoutes([
   ModalsRouteNames.CarouselMultimedia,
   ModalsRouteNames.Download,
   ModalsRouteNames.FileImport,
+  ModalsRouteNames.H5PPlayer,
   ModalsRouteNames.Infos,
   ModalsRouteNames.Log,
   ModalsRouteNames.MediaPlayer,

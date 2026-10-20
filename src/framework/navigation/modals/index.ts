@@ -6,6 +6,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { MultimediaCarouselNavParams } from '~/framework/components/carousel-multimedia/openCarousel';
 // eslint-disable-next-line import/order
 // import type { ICarouselNavParams } from '~/framework/components/carousel/screen';
+import type { H5PPlayerNavParams } from '~/framework/components/h5p-player/types';
 import type { FileImportScreenProps } from '~/framework/components/inputs/rich-text/file-import';
 import type { RichEditorFormReduxNavParams } from '~/framework/components/inputs/rich-text/form/types';
 import type { MediaPlayerParams } from '~/framework/components/media/player/types';
@@ -23,6 +24,7 @@ export enum ModalsRouteNames {
   CarouselMultimedia = 'carousel-multimedia',
   Download = 'download',
   FileImport = 'file-import',
+  H5PPlayer = 'h5p-player',
   Infos = 'infos',
   Log = 'log',
   MediaPlayer = 'media-player',
@@ -42,6 +44,7 @@ export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.AudienceReactions]: AudienceReactionsScreenNavParams;
   [ModalsRouteNames.AudienceViews]: AudienceViewsScreenNavParams;
   [ModalsRouteNames.FileImport]: FileImportScreenProps.NavParams;
+  [ModalsRouteNames.H5PPlayer]: H5PPlayerNavParams;
   [ModalsRouteNames.AttachmentsImport]: AttachmentsImportScreenProps.NavParams;
   [ModalsRouteNames.RichTextEditor]: RichEditorFormReduxNavParams;
   [ModalsRouteNames.SplashAds]: SplashadsScreenNavParams;
