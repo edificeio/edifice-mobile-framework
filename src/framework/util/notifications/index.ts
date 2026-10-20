@@ -7,8 +7,6 @@ import { ImageURISource } from 'react-native';
 import { decode } from 'html-entities';
 import moment, { Moment } from 'moment';
 
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-
 // Types
 
 export interface IEntcoreAbstractNotification {
@@ -126,8 +124,6 @@ export const isEnrichedNotification = (n: ITimelineNotification) =>
   !!(n as ITimelineNotification & Partial<IEnrichedNotification>).preview;
 export const getAsEnrichedNotification = (n: ITimelineNotification) =>
   isEnrichedNotification(n) ? (n as IEnrichedNotification) : undefined;
-
-export const isMyNotification = (n: ISenderNotification, u: AuthLoggedAccount) => n.sender.id === u.user.id;
 
 // Adapter
 

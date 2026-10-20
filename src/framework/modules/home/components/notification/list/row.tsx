@@ -20,7 +20,6 @@ const NO_DRAG_OFFSET = 9999;
 
 export const NotificationRow = React.memo(
   ({
-    canDelete,
     canReport,
     isRowOpened,
     item,
@@ -62,19 +61,17 @@ export const NotificationRow = React.memo(
               progress={progress}
             />
           ) : null}
-          {canDelete ? (
-            <SwipeAction
-              color={theme.palette.status.failure.regular}
-              filled
-              icon="ui-delete"
-              label={I18n.get('common-delete')}
-              onPress={remove}
-              progress={progress}
-            />
-          ) : null}
+          <SwipeAction
+            color={theme.palette.status.failure.regular}
+            filled
+            icon="ui-delete"
+            label={I18n.get('common-delete')}
+            onPress={remove}
+            progress={progress}
+          />
         </View>
       ),
-      [canDelete, canReport, remove, report],
+      [canReport, remove, report],
     );
 
     const onCardPress = isOpenable || someRowOpen ? handleCardPress : undefined;
@@ -85,8 +82,7 @@ export const NotificationRow = React.memo(
     );
     const row = <View style={styles.row}>{card}</View>;
 
-    const actionCount = (canReport ? 1 : 0) + (canDelete ? 1 : 0);
-    if (!actionCount) return row;
+    const actionCount = canReport ? 2 : 1;
 
     return (
       <ReanimatedSwipeable
