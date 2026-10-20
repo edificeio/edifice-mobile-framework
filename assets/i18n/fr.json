@@ -696,6 +696,8 @@
   "gallery-readpermissionblocked-text": "{{appName}} ne peut pas accéder à la galerie. Vous pouvez autoriser l'accès via les réglages de l'application dans les paramètres du téléphone.",
   "gallery-readpermissionblocked-title": "Accès à la galerie refusé",
   "galleryaction-pick": "Choisir dans la galerie",
+  "h5p-activity-start": "Commencer l'activité",
+  "h5p-activity-title": "Activité interactive",
   "homework": "Cahier de textes",
   "homework-create-addhomework": "Ajouter le devoir",
   "homework-create-addhomework-ent77": "Ajouter l'activité",

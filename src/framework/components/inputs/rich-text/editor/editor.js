@@ -173,6 +173,11 @@ function createHTML(options = {}) {
         ul, ol {list-style-position: outside; }
         li p {margin: 0; padding: 0;}
         .conversation-history > div {margin-left: 10px; padding-left: 10px; border-left: 1px ridge #C7C7C7;}
+        div[data-h5p-id] {position: relative; display: flex; align-items: center; min-height: ${playIconSize + UI_SIZES.spacing.small * 2}px; margin: ${UI_SIZES.spacing.minor}px 0; padding: ${UI_SIZES.spacing.small}px; padding-left: ${playIconSize + UI_SIZES.spacing.small * 2}px; background-color: ${theme.palette.grey.fog}; border: ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl}; border-radius: ${UI_SIZES.radius.newCard}px;}
+        div[data-h5p-id]::before {content: ""; position: absolute; left: ${UI_SIZES.spacing.small}px; top: 50%; transform: translateY(-50%); background-image: url(${playIcon}); background-size: cover; background-repeat: no-repeat; height: ${playIconSize}px; width: ${playIconSize}px;}
+        div[data-h5p-id] a {display: flex; flex-direction: column; font-size: 0; line-height: 0; text-decoration: none;}
+        div[data-h5p-id] a::before {content: ${JSON.stringify(I18n.get('h5p-activity-title'))}; color: ${theme.palette.grey.black}; font-weight: 700; font-size: ${TextSizeStyle.Medium.fontSize}px; line-height: ${TextSizeStyle.Medium.lineHeight}px;}
+        div[data-h5p-id] a::after {content: ${JSON.stringify(I18n.get('h5p-activity-start'))}; color: ${theme.palette.primary.regular}; font-size: ${TextSizeStyle.Normal.fontSize}px; line-height: ${TextSizeStyle.Normal.lineHeight}px;}
         #content>p:first-child { margin-block-start: 0;}
         #content>p:last-child { margin-block-end: 0;}
         mark[data-color="transparent"] { background-color: transparent; }
@@ -995,6 +1000,11 @@ function createHTML(options = {}) {
                     // Set whether the checkbox is selected by default
                     if (ele.checked) ele.setAttribute('checked', '');
                     else ele.removeAttribute('checked');
+                    return false;
+                } else if (ele.nodeType === 1 && ele.closest('div[data-h5p-id]')) {
+                    // H5P activity: opened in the app rather than through its fallback link
+                    const h5pBlock = ele.closest('div[data-h5p-id]');
+                    postAction({type: 'H5P_TOUCHED', data: h5pBlock.getAttribute('data-h5p-id')}, true);
                     return false;
                 } else if (ele.nodeName === 'A' && ele.getAttribute('href')) {
                     const contentType = ele.getAttribute('data-content-type');
