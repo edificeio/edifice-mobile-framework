@@ -4,7 +4,9 @@ import { Keyboard, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 import theme from '~/app/theme';
+import { isH5PContentId } from '~/framework/components/h5p-player/util';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { openUrl } from '~/framework/util/linking';
 
 import { actions, messages } from './const';
@@ -68,6 +70,7 @@ export default class RichEditor extends Component {
     that.mediasUrls = [];
     that._onLinkTouched = that._onLinkTouched.bind(that);
     that._onMediaTouched = that._onMediaTouched.bind(that);
+    that._onH5PTouched = that._onH5PTouched.bind(that);
     const {
       autoCapitalize,
       autoCorrect,
@@ -192,6 +195,13 @@ export default class RichEditor extends Component {
     }
   }
 
+  _onH5PTouched(contentId) {
+    const { disabled } = this.props;
+    if (disabled && isH5PContentId(contentId)) {
+      this.props.navigation?.navigate(ModalsRouteNames.H5PPlayer, { contentId });
+    }
+  }
+
   onMessage(event) {
     const that = this;
     const { onBlur, onChange, onCursorPosition, onFocus, onInput, onKeyDown, onKeyUp, onMessage, onPaste } = that.props;
@@ -249,6 +259,9 @@ export default class RichEditor extends Component {
         case messages.OFFSET_Y:
           const offsetY = Number.parseInt(Number.parseInt(data, 10) + that.layout.y || 0, 10);
           if (offsetY > 0) onCursorPosition(offsetY);
+          break;
+        case messages.H5P_TOUCHED:
+          that._onH5PTouched(data);
           break;
         case messages.LINK_TOUCHED:
           that._onLinkTouched(that._getAbsoluteUrl(data), that.linksUrls);
