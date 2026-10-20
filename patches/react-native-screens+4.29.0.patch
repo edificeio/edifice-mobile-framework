@@ -1,0 +1,48 @@
+diff --git a/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackHeaderConfig.kt b/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackHeaderConfig.kt
+index 68b8d85..007a338 100644
+--- a/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackHeaderConfig.kt
++++ b/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/ScreenStackHeaderConfig.kt
+@@ -288,6 +288,28 @@ class ScreenStackHeaderConfig(
+             screenFragment?.canNavigateBack() == true && !isBackButtonHidden,
+         )
+ 
++        // PATCH: language independent id of the back button (what e2e tests read as `resource-id`, like React Native's `testID`)
++        if (toolbar.navigationIcon != null) {
++            for (i in 0 until toolbar.childCount) {
++                val child = toolbar.getChildAt(i)
++                if (child is android.widget.ImageButton) {
++                    androidx.core.view.ViewCompat.setAccessibilityDelegate(
++                        child,
++                        object : androidx.core.view.AccessibilityDelegateCompat() {
++                            override fun onInitializeAccessibilityNodeInfo(
++                                host: android.view.View,
++                                info: androidx.core.view.accessibility.AccessibilityNodeInfoCompat,
++                            ) {
++                                super.onInitializeAccessibilityNodeInfo(host, info)
++                                info.viewIdResourceName = "BackButton"
++                            }
++                        },
++                    )
++                    break
++                }
++            }
++        }
++
+         // title
+         newActionBar.title = title
+         if (TextUtils.isEmpty(title)) {
+diff --git a/node_modules/react-native-screens/ios/RNSBarButtonItem.mm b/node_modules/react-native-screens/ios/RNSBarButtonItem.mm
+index c435fdd..2192d98 100644
+--- a/node_modules/react-native-screens/ios/RNSBarButtonItem.mm
++++ b/node_modules/react-native-screens/ios/RNSBarButtonItem.mm
+@@ -125,6 +125,10 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
+   if (dict[@"accessibilityHint"]) {
+     self.accessibilityHint = dict[@"accessibilityHint"];
+   }
++  // PATCH: language independent id of the item (read as `name` by XCUITest / Appium)
++  if (dict[@"accessibilityIdentifier"]) {
++    self.accessibilityIdentifier = dict[@"accessibilityIdentifier"];
++  }
+ 
+ #if !TARGET_OS_TV || __TV_OS_VERSION_MAX_ALLOWED >= 170000
+   if (@available(tvOS 17.0, *)) {

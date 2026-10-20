@@ -1,11 +1,12 @@
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, Pressable, StyleSheet } from 'react-native';
 
 import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
-import { HeaderButton, HeaderTitle } from '@react-navigation/elements';
+import { HeaderTitle } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackNavigatorProps } from '@react-navigation/native-stack';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
+import { I18n } from '~/util/i18n';
 
 import { ScreenOptionsProps } from './types';
 
@@ -31,6 +32,14 @@ export const hiddenStackScreenOptions: NativeStackNavigatorProps['screenOptions'
 
 /**
  * Every stack screen that **shows** navBar have these options
+ *
+ * E2E TESTS (Appium): identifiers of the header are the same on iOS and Android, in modals or not (full explanation: see the
+ * comment of `modalCloseButtonOptions`, and `patches/react-native-screens+*.patch`).
+ * - Title: `header-title`, given here. The title must be a React component to carry a `testID` (the native title can't), so
+ *   `HeaderTitle` of react-navigation is used, which forwards `testID` to its text. A screen that gives its own `headerTitle`
+ *   replaces this one: it must then set its own `testID="header-title"` (an empty title doesn't need one).
+ * - Back button: `BackButton`. It is the NATIVE button (we don't render it, so we can't give it a `testID`):
+ *   on iOS UIKit already names it `BackButton`, on Android our patch of `react-native-screens` does.
  */
 export const visibleStackScreenOptions: NativeStackNavigatorProps['screenOptions'] = {
   headerBackButtonDisplayMode: 'minimal',
@@ -74,6 +83,15 @@ const ModalCloseIcon = ({ color }: { color?: string }) => (
   />
 );
 
+/**
+ * Language independent id of the iOS close item, read as `name` by XCUITest (Appium). Without it `name` is the label ("Fermer"),
+ * which changes with the language.
+ * `accessibilityIdentifier` does not exist in the types of react-navigation, and the item is native: it works only because our patch of
+ * `react-native-screens` (`RNSBarButtonItem.mm`) reads it. It is spread in the item (instead of written in it) to avoid the TypeScript
+ * error on an unknown property. If the patch stops applying, the close button just gets back its label as `name`: nothing else breaks.
+ */
+const closeItemIdentifier = { accessibilityIdentifier: 'BackButton' };
+
 const modalCloseButtonStyle = StyleSheet.create({
   button: {
     alignItems: 'center',
@@ -85,6 +103,12 @@ const modalCloseButtonStyle = StyleSheet.create({
 
 /**
  * The close button of a modal, as its header items (the native back button never exists in a modal, see `modalOptions`).
+ *
+ * E2E TESTS: this button must be found with the id `BackButton`, like the back button of a stack screen (whichever platform):
+ * - Android: a React Native `Pressable` in `headerLeft`, so `testID="BackButton"` gives `resource-id="BackButton"`.
+ * - iOS: a native header item (`unstable_headerLeftItems`, which replaces `headerLeft` on iOS): `accessibilityIdentifier` gives
+ *   `name="BackButton"`, thanks to our patch of `react-native-screens` (see `closeItemIdentifier`).
+ * Do not use `HeaderButton` of react-navigation here: on Android its `aria-label` does not reach the `content-desc`.
  * It only shows when the screen can go back, unless `always` is set: a screen that is the first of a navigator nested in a modal
  * can't go back inside its own navigator, but still must close the modal (the go back is forwarded to the parent navigation).
  */
@@ -93,21 +117,35 @@ export const modalCloseButtonOptions = (
   { always = false }: { always?: boolean } = {},
 ): NativeStackNavigationOptions => ({
   // Android (and iOS fallback) close button : `unstable_headerLeftItems` overrides this one on iOS.
+  // `accessibilityLabel` is what screen readers say (translated), `testID` is what tests look for (never translated).
   headerLeft: ({ canGoBack, tintColor }) =>
     always || canGoBack ? (
-      <HeaderButton
-        accessibilityLabel="Close"
+      <Pressable
+        accessible
+        accessibilityLabel={I18n.get('common-close')}
+        accessibilityRole="button"
+        android_ripple={{ borderless: true, color: UI_SIZES.navigation.headerButtonRippleColor.light, radius: 20 }}
+        hitSlop={16}
         onPress={() => navigation.goBack()}
-        pressColor={UI_SIZES.navigation.headerButtonRippleColor.light}
-        style={modalCloseButtonStyle.button}>
+        style={modalCloseButtonStyle.button}
+        testID="BackButton">
         <ModalCloseIcon color={tintColor} />
-      </HeaderButton>
+      </Pressable>
     ) : null,
 
-  // iOS Close button
+  // iOS Close button: native items have no `testID`, so the id of tests is `accessibilityIdentifier` (see `closeItemIdentifier`)
   unstable_headerLeftItems: ({ canGoBack }) =>
     always || canGoBack
-      ? [{ icon: { name: 'xmark', type: 'sfSymbol' }, label: 'Close', onPress: () => navigation.goBack(), type: 'button' }]
+      ? [
+          {
+            accessibilityLabel: I18n.get('common-close'),
+            ...closeItemIdentifier,
+            icon: { name: 'xmark', type: 'sfSymbol' },
+            label: I18n.get('common-close'),
+            onPress: () => navigation.goBack(),
+            type: 'button',
+          },
+        ]
       : [],
 });
 
