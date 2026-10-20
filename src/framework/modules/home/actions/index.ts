@@ -32,28 +32,35 @@ const $prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, an
 
 /**
  * Clear the timeline and fetch the first page. If the fetch fails, data is not cleared.
+ * @param apiVersion contract asked by the screen. Without it, the one the list was loaded with is kept.
  */
-export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, _getState: () => any) => {
-  try {
-    const state = (await dispatch($prepareNotificationsAction())) as unknown as TimelineState; // TS BUG: await is needed here
-    if (state.notifications.isFetching) return;
-    // Load notifications page 0 & flash messages (after reset)
-    dispatch(notificationsActions.request());
-    dispatch(flashMessagesActions.request());
-    const page = 0;
-    const filters = Object.keys(state.notifSettings.notifFilterSettings.data)
-      .filter(filter => state.notifSettings.notifFilterSettings.data[filter])
-      .filter(filter => state.notifDefinitions.notifFilters.data.find(nf => nf.type === filter)); // whitelist only authorized filters after settings application
-    const notifications = await notificationsService.page(page, filters);
-    const flashMessages = await flashMessagesService.list();
-    dispatch(notificationsActions.clear());
-    dispatch(flashMessagesActions.clear());
-    dispatch(notificationsActions.receipt(notifications, page));
-    dispatch(flashMessagesActions.receipt(flashMessages));
-  } catch {
-    // ToDo: Error handling
-  }
-};
+export const startLoadNotificationsAction =
+  (apiVersion?: string) => async (dispatch: ThunkDispatch<any, any, any>, _getState: () => any) => {
+    try {
+      const state = (await dispatch($prepareNotificationsAction())) as unknown as TimelineState; // TS BUG: await is needed here
+      if (state.notifications.isFetching) return;
+      // Load notifications page 0 & flash messages (after reset)
+      dispatch(notificationsActions.request());
+      dispatch(flashMessagesActions.request());
+      const page = 0;
+      const filters = Object.keys(state.notifSettings.notifFilterSettings.data)
+        .filter(filter => state.notifSettings.notifFilterSettings.data[filter])
+        .filter(filter => state.notifDefinitions.notifFilters.data.find(nf => nf.type === filter)); // whitelist only authorized filters after settings application
+      const notifications = await notificationsService.page(
+        page,
+        filters,
+        apiVersion ?? state.notificationsApiVersion ?? undefined,
+      );
+      const flashMessages = await flashMessagesService.list();
+      dispatch(notificationsActions.clear());
+      dispatch(flashMessagesActions.clear());
+      if (apiVersion) dispatch(notificationsActions.setApiVersion(apiVersion));
+      dispatch(notificationsActions.receipt(notifications, page));
+      dispatch(flashMessagesActions.receipt(flashMessages));
+    } catch {
+      // ToDo: Error handling
+    }
+  };
 
 /**
  * Fetch a specific page of notifications and add it to the notifications data.
@@ -73,7 +80,7 @@ export const loadNotificationsPageAction =
       const filters = Object.keys(state.notifSettings.notifFilterSettings.data).filter(
         filter => state.notifSettings.notifFilterSettings.data[filter],
       );
-      const notifications = await notificationsService.page(page, filters);
+      const notifications = await notificationsService.page(page, filters, state.notificationsApiVersion ?? undefined);
       dispatch(notificationsActions.receipt(notifications, page));
       // Returns true if there is more pages to load
       state = moduleConfig.getState(getState());
