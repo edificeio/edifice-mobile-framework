@@ -44,7 +44,6 @@ export const NotificationList = React.memo(
     onReportItem,
     onSwipeActiveChange,
     refreshing,
-    userId,
   }: NotificationListProps) => {
     const refreshControl = React.useMemo(
       () => <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
@@ -137,7 +136,6 @@ export const NotificationList = React.memo(
       ({ item }: ListRenderItemInfo<ITimelineNotification>) => (
         <NotificationRow
           item={item}
-          canDelete={item.backupData?.sender !== userId}
           canReport={canReport}
           isRowOpened={openRowId === item.id}
           someRowOpen={!!openRowId}
@@ -151,19 +149,7 @@ export const NotificationList = React.memo(
           onWillOpen={onRowWillOpen}
         />
       ),
-      [
-        canReport,
-        onCardPress,
-        onDelete,
-        onReport,
-        onRowClose,
-        onRowOpen,
-        onRowWillOpen,
-        onSwipeActive,
-        openRowId,
-        setRowRef,
-        userId,
-      ],
+      [canReport, onCardPress, onDelete, onReport, onRowClose, onRowOpen, onRowWillOpen, onSwipeActive, openRowId, setRowRef],
     );
 
     const loadingOrRefreshing = loading || refreshing;
