@@ -29,13 +29,18 @@ export const notifFiltersService = {
   },
 };
 
+export const NOTIFICATIONS_DEFAULT_VERSION = '3.0';
+
+// The server drops the user's own notifications before paginating; filtering them here would skew the page count.
+export const NOTIFICATIONS_WITHOUT_OWN_VERSION = '4.0';
+
 export const notificationsService = {
   delete: async (id: string) => {
     const api = `/timeline/${id}`;
     return sessionFetch.json(api, { method: 'PUT' });
   },
 
-  page: async (page: number, filters: string[]) => {
+  page: async (page: number, filters: string[], apiVersion: string = NOTIFICATIONS_DEFAULT_VERSION) => {
     const url = '/timeline/lastNotifications';
     const query = {
       page,
@@ -43,7 +48,7 @@ export const notificationsService = {
     };
     const api = queryString.stringifyUrl({ query, url });
     const headers = {
-      Accept: 'application/json;version=3.0',
+      Accept: `application/json;version=${apiVersion}`,
     };
     const entcoreNotifications = await sessionFetch.json<{
       results: IEntcoreTimelineNotification[];

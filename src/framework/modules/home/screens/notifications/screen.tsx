@@ -24,7 +24,7 @@ import { isUserbookNotification } from '~/framework/modules/home/components/noti
 import { useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
 import timelineConfig from '~/framework/modules/home/module-config';
 import { getTimelineWorkflowInformation } from '~/framework/modules/home/rights';
-import { notificationsService } from '~/framework/modules/home/service';
+import { NOTIFICATIONS_WITHOUT_OWN_VERSION, notificationsService } from '~/framework/modules/home/service';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import type { ITimelineNotification } from '~/framework/util/notifications';
@@ -51,7 +51,7 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
     if (!notifications.endReached) dispatch(loadNotificationsPageAction());
   }, [dispatch, notifications.endReached]);
 
-  const reload = React.useCallback(() => dispatch(startLoadNotificationsAction()), [dispatch]);
+  const reload = React.useCallback(() => dispatch(startLoadNotificationsAction(NOTIFICATIONS_WITHOUT_OWN_VERSION)), [dispatch]);
 
   const reloading = useHomeReload(reload);
 
