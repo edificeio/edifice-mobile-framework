@@ -11,7 +11,7 @@ const isSourceHtml = (source: WebViewSource | undefined): source is WebViewSourc
 const isSourceUri = (source: WebViewSource | undefined): source is WebViewSourceUri =>
   (source as WebViewSourceUri | undefined)?.uri !== undefined;
 
-export function WebView<P>(props: WebViewProps & P) {
+export const WebView = React.forwardRef<RNWebView, WebViewProps>(function WebView(props, ref) {
   const { injectedJavaScript, source, ...otherProps } = props;
   const id = getSession()?.platform ? appConf.webviewIdentifier : appConf.webviewIdentifier || 'ode-unknown';
   const realSource: WebViewSource | undefined = useMemo(() => {
@@ -30,5 +30,5 @@ export function WebView<P>(props: WebViewProps & P) {
 
   const realInjectedJavaScript = `window.WEBVIEW_BUNDLEID=${id}; ${injectedJavaScript}`;
 
-  return <RNWebView {...otherProps} source={realSource} injectedJavaScript={realInjectedJavaScript} />;
-}
+  return <RNWebView {...otherProps} ref={ref} source={realSource} injectedJavaScript={realInjectedJavaScript} />;
+});
