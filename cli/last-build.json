@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-10-12 09:34:01",
-  "notes": "feat(i18n): ENABLING-911, fr-mq language addition\neat(auth): ENABLING-1326, change version number test id\nfeat(auth): ENABLING-1326, add version number to platform selection screen\nfeat: PEDAGO-4391 add Marelle font to rich-editor\neat(wayf): ENABLING-1318, add and manage wayf version\nfeat(wayf): ENABLING-1318, add and manage wayf version\nrelease: 1.17.9(1170900)\nchore: sync phrase translation branch\nRelease 1.17.8\nrelease: 1.17.8-rc.3(1170810)",
-  "version": "1.17.9-alpha.1(1170901)",
+  "last": "2026-10-21 14:27:54",
+  "notes": "fix(pronote): ORGA-605, SUPPORT-5125 fix carnet-de-bord preloading pronote connectors\nfix(presence): fix missing brace and imports\nfeat(perfs): ENABLING-1335, remove calls to track event\nUpdated translations from Phrase (343)\nfeat(i18n): add missing fr-mq language to phrase auto sync\nUpdated translations from Phrase (342)\nrelease: 1.17.9-alpha.1(1170901)",
+  "version": "1.17.9-alpha.2(1170902)",
   "track": "1.17.9",
-  "order": "alpha.1"
+  "order": "alpha.2"
 }
