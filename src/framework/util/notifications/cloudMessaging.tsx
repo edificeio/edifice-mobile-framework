@@ -24,6 +24,8 @@ const CloudMessagingContext = React.createContext<() => void>(() => {});
 export function CloudMessagingProvider({ children }: PropsWithChildren) {
   const [remoteMessage, setRemoteMessage] = useState<RemoteMessage | null>(null);
   const isInitialRef = React.useRef(true);
+  // Every tab mounts a handler, and they all run before the message is cleared.
+  const handledMessageRef = React.useRef<RemoteMessage | null>(null);
   const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, Action>>();
   const navigation = useNavigation<NavigationProp<ParamListBase, keyof ParamListBase, string>>();
   const navDispatch = useNavigationRedirectionDispatch(isInitialRef.current ? navigation : navigationRef);
@@ -50,7 +52,8 @@ export function CloudMessagingProvider({ children }: PropsWithChildren) {
 
   const handleNotification = React.useCallback(() => {
     try {
-      if (!remoteMessage || !remoteMessage.data) return;
+      if (!remoteMessage || !remoteMessage.data || handledMessageRef.current === remoteMessage) return;
+      handledMessageRef.current = remoteMessage;
 
       // 1. Parse remoteMessage data
       const notificationData = {
