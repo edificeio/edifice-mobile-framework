@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Modal, TouchableWithoutFeedback, View } from 'react-native';
 
+import { useRegisterModalClose } from '~/framework/navigation/modals/modal-dismissal';
+
 import styles from './styles';
 import { ModalWrapperProps } from './types';
 
@@ -12,6 +14,8 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   onClose,
   presentationStyle = 'overFullScreen',
 }) => {
+  useRegisterModalClose(isVisible, onClose);
+
   const handleOverlayPress = React.useCallback(() => {
     if (closeOnOverlayPress) {
       onClose();
