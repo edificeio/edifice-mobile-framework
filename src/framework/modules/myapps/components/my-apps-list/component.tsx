@@ -15,10 +15,7 @@ import { buildAllAppsCategoryList, buildAppItem, isSeparator } from './utils';
 const NUM_COLUMNS = 2;
 
 export const MyAppsList = React.forwardRef<FlashListRef<MyAppsListItem>, MyAppsListProps>(
-  (
-    { apps, emptyScreenConfig, initialScrollAppAddress, isAllAppsFilter, onLongPressApp, onPressApp, onRefresh, refreshing },
-    forwardedRef,
-  ) => {
+  ({ apps, emptyScreenConfig, isAllAppsFilter, onLongPressApp, onPressApp, onRefresh, refreshing }, forwardedRef) => {
     const localRef = React.useRef<FlashListRef<MyAppsListItem>>(null);
 
     React.useImperativeHandle(forwardedRef, () => localRef.current as FlashListRef<MyAppsListItem>);
@@ -76,10 +73,6 @@ export const MyAppsList = React.forwardRef<FlashListRef<MyAppsListItem>, MyAppsL
       [title, text, testID],
     );
 
-    const foundAppIndex = initialScrollAppAddress
-      ? data.findIndex(element => element.type === 'app' && element.app.address === initialScrollAppAddress)
-      : -1;
-
     return (
       <FlashList
         ref={localRef}
@@ -93,7 +86,6 @@ export const MyAppsList = React.forwardRef<FlashListRef<MyAppsListItem>, MyAppsL
         onRefresh={onRefresh}
         refreshing={refreshing}
         ListEmptyComponent={renderEmptyComponent}
-        initialScrollIndex={foundAppIndex === -1 ? undefined : foundAppIndex}
       />
     );
   },

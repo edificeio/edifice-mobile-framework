@@ -8,6 +8,5 @@ export const myAppsRouteNames = {
 export interface IMyAppsNavigationParams extends ParamListBase {
   Home: {
     tabBarVisible?: boolean;
-    initialScrollAppAddress?: string;
   };
 }

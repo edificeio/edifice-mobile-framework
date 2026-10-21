@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ScrollView, ScrollViewProps, StyleSheet, View } from 'react-native';
 
-import { TabActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -22,7 +21,6 @@ import UserList, { IUserListItem } from '~/framework/components/UserList';
 import { ContentLoader } from '~/framework/hooks/loader';
 import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import myAppsModuleConfig from '~/framework/modules/myapps/module-config';
 import { loadCarnetDeBordAction } from '~/framework/modules/widgets/carnet-de-board/actions/carnet-de-bord';
 import {
   CarnetDeBordSection,
@@ -39,8 +37,8 @@ import { ICarnetDeBordStateData } from '~/framework/modules/widgets/carnet-de-bo
 import redirect from '~/framework/modules/widgets/carnet-de-board/service/redirect';
 import { preferences } from '~/framework/modules/widgets/carnet-de-board/storage';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { displayDate } from '~/framework/util/date';
+import { openUrl } from '~/framework/util/linking';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 
 export interface CarnetDeBordScreenDataProps {
@@ -123,6 +121,12 @@ function CarnetDeBordScreen({ data, error, handleLoadData, navigation, session, 
     return connectors;
   }, [session?.rights.apps]);
 
+  const openAddress = React.useMemo(() => {
+    const connector = pronoteConnectorsSorted?.[0];
+    const finalUrl = connector ? `/auth/redirect?url=${encodeURIComponent(connector.address.trim())}` : undefined;
+    return finalUrl;
+  }, [pronoteConnectorsSorted]);
+
   // Data & content
   const loadData = React.useCallback(async () => {
     const savedSelectedId = preferences.getString('carnet-de-bord.selected-user');
@@ -165,15 +169,9 @@ function CarnetDeBordScreen({ data, error, handleLoadData, navigation, session, 
                   title={I18n.get('pronote-initfailed-title')}
                   text={I18n.get('pronote-initfailed-text')}
                   buttonAction={() => {
-                    navigation.goBack();
-                    navigation.dispatch(
-                      TabActions.jumpTo(computeTabRouteName(myAppsModuleConfig.routeName), {
-                        params: { initialScrollAppAddress: pronoteConnectorsSorted?.[0]?.address },
-                        screen: 'myapps',
-                      }),
-                    );
+                    openAddress && openUrl(openAddress);
                   }}
-                  buttonIcon="ui-arrowRight"
+                  buttonIcon="ui-external-link"
                   buttonText={I18n.get('pronote-carnet-de-bord-error-redirect')}
                 />
               ) : (

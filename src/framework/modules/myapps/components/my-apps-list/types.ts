@@ -8,7 +8,6 @@ export interface MyAppsListProps {
   onRefresh?: () => Promise<void>;
   refreshing?: boolean;
   emptyScreenConfig: { text: string; title: string; testID?: string };
-  initialScrollAppAddress?: string;
 }
 
 export type MyAppsListItem = { type: 'app'; app: AppsInfoAggregated } | { type: 'separator' };
