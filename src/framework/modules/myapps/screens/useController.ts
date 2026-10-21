@@ -24,6 +24,7 @@ import {
 import { AppsInfoAggregated, MyAppsFilter, MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 import { getAppModule } from '~/framework/modules/myapps/utils';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
+import { NAVIGATE_CLOSE_DELAY } from '~/framework/navigation/nextTabJump';
 import { getModuleTabRouteName } from '~/framework/navigation/tabTarget';
 import { openUrl } from '~/framework/util/linking';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
@@ -102,11 +103,13 @@ export function useMyAppsHomeController() {
 
       const shouldShow =
         !alreadySeen && onboarding?.version !== ONBOARDING_VERSION && !autoShownOnboardingSessionKeys.has(loginSessionKey);
+      if (!shouldShow) return;
 
-      if (shouldShow) {
+      const showTimer = setTimeout(() => {
         autoShownOnboardingSessionKeys.add(loginSessionKey);
-        requestAnimationFrame(() => modalRef.current?.doShowModal());
-      }
+        modalRef.current?.doShowModal();
+      }, NAVIGATE_CLOSE_DELAY);
+      return () => clearTimeout(showTimer);
     }, [getLoginSessionKey]),
   );
 
