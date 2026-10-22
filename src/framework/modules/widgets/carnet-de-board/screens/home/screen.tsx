@@ -24,6 +24,7 @@ import {
 import { pronoteRouteNames } from '~/framework/modules/widgets/carnet-de-board/navigation';
 import { getChildId } from '~/framework/modules/widgets/model';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { openUrl } from '~/framework/util/linking';
 
 import styles from './styles';
 import { CarnetDeBordScreenProps } from './types';
@@ -105,6 +106,18 @@ export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ naviga
 
   const renderLoading = React.useCallback(() => <CarnetDeBordSectionPlaceholder style={styles.sections} />, []);
 
+  const pronoteConnectorsSorted = React.useMemo(() => {
+    const connectors = session?.rights.apps.filter(app => app.casType === 'PronoteRegisteredService');
+    connectors?.sort((a, b) => String(a.displayName ?? a.name).localeCompare(String(b.displayName ?? b.name)));
+    return connectors;
+  }, [session?.rights.apps]);
+
+  const openAddress = React.useMemo(() => {
+    const connector = pronoteConnectorsSorted?.[0];
+    const finalUrl = connector ? `/auth/redirect?url=${encodeURIComponent(connector.address.trim())}` : undefined;
+    return finalUrl;
+  }, [pronoteConnectorsSorted]);
+
   const renderError = React.useCallback(
     (refreshControl: ScrollViewProps['refreshControl']) => (
       <ScrollView refreshControl={refreshControl}>
@@ -113,13 +126,18 @@ export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ naviga
             svgImage="empty-pronote-uri"
             title={I18n.get('pronote-initfailed-title')}
             text={I18n.get('pronote-initfailed-text')}
+            buttonAction={() => {
+              openAddress && openUrl(openAddress);
+            }}
+            buttonIcon="ui-external-link"
+            buttonText={I18n.get('pronote-carnet-de-bord-error-redirect')}
           />
         ) : (
           <EmptyScreen svgImage="empty-light" title={I18n.get('pronote-nodata-title')} text={I18n.get('pronote-nodata-text')} />
         )}
       </ScrollView>
     ),
-    [error],
+    [error, openAddress],
   );
 
   return (
