@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -8,28 +8,16 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourcePicker from '~/framework/components/explorer/resource-picker';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
-import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
+import { blogRouteNames } from '~/framework/modules/blog/navigation';
 import { dispatchBlogPostOnSuccessAction } from '~/framework/modules/blog/navigation/actions';
 import { BlogList } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-export interface BlogSelectScreenNavParams {
-  blogsData: BlogList;
-  // Where the user started from, which the created post is tracked under.
-  source: string;
-}
-export type BlogSelectScreenProps = NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.home>;
+import type { BlogSelectScreenProps } from './types';
 
-export interface BlogSelectScreenState {
-  blogsData: BlogList;
-}
-
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.home>): NativeStackNavigationOptions => ({
+export const computeNavBar = ({ navigation, route }: BlogSelectScreenProps): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
