@@ -6,13 +6,10 @@
  * - from then on, every change of the store is serialized back to the storage (zustand `subscribe`).
  */
 
-import appConf from '~/framework/util/appConf';
 import { Storage } from '~/framework/util/storage';
 import {
   accountIsActive,
   accountIsLoggable,
-  AccountType,
-  ANONYMOUS_ACCOUNT_ID,
   AuthMixedAccountMap,
   AuthSavedAccount,
   getSerializedLoggedInAccountInfo,
@@ -31,28 +28,6 @@ import {
 import { getActiveAccount, useAccountsStore } from './accounts';
 import { useSignInStore } from './sign-in';
 
-/** Pre-1.12 versions only saved a token, to which we give an anonymous account to be restored. */
-const getAnonymousAccount = (startup: AuthStorageData['startup']): AuthSavedAccount | undefined => {
-  const platform = startup.platform ? appConf.getExpandedPlatform(startup.platform) : undefined;
-  if (!startup.anonymousToken || !platform) return undefined;
-  return {
-    addTimestamp: 0,
-    method: undefined,
-    platform: platform.name,
-    tokens: {
-      access: {
-        expiresAt: startup.anonymousToken.expires_at.toString(),
-        type: startup.anonymousToken.token_type as 'Bearer',
-        value: startup.anonymousToken.access_token,
-      },
-      origin: platform.url,
-      refresh: { value: startup.anonymousToken.refresh_token },
-      scope: startup.anonymousToken.scope.split(' '),
-    },
-    user: { displayName: '', id: ANONYMOUS_ACCOUNT_ID, loginUsed: '', type: AccountType.Guest },
-  } as AuthSavedAccount;
-};
-
 /**
  * Tokens that are never persisted: they are fetched from the server at each login, or when needed.
  */
@@ -64,12 +39,10 @@ const stripVolatileTokens = <T extends AuthSavedAccount>(account: T): T => {
 
 const serializeAccounts = (accounts: AuthMixedAccountMap) =>
   Object.fromEntries(
-    Object.entries(accounts)
-      .filter(([id]) => id !== ANONYMOUS_ACCOUNT_ID) // Anonymous account only exists to be migrated, never saved
-      .map(([id, account]) => [
-        id,
-        stripVolatileTokens(accountIsActive(account) ? getSerializedLoggedInAccountInfo(account) : account),
-      ]),
+    Object.entries(accounts).map(([id, account]) => [
+      id,
+      stripVolatileTokens(accountIsActive(account) ? getSerializedLoggedInAccountInfo(account) : account),
+    ]),
   ) as Record<string, AuthSavedAccount>;
 
 /**
@@ -102,8 +75,6 @@ export const initAccountsStore = () => {
   const accounts: AuthMixedAccountMap = Object.fromEntries(
     Object.entries(readSavedAccounts()).map(([id, account]) => [id, stripVolatileTokens(account)]),
   );
-  const anonymous = getAnonymousAccount(startup);
-  if (anonymous) accounts[ANONYMOUS_ACCOUNT_ID] = anonymous;
   useAccountsStore.getState().hydrate(accounts, readShowWelcome());
 
   unsubscribe?.();
@@ -122,7 +93,7 @@ export const initAccountsStore = () => {
       writeAccounts(serializeAccounts(state.accounts));
       // An account that disappears (removed, or replaced by another one) takes its preferences with it.
       Object.keys(prev.accounts)
-        .filter(id => !(id in state.accounts) && id !== ANONYMOUS_ACCOUNT_ID)
+        .filter(id => !(id in state.accounts))
         .forEach(eraseStorageForAccount);
     }
     if (state.showWelcome !== prev.showWelcome) {
@@ -139,9 +110,7 @@ export const initAccountsStore = () => {
   };
 
   const accountIds = Object.keys(accounts);
-  const startupAccountId = anonymous
-    ? ANONYMOUS_ACCOUNT_ID
-    : (startup.account ?? (accountIds.length === 1 ? accountIds[0] : undefined));
+  const startupAccountId = startup.account ?? (accountIds.length === 1 ? accountIds[0] : undefined);
   return {
     account: startupAccountId !== undefined ? accounts[startupAccountId] : undefined,
     platform: startup.platform,

@@ -12,22 +12,11 @@ import { accountIsLoggable, AuthSavedAccount } from './model';
 
 export const STORAGE_PREFIX = 'auth';
 
-export interface Pre_1_12_OAuthToken {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-  expires_at: Date;
-  refresh_token: string;
-  scope: string;
-}
-
 export interface AuthStorageData {
   'accounts': Record<string, AuthSavedAccount>;
   'startup': {
     account?: string;
     platform?: string;
-    /** used to migrate pre-1.12 automatic connections */
-    anonymousToken?: Pre_1_12_OAuthToken;
   };
   /** Tells if the welcome screen must be shown. True until the user signed in for the first time (then false for ever). */
   'show-onboarding': boolean;
@@ -57,14 +46,7 @@ export const readSavedAccounts = () => {
   ) as Record<string, AuthSavedAccount>;
 };
 
-export const readSavedStartup = () => {
-  let startup = storage.getJSON('startup');
-  const oldCurrentPlatform = Storage.global.getString('currentPlatform'); // pre-1.12 storage
-  if (!startup?.platform && oldCurrentPlatform) startup = { platform: oldCurrentPlatform };
-  const oldCurrentToken = Storage.global.getString('token'); // pre-1.12 storage
-  if (!startup?.account && oldCurrentToken) startup = { ...startup, anonymousToken: JSON.parse(oldCurrentToken) };
-  return { ...startup } as AuthStorageData['startup'];
-};
+export const readSavedStartup = () => storage.getJSON('startup') as AuthStorageData['startup'];
 
 /** Defaults to true: the welcome screen is shown at the first launch of the app. */
 export const readShowWelcome = () => storage.getBoolean('show-onboarding') ?? true;
