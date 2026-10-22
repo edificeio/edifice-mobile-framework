@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-10-21 18:19:58",
-  "notes": "fix(pronote): ORGA-605, SUPPORT-5125 fix carnet-de-bord preloading pronote connectors (2)\nfix: communities not loading\nrelease: 1.17.9-alpha.2(1170902)",
-  "version": "1.17.9-alpha.3(1170903)",
+  "last": "2026-10-22 13:06:45",
+  "notes": "release: 1.17.9-alpha.3(1170903)",
+  "version": "1.17.9-rc.1(1170904)",
   "track": "1.17.9",
-  "order": "alpha.3"
+  "order": "rc.1"
 }
