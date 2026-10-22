@@ -16,13 +16,14 @@ export default StyleSheet.create({
     borderBottomWidth: UI_SIZES.border.thin,
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.minor,
     paddingVertical: UI_SIZES.spacing.tiny,
   },
   filterButton: {
-    backgroundColor: theme.palette.primary.pale,
-    borderRadius: UI_SIZES.radius.input,
+    backgroundColor: theme.palette.primary.feather,
+    borderRadius: UI_SIZES.radius.medium,
     height: getScaleWidth(UI_SIZES.dimensions.height.huge),
     minWidth: FILTER_BUTTON_MIN_WIDTH,
+    paddingHorizontal: UI_SIZES.spacing.small,
   },
 });
