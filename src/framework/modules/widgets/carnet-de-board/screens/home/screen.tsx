@@ -6,7 +6,6 @@ import type { NativeStackNavigationOptions } from '@react-navigation/native-stac
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { NavBarAction } from '~/framework/components/navigation';
-import { PageView } from '~/framework/components/page';
 import { SmallBoldText } from '~/framework/components/text';
 import UserList from '~/framework/components/UserList';
 import { ContentLoader, LoadingState } from '~/framework/hooks/loader';
@@ -141,15 +140,13 @@ export const CarnetDeBordScreen = withSession<CarnetDeBordScreenProps>(({ naviga
   );
 
   return (
-    <PageView>
-      <ContentLoader
-        initialLoadingState={hadData ? LoadingState.DONE : undefined}
-        renderLoading={renderLoading}
-        renderError={renderError}
-        loadContent={load}
-        renderContent={renderContent}
-      />
-    </PageView>
+    <ContentLoader
+      initialLoadingState={hadData ? LoadingState.DONE : undefined}
+      renderLoading={renderLoading}
+      renderError={renderError}
+      loadContent={load}
+      renderContent={renderContent}
+    />
   );
 });
 
