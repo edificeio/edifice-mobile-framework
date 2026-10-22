@@ -52,7 +52,7 @@ export function CloudMessagingProvider({ children }: PropsWithChildren) {
 
   const handleNotification = React.useCallback(() => {
     try {
-      if (!remoteMessage || !remoteMessage.data || handledMessageRef.current === remoteMessage) return;
+      if (!remoteMessage?.data || handledMessageRef.current === remoteMessage) return;
       handledMessageRef.current = remoteMessage;
 
       // 1. Parse remoteMessage data
