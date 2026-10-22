@@ -1,7 +1,7 @@
 import { createActiveAccount, createSavedAccount } from '~/test-utils/auth-accounts';
 import { loadAuthModules } from '~/test-utils/auth-modules';
 
-import { ANONYMOUS_ACCOUNT_ID, AuthRequirement } from '../model';
+import { AuthRequirement } from '../model';
 
 const setup = (options?: Parameters<typeof loadAuthModules>[0]) => {
   const modules = loadAuthModules(options);
@@ -85,40 +85,6 @@ describe('reading the storage (initAccountsStore)', () => {
     seed('accounts', { a: account });
     initAccountsStore();
     expect((useAccountsStore.getState().accounts.a as typeof account).tokens.origin).toBe('https://pf1.test');
-  });
-
-  describe('a launch of a version before 1.12, that only saved a platform and a token', () => {
-    const oldToken = {
-      access_token: 'old-access',
-      expires_at: '2100-01-01T00:00:00.000Z',
-      expires_in: 3600,
-      refresh_token: 'old-refresh',
-      scope: 'auth userinfo',
-      token_type: 'Bearer',
-    };
-
-    it('turns them into an anonymous account to restore', () => {
-      const { initAccountsStore, lib, useAccountsStore } = setup();
-      lib.set('currentPlatform', 'pf1');
-      lib.set('token', JSON.stringify(oldToken));
-      const { account, platform } = initAccountsStore();
-      expect(platform).toBe('pf1');
-      expect(account?.user.id).toBe(ANONYMOUS_ACCOUNT_ID);
-      expect(useAccountsStore.getState().accounts[ANONYMOUS_ACCOUNT_ID]).toBeDefined();
-      const tokens = (account as unknown as { tokens: { refresh: { value: string }; scope: string[]; origin: string } }).tokens;
-      expect(tokens.refresh.value).toBe('old-refresh');
-      expect(tokens.scope).toEqual(['auth', 'userinfo']);
-      expect(tokens.origin).toBe('https://pf1.test');
-    });
-
-    it('never saves the anonymous account', () => {
-      const { initAccountsStore, lib, readJSON, useAccountsStore } = setup();
-      lib.set('currentPlatform', 'pf1');
-      lib.set('token', JSON.stringify(oldToken));
-      initAccountsStore();
-      useAccountsStore.getState().setAccount(createActiveAccount({ id: 'real' }), ANONYMOUS_ACCOUNT_ID);
-      expect(Object.keys(readJSON('accounts'))).toEqual(['real']);
-    });
   });
 });
 

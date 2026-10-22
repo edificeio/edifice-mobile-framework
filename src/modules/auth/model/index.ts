@@ -301,8 +301,6 @@ export enum AuthPendingRedirection {
   RENEW_PASSWORD = 'renew_password',
 }
 
-export const ANONYMOUS_ACCOUNT_ID = 'migration';
-
 /**
  * Associates a saved account to each user id
  */
