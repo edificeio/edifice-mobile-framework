@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-10-22 13:06:45",
-  "notes": "release: 1.17.9-alpha.3(1170903)",
-  "version": "1.17.9-rc.1(1170904)",
+  "last": "2026-10-22 16:02:20",
+  "notes": "fix: ENABLING-1357, SUPPORT-5282 fix initial post-login data loading after requirement\nchore: remove Promise.all for my-apps loading\nUpdated translations from Phrase (347)\nfix(auth): ENABLING-1358, SUPPORT-5506 show requirement before activation/renew\nrelease: 1.17.9-rc.1(1170904)",
+  "version": "1.17.9-rc.2(1170905)",
   "track": "1.17.9",
-  "order": "rc.1"
+  "order": "rc.2"
 }
