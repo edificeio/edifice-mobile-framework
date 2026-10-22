@@ -1,16 +1,10 @@
-import { ThunkDispatch } from 'redux-thunk';
-
 import { I18n } from '~/app/i18n';
-import { getStore } from '~/app/store';
-import Toast from '~/framework/components/toast';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { registerTimelineWorkflow } from '~/framework/util/timelineWorkflows';
 
-import { getPublishableBlogListAction } from './actions';
 import moduleConfig from './module-config';
 import { blogRouteNames } from './navigation';
-import { dispatchBlogPostOnSuccessAction } from './navigation/actions';
 import { Blog } from './reducer';
 
 export const createBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|create';
@@ -71,22 +65,7 @@ export default () =>
     const wk = getBlogWorkflowInformation(session);
     return (
       wk.blog.create && {
-        action: async () => {
-          try {
-            const blogsData = await (getStore().dispatch as ThunkDispatch<any, any, any>)(getPublishableBlogListAction());
-            const hasOneBlog = blogsData?.length === 1;
-
-            if (hasOneBlog) {
-              navigation.navigate(blogRouteNames.blogCreatePost, {
-                blog: blogsData[0],
-                navActionOnSuccess: dispatchBlogPostOnSuccessAction(blogsData[0].id, session),
-                source,
-              });
-            } else navigation.navigate(blogRouteNames.select, { source });
-          } catch {
-            Toast.showError(I18n.get('blog-rights-error-text'));
-          }
-        },
+        action: () => navigation.navigate(blogRouteNames.select, { source }),
         appName: moduleConfig.name,
         icon: {
           android: 'ic_blog',
