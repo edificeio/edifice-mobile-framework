@@ -1,56 +1,61 @@
-import * as React from 'react';
+/**
+ * Blog selection, for a post about to be written.
+ */
+import React from 'react';
 
-import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
-import { useDispatch, useSelector } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
+import { screenOptions } from '~/app/navigation/util';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import ResourcePicker from '~/framework/components/explorer/resource-picker';
-import { selectors } from '~/framework/modules/auth/redux/reducer';
-import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
+import Toast from '~/framework/components/toast';
+import { withSession } from '~/framework/modules/auth/util';
+import moduleConfig from '~/framework/modules/blog/module-config';
 import { blogRouteNames } from '~/framework/modules/blog/navigation';
 import { dispatchBlogPostOnSuccessAction } from '~/framework/modules/blog/navigation/actions';
-import { BlogList } from '~/framework/modules/blog/reducer';
+import { selectors } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
-import { useAppTheme } from '~/framework/modules/myapps/hooks';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { blogService } from '~/framework/modules/blog/service';
+import { API } from '~/framework/modules/explorer/service/types';
+import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
 
 import type { BlogSelectScreenProps } from './types';
 
-export const computeNavBar = ({ navigation, route }: BlogSelectScreenProps): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('blog-select-title'),
-  }),
-});
+export const computeNavBar = screenOptions(() => ({
+  title: I18n.get('blog-select-title'),
+}));
 
-function BlogSelectScreenComponent(props: BlogSelectScreenProps) {
-  const appTheme = useAppTheme('blog');
-  const dispatch = useDispatch() as any; // Thunk dispatch typing
-  const session = useSelector(selectors.session);
-  const [blogsData, setBlogsData] = React.useState<BlogList>(props.route.params.blogsData);
+// contrib is the right needed to post in a blog.
+const blogSelectContext: API.Explorer.ContextQuery = {
+  application: 'blog',
+  resource_type: 'blog',
+  right_type: 'contrib',
+};
 
-  const doGetPublishableBlogList = React.useCallback(async () => {
-    const blogs = (await dispatch(getPublishableBlogListAction())) as unknown as BlogList;
-    if (!blogs) {
-      throw new Error('[doGetPublishableBlogList] failed to retrieve the publishable blog list');
-    }
-    setBlogsData(blogs);
-  }, [dispatch]);
+export default withSession<BlogSelectScreenProps>(({ navigation, route, session, ...props }) => {
+  const hasBlogCreationRights = getBlogWorkflowInformation(session) && getBlogWorkflowInformation(session).blog.create;
+  const isFocused = useIsFocused();
 
-  const onPressBlog = (blog: any) => {
-    if (!session) return;
-    props.navigation.navigate(blogRouteNames.blogCreatePost, {
-      blog,
-      navActionOnSuccess: dispatchBlogPostOnSuccessAction(blog.id, session),
-      source: props.route.params.source,
-    });
-  };
+  // The creation screen needs the blog itself, which the explorer does not carry.
+  const onOpenResource = React.useCallback<NonNullable<ResourceExplorerTemplate.Props['onOpenResource']>>(
+    async r => {
+      if (!isFocused) return;
+      try {
+        const blog = await blogService.get(session, r.resourceId);
+        navigation.navigate(blogRouteNames.blogCreatePost, {
+          blog,
+          navActionOnSuccess: dispatchBlogPostOnSuccessAction(blog.id, session),
+          source: route.params.source,
+        });
+      } catch {
+        Toast.showError(I18n.get('toast-error-text'));
+      }
+    },
+    [isFocused, navigation, route.params.source, session],
+  );
 
-  const renderEmptyBlogList = () => {
-    const hasBlogCreationRights = session && getBlogWorkflowInformation(session)?.blog.create;
-    return (
+  const emptyComponent = React.useMemo(
+    () => (
       <EmptyScreen
         svgImage="empty-search"
         title={I18n.get('blog-select-emptyscreen-title')}
@@ -58,24 +63,20 @@ function BlogSelectScreenComponent(props: BlogSelectScreenProps) {
         buttonText={hasBlogCreationRights ? I18n.get('blog-select-emptyscreen-button') : undefined}
         buttonUrl="/blog#/edit/new"
       />
-    );
-  };
+    ),
+    [hasBlogCreationRights],
+  );
 
   return (
-    <ResourcePicker
-      data={blogsData}
-      emptyComponent={renderEmptyBlogList}
-      onRefresh={doGetPublishableBlogList}
-      onPressItem={onPressBlog}
-      defaultThumbnail={{
-        background: appTheme.colors.pale,
-        fill: appTheme.colors.regular,
-        name: 'blog',
-      }}
+    <ResourceExplorer
+      {...props}
+      navigation={navigation as ResourceExplorerTemplate.NavigationProps['navigation']}
+      route={route as ResourceExplorerTemplate.NavigationProps['route']}
+      moduleConfig={moduleConfig}
+      onOpenResource={onOpenResource}
+      selectors={selectors.explorer}
+      emptyComponent={emptyComponent}
+      context={blogSelectContext}
     />
   );
-}
-
-export const BlogSelectScreen = React.memo(BlogSelectScreenComponent);
-
-export default BlogSelectScreen;
+});
