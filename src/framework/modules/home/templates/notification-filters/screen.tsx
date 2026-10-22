@@ -11,7 +11,7 @@ import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { Svg } from '~/framework/components/picture';
-import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { BodyText, SmallText } from '~/framework/components/text';
 
 import styles from './styles';
 import { NotificationFilterItem, NotificationFilterRowProps, NotificationFiltersTemplateProps } from './types';
@@ -107,10 +107,10 @@ export function NotificationFiltersTemplate({
           accessibilityRole="checkbox"
           accessibilityState={{ checked: isPartiallySelected ? 'mixed' : areAllSelected }}
           testID="notification-filters-select-all">
-          <SmallText>{I18n.get(labelsI18n.selectAll)}</SmallText>
+          <BodyText>{I18n.get(labelsI18n.selectAll)}</BodyText>
           <Checkbox checked={areAllSelected} partialyChecked={isPartiallySelected} onPress={toggleAll} />
         </TouchableOpacity>
-        <SmallBoldText>{I18n.get(labelsI18n.selectedCount, { count: selectedCount, total: items.length })}</SmallBoldText>
+        <SmallText>{I18n.get(labelsI18n.selectedCount, { count: selectedCount, total: items.length })}</SmallText>
       </View>
 
       <FlashList

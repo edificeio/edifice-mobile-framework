@@ -17,7 +17,7 @@ export default StyleSheet.create({
     borderWidth: UI_SIZES.border.thin,
     flexDirection: 'row',
     gap: UI_SIZES.spacing.minor,
-    marginVertical: UI_SIZES.spacing.tiny,
+    marginVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
   },
