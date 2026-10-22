@@ -9,7 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { getStore, IGlobalState } from '~/app/store';
 import { AuthActiveAccount, UserChildrenFlattened } from '~/framework/modules/auth/model';
 import { refreshQueryParamTokenAction } from '~/framework/modules/auth/thunks';
-import { IPronoteConnectorInfo, PronoteCdbInitError } from '~/framework/modules/widgets/carnet-de-board/model/carnet-de-bord';
+import { IPronoteConnectorInfo, PronoteCdbInitError } from '~/framework/modules/widgets/carnet-de-board/model';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 import { sessionFetch } from '~/framework/util/transport';
 import { HTTPError } from '~/framework/util/transport/error';
