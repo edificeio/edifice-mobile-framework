@@ -82,7 +82,7 @@ export default () =>
                 navActionOnSuccess: dispatchBlogPostOnSuccessAction(blogsData[0].id, session),
                 source,
               });
-            } else navigation.navigate(blogRouteNames.select, { blogsData, source });
+            } else navigation.navigate(blogRouteNames.select, { source });
           } catch {
             Toast.showError(I18n.get('blog-rights-error-text'));
           }
