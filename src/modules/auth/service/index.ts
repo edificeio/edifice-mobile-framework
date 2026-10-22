@@ -76,6 +76,7 @@ const createSession = async (
     method,
     publicInfos.userData,
     publicInfos.userPublicInfo,
+    true,
   );
   const result: SignInResult = { session };
 
