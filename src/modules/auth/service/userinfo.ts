@@ -57,13 +57,8 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, { tokens }
       throw new global.Error('fetchUserPublicInfo : User type has not being returned by the server');
     }
 
-    await tokenFetch.json<any>(tokens, `/directory/user/${userinfo.userId}`);
-    await tokenFetch.json<any>(tokens, `/userbook/api/person?id=${userinfo.userId}`);
-
-    const [userdata, userPublicInfo] = await Promise.all([
-      tokenFetch.json<any>(tokens, `/directory/user/${userinfo.userId}`),
-      tokenFetch.json<any>(tokens, `/userbook/api/person?id=${userinfo.userId}`),
-    ]);
+    const userdata = await tokenFetch.json<any>(tokens, `/directory/user/${userinfo.userId}`);
+    const userPublicInfo = await tokenFetch.json<any>(tokens, `/userbook/api/person?id=${userinfo.userId}`);
 
     // We fetch children information only for relative users
     const childrenStructure: UserPrivateData['childrenStructure'] =
