@@ -1420,6 +1420,7 @@
   "pronote-cahierdetextes-empty": "Nessun lavoro per i prossimi 7 giorni",
   "pronote-cahierdetextes-pourdate": "Per {{date}}",
   "pronote-cahierdetextes-title": "Libro di testo",
+  "pronote-carnet-de-bord-error-redirect": "Connettore Pronote",
   "pronote-connectorselector-action": "Apri Pronote",
   "pronote-connectorselector-placeholder": "Scegli la struttura",
   "pronote-connectorselector-title": "Il tuo account è collegato a più sedi.\nScegli l'istituto con cui vuoi connetterti.",
