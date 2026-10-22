@@ -192,9 +192,9 @@ export const getOAuth2AccessToken = {
    * @param saml2 - The SAML2 assertion.
    * @returns A promise that resolves to the fetched token.
    */
-  withSaml2: (platform: Platform, saml2: string) => {
+  withSaml2: async (platform: Platform, saml2: string) => {
     try {
-      return fetchToken(platform, 'saml2', { assertion: saml2 });
+      return await fetchToken(platform, 'saml2', { assertion: saml2 });
     } catch (e) {
       // When login in with saml2, "CREDENTIALS_MISMATCH" is the errcode obtained if the saml token does not link to an actual user account.
       // We override the error type to "SAML_INVALID" in this case.
