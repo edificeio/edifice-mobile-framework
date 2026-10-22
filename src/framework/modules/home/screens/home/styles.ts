@@ -8,7 +8,7 @@ export const ADD_BUTTON_SIZE = getScaleWidth(UI_SIZES.dimensions.height.huge);
 export const styles = StyleSheet.create({
   addButton: {
     alignItems: 'center',
-    backgroundColor: theme.palette.primary.pale,
+    backgroundColor: theme.palette.primary.feather,
     borderRadius: ADD_BUTTON_SIZE / 2,
     gap: UI_SIZES.spacing.minor,
     height: ADD_BUTTON_SIZE,
