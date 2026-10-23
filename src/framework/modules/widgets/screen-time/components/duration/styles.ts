@@ -20,7 +20,7 @@ export default StyleSheet.create({
   },
   root: {
     backgroundColor: theme.palette.grey.white,
-    borderColor: theme.palette.complementary.yellow.light,
+    borderColor: theme.palette.primary.light,
     borderRadius: UI_SIZES.radius.mediumPlus,
     borderWidth: UI_SIZES.border.thin,
     flexDirection: 'row',

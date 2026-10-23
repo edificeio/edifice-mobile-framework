@@ -51,7 +51,7 @@ export default StyleSheet.create({
   },
 
   barHorizontal: {
-    backgroundColor: theme.palette.complementary.yellow.regular,
+    backgroundColor: theme.palette.primary.regular,
     borderRadius: UI_SIZES.radius.medium,
     height: '100%',
   },
