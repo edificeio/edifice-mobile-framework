@@ -14,6 +14,7 @@ import {
 } from '~/modules/auth/model';
 import service from '~/modules/auth/service';
 import type { SignInResult } from '~/modules/auth/service/types';
+import { getPlatformContext } from '~/modules/auth/store/platform-context';
 import { useSignInStore } from '~/modules/auth/store/sign-in';
 import track from '~/modules/auth/tracking';
 import { I18n } from '~/util/i18n';
@@ -95,17 +96,18 @@ export const useSignIn = () => {
   );
 
   /**
-   * Signs in with the credentials that were just set up (activation, password change).
+   * Signs in with the password the user just chose, at the end of an activation, a password renewal or a password change:
+   * these flows create or replace the password, then the user must be signed in with it.
    * If it fails, the user is sent back to the login screen of the platform, where the error is shown.
    */
-  const signInAfterSetup = React.useCallback(
+  const signInWithNewPassword = React.useCallback(
     async (platform: string, credentials: AuthCredentials, accountToReplaceId?: string) => {
       try {
         await onSignedIn(await service.signIn.withCredentials(platform, credentials), accountToReplaceId);
       } catch (e) {
-        console.error('[Auth] Sign in after setup error :', e);
+        console.error('[Auth] Sign in with new password error :', e);
         const { setError, setStatus } = useSignInStore.getState();
-        setStatus({ loginUsed: credentials.username, platform, type: 'restore' });
+        setStatus({ accountId: accountToReplaceId, loginUsed: credentials.username, platform, type: 'restore' });
         setError({ info: e as Error, key: undefined });
         throw e;
       }
@@ -123,7 +125,7 @@ export const useSignIn = () => {
       try {
         await withTracking(track.activation, async () => {
           await service.activateAccount(platform, model);
-          await signInAfterSetup(platform, { password: model.password, username: model.login }, accountToReplaceId);
+          await signInWithNewPassword(platform, { password: model.password, username: model.login }, accountToReplaceId);
         });
       } catch (e) {
         if ((e as IActivationError).name === 'EACTIVATION') throw e;
@@ -132,20 +134,28 @@ export const useSignIn = () => {
         else throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'), '');
       }
     },
-    [signInAfterSetup],
+    [signInWithNewPassword],
   );
 
   /**
    * Changes the password then signs in.
-   * @param passwordRegex regex of the platform password rules, to tell the user why the new password was refused.
+   * The password rules of the platform (already loaded by the screen that asks for the new password) are given to the service,
+   * to tell the user why a new password was refused.
    * @throws a change password error if the password change fails, or the sign-in error.
    */
   const changePassword = React.useCallback(
     async (platform: string, payload: IChangePasswordPayload, options?: { forceChange?: boolean; accountToReplaceId?: string }) => {
-      await service.changePassword(platform, payload, options);
-      await signInAfterSetup(platform, { password: payload.newPassword, username: payload.login }, options?.accountToReplaceId);
+      await service.changePassword(platform, payload, {
+        forceChange: options?.forceChange,
+        passwordRegex: getPlatformContext(platform)?.passwordRegex,
+      });
+      await signInWithNewPassword(
+        platform,
+        { password: payload.newPassword, username: payload.login },
+        options?.accountToReplaceId,
+      );
     },
-    [signInAfterSetup],
+    [signInWithNewPassword],
   );
 
   return { activate, changePassword, withCredentials, withFederation };
