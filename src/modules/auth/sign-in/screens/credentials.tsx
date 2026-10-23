@@ -17,13 +17,22 @@ const SignInCredentialsScreen = React.memo(function ({
   },
 }: StaticScreenProps<{ platform: Platform['name']; accountId?: string; loginUsed?: string }>) {
   const account = useAccountsStore(s => (accountId ? s.accounts[accountId] : undefined));
+  // With several accounts, the login of the targeted one can't be changed (so no account is replaced by another user).
+  // With a single account the user must be able to change it: it is the only way out, as the accounts can't be managed then.
+  const lockLogin = useAccountsStore(s => Object.keys(s.accounts).length > 1);
   const { withCredentials } = useSignIn();
   const handleSignIn = React.useCallback<SignInCredentialsScreenTemplateProps['handleSignIn']>(
     (credentials, key, accountToReplaceId) => withCredentials(platform, credentials, key, accountToReplaceId),
     [platform, withCredentials],
   );
   return (
-    <SignInCredentialsScreenTemplate account={account} handleSignIn={handleSignIn} loginUsed={loginUsed} platform={platform} />
+    <SignInCredentialsScreenTemplate
+      account={account}
+      handleSignIn={handleSignIn}
+      lockLogin={lockLogin}
+      loginUsed={loginUsed}
+      platform={platform}
+    />
   );
 });
 SignInCredentialsScreen.displayName = 'SignInCredentialsScreen';
