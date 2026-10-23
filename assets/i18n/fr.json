@@ -2077,6 +2077,7 @@
   "widget-cantine-menu-type-laitage": "Laitage",
   "widget-cantine-menu-type-plat": "Plat",
   "widget-cantine-title": "Cantine",
+  "widget-cantine-widget-title": "Menu de la cantine",
   "widget-screen-time-day": "Quotidien",
   "widget-screen-time-duration-hours-minutes": "{{hours}}h{{minutes}}min",
   "widget-screen-time-duration-minutes": "{{minutes}}min",
