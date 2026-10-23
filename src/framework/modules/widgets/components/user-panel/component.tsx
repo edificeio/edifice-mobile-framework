@@ -8,7 +8,7 @@ import { WidgetUserSelector, WidgetUserSelectorPlaceholder } from '~/framework/m
 
 import { WidgetUserPanelPlaceholderProps, WidgetUserPanelProps } from './types';
 
-const RING_COLOR = theme.palette.complementary.yellow.regular;
+const RING_COLOR = theme.palette.primary.regular;
 
 const OTHER_USERS_ICON = 'ui-users' as const;
 
