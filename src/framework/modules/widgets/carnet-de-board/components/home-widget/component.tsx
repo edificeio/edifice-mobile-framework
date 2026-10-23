@@ -73,7 +73,7 @@ export function CarnetDeBordWidget({ session }: Readonly<CarnetDeBordWidgetProps
 
   const renderLoaded = () => {
     const panelColors = hasPronote
-      ? { background: theme.palette.complementary.yellow.pale, border: theme.palette.complementary.yellow.light }
+      ? { background: theme.palette.primary.pale, border: theme.palette.primary.light }
       : { background: theme.palette.grey.white, border: theme.palette.grey.cloudy };
 
     return (

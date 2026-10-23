@@ -62,8 +62,8 @@ export function ScreenTimeWidget({ session }: Readonly<ScreenTimeWidgetProps>) {
 
   const renderPanel = () => (
     <WidgetUserPanel
-      background={theme.palette.complementary.yellow.pale}
-      border={theme.palette.complementary.yellow.light}
+      background={theme.palette.primary.pale}
+      border={theme.palette.primary.light}
       users={users}
       selectedId={selected?.id}
       onSelect={select}

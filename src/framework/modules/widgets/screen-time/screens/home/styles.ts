@@ -33,8 +33,8 @@ export default StyleSheet.create({
     marginVertical: UI_SIZES.spacing.tiny,
   },
   summary: {
-    backgroundColor: theme.palette.complementary.yellow.pale,
-    borderColor: theme.palette.complementary.yellow.light,
+    backgroundColor: theme.palette.primary.pale,
+    borderColor: theme.palette.primary.light,
     borderRadius: UI_SIZES.radius.mediumPlus,
     borderWidth: UI_SIZES.border.thin,
     marginBottom: UI_SIZES.spacing.medium,
