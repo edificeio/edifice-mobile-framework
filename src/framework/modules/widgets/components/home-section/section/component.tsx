@@ -14,9 +14,11 @@ export const WidgetsHomeSection = React.memo(({ session }: WidgetsHomeSectionPro
   return (
     <View style={styles.section}>
       <HeadingSText>{I18n.get('home-widgets-title')}</HeadingSText>
-      {widgets.map(widget => (
-        <React.Fragment key={widget.name}>{widget.renderComponent(session)}</React.Fragment>
-      ))}
+      <View style={styles.widgets}>
+        {widgets.map(widget => (
+          <React.Fragment key={widget.name}>{widget.renderComponent(session)}</React.Fragment>
+        ))}
+      </View>
     </View>
   );
 });
@@ -24,5 +26,8 @@ export const WidgetsHomeSection = React.memo(({ session }: WidgetsHomeSectionPro
 const styles = StyleSheet.create({
   section: {
     gap: UI_SIZES.spacing.minor,
+  },
+  widgets: {
+    gap: UI_SIZES.spacing.medium,
   },
 });
