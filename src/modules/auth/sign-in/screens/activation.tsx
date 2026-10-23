@@ -13,16 +13,21 @@ import { I18n } from '~/util/i18n';
 
 const SignInActivationScreen = React.memo(function ({
   route: {
-    params: { credentials, platform },
+    params: { accountId, credentials, platform },
   },
 }: StaticScreenProps<{
   platform: Platform['name'];
   credentials: AuthCredentials;
+  accountId?: string;
 }>) {
   const navigation = useNavigation<SignInActivationScreenTemplateProps['navigation']>();
   const { activate } = useSignIn();
+  const trySubmit = React.useCallback<SignInActivationScreenTemplateProps['trySubmit']>(
+    (activationPlatform, model) => activate(activationPlatform, model, accountId),
+    [accountId, activate],
+  );
   return (
-    <SignInActivationScreenTemplate credentials={credentials} navigation={navigation} platform={platform} trySubmit={activate} />
+    <SignInActivationScreenTemplate credentials={credentials} navigation={navigation} platform={platform} trySubmit={trySubmit} />
   );
 });
 SignInActivationScreen.displayName = 'SignInActivationScreen';

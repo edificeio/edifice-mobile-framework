@@ -46,7 +46,8 @@ export const readSavedAccounts = () => {
   ) as Record<string, AuthSavedAccount>;
 };
 
-export const readSavedStartup = () => storage.getJSON('startup') as AuthStorageData['startup'];
+/** Nothing saved gives an empty startup (first launch, or logged out): callers read its fields without checking it exists. */
+export const readSavedStartup = () => ({ ...storage.getJSON('startup') }) as AuthStorageData['startup'];
 
 /** Defaults to true: the welcome screen is shown at the first launch of the app. */
 export const readShowWelcome = () => storage.getBoolean('show-onboarding') ?? true;

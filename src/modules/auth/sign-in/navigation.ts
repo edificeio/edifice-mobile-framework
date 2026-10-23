@@ -75,7 +75,10 @@ export const getRouteForOneTimeCode = (status: Extract<SignInStatus, { type: 'ac
   const credentials = { password: status.code, username: status.loginUsed };
   switch (status.type) {
     case 'activation':
-      return { name: 'sign-in/activation', params: { credentials, platform: status.platform } } as const;
+      return {
+        name: 'sign-in/activation',
+        params: { accountId: status.accountId, credentials, platform: status.platform },
+      } as const;
     case 'passwordRenew':
       return {
         name: 'sign-in/renew-password',

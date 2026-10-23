@@ -49,9 +49,13 @@ export const useSignIn = () => {
           } catch (e) {
             // "CREDENTIALS_MISMATCH" caused by the use of an activation / renew code
             if (hasOAuth2Code(e, OAuth2ErrorCode.ACTIVATION_CODE)) {
-              useSignInStore
-                .getState()
-                .setStatus({ code: credentials.password, loginUsed: credentials.username, platform, type: 'activation' });
+              useSignInStore.getState().setStatus({
+                accountId: accountToReplaceId,
+                code: credentials.password,
+                loginUsed: credentials.username,
+                platform,
+                type: 'activation',
+              });
               return AuthPendingRedirection.ACTIVATE;
             } else if (hasOAuth2Code(e, OAuth2ErrorCode.PASSWORD_RESET)) {
               useSignInStore.getState().setStatus({
@@ -111,14 +115,15 @@ export const useSignIn = () => {
 
   /**
    * Activates the account then signs in.
+   * @param accountToReplaceId the saved account the sign-in was aiming at, like for a regular sign-in.
    * @throws an activation error, whatever the cause.
    */
   const activate = React.useCallback(
-    async (platform: string, model: IActivationPayload) => {
+    async (platform: string, model: IActivationPayload, accountToReplaceId?: string) => {
       try {
         await withTracking(track.activation, async () => {
           await service.activateAccount(platform, model);
-          await signInAfterSetup(platform, { password: model.password, username: model.login });
+          await signInAfterSetup(platform, { password: model.password, username: model.login }, accountToReplaceId);
         });
       } catch (e) {
         if ((e as IActivationError).name === 'EACTIVATION') throw e;
