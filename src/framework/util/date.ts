@@ -1,8 +1,10 @@
 import moment, { DurationInputArg1, DurationInputArg2, Moment } from 'moment';
 
+import { I18n } from '~/app/i18n';
+
 import { uppercaseFirstLetter } from './string';
 
-import { I18n } from '~/app/i18n';
+export const ISO_DATE_FORMAT = 'YYYY-MM-DD';
 
 export enum DayOfTheWeek {
   MONDAY = 'monday',
