@@ -175,6 +175,15 @@ describe('getSignInNavigationState', () => {
       expect(names(state({ accounts }))).toEqual(['sign-in/accounts']);
     });
 
+    it('goes back to the login of the targeted account when the sign-in following an activation or a password change failed', () => {
+      setPlatforms(['standard']);
+      const status: SignInStatus = { accountId: 'a', loginUsed: 'typed-login', platform: 'pf1', type: 'restore' };
+      const routes = state({ accounts, status }).routes!;
+      expect(routes.map(route => route.name)).toEqual(['sign-in/accounts', 'sign-in/credentials']);
+      // The account is targeted, so the sign-in will replace it (and its own login is the one to fill in)
+      expect(routes[1].params).toEqual({ accountId: 'a', loginUsed: undefined, platform: 'pf1' });
+    });
+
     it('goes on to the login of the account of a failed restore', () => {
       setPlatforms(['standard', 'wayf']);
       const status: SignInStatus = { accountId: 'b', platform: 'pf2', type: 'restore' };
