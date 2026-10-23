@@ -19,7 +19,7 @@ export type SignInStatus =
       loginUsed?: string;
     }
   /** The user entered an activation code instead of its password */
-  | { type: 'activation'; platform: Platform['name']; loginUsed: string; code: string }
+  | { type: 'activation'; platform: Platform['name']; loginUsed: string; code: string; accountId?: string }
   /** The user entered a password renew code instead of its password */
   | { type: 'passwordRenew'; platform: Platform['name']; loginUsed: string; code: string; accountId?: string };
 

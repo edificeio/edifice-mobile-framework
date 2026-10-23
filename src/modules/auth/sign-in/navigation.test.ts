@@ -90,6 +90,14 @@ describe('the screen of an activation or password renew code', () => {
     });
   });
 
+  it('is the activation screen, which also knows the account if there is one', () => {
+    const status: SignInStatus = { accountId: 'acc1', code: '123', loginUsed: 'login', platform: 'pf1', type: 'activation' };
+    expect(getRouteForOneTimeCode(status)).toEqual({
+      name: 'sign-in/activation',
+      params: { accountId: 'acc1', credentials: { password: '123', username: 'login' }, platform: 'pf1' },
+    });
+  });
+
   it('is the renew password screen, which also knows the account if there is one', () => {
     const status: SignInStatus = { accountId: 'acc1', code: '456', loginUsed: 'login', platform: 'pf1', type: 'passwordRenew' };
     expect(getRouteForOneTimeCode(status)).toEqual({
