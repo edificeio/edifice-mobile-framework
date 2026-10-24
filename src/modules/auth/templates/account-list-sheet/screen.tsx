@@ -6,7 +6,7 @@ import { FlatList } from 'react-native-gesture-handler';
 
 import { sheetSpacingStyles, useFormSheetStyleFix } from '~/app/navigation-new/layout';
 import toast from '~/framework/components/toast';
-import { AccountList } from '~/modules/auth/components/account-list';
+import { AccountList } from '~/modules/auth/components';
 import { removeAccount } from '~/modules/auth/flows';
 import { type AuthActiveAccount, type AuthSavedAccount, getOrderedAccounts } from '~/modules/auth/model';
 import { getActiveAccount, useAccountsStore } from '~/modules/auth/store/accounts';

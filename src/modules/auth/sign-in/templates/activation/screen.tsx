@@ -19,7 +19,7 @@ import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { Svg } from '~/framework/components/picture';
 import { HeadingSText, SmallActionText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
-import { usePlatformAuthContext, usePlatformAuthLegalUrls } from '~/modules/auth/hooks/use-platform-config';
+import { usePlatformAuthContext, usePlatformAuthLegalUrls } from '~/modules/auth/hooks';
 import { IActivationError } from '~/modules/auth/model';
 import { Loading } from '~/ui/Loading';
 import { ValidatorBuilder } from '~/util/form';

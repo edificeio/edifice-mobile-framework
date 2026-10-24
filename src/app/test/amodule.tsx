@@ -9,9 +9,9 @@ import { defineModal, defineScreen, sharedTransitions, StackNavigation } from '~
 import { PrimaryButton } from '~/framework/components/button';
 import { BodyText } from '~/framework/components/text';
 import { useStorageNumber } from '~/framework/util/storage/hooks';
-import { AccountsButton } from '~/modules/auth/components/accounts-button';
+import { AccountsButton } from '~/modules/auth/components';
 import { logout } from '~/modules/auth/flows';
-import { withSession } from '~/modules/auth/hoc/with-session';
+import { withSession } from '~/modules/auth/hoc';
 
 import { preferences, storage } from './amodule-storage';
 
