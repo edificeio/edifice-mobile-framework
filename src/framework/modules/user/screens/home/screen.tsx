@@ -40,7 +40,7 @@ import BuildInfo from '~/framework/util/build-info';
 import { handleAction } from '~/framework/util/redux/actions';
 import { platformURISource } from '~/framework/util/transport';
 import { useZendesk } from '~/framework/util/zendesk';
-import { AccountsButton } from '~/modules/auth/components/accounts-button';
+import { AccountsButton } from '~/modules/auth/components';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 import { I18n } from '~/util/i18n';
 
