@@ -11,7 +11,7 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { Svg } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { usePlatformAuthContext } from '~/modules/auth/hooks/use-platform-config';
+import { usePlatformAuthContext } from '~/modules/auth/hooks';
 import { IChangePasswordError } from '~/modules/auth/model';
 import { Loading } from '~/ui/Loading';
 import { ValueChangeArgs } from '~/util/form';

@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 import { StaticScreenProps } from '@react-navigation/native';
 
 import { EntModule } from '~/app/module';
-import { AccountsButton } from '~/modules/auth/components/accounts-button';
+import { AccountsButton } from '~/modules/auth/components';
 
 function BModuleHomeScreen({}: StaticScreenProps<{
   bParam: boolean;
