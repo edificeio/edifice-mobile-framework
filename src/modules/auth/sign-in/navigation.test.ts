@@ -127,6 +127,10 @@ describe('getSignInNavigationState', () => {
       expect(names(state())).toEqual([multiple ? 'sign-in/platforms' : loginScreen]);
     });
 
+    it('starts with the introduction screen alone when it is asked (add-account modal), whatever the platforms', () => {
+      expect(names(state({ showIntroduction: true }))).toEqual(['sign-in/introduction']);
+    });
+
     it('puts the welcome screen first when it is shown, whatever comes next', () => {
       expect(names(state({ accounts: saved(), showWelcome: true }))[0]).toBe('sign-in/welcome');
     });
@@ -156,6 +160,11 @@ describe('getSignInNavigationState', () => {
       const status: SignInStatus = { code: '1', loginUsed: 'login', platform: 'pf1', type: 'activation' };
       expect(names(state({ status }))).toEqual(['sign-in/activation']);
       expect(names(state({ showWelcome: true, status }))).toEqual(['sign-in/welcome', 'sign-in/activation']);
+    });
+
+    it('does not go through the introduction screen', () => {
+      const status: SignInStatus = { code: '1', loginUsed: 'login', platform: 'pf1', type: 'activation' };
+      expect(names(state({ showIntroduction: true, status }))).toEqual(['sign-in/activation']);
     });
 
     it('ignores the saved accounts', () => {
