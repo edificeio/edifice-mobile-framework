@@ -11,6 +11,7 @@ import SignInActivationScreen from './screens/activation';
 import SignInCredentialsScreen from './screens/credentials';
 import SignInDiscoveryClassScreen from './screens/discovery-class';
 import AuthForgotScreen from './screens/forgot';
+import SignInIntroductionScreen from './screens/introduction';
 import AuthPlatformsScreen from './screens/platforms';
 import SignInRedirectScreen from './screens/redirect';
 import SignInRenewPasswordScreen from './screens/renew-password';
@@ -28,6 +29,7 @@ export default new CoreModule({
     'sign-in/activation': SignInActivationScreen,
     'sign-in/credentials': SignInCredentialsScreen,
     'sign-in/discovery-class': SignInDiscoveryClassScreen,
+    'sign-in/introduction': SignInIntroductionScreen,
     'sign-in/platforms': AuthPlatformsScreen,
     'sign-in/redirect': SignInRedirectScreen,
     'sign-in/renew-password': SignInRenewPasswordScreen,

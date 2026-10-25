@@ -94,35 +94,40 @@ export const getRouteForOneTimeCode = (status: Extract<SignInStatus, { type: 'ac
  * While `showWelcome` is true (until the user signed in once), the welcome screen comes first, so the user can go back to it.
  * Then the user lands on the screen of its situation:
  * - fresh start (no account, no status): welcome screen, or platforms / login screen if the welcome screen is not shown anymore
- *   (e.g. all the accounts were removed)
+ *   (e.g. all the accounts were removed). With `showIntroduction` (add-account modal), the introduction screen comes first instead:
+ *   it is alone, the user goes on from it
  * - activation / password renew code: matching screen
  * - saved accounts: accounts selection (several accounts) or login screen of the account / platform
  */
 export const getSignInNavigationState = ({
-  accounts,
+  accounts = {},
   lastDeletedAccount,
-  showWelcome,
+  showIntroduction = false,
+  showWelcome = false,
   status,
 }: {
-  accounts: AuthMixedAccountMap;
+  accounts?: AuthMixedAccountMap;
   lastDeletedAccount?: string;
+  /** The introduction screen (what having several accounts means) comes first. Used by the add-account modal, not by the main sign-in. */
+  showIntroduction?: boolean;
   /** The welcome screen comes first, until the user signed in once (see `showWelcome` of the accounts store). */
-  showWelcome: boolean;
+  showWelcome?: boolean;
   status?: SignInStatus;
 }): PartialState<NavigationState> => {
-  const routes: PartialState<NavigationState>['routes'] = showWelcome ? [{ name: 'sign-in/welcome' }] : [];
+  const firstRoute = showWelcome ? { name: 'sign-in/welcome' } : showIntroduction ? { name: 'sign-in/introduction' } : undefined;
+  const routes: PartialState<NavigationState>['routes'] = firstRoute ? [firstRoute] : [];
   const accountIds = Object.keys(accounts);
   const nbAccounts = accountIds.length;
 
-  // A. Activation & Password renew
+  // A. Activation & Password renew. The welcome screen stays below (the user can go back to it), the introduction screen does not:
+  // the user already is past it, as it leads to the login.
   if (status?.type === 'activation' || status?.type === 'passwordRenew') {
-    routes.push(getRouteForOneTimeCode(status));
-    return { routes, stale: true };
+    return { routes: [...(showWelcome ? routes : []), getRouteForOneTimeCode(status)], stale: true };
   }
 
-  // B. Nothing to start from: the welcome screen, or if it is not shown anymore the way to log in.
+  // B. Nothing to start from: the welcome (or introduction) screen, or if there is none the way to log in.
   if (nbAccounts === 0 && !status) {
-    if (!showWelcome) routes.push(getRouteForOnboarding());
+    if (!firstRoute) routes.push(getRouteForOnboarding());
     return { routes, stale: true };
   }
 
@@ -175,15 +180,13 @@ export const useLoadAccountNavigationState = () => {
 
 /**
  * Navigation state of the sign-in screens when an account is added to the existing ones: the saved accounts and the welcome
- * screen are ignored, the user starts from the platforms / login screen.
- * Only an activation / password renew code changes that: it leads to its own screen.
+ * screen are ignored. The user starts from the introduction screen, always (whatever the accounts or `showWelcome` are), then goes on
+ * to the platforms / login screen.
+ * Only an activation / password renew code changes that: it leads to its own screen, without the introduction.
  */
 export const useAddAccountNavigationState = () => {
   const status = useSignInStore(s => s.status);
   const attempt = useSignInStore(s => s.attempt);
   const oneTimeCodeStatus = status?.type === 'activation' || status?.type === 'passwordRenew' ? status : undefined;
-  return useStableNavigationState(
-    getSignInNavigationState({ accounts: {}, showWelcome: false, status: oneTimeCodeStatus }),
-    attempt,
-  );
+  return useStableNavigationState(getSignInNavigationState({ showIntroduction: true, status: oneTimeCodeStatus }), attempt);
 };
