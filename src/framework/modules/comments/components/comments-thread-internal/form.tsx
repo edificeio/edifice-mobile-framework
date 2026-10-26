@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ListRenderItemInfo, StyleProp, View, ViewStyle } from 'react-native';
+import { ListRenderItemInfo, Pressable, StyleProp, View, ViewStyle } from 'react-native';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { KeyboardStickyView, KeyboardStickyViewProps, useKeyboardState } from 'react-native-keyboard-controller';
@@ -13,6 +13,8 @@ import { SingleAvatar } from '~/framework/components/avatar';
 import { PrimaryButton, TerciaryButton } from '~/framework/components/button';
 import { UI_STYLES } from '~/framework/components/constants';
 import { ChatTextArea, ChatTextAreaProps } from '~/framework/components/inputs/text2';
+import { chat as chatInputStyles } from '~/framework/components/inputs/text2/style';
+import { SmallItalicText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { config } from '~/framework/modules/comments';
@@ -21,10 +23,14 @@ import { CommentsThreadContext } from './context';
 import styles from './styles';
 import { CommentsThreadInternalProps, CommentsThreadInternals } from './types';
 
+const FAKE_INPUT_STYLE = [UI_STYLES.flex1, chatInputStyles.wrapper, styles.fakeInput];
+
 export const CommentsThreadAddForm = ({
+  onAddRichMessage,
   onBlur,
   onFocus,
   onSubmit,
+  placeholder = I18n.get('comment-add-comment'),
   ref,
   stickyOffset = {},
   style,
@@ -32,7 +38,9 @@ export const CommentsThreadAddForm = ({
   style?: AnimatedStyle<ViewStyle>;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
+  onAddRichMessage?: CommentsThreadInternalProps['onAddRichMessage'];
   onSubmit?: CommentsThreadInternalProps['onSubmit'];
+  placeholder?: string;
   ref?: ChatTextAreaProps['ref'];
   stickyOffset?: KeyboardStickyViewProps['offset'];
 }) => {
@@ -52,6 +60,12 @@ export const CommentsThreadAddForm = ({
     }
   }, [dispatch, newCommentValue, onSubmit]);
   const session = useSelector(selectors.session);
+  const onChangeText = React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
+    text => {
+      dispatch({ newCommentValue: text });
+    },
+    [dispatch],
+  );
 
   const overscrollSize = useKeyboardState(s => s.height) + bottomInset;
   const stickyOverscrollStyle = React.useMemo(
@@ -71,29 +85,34 @@ export const CommentsThreadAddForm = ({
             [dispatch],
           )}>
           <SingleAvatar size="md" userId={session?.user.id} />
-          <ChatTextArea
-            ref={ref}
-            maxLength={config.maxLength}
-            wrapperStyle={[UI_STYLES.flex1]}
-            value={newCommentValue}
-            onChangeText={React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
-              text => {
-                dispatch({ newCommentValue: text });
-              },
-              [dispatch],
-            )}
-            editable={!isSending}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            placeholder={I18n.get('comment-add-comment')}
-          />
-          <PrimaryButton
-            onPress={onPress}
-            testID="comment-add"
-            disabled={!newCommentValue.length}
-            icon="ui-send"
-            loading={isSending}
-          />
+          {onAddRichMessage ? (
+            <Pressable style={FAKE_INPUT_STYLE} onPress={onAddRichMessage} testID="open-editor-modal">
+              <SmallItalicText style={styles.fakeInputPlaceholder} numberOfLines={1}>
+                {placeholder}
+              </SmallItalicText>
+            </Pressable>
+          ) : (
+            <>
+              <ChatTextArea
+                ref={ref}
+                maxLength={config.maxLength}
+                wrapperStyle={[UI_STYLES.flex1]}
+                value={newCommentValue}
+                onChangeText={onChangeText}
+                editable={!isSending}
+                onFocus={onFocus}
+                onBlur={onBlur}
+                placeholder={placeholder}
+              />
+              <PrimaryButton
+                onPress={onPress}
+                testID="comment-add"
+                disabled={!newCommentValue.length}
+                icon="ui-send"
+                loading={isSending}
+              />
+            </>
+          )}
         </View>
       </KeyboardStickyView>
     </Animated.View>

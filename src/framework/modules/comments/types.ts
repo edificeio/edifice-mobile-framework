@@ -12,6 +12,7 @@ interface CommonItemData {
   authorName: string;
   authorAccountType: AccountType;
   date: Temporal.Instant;
+  hidden?: boolean;
 }
 interface CommonDeletedItemData extends CommonItemData {
   deleted: true;

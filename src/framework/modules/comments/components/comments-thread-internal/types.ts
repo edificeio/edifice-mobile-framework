@@ -40,11 +40,15 @@ export type CommentsThreadInternalProps<
 > &
   CommentsThreadEvents & {
     AnimatedListComponent?: ComponentType<CustomListProps>;
+    addPlaceholder?: string;
+    alwaysShowCommentField?: boolean;
     canAddComment: boolean;
     canAddReply: boolean;
-    alwaysShowCommentField?: boolean;
     data: CommentsThreadInternals.Item[];
+    deletedContentPlaceholder?: string;
     focusItem?: CommentsThread.AnyActualItem['id'];
+    onAddRichMessage?: () => void;
+    onEditRichMessage?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem) => void;
     onUnfoldReplies?: (id: string, start: number, count: number) => void;
   };
 
@@ -104,6 +108,7 @@ export namespace CommentsThreadInternals {
     onUnfoldReplies?: (id: string, start: number, count: number) => void;
     canAddComment?: boolean;
     canAddReply?: boolean;
+    deletedContentPlaceholder?: string;
     onPressReply?: (item: CommentsThreadInternals.CommentItem, index: number) => void;
     onSendEdit?: CommentsThreadInternalProps['onEdit'];
     inputRef?: ChatTextAreaProps['ref'];

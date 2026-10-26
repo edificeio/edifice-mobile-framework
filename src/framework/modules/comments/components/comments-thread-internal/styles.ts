@@ -51,6 +51,14 @@ export default StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.big,
     paddingVertical: UI_SIZES.spacing.minor,
   },
+  fakeInput: {
+    height: UI_SIZES.elements.avatar.md,
+    justifyContent: 'center',
+    paddingHorizontal: UI_SIZES.spacing.small,
+  },
+  fakeInputPlaceholder: {
+    color: theme.palette.grey.graphite,
+  },
   itemAuthor: {
     flexShrink: 1,
   },

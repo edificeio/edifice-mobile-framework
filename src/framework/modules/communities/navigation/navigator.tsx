@@ -1,6 +1,9 @@
 import * as React from 'react';
 
 import moduleConfig from '~/framework/modules/communities/module-config';
+import CommunitiesDiscussionMessageEditorScreen, {
+  DiscussionMessageEditorScreenOptions as discussionMessageEditorNavBar,
+} from '~/framework/modules/communities/screens/discussion-message-editor';
 import CommunitiesDiscussionDetailsScreen, {
   DiscussionDetailsScreenOptions as discussionDetailsNavBar,
 } from '~/framework/modules/communities/screens/discussions-details';
@@ -75,8 +78,15 @@ export default () =>
           options={joinConfirmNavBar}
         />
       </Stack.Group>
+      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+        <Stack.Screen
+          name={communitiesRouteNames.discussionMessageEditor}
+          component={CommunitiesDiscussionMessageEditorScreen}
+          options={discussionMessageEditorNavBar}
+        />
+      </Stack.Group>
     </>
   ));
 
-setModalModeForRoutes([communitiesRouteNames.joinConfirm]);
+setModalModeForRoutes([communitiesRouteNames.joinConfirm, communitiesRouteNames.discussionMessageEditor]);
 setCrossIconBlackForRoutes([communitiesRouteNames.joinConfirm]);

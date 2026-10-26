@@ -5,6 +5,7 @@ import { MessageDto } from '@edifice.io/community-client-rest-rn';
 import Animated, { useAnimatedRef, useScrollOffset } from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { LOADING_ITEM_DATA, PaginatedFlatListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -18,13 +19,8 @@ import { CommentDeletedItem, CommentItem } from '~/framework/modules/comments/ty
 import { toInstant } from '~/framework/modules/communities/adapter';
 import DiscussionHeader from '~/framework/modules/communities/components/discussions/header';
 import { useCollapsibleDiscussionHeader } from '~/framework/modules/communities/hooks/use-collapsible-discussion-header';
-import {
-  createMessage,
-  deleteMessage,
-  getDiscussion,
-  getMessages,
-  updateMessage,
-} from '~/framework/modules/communities/service/discussions';
+import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
+import { deleteMessage, getDiscussion, getMessages } from '~/framework/modules/communities/service/discussions';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getDiscussionStatus } from '~/framework/modules/communities/utils';
 
@@ -42,7 +38,7 @@ const parseAccountTypesMap = {
   Teacher: AccountType.Teacher,
 } as const;
 
-export const DiscussionDetailsScreenOptions = screenOptions(() => ({ headerShadowVisible: false, headerTitle: '' }));
+export const DiscussionDetailsScreenOptions = screenOptions(() => ({ headerTitle: '' }));
 
 function hydrateMessage(message: MessageDto): Omit<CommentItem, 'replies'> | Omit<CommentDeletedItem, 'replies'> {
   const common = {
@@ -50,62 +46,106 @@ function hydrateMessage(message: MessageDto): Omit<CommentItem, 'replies'> | Omi
     authorId: message.createdBy.entId,
     authorName: message.createdBy.displayName,
     date: toInstant(message.updatedAt ?? message.createdAt)!,
+    hidden: message.isFirstMessage,
     id: message.id.toString(),
   };
   return message.deleted ? { ...common, deleted: true as const } : { ...common, content: message.htmlContent, isRichContent: true };
 }
 
 export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function DiscussionDetailsScreen({
+  navigation,
   route: {
-    params: { communityId, discussionId },
+    params: { communityId, discussionId, lastMutation },
   },
   session,
 }) {
   const dispatch = useDispatch();
   const discussion = useSelector(communitiesSelectors.getCommunityDiscussion(communityId, discussionId));
   const [messages, setMessages] = React.useState<PaginatedCommentsListProps['data']>([]);
-  // const [totalMessages, setTotalMessages] = React.useState<number>();
-  // const [isLoadingMore, setIsLoadingMore] = React.useState(false);
   const scrollRef = useAnimatedRef<Animated.FlatList<CommentsThreadInternals.Item>>();
   const scrollOffset = useScrollOffset(scrollRef);
   const { collapse, expandedBandHeight } = useCollapsibleDiscussionHeader(scrollOffset);
+
+  const fetchDiscussion = React.useCallback(async () => {
+    const loaded = await getDiscussion(session, communityId, discussionId);
+    dispatch(communitiesActions.loadCommunityDiscussions(communityId, { [loaded.id]: loaded }));
+  }, [communityId, discussionId, dispatch, session]);
+
+  // Fetch discussion if it's missing from the store
+  const hasDiscussion = !!discussion;
+  React.useEffect(() => {
+    if (hasDiscussion) return;
+    let cancelled = false;
+    fetchDiscussion().catch(e => {
+      if (cancelled) return;
+      console.error('Error while loading community discussion', e);
+      toast.showError();
+      if (navigation.canGoBack()) navigation.goBack();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchDiscussion, hasDiscussion, navigation]);
 
   const onPageReached = React.useCallback<
     NonNullable<PaginatedFlatListProps<Omit<CommentItem, 'replies'> | Omit<CommentDeletedItem, 'replies'>>['onPageReached']>
   >(
     async (page, reloadAll) => {
-      if (page === 0 || reloadAll) {
-        const loaded = await getDiscussion(session, communityId, discussionId);
-        dispatch(communitiesActions.loadCommunityDiscussions(communityId, { [loaded.id]: loaded }));
-      }
+      if (page === 0 || reloadAll) await fetchDiscussion();
 
       const { messages: loadedMessages, total } = await getMessages(session, communityId, discussionId, page, PAGE_SIZE);
       const newData = loadedMessages.map(hydrateMessage);
       setMessages(previousData => staleOrSplice({ newData, previousData, reloadAll, start: page * PAGE_SIZE, total }));
     },
-    [communityId, discussionId, dispatch, session],
+    [communityId, discussionId, fetchDiscussion, session],
   );
 
-  const onSubmit = React.useCallback<NonNullable<PaginatedCommentsListProps['onSubmit']>>(
-    async data => {
-      await createMessage(session, communityId, discussionId, data.content);
-      await onPageReached(Math.floor((messages.length + 1) / PAGE_SIZE), true);
-      requestAnimationFrame(() => {
-        scrollRef.current?.scrollToEnd({ animated: true });
+  const onAddRichMessage = React.useCallback(() => {
+    navigation.navigate(communitiesRouteNames.discussionMessageEditor, { communityId, discussionId });
+  }, [communityId, discussionId, navigation]);
+
+  const onEditRichMessage = React.useCallback<NonNullable<PaginatedCommentsListProps['onEditRichMessage']>>(
+    item => {
+      navigation.navigate(communitiesRouteNames.discussionMessageEditor, {
+        communityId,
+        discussionId,
+        initialContentHtml: item.content,
+        messageId: Number(item.id),
       });
     },
-    [communityId, discussionId, messages.length, onPageReached, scrollRef, session],
+    [communityId, discussionId, navigation],
   );
 
-  const onEdit = React.useCallback<NonNullable<PaginatedCommentsListProps['onEdit']>>(
-    async (data, id) => {
-      const updated = hydrateMessage(await updateMessage(session, communityId, discussionId, Number(id), data.content));
-      setMessages(previous =>
-        previous.map(message => (message !== LOADING_ITEM_DATA && message.id === updated.id ? updated : message)),
+  // Reload the affected page when coming back from the message editor
+  const messagesRef = React.useRef(messages);
+  messagesRef.current = messages;
+  const handledMutationRef = React.useRef<number>(undefined);
+  React.useEffect(() => {
+    if (!lastMutation || handledMutationRef.current === lastMutation.at) return;
+    handledMutationRef.current = lastMutation.at;
+    const currentMessages = messagesRef.current;
+    if (lastMutation.type === 'created') {
+      onPageReached(Math.floor(currentMessages.length / PAGE_SIZE), true)
+        .then(() => {
+          requestAnimationFrame(() => {
+            scrollRef.current?.scrollToEnd({ animated: true });
+          });
+        })
+        .catch(e => {
+          console.error('Error while reloading community discussion messages', e);
+          toast.showError();
+        });
+    } else {
+      const index = currentMessages.findIndex(
+        message => message !== LOADING_ITEM_DATA && message.id === lastMutation.messageId.toString(),
       );
-    },
-    [communityId, discussionId, session],
-  );
+      if (index === -1) return;
+      onPageReached(Math.floor(index / PAGE_SIZE)).catch(e => {
+        console.error('Error while reloading community discussion messages', e);
+        toast.showError();
+      });
+    }
+  }, [lastMutation, onPageReached, scrollRef]);
 
   const onDelete = React.useCallback<NonNullable<PaginatedCommentsListProps['onDelete']>>(
     async id => {
@@ -152,11 +192,13 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
         ListHeaderComponent={listHeader}
         canAddComment={true}
         allowReplies={false}
+        deletedContentPlaceholder={I18n.get('communities-discussion-message-deleted')}
         scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
         contentInsetAdjustmentBehavior="never"
-        onEdit={onEdit}
         onDelete={onDelete}
-        onSubmit={onSubmit}
+        onAddRichMessage={onAddRichMessage}
+        onEditRichMessage={onEditRichMessage}
+        addPlaceholder={I18n.get('communities-discussion-message-add')}
       />
       <DiscussionHeader
         authorName={discussion.createdBy.displayName}

@@ -36,15 +36,19 @@ import { CommentsThreadInternalProps, CommentsThreadInternals } from './types';
 export const DefaultAnimatedListComponent = Animated.FlatList<CommentsThreadInternals.Item>;
 
 export function CommentsThreadInternal({
+  addPlaceholder,
   alwaysShowCommentField = false,
   AnimatedListComponent = DefaultAnimatedListComponent,
   canAddComment: _canAddComment,
   canAddReply: _canAddReply,
   data,
+  deletedContentPlaceholder,
   focusItem,
   ListHeaderComponent: _ListHeaderComponent,
+  onAddRichMessage,
   onDelete,
   onEdit,
+  onEditRichMessage,
   onReply,
   onScroll: _onScroll,
   onSubmit,
@@ -211,6 +215,10 @@ export function CommentsThreadInternal({
 
   const onPressEdit = React.useCallback<NonNullable<CommentsThreadInternals.ItemProps['onPressEdit']>>(
     item => {
+      if (onEditRichMessage) {
+        onEditRichMessage(item);
+        return;
+      }
       const beginEdit = () => {
         context[1]({ editHasChanges: false, editId: item.id, editValue: item.content });
         requestAnimationFrame(() => {
@@ -220,7 +228,7 @@ export function CommentsThreadInternal({
       if (hasChangesInInlineEditingFrom(item)) confirmQuitEdit(beginEdit);
       else beginEdit();
     },
-    [confirmQuitEdit, context, hasChangesInInlineEditingFrom],
+    [confirmQuitEdit, context, hasChangesInInlineEditingFrom, onEditRichMessage],
   );
 
   const onPressDelete = React.useCallback<NonNullable<CommentsThreadInternals.ItemProps['onPressDelete']>>(
@@ -244,21 +252,33 @@ export function CommentsThreadInternal({
   );
 
   const renderItem = React.useCallback<NonNullable<FlatListProps<CommentsThreadInternals.Item>['renderItem']>>(
-    info => (
-      <CommentsThreadComponents.Item
-        {...info}
-        canAddReply={canAddReply}
-        canAddComment={canAddComment}
-        onPressReply={onPressReply}
-        onPressEdit={onPressEdit}
-        onSendEdit={onEdit}
-        onPressDelete={onPressDelete}
-        onUnfoldReplies={unfoldReplies}
-        inputRef={inlineEditRef}
-        listRef={listRef}
-      />
-    ),
-    [canAddReply, canAddComment, listRef, onEdit, onPressDelete, onPressEdit, onPressReply, unfoldReplies],
+    info =>
+      'hidden' in info.item && info.item.hidden ? null : (
+        <CommentsThreadComponents.Item
+          {...info}
+          canAddReply={canAddReply}
+          canAddComment={canAddComment}
+          deletedContentPlaceholder={deletedContentPlaceholder}
+          onPressReply={onPressReply}
+          onPressEdit={onPressEdit}
+          onSendEdit={onEdit}
+          onPressDelete={onPressDelete}
+          onUnfoldReplies={unfoldReplies}
+          inputRef={inlineEditRef}
+          listRef={listRef}
+        />
+      ),
+    [
+      canAddReply,
+      canAddComment,
+      deletedContentPlaceholder,
+      listRef,
+      onEdit,
+      onPressDelete,
+      onPressEdit,
+      onPressReply,
+      unfoldReplies,
+    ],
   );
 
   const keyExtractor = React.useCallback<NonNullable<FlatListProps<CommentsThreadInternals.Item>['keyExtractor']>>(item => {
@@ -308,7 +328,9 @@ export function CommentsThreadInternal({
       />
       {canAddComment && !isInlineEditing && (
         <CommentsThreadAddForm
+          onAddRichMessage={onAddRichMessage}
           onSubmit={onSubmit}
+          placeholder={addPlaceholder}
           style={inputStyle}
           onFocus={onFocus}
           onBlur={onBlur}
