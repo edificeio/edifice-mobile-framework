@@ -33,7 +33,7 @@ const blogSelectContext: API.Explorer.ContextQuery = {
 };
 
 export default withSession<BlogSelectScreenProps>(({ navigation, route, session, ...props }) => {
-  const hasBlogCreationRights = getBlogWorkflowInformation(session) && getBlogWorkflowInformation(session).blog.create;
+  const hasBlogCreationRights = getBlogWorkflowInformation(session).blog.create;
   const isFocused = useIsFocused();
 
   // The creation screen needs the blog itself, which the explorer does not carry.
