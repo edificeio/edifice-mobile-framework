@@ -42,7 +42,7 @@ export function WidgetPanel({ background, border, children, header, radius, styl
   return (
     <View ref={panelRef} style={style}>
       {path && size ? (
-        <RNSvg style={StyleSheet.absoluteFill} width={size.width} height={size.height} pointerEvents="none">
+        <RNSvg style={StyleSheet.absoluteFill} pointerEvents="none">
           <Path d={path} fill={background} stroke={border} strokeWidth={PANEL_STROKE} />
         </RNSvg>
       ) : null}
