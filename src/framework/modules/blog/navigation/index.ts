@@ -2,14 +2,14 @@ import { ParamListBase } from '@react-navigation/native';
 
 import moduleConfig from '~/framework/modules/blog/module-config';
 import type { BlogPostDetailsScreenNavParams } from '~/framework/modules/blog/screens/blog-post-details/types';
-import type { BlogSelectScreenNavParams } from '~/framework/modules/blog/screens/BlogSelectScreen';
 import type { BlogCreatePostScreenNavParams } from '~/framework/modules/blog/screens/create-post/types';
 import type { BlogEditPostScreenNavParams } from '~/framework/modules/blog/screens/edit/types';
 import type { BlogExplorerScreen } from '~/framework/modules/blog/screens/explorer';
 import type { BlogPostListScreenNavigationParams } from '~/framework/modules/blog/screens/list/types';
+import type { BlogSelectScreenNavParams } from '~/framework/modules/blog/screens/select/types';
 
 export interface BlogNavigationParams extends ParamListBase {
-  home: BlogSelectScreenNavParams;
+  select: BlogSelectScreenNavParams;
   blogExplorer: BlogExplorerScreen.NavParams;
   blogPostList: BlogPostListScreenNavigationParams;
   blogPostDetails: BlogPostDetailsScreenNavParams;
@@ -23,5 +23,5 @@ export const blogRouteNames = {
   blogExplorer: `${moduleConfig.routeName}` as 'blogExplorer',
   blogPostDetails: `${moduleConfig.routeName}/details` as 'blogPostDetails',
   blogPostList: `${moduleConfig.routeName}/posts` as 'blogPostList',
-  home: `${moduleConfig.routeName}/select` as 'home',
+  select: `${moduleConfig.routeName}/select` as 'select',
 };
