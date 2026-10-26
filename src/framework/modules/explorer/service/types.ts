@@ -23,6 +23,7 @@ export namespace API {
     export interface ContextQuery {
       application: string;
       resource_type: string;
+      right_type?: 'read' | 'contrib' | 'manager';
     }
 
     export interface ContextResponse {
