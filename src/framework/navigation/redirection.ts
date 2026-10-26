@@ -12,7 +12,8 @@ const SCREEN_LAYOUT_DELAY = 48;
 const actionDelay = (index: number) => NAVIGATE_CLOSE_DELAY + SCREEN_LAYOUT_DELAY * index;
 
 // A tab change while a native modal is open leaves the tab bar deaf, see the note in main-navigation.
-// So the modal closes first, then the remaining actions build the stack we land in, one at a time.
+// close the modal first, then build the destination stack one action at a time,
+// since the redirect already waits for the modal to close.
 export function useRedirectActionOnSuccess(navigation: NavigationProp<ParamListBase>) {
   const rootNavigation = navigationRef as unknown as NavigationProp<ParamListBase>;
   const redirectionDispatch = useNavigationRedirectionDispatch(rootNavigation);
@@ -21,7 +22,7 @@ export function useRedirectActionOnSuccess(navigation: NavigationProp<ParamListB
     (actions: NavigationAction | NavigationAction[]) => {
       const [first, ...rest] = [actions].flat();
       handleNotificationNavigationAction(first, navigation, redirectionDispatch);
-      rest.forEach((action, index) => setTimeout(() => rootNavigation.dispatch(action), actionDelay(index)));
+      rest.forEach((action, index) => setTimeout(() => rootNavigation.dispatch(action), actionDelay(index + 1)));
     },
     [navigation, redirectionDispatch, rootNavigation],
   );
