@@ -16,11 +16,11 @@ import ScrollView from '~/framework/components/scrollView';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import MenuCard from '~/framework/modules/widgets/cantine/components/MenuCard';
-import { CantineData } from '~/framework/modules/widgets/cantine/model';
 import { CantineNavigationParams, cantineRouteNames } from '~/framework/modules/widgets/cantine/navigation';
 import { actions, getCacheKey, getCantineData, shouldRetryCantineData } from '~/framework/modules/widgets/cantine/reducer';
+import { cantineService } from '~/framework/modules/widgets/cantine/service';
+import { getSelectedStructure, selectedStructureStorage } from '~/framework/modules/widgets/cantine/storage';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { sessionFetch } from '~/framework/util/transport';
 import { Loading } from '~/ui/Loading';
 
 import styles from './styles';
@@ -48,9 +48,7 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
     value: structure.UAI,
   }));
 
-  // Set default structure to the first one if available
-  const defaultStructure = dropdownItemsStructures.length > 0 ? dropdownItemsStructures[0] : null;
-  const defaultStructureValue = defaultStructure?.value || null;
+  const defaultStructureValue = getSelectedStructure(userStructures)?.UAI ?? null;
 
   // default date is today
   const [selectedDate, setSelectedDate] = React.useState<string>(() => {
@@ -85,9 +83,7 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
 
     setIsLoading(true);
     try {
-      const cantineInfoResponse = await sessionFetch.json<CantineData>(
-        `/appregistry/${selectedStructureValue}/cantine/menu?date=${selectedDate}`,
-      );
+      const cantineInfoResponse = await cantineService.menu(selectedStructureValue, moment(selectedDate));
 
       // Check if the response has menu items
       if (cantineInfoResponse && cantineInfoResponse.menu && cantineInfoResponse.menu.length > 0) {
@@ -118,6 +114,7 @@ export default function CantineHomeScreen({ embedded = false, noScroll = false }
     (callback: (value: string | null) => string | null) => {
       const newValue = callback(selectedStructureValue);
       setSelectedStructureValue(newValue);
+      if (newValue) selectedStructureStorage.write(newValue);
     },
     [selectedStructureValue],
   );
