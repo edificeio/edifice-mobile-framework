@@ -10,16 +10,18 @@ const DEFAULT_COUNT = 4;
 
 export const CarnetDeBordSectionPlaceholder = React.memo(
   ({ count = DEFAULT_COUNT, style }: Readonly<CarnetDeBordSectionPlaceholderProps>) => (
-    <Placeholder style={[styles.list, style]} Animation={Fade}>
-      {Array.from({ length: count }, (_unused, index) => (
-        <View key={index} style={styles.card}>
-          <PlaceholderMedia style={styles.icon} />
-          <View style={styles.lines}>
-            <PlaceholderLine width={40} noMargin />
-            <PlaceholderLine width={70} noMargin />
+    <Placeholder Animation={Fade}>
+      <View style={[styles.list, style]}>
+        {Array.from({ length: count }, (_unused, index) => (
+          <View key={index} style={styles.card}>
+            <PlaceholderMedia style={styles.icon} />
+            <View style={styles.lines}>
+              <PlaceholderLine width={40} noMargin />
+              <PlaceholderLine width={70} noMargin />
+            </View>
           </View>
-        </View>
-      ))}
+        ))}
+      </View>
     </Placeholder>
   ),
 );
