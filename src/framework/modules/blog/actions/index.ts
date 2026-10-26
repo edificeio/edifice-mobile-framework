@@ -4,7 +4,7 @@
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
-import { actionTypes, Blog, BlogFolder, BlogPost, getPublishableBlogs } from '~/framework/modules/blog/reducer';
+import { actionTypes, Blog, BlogFolder, BlogPost } from '~/framework/modules/blog/reducer';
 import {
   createBlogPostResourceRight,
   getBlogPostRight,
@@ -60,22 +60,6 @@ export const fetchBlogPostsAction =
       throw e;
     }
   };
-
-/**
- * Fetch the user's publishable blog list.
- * Info: no reducer is used in this action.
- */
-export const getPublishableBlogListAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-  try {
-    const session = assertSession();
-
-    const allBlogs = await blogService.list(session);
-    const publishableBlogs = getPublishableBlogs(session, allBlogs);
-    return publishableBlogs;
-  } catch {
-    // ToDo: Error handling
-  }
-};
 
 export const getBlogsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   const session = assertSession();
