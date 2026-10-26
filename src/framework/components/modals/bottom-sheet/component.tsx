@@ -17,6 +17,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { useSyncRef } from '~/framework/hooks/ref';
+import { useRegisterModalClose } from '~/framework/navigation/modals/modal-dismissal';
 
 import styles from './styles';
 
@@ -58,6 +59,22 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
     const onClose = React.useCallback(() => {
       bottomSheetRef.current?.close();
     }, [bottomSheetRef]);
+
+    const { onChange, onDismiss } = props;
+    const [presented, setPresented] = React.useState(false);
+    const onPresentedChange = React.useCallback(
+      (...args: Parameters<NonNullable<BottomSheetModalProps['onChange']>>) => {
+        setPresented(args[0] >= 0);
+        onChange?.(...args);
+      },
+      [onChange],
+    );
+    const onPresentedDismiss = React.useCallback(() => {
+      setPresented(false);
+      onDismiss?.();
+    }, [onDismiss]);
+    const dismiss = React.useCallback(() => bottomSheetRef.current?.dismiss(), []);
+    useRegisterModalClose(presented, dismiss);
 
     const header =
       _header ??
@@ -103,7 +120,9 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
         }
         backdropComponent={BackdropComponent}
         topInset={useHeaderHeight() + additionalTopInset}
-        {...props}>
+        {...props}
+        onChange={onPresentedChange}
+        onDismiss={onPresentedDismiss}>
         {children}
       </BottomSheetModal>
     );

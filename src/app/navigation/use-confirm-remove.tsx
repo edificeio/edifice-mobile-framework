@@ -14,6 +14,8 @@ import {
 } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
+import { closeOpenModals } from '~/framework/navigation/modals/modal-dismissal';
+import { NAVIGATE_CLOSE_DELAY } from '~/framework/navigation/nextTabJump';
 
 export const ConfirmRemoveContext = React.createContext<React.RefObject<NavigationAction[]>>({ current: [] });
 
@@ -71,6 +73,8 @@ export function useConfirmRemove(
 
 /**
  * Expose a navigation dispatch function that triggers any usePreventDefault in current screens, then dispatch the given action.
+ * The open modals and the stacked screens close first, and the action waits for them: navigating behind a native
+ * modal desyncs the screens, see the note in main-navigation.
  */
 export function useNavigationRedirectionDispatch<ParamList extends ParamListBase, State extends NavigationState = NavigationState>(
   navigation: NavigationProp<ParamList, keyof ParamList, string | undefined, State>,
@@ -78,8 +82,10 @@ export function useNavigationRedirectionDispatch<ParamList extends ParamListBase
   const storedActionsRef = React.useContext(ConfirmRemoveContext);
   return React.useCallback(
     (_action: NavigationAction) => {
+      const closedModal = closeOpenModals();
       const previousNavState = navigation.getState(); // root nav state
       const action: NavigationAction = { ..._action, source: previousNavState.key };
+      const dispatchOnceClosed = () => setTimeout(() => navigation.dispatch(action), NAVIGATE_CLOSE_DELAY);
       const previousActiveRootState = previousNavState.routes[previousNavState.index ?? 0]?.state;
       const previousActiveTabState =
         previousActiveRootState && previousActiveRootState.index !== undefined
@@ -94,10 +100,10 @@ export function useNavigationRedirectionDispatch<ParamList extends ParamListBase
         if (newNavState === previousNavState) /* same state -> usePreventRemove WAS triggered */ {
           storedActionsRef.current.push(action);
         } else /* different state -> usePreventRemove was NOT triggered */ {
-          requestAnimationFrame(() => {
-            navigation.dispatch(action);
-          });
+          dispatchOnceClosed();
         }
+      } else if (closedModal) {
+        dispatchOnceClosed();
       } else {
         navigation.dispatch(action);
       }
