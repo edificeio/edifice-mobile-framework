@@ -1,8 +1,6 @@
 import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { CantineState } from './reducer';
-
-export default new NavigableModuleConfig<'cantine', CantineState>({
+export default new NavigableModuleConfig<'cantine', null>({
   displayAs: ModuleType.MYAPPS_WIDGET,
   entcoreScope: ['appregistry'],
   entcoreTrackingName: 'Cantine',
