@@ -8,8 +8,7 @@ import { SecondaryButton } from '~/framework/components/buttons/secondary';
 import { BodyText } from '~/framework/components/text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { useHomeReload } from '~/framework/modules/home/hooks';
-import { MenuSteps } from '~/framework/modules/widgets/cantine/components/menu';
-import { CantineWidgetPlaceholder } from '~/framework/modules/widgets/cantine/components/menu/steps/placeholder';
+import { MenuSteps, MenuStepsPlaceholder } from '~/framework/modules/widgets/cantine/components/menu';
 import { useCantineMenu } from '~/framework/modules/widgets/cantine/hooks/menu';
 import { cantineRouteNames } from '~/framework/modules/widgets/cantine/navigation';
 import { getSelectedStructure } from '~/framework/modules/widgets/cantine/storage';
@@ -55,7 +54,7 @@ export function CantineWidget({ session }: Readonly<CantineWidgetProps>) {
   const renderLoading = () => (
     <>
       {renderStructureName()}
-      <CantineWidgetPlaceholder />
+      <MenuStepsPlaceholder style={styles.placeholder} />
     </>
   );
 
