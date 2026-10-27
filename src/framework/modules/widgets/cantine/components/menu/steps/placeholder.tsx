@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import styles from './styles';
+import styles from '~/framework/modules/widgets/cantine/components/home-widget/styles';
 
 const PLACEHOLDER_STEPS = [
   { dishes: [45, 70, 60, 50], key: 'first' },
