@@ -1688,6 +1688,8 @@
   "timeline-notiftype-exercizer-considersubmitted": "Copia cunsidarata com'è resa",
   "timeline-notiftype-exercizer-correctcopy": "Currizzioni di copia",
   "timeline-notiftype-exercizer-correcthomework": "Currizzioni di duveru",
+  "timeline-notiftype-exercizer-generatederror": "Errore di generazione di eserciziu",
+  "timeline-notiftype-exercizer-generatedok": "Eserciziu generatu cù successu",
   "timeline-notiftype-exercizer-homeworkreminder": "Richjamu automaticu",
   "timeline-notiftype-exercizer-modifybegin": "Mudificazioni di a data di principiu d'un sughjettu",
   "timeline-notiftype-exercizer-modifydue": "Mudificazioni di a data di fini d'un sughjettu",

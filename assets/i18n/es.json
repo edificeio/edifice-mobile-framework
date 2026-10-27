@@ -1688,6 +1688,8 @@
   "timeline-notiftype-exercizer-considersubmitted": "Deberes entregados",
   "timeline-notiftype-exercizer-correctcopy": "Corrección de los deberes",
   "timeline-notiftype-exercizer-correcthomework": "Corrección de deberes ",
+  "timeline-notiftype-exercizer-generatederror": "Error de generación de ejercicios",
+  "timeline-notiftype-exercizer-generatedok": "Ejercicio generado con éxito",
   "timeline-notiftype-exercizer-homeworkreminder": "Recordatorio automático",
   "timeline-notiftype-exercizer-modifybegin": "Modificación de la fecha de inicio del tema",
   "timeline-notiftype-exercizer-modifydue": "Modificación de la fecha de finalización del tema",
