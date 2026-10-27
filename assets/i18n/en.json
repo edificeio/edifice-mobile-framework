@@ -1688,6 +1688,8 @@
   "timeline-notiftype-exercizer-considersubmitted": "Work submitted",
   "timeline-notiftype-exercizer-correctcopy": "Correct work",
   "timeline-notiftype-exercizer-correcthomework": "Correct homework",
+  "timeline-notiftype-exercizer-generatederror": "Generation of the exercise in error",
+  "timeline-notiftype-exercizer-generatedok": "Exercise generated successfully",
   "timeline-notiftype-exercizer-homeworkreminder": "Automatic homework reminder",
   "timeline-notiftype-exercizer-modifybegin": "Work start date changed",
   "timeline-notiftype-exercizer-modifydue": "Work end date changed",
