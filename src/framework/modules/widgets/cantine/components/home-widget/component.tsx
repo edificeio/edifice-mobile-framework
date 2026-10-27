@@ -9,6 +9,7 @@ import { BodyText } from '~/framework/components/text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { useHomeReload } from '~/framework/modules/home/hooks';
 import { MenuSteps } from '~/framework/modules/widgets/cantine/components/menu';
+import { CantineWidgetPlaceholder } from '~/framework/modules/widgets/cantine/components/menu/steps/placeholder';
 import { useCantineMenu } from '~/framework/modules/widgets/cantine/hooks/menu';
 import { cantineRouteNames } from '~/framework/modules/widgets/cantine/navigation';
 import { getSelectedStructure } from '~/framework/modules/widgets/cantine/storage';
@@ -16,7 +17,6 @@ import { WidgetCard } from '~/framework/modules/widgets/components/card';
 import { CANTINE_WIDGET_MENU_MAX_HEIGHT } from '~/framework/modules/widgets/components/constants';
 import { WidgetMessage } from '~/framework/modules/widgets/components/message';
 
-import { CantineWidgetPlaceholder } from './placeholder';
 import styles from './styles';
 
 export interface CantineWidgetProps {
