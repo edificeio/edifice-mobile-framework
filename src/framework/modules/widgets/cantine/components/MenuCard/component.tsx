@@ -1,45 +1,17 @@
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
 
-import styles from './styles';
-import { MenuCardProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, BodyText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { MenuItem } from '~/framework/modules/widgets/cantine/model';
+import { formatAllergens, hasAllergens } from '~/framework/modules/widgets/cantine/model/allergens';
 import { Image } from '~/framework/util/media-deprecated';
 
-// Allergy configuration
-const ALLERGY_CONFIG = [
-  { key: 'allerg_gluten', label: 'widget-cantine-menu-allergene-gluten' },
-  { key: 'allerg_crustace', label: 'widget-cantine-menu-allergene-crustace' },
-  { key: 'allerg_oeuf', label: 'widget-cantine-menu-allergene-oeuf' },
-  { key: 'allerg_poisson', label: 'widget-cantine-menu-allergene-poisson' },
-  { key: 'allerg_soja', label: 'widget-cantine-menu-allergene-soja' },
-  { key: 'allerg_lait', label: 'widget-cantine-menu-allergene-lait' },
-  { key: 'allerg_fruit_coque', label: 'widget-cantine-menu-allergene-fruit-coque' },
-  { key: 'allerg_celeri', label: 'widget-cantine-menu-allergene-celeri' },
-  { key: 'allerg_moutarde', label: 'widget-cantine-menu-allergene-moutarde' },
-  { key: 'allerg_sesame', label: 'widget-cantine-menu-allergene-sesame' },
-  { key: 'allerg_anhydride', label: 'widget-cantine-menu-allergene-anhydride' },
-  { key: 'allerg_lupin', label: 'widget-cantine-menu-allergene-lupin' },
-  { key: 'allerg_mollusque', label: 'widget-cantine-menu-allergene-mollusque' },
-  { key: 'allerg_arachide', label: 'widget-cantine-menu-allergene-arachide' },
-] as const;
-
-const getAllergyText = (item: MenuItem): string => {
-  const allergies = ALLERGY_CONFIG.filter(allergy => item[allergy.key as keyof MenuItem] !== 0).map(allergy =>
-    I18n.get(allergy.label),
-  );
-  return allergies.join(', ');
-};
-
-const hasAllergy = (item: MenuItem): boolean => {
-  return ALLERGY_CONFIG.some(allergy => item[allergy.key as keyof MenuItem] !== 0);
-};
+import styles from './styles';
+import { MenuCardProps } from './types';
 
 // Icon configuration for menu items
 const MENU_ICONS = {
@@ -99,7 +71,7 @@ const MenuSection: React.FC<{
           ].filter(icon => icon.condition);
 
           const isExpanded = expandedItems.has(String(item.id));
-          const hasAllergies = hasAllergy(item);
+          const hasAllergies = hasAllergens(item);
           const isLastItem = index === items.length - 1;
 
           return (
@@ -147,7 +119,7 @@ const MenuSection: React.FC<{
                       />
                     </View>
                   </View>
-                  <View>{isExpanded && <SmallText style={styles.allergyExpandedText}>{getAllergyText(item)}</SmallText>}</View>
+                  <View>{isExpanded && <SmallText style={styles.allergyExpandedText}>{formatAllergens(item)}</SmallText>}</View>
                 </View>
               )}
             </Pressable>

@@ -8,9 +8,10 @@ import { MENU_CATEGORIES } from '~/framework/modules/widgets/cantine/model/categ
 
 export interface MenuStepsProps {
   menuItems: MenuItem[];
+  showAllergens?: boolean;
 }
 
-export function MenuSteps({ menuItems }: Readonly<MenuStepsProps>) {
+export function MenuSteps({ menuItems, showAllergens }: Readonly<MenuStepsProps>) {
   return (
     <Stepper>
       {MENU_CATEGORIES.map(category => {
@@ -19,7 +20,7 @@ export function MenuSteps({ menuItems }: Readonly<MenuStepsProps>) {
         return (
           <Stepper.Step key={category.type} color={category.color} icon={category.icon} title={I18n.get(category.titleI18n)}>
             {items.map(item => (
-              <MenuItemRow key={item.id} item={item} />
+              <MenuItemRow key={item.id} item={item} showAllergens={showAllergens} />
             ))}
           </Stepper.Step>
         );
