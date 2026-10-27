@@ -2,7 +2,7 @@ import type { AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
-import { DoTrackArgLegacy, Trackers, TrackEventOfModuleArgs, trackingActionAddSuffix } from '~/framework/util/tracker';
+import { DoTrackArgLegacy, TrackEventOfModuleArgs, trackingActionAddSuffix } from '~/framework/util/tracker';
 
 export interface TryActionOptions<Args extends any[], ReturnType, TrackEventArgs = TrackEventOfModuleArgs> {
   track?: TrackEventArgs | ((returnedValue: Awaited<ReturnType> | Error, ...args: Args) => TrackEventArgs | undefined);
@@ -48,20 +48,8 @@ function performAction<Args extends any[], R, E>(
                 opts.track[2] && trackingActionAddSuffix(opts.track[2], true),
                 opts.track[3],
               ] as TrackEventOfModuleArgs));
-        if (trackOpt) Trackers.trackEventOfModule(...trackOpt);
         return ret;
       } catch (e) {
-        const trackOpt =
-          opts?.track &&
-          (typeof opts.track === 'function'
-            ? opts.track(e as Error, ...args)
-            : ([
-                opts.track[0],
-                opts.track[1],
-                opts.track[2] && trackingActionAddSuffix(opts.track[2], false),
-                opts.track[3],
-              ] as TrackEventOfModuleArgs));
-        if (trackOpt) Trackers.trackEventOfModule(...trackOpt);
         onCatch(e);
       }
     }) as unknown as (...args: Args) => ThunkAction<R, IGlobalState, E, AnyAction>;
@@ -126,13 +114,10 @@ export const tryActionLegacy =
   ) =>
   (...args: Args) =>
   async (dispatch: ThunkDispatch<IGlobalState, E, AnyAction>) => {
-    const doTrack = typeof trackInfo === 'function' ? trackInfo(...args) : trackInfo;
     try {
       const ret = await dispatch(action(...args));
-      if (doTrack) Trackers.trackEventOfModule(doTrack[0], doTrack[1], doTrack[2] + ' - Succès', doTrack[3]);
       return ret;
     } catch (e) {
-      if (doTrack) Trackers.trackEventOfModule(doTrack[0], doTrack[1], doTrack[2] + ' - Échec', doTrack[3]);
       // ToDo : General error reporting here
       if (throwback) throw e;
     }

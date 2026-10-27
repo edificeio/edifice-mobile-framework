@@ -3,9 +3,6 @@ import { ScrollView, View } from 'react-native';
 
 import moment from 'moment';
 
-import styles from './styles';
-import { StatisticsProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { SmallText } from '~/framework/components/text';
@@ -14,6 +11,9 @@ import StatisticsPlaceholder from '~/framework/modules/viescolaire/presences/com
 import StatisticsCard from '~/framework/modules/viescolaire/presences/components/statistics-card';
 import { Event, EventType } from '~/framework/modules/viescolaire/presences/model';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
+
+import styles from './styles';
+import { StatisticsProps } from './types';
 
 const getDefaultSelectedTerm = (terms: ITerm[]): string => {
   const currentTerm = terms.find(term => moment().isBetween(term.startDate, term.endDate));
@@ -45,7 +45,7 @@ const Statistics = (props: StatisticsProps) => {
             const date = 'startDate' in e ? e.startDate : e.date;
             return date.isSameOrAfter(term.startDate) && date.isSameOrBefore(term.endDate);
           })
-        : stats.events,
+        : stats?.events,
       recoveryMethod: props.statistics.recoveryMethod,
     };
   };

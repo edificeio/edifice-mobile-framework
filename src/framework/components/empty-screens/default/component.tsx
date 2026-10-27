@@ -11,7 +11,7 @@ import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
 import { PageViewStyle } from '~/framework/components/page';
-import { Svg } from '~/framework/components/picture';
+import { Svg, SvgIconName } from '~/framework/components/picture';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 
 import styles from './styles';
@@ -37,7 +37,7 @@ const EmptyScreen = ({
   buttonText?: string;
   buttonUrl?: string;
   buttonAction?: () => void;
-  buttonIcon?: string;
+  buttonIcon?: SvgIconName;
   customStyle?: ViewStyle;
   customTitleStyle?: TextStyle;
   svgFillColor?: ColorValue;

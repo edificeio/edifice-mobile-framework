@@ -35,7 +35,7 @@ export default function StatisticsCard(props: StatisticsCardProps) {
       !recoveryMethod ||
       recoveryMethod === 'HOUR'
     ) {
-      return events.length;
+      return events?.length;
     }
     const absenceDates = events.reduce((acc: string[], event: Event) => {
       const date = ('startDate' in event ? event.startDate : event.date).format(

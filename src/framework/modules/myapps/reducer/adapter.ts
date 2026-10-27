@@ -254,7 +254,9 @@ export const loadAppsDataFromService = async (
 ) => {
   const modules = AllModules().filterAvailables(accountOrSession).filter(isNavigableModule);
 
-  const [appsInfo, appsConfig, favorites] = await Promise.all([appsService.list(), appsService.config(), appsService.bookmarks()]);
+  const appsInfo = await appsService.list();
+  const appsConfig = await appsService.config();
+  const favorites = await appsService.bookmarks();
 
   const enrichedAppsInfo = enrichAppsWithModuleInfo(appsInfo, modules);
   return buildFetchSuccessPayload(enrichedAppsInfo, appsConfig, favorites);

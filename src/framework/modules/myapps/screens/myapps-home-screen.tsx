@@ -23,7 +23,7 @@ export const computeNavBar = screenOptions(() => ({
   title: I18n.get('myapp-appname'),
 }));
 
-const MyAppsHomeScreen = ({ navigation }: MyAppsHomeScreenProps) => {
+const MyAppsHomeScreen = ({ navigation, route }: MyAppsHomeScreenProps) => {
   const {
     apps,
     appsListRef,

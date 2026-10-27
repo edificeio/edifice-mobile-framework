@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { ILocalAttachment } from './Attachment';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
@@ -16,7 +14,8 @@ import { LocalFile } from '~/framework/util/fileHandler/models';
 import { mapLocalFileToLegacy } from '~/framework/util/fileHandler/utils/mapLocalFileToLegacy';
 import { formatSource, Image } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
-import { Trackers } from '~/framework/util/tracker';
+
+import { ILocalAttachment } from './Attachment';
 
 const itemWidth =
   // The items' width is computed by substracting spacings from the screen's width
@@ -85,13 +84,12 @@ export class AttachmentGroupImages extends React.PureComponent<{
   }
 
   onOpenImage = () => {
-    const { images, moduleName } = this.props;
+    const { images } = this.props;
     const carouselImages = images.map(image => ({
       alt: 'image',
       src: { uri: image.uri },
       type: 'image' as const,
     }));
-    Trackers.trackEvent(moduleName, 'OPEN ATTACHMENT', 'Edit mode');
     openCarousel({ data: carouselImages, referer: undefined });
   };
 
