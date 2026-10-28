@@ -6,7 +6,6 @@
 
 import { CoreModule } from '~/app/module';
 
-import AuthAccountsScreen from './screens/accounts';
 import SignInActivationScreen from './screens/activation';
 import SignInCredentialsScreen from './screens/credentials';
 import SignInDiscoveryClassScreen from './screens/discovery-class';
@@ -25,7 +24,6 @@ export default new CoreModule({
   },
   name: 'sign-in',
   screens: {
-    'sign-in/accounts': AuthAccountsScreen,
     'sign-in/activation': SignInActivationScreen,
     'sign-in/credentials': SignInCredentialsScreen,
     'sign-in/discovery-class': SignInDiscoveryClassScreen,

@@ -1,5 +1,5 @@
 import { OAuth2SamlMultipleVectorError } from '~/framework/util/oauth2';
-import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
+import { Trackers, type TrackEventOfModuleArgs, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { createTrackEvents, TRACK_DEFAULT, TRACK_ERROR } from '~/framework/util/tracker/track-opt';
 
 import { AuthPendingRedirection } from './model';
@@ -62,4 +62,23 @@ export const trackingAccountEvents = {
   switchAccountPressButton: () => {
     Trackers.trackEvent(TrackCategory.Compte, 'Changer compte', 'Mon compte → Changer compte');
   },
+};
+
+type TrackOption<T> = (returnedValue: T | Error) => TrackEventOfModuleArgs | undefined;
+
+/**
+ * Runs the function and sends the tracking event of the matching scenario (success or failure) with the result.
+ * Errors are thrown back.
+ */
+export const withTracking = async <T>(trackOption: TrackOption<T>, fn: () => Promise<T>) => {
+  try {
+    const result = await fn();
+    const event = trackOption(result);
+    if (event) Trackers.trackEventOfModule(...event);
+    return result;
+  } catch (e) {
+    const event = trackOption(e as Error);
+    if (event) Trackers.trackEventOfModule(...event);
+    throw e;
+  }
 };

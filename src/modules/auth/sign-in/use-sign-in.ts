@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Error } from '~/framework/util/error';
 import { OAuth2Error, OAuth2ErrorCode } from '~/framework/util/oauth2';
-import { withTracking } from '~/modules/auth/flows/track';
 import {
   AuthCredentials,
   AuthFederationCredentials,
@@ -14,9 +13,9 @@ import {
 } from '~/modules/auth/model';
 import service from '~/modules/auth/service';
 import type { SignInResult } from '~/modules/auth/service/types';
+import { useSignInStore } from '~/modules/auth/sign-in/store';
 import { getPlatformContext } from '~/modules/auth/store/platform-context';
-import { useSignInStore } from '~/modules/auth/store/sign-in';
-import track from '~/modules/auth/tracking';
+import track, { withTracking } from '~/modules/auth/tracking';
 import { I18n } from '~/util/i18n';
 
 import { useSignInContext } from './context';
@@ -107,7 +106,7 @@ export const useSignIn = () => {
       } catch (e) {
         console.error('[Auth] Sign in with new password error :', e);
         const { setError, setStatus } = useSignInStore.getState();
-        setStatus({ accountId: accountToReplaceId, loginUsed: credentials.username, platform, type: 'restore' });
+        setStatus({ accountId: accountToReplaceId, loginUsed: credentials.username, platform, type: 'login' });
         setError({ info: e as Error, key: undefined });
         throw e;
       }

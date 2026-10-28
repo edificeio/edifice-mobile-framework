@@ -7,7 +7,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { sheetSpacingStyles, useFormSheetStyleFix } from '~/app/navigation-new/layout';
 import toast from '~/framework/components/toast';
 import { AccountList } from '~/modules/auth/components';
-import { removeAccount } from '~/modules/auth/flows';
+import { useAuthFlows } from '~/modules/auth/flows';
 import { type AuthActiveAccount, type AuthSavedAccount, getOrderedAccounts } from '~/modules/auth/model';
 import { getActiveAccount, useAccountsStore } from '~/modules/auth/store/accounts';
 import { I18n } from '~/util/i18n';
@@ -16,6 +16,7 @@ import type { AccountListSheetScreenTemplateProps } from './types';
 
 export const AccountListSheetScreenTemplate = ({ description, onDelete, onPress, title }: AccountListSheetScreenTemplateProps) => {
   const navigation = useNavigation();
+  const { removeAccount } = useAuthFlows();
   const accounts = useAccountsStore(s => s.accounts);
   const data = React.useMemo(() => getOrderedAccounts(accounts), [accounts]);
   const formSheetStyle = useFormSheetStyleFix();
@@ -38,7 +39,7 @@ export const AccountListSheetScreenTemplate = ({ description, onDelete, onPress,
         console.error(e);
       }
     },
-    [onDelete],
+    [onDelete, removeAccount],
   );
 
   return (

@@ -3,7 +3,7 @@ import React from 'react';
 import type { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
-import { logout } from '~/modules/auth/flows';
+import { useAuthFlows } from '~/modules/auth/flows';
 import { useRequirementsNavigation } from '~/modules/auth/requirements/navigation';
 import service from '~/modules/auth/service';
 import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
@@ -18,6 +18,7 @@ const RequirementVerifyEmailScreen = React.memo(function ({}: StaticScreenProps<
   // This screen only shows while there is a connected account with a requirement.
   const account = useAccountWithRequirement()!;
   const navigation = useRequirementsNavigation();
+  const { logout } = useAuthFlows();
   const onSubmit = React.useCallback(
     async (email: string) => {
       await service.emailValidation.requestCode(account, email);

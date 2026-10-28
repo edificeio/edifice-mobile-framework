@@ -219,6 +219,65 @@ describe('accounts store', () => {
     });
   });
 
+  describe('startup (what the app resumes at its next launch)', () => {
+    const saved = (id: string) => ({ [id]: createSavedAccount({ id }) });
+
+    it('is empty at first, and is what hydrate is given', () => {
+      expect(store().startup).toEqual({});
+      store().hydrate(saved('a'), true, { account: 'a', platform: 'platform' });
+      expect(store().startup).toEqual({ account: 'a', platform: 'platform' });
+      expect(store().connected).toBeUndefined();
+    });
+
+    it('becomes the account that signs in, with its platform', () => {
+      store().setAccount(createActiveAccount({ id: 'a' }));
+      expect(store().startup).toEqual({ account: 'a', platform: 'platform' });
+    });
+
+    it('moves to the account that replaces the connected one', () => {
+      store().setAccount(createActiveAccount({ id: 'a' }));
+      store().setAccount(createActiveAccount({ id: 'b' }), 'a');
+      expect(store().startup).toEqual({ account: 'b', platform: 'platform' });
+    });
+
+    it('is emptied when the connected account logs out, or is put to sleep', () => {
+      store().setAccount(createActiveAccount({ id: 'a' }));
+      store().logout();
+      expect(store().startup).toEqual({});
+      store().setAccount(createActiveAccount({ id: 'b' }));
+      store().sleep();
+      expect(store().startup).toEqual({});
+    });
+
+    it('is not touched by a logout or a sleep when nobody is connected (a restore that failed at launch)', () => {
+      store().hydrate(saved('a'), false, { account: 'a', platform: 'platform' });
+      store().logout();
+      store().sleep();
+      expect(store().startup).toEqual({ account: 'a', platform: 'platform' });
+    });
+
+    it('is not touched by the tokens, the profile or the removal of another account', () => {
+      store().hydrate({ ...saved('a'), ...saved('b') }, false, { account: 'a', platform: 'platform' });
+      store().removeAccount('b');
+      expect(store().startup).toEqual({ account: 'a', platform: 'platform' });
+    });
+
+    it('is lost with the account it points to, connected or not', () => {
+      store().hydrate({ ...saved('a'), ...saved('b') }, false, { account: 'a', platform: 'platform' });
+      store().removeAccount('a');
+      expect(store().startup).toEqual({});
+      store().setAccount(createActiveAccount({ id: 'c' }));
+      store().removeAccount('c');
+      expect(store().startup).toEqual({});
+    });
+
+    it('is only the platform of the last account, once it is removed', () => {
+      store().hydrate(saved('a'), false, { account: 'a', platform: 'platform' });
+      store().removeAccount('a');
+      expect(store().startup).toEqual({ platform: 'platform' });
+    });
+  });
+
   describe('tokens', () => {
     it('refreshToken replaces the tokens of the account', () => {
       store().setAccount(createActiveAccount({ id: 'a' }));

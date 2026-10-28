@@ -8,6 +8,7 @@
 
 import type { IGlobalState } from '~/app/store';
 import type { HostId, Platform } from '~/framework/util/appConf';
+import { useSignInStore } from '~/modules/auth/sign-in/store';
 import {
   assertSession as assertStoreSession,
   getActiveAccount,
@@ -20,7 +21,6 @@ import {
   usePlatformLegalUrlsStore,
 } from '~/modules/auth/store/platform-legal-urls';
 import { getPlatformReactionTypes } from '~/modules/auth/store/platform-reaction-types';
-import { useSignInStore } from '~/modules/auth/store/sign-in';
 
 import type { AuthState } from './types';
 

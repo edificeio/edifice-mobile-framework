@@ -146,6 +146,8 @@ export namespace Error {
         return I18n.get('auth-error-predeleted', { currentplatform: platformUrl });
       case AccountErrorCode.TOO_MANY_ACCOUNTS:
         return I18n.get('auth-error-toomanyaccounts');
+      case AccountErrorCode.SESSION_SETUP_FAILED:
+        return I18n.get('auth-error-sessionsetup');
 
       case OAuth2ErrorCode.SAML_MULTIPLE_VECTOR:
       default:

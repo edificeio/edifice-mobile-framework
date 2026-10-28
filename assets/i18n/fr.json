@@ -151,6 +151,7 @@
   "auth-error-requirements": "Le serveur de votre réseau éducatif ne répond pas. Veuillez réessayer ultérieurement. Si le problème persiste, veuillez contacter le support. (Code 7)",
   "auth-error-restorefail": "La restauration de votre session mobile a échouée. Veuillez réessayer ultérieurement.",
   "auth-error-runtimeerror": "Un problème est survenu. Veuillez réessayer.",
+  "auth-error-sessionsetup": "Le chargement de vos données a échoué. Vérifiez votre connexion et réessayez.",
   "auth-error-tooload": "Votre réseau éducatif est momentanément indisponible, notre équipe fait le maximum pour résoudre ces perturbations le plus rapidement possible.",
   "auth-error-tooload-monlyceenet": "Votre réseau éducatif est momentanément indisponible, notre équipe fait le maximum pour résoudre ces perturbations le plus rapidement possible.",
   "auth-error-toomanyaccounts": "Vous avez atteint le nombre maximum de comptes sur cet appareil. Supprimez un compte pour en ajouter un autre.",

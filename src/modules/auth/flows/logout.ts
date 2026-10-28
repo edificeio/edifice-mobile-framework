@@ -1,19 +1,19 @@
-import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
-import service from '~/modules/auth/service';
+import { useSignInStore } from '~/modules/auth/sign-in/store';
 import { assertActiveAccount, useAccountsStore } from '~/modules/auth/store/accounts';
-import { useSignInStore } from '~/modules/auth/store/sign-in';
 
-import { dispatchToLegacyStore } from './legacy-redux';
+import type { EndSession } from './end-session';
 
 /**
- * Disconnects the connected account and removes its tokens (the account stays among the saved ones).
- * Works at any stage: an account with a requirement can be logged out (its session never started, so it has no notifications).
+ * Gives `logout`: disconnects the connected account and removes its tokens (the account stays among the saved ones).
+ * Its session, if any, ends first (modules release it: the account still has its tokens then).
+ * Works at any stage: an account with a requirement can be logged out (its session never started).
  * @throws if there is no connected account.
  */
-export const logout = async () => {
+export const createLogout = (endSession: EndSession) => async () => {
   const account = assertActiveAccount();
-  if (account.requirement === undefined) await service.notifications.disableForAccount(account);
+  endSession(account);
   useAccountsStore.getState().logout();
   useSignInStore.getState().reset();
-  dispatchToLegacyStore(createEndSessionAction()); // flush sessionReducers of not yet migrated modules
 };
+
+export type LogoutFlow = ReturnType<typeof createLogout>;

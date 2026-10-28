@@ -17,32 +17,10 @@ export interface FirebaseNotificationStorage {
 /**
  * Service for managing Firebase Cloud Messaging (FCM) tokens.
  * This service handles the registration and unregistration of FCM tokens for user accounts,
- * ensures the app has the necessary permissions to receive notifications, and manages task queues
- * for registering and unregistering tokens.
+ * and ensures the app has the necessary permissions to receive notifications.
+ * It is driven by the sessions (see `~/modules/notifications`): registered when a session starts, unregistered when it is released.
  */
 class FirebaseCloudMessagingService {
-  registeringQueue: Parameters<typeof this.enablePushNotificationsForAccount>[] = [];
-
-  unqueueRegisteringTasks = async () => {
-    let item: (typeof this.registeringQueue)[0] | undefined;
-    while ((item = this.registeringQueue.shift()) !== undefined) {
-      await this.enablePushNotificationsForAccount(...item);
-    }
-  };
-
-  unregisteringQueue: Parameters<typeof this.disablePushNotificationsForAccount>[] = [];
-
-  unqueueUnregisteringTasks = async () => {
-    let item: (typeof this.unregisteringQueue)[0] | undefined;
-    while ((item = this.unregisteringQueue.shift()) !== undefined) {
-      await this.disablePushNotificationsForAccount(...item);
-    }
-  };
-
-  unqueueAllTasks = async () => {
-    await Promise.all([this.unqueueRegisteringTasks(), this.unqueueUnregisteringTasks()]);
-  };
-
   /** Unsubscribe function returned by the token refresh listener. */
   protected unsubscribeTokenRefresh?: () => void;
 
@@ -62,12 +40,9 @@ class FirebaseCloudMessagingService {
       console.debug('[FirebaseMessagingService] Token refreshed', newToken);
       const session = getSession();
       if (session) {
-        void this.enablePushNotificationsForAccount(session);
+        this.enablePushNotificationsForAccount(session);
       }
     });
-
-    // ToDo : when to unqueue tasks ?
-    // ToDo : store task queues in storage and unqueue them on app start
 
     // console.debug('[FirebaseMessagingService] Service auto initialized ?', isAutoInitEnabled(getMessaging()));
   }
@@ -130,43 +105,34 @@ class FirebaseCloudMessagingService {
       }
       const lastKnownToken = storageForAccount.getString('last-known-firebase-token');
       if (lastKnownToken && lastKnownToken !== token) {
-        await this.disablePushNotificationsForAccount(account, lastKnownToken);
+        // A failure here must not prevent the registration of the new token
+        await this.disablePushNotificationsForAccount(account, lastKnownToken).catch(e =>
+          console.error('[FirebaseMessagingService] putTokenForAccount - Unable to unregister the old token -', e),
+        );
       }
       await accountFetch(account, `/timeline/pushNotif/fcmToken?fcmToken=${token}`, { method: 'PUT' });
 
       console.debug('[FirebaseMessagingService] putTokenForAccount - OK -', account.user.displayName, '-', token);
       storageForAccount.set('last-known-firebase-token', token);
     } catch (e) {
-      /* When the token cannot be registered, we should not throw an error, as it is not a blocking operation.
-       * Instead, we should log the error and try to register the token again later.
-       */
+      // Not a blocking operation: the error is logged, and the registration is tried again at the next session
       console.error('[FirebaseMessagingService] putTokenForAccount - ERROR -', account.user.displayName, '-', token, '-', e);
-      this.registeringQueue.push([account]);
     }
   }
 
-  /** Unregister given FCM Token for provided account */
+  /**
+   * Unregister the FCM Token that was registered for the account (or the given one). Does nothing when none was.
+   * It throws when the platform could not be reached: the token stays known, and the next release of the account tries again.
+   */
   public async disablePushNotificationsForAccount(account: AuthSavedLoggedInAccount | AuthActiveAccount, token?: string) {
-    try {
-      const storageForAccount = this.getStorageSliceForAccount(account);
-      // We get the last known token from firebase, or the provided one.
-      // If firebase fails (ex: permission denied), we still try to unregister the last known token.
-      token =
-        token ?? (await this.getFCMToken(false).catch(() => undefined)) ?? storageForAccount.getString('last-known-firebase-token');
-      if (!token) {
-        console.error('[FirebaseMessagingService] deleteTokenForAccount - No token to delete for -', account.user.displayName);
-        return;
-      }
-      await accountFetch(account, `/timeline/pushNotif/fcmToken?fcmToken=${token}`, { method: 'DELETE' });
-      console.debug('[FirebaseMessagingService] deleteTokenForAccount - OK -', account.user.displayName, '-', token);
-      storageForAccount.remove('last-known-firebase-token');
-    } catch (e) {
-      /* When the token cannot be unregistered, we should not throw an error, as it is not a blocking operation.
-       * Instead, we should log the error and try to unregister the token again later.
-       */
-      console.error('[FirebaseMessagingService] deleteTokenForAccount - ERROR -', account.user.displayName, '-', token, '-', e);
-      this.unregisteringQueue.push([account, token]);
-    }
+    const storageForAccount = this.getStorageSliceForAccount(account);
+    // What matters is the token that was registered for the account, not the current one of firebase, which may have changed since.
+    token = token ?? storageForAccount.getString('last-known-firebase-token');
+    if (!token) return;
+    await accountFetch(account, `/timeline/pushNotif/fcmToken?fcmToken=${token}`, { method: 'DELETE' });
+    console.debug('[FirebaseMessagingService] deleteTokenForAccount - OK -', account.user.displayName, '-', token);
+    // The token given by `enablePushNotificationsForAccount` is an old one: the stored one is the new one, if any
+    if (storageForAccount.getString('last-known-firebase-token') === token) storageForAccount.remove('last-known-firebase-token');
   }
 }
 

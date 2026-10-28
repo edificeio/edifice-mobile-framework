@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useModules } from '~/app/module/loader';
 
-import { runDeviceMigrations } from './migrations';
+import { runDeviceStorageMigrations } from './migrations';
 
 /**
  * Runs the migrations of the storages the modules declare (their `storages`) before anything reads the storage: its children
@@ -10,6 +10,6 @@ import { runDeviceMigrations } from './migrations';
  */
 export const StorageProvider = React.memo(function ({ children }: React.PropsWithChildren) {
   const storages = useModules().flatMap(module => module.storages);
-  React.use(runDeviceMigrations(storages));
+  React.use(runDeviceStorageMigrations(storages));
   return <>{children}</>;
 });

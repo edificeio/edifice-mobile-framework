@@ -35,16 +35,22 @@ export abstract class Module<
   scope: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['scope'];
   redux: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['redux'];
   storages: NonNullable<ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['storages']>;
+  onSessionRelease: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['onSessionRelease'];
+  onSessionStart: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['onSessionStart'];
+  sessionSetup: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['sessionSetup'];
   screens: ModuleStaticScreens<Screens>;
   modals: ModuleStaticScreens<Modals>;
 
-  constructor({ modals, name, redux, scope, screens, storages }: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>) {
-    this.name = name;
-    this.scope = scope;
-    this.redux = redux;
-    this.storages = storages ?? [];
-    this.screens = Module.createScreens(screens);
-    this.modals = Module.createScreens(modals);
+  constructor(opts: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>) {
+    this.name = opts.name;
+    this.scope = opts.scope;
+    this.redux = opts.redux;
+    this.storages = opts.storages ?? [];
+    this.screens = Module.createScreens(opts.screens);
+    this.modals = Module.createScreens(opts.modals);
+    this.onSessionRelease = opts.onSessionRelease;
+    this.onSessionStart = opts.onSessionStart;
+    this.sessionSetup = opts.sessionSetup;
   }
 
   // Screens and modals will always be added to a native stack navigator.

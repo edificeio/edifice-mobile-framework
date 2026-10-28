@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import {
   accountIsActive,
+  accountIsLoggable,
   AuthActiveAccount,
   type AuthActiveAccountWithRequirement,
   AuthCarbonioUserInfos,
@@ -12,11 +13,23 @@ import {
   getSerializedLoggedOutAccountInfo,
 } from '~/modules/auth/model';
 
+/**
+ * What the app resumes at its next launch: the account to restore, and the platform it is on (or only a platform to show).
+ * It is what the storage keeps (`startup`), and it follows `connected`: see `setAccount`, `logout`, `sleep` and `removeAccount`.
+ * Choosing an account, trying to restore it and failing never change it: only a successful sign-in does.
+ */
+export type AuthStartup = { account?: string; platform?: string };
+
+const platformNameOf = (account: AuthMixedAccountMap[string]) =>
+  typeof account.platform === 'string' ? account.platform : account.platform.name;
+
 type State = {
   /** Every account known by the app : saved ones, and the active one if connected. */
   accounts: AuthMixedAccountMap;
   /** Id of the connected account, if any. The account then is an `AuthActiveAccount`. */
   connected?: string;
+  /** What the app resumes at its next launch. It is persisted as is. */
+  startup: AuthStartup;
   /** Id of the last account removed by the user. If defined, the account selector must be shown even if there is only one account left. */
   lastDeletedAccount?: string;
   /** Timestamp of the last account addition. */
@@ -29,16 +42,19 @@ type State = {
 };
 
 type Action = {
-  /** Replaces the whole state with data read from the storage. */
-  hydrate: (accounts: AuthMixedAccountMap, showWelcome: boolean) => void;
+  /** Replaces the whole state with data read from the storage. Nobody is connected: restoring `startup` is up to the caller. */
+  hydrate: (accounts: AuthMixedAccountMap, showWelcome: boolean, startup?: AuthStartup) => void;
   /**
    * Makes the given account the connected one, in place of the saved account of id `accountToReplaceId`.
    * If `accountToReplaceId` is not provided, the account is simply added to the existing ones.
    */
   setAccount: (account: AuthActiveAccount, accountToReplaceId?: string) => void;
-  /** Disconnects the connected account and removes its tokens. */
+  /** Disconnects the connected account and removes its tokens. Nothing is left to resume at the next launch. */
   logout: () => void;
-  /** Puts the connected account to sleep : it is disconnected (notifications are off) but keeps its tokens, so it can be woken up later (account switch). */
+  /**
+   * Puts the connected account to sleep : it is disconnected (notifications are off) but keeps its tokens, so it can be woken up later (account switch).
+   * Nothing is left to resume at the next launch: if another account is signed in right after, it becomes the `startup`.
+   */
   sleep: () => void;
   removeAccount: (id: string) => void;
   refreshToken: (id: string, tokens: AuthTokenSet) => void;
@@ -66,7 +82,8 @@ const withTokens = (state: State, id: string, patch: Partial<AuthTokenSet>): Par
 export const useAccountsStore = create<State & Action>()(set => ({
   accounts: {},
   connected: undefined,
-  hydrate: (accounts, showWelcome) => set({ accounts, connected: undefined, lastDeletedAccount: undefined, showWelcome }),
+  hydrate: (accounts, showWelcome, startup = {}) =>
+    set({ accounts, connected: undefined, lastDeletedAccount: undefined, showWelcome, startup }),
   lastAddAccount: 0,
   lastDeletedAccount: undefined,
   logout: () =>
@@ -77,14 +94,19 @@ export const useAccountsStore = create<State & Action>()(set => ({
         accounts: { ...state.accounts, [account.user.id]: getSerializedLoggedOutAccountInfo(account) },
         connected: undefined,
         lastDeletedAccount: undefined,
+        startup: {},
       };
     }),
   refreshToken: (id, tokens) => set(state => withTokens(state, id, tokens)),
   removeAccount: id =>
     set(state => {
+      const removed = state.accounts[id];
       const accounts = { ...state.accounts };
       delete accounts[id];
-      return { accounts, connected: state.connected === id ? undefined : state.connected, lastDeletedAccount: id };
+      // The startup is lost with the account it points to. Without any account left, the platform it was on is what is shown next.
+      let startup = state.connected === id || state.startup.account === id ? {} : state.startup;
+      if (removed && Object.keys(accounts).length === 0) startup = { platform: platformNameOf(removed) };
+      return { accounts, connected: state.connected === id ? undefined : state.connected, lastDeletedAccount: id, startup };
     }),
   setAccount: (account, accountToReplaceId) =>
     set(state => {
@@ -100,6 +122,8 @@ export const useAccountsStore = create<State & Action>()(set => ({
         lastDeletedAccount: undefined,
         // Once an account was signed in, the welcome screen is never shown again.
         showWelcome: false,
+        // The account the app resumes at its next launch is the one that just signed in.
+        startup: { account: account.user.id, platform: platformNameOf(accounts[account.user.id]) },
       };
     }),
   setCarbonioToken: (id, token) => set(state => withTokens(state, id, { carbonioToken: token })),
@@ -120,8 +144,10 @@ export const useAccountsStore = create<State & Action>()(set => ({
         accounts: { ...state.accounts, [account.user.id]: getSerializedLoggedInAccountInfo(account) },
         connected: undefined,
         lastDeletedAccount: undefined,
+        startup: {},
       };
     }),
+  startup: {},
   updateProfile: (id, user) =>
     set(state => {
       const account = state.accounts[id];
@@ -161,6 +187,15 @@ export const useSession = () => useAccountsStore(selectSession);
 export const useAccountWithRequirement = () => useAccountsStore(selectAccountWithRequirement);
 
 // Non-reactive accessors (for services / non-react code)
+
+/**
+ * The account of the given id with its tokens (connected, or saved with its tokens), as the store has it now: the most recent tokens.
+ * Nothing for an unknown account, or one that has no tokens (logged out).
+ */
+export const getAccountWithTokens = (id: string) => {
+  const account = useAccountsStore.getState().accounts[id];
+  return accountIsLoggable(account) ? account : undefined;
+};
 
 export const getActiveAccount = () => selectActiveAccount(useAccountsStore.getState());
 export const getSession = () => selectSession(useAccountsStore.getState());

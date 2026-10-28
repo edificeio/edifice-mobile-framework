@@ -5,9 +5,9 @@
  */
 
 import type * as AccountStorageHandlerModule from '~/framework/util/storage/account-storage-handler';
+import type { useSignInStore as UseSignInStore } from '~/modules/auth/sign-in/store';
 import type { useAccountsStore as UseAccountsStore } from '~/modules/auth/store/accounts';
 import type { initAccountsStore as InitAccountsStore } from '~/modules/auth/store/accounts-persistence';
-import type { useSignInStore as UseSignInStore } from '~/modules/auth/store/sign-in';
 
 import { type PlatformKind, setPlatforms } from './app-conf';
 import type { FakeStorageLib } from './fake-storage-lib';
@@ -30,7 +30,7 @@ export const loadAuthModules = ({ platforms = ['standard'] }: { platforms?: Plat
       initAccountsStore: require('~/modules/auth/store/accounts-persistence').initAccountsStore,
       lib: require('~/framework/util/storage/mmkv').mmkvInstance,
       useAccountsStore: require('~/modules/auth/store/accounts').useAccountsStore,
-      useSignInStore: require('~/modules/auth/store/sign-in').useSignInStore,
+      useSignInStore: require('~/modules/auth/sign-in/store').useSignInStore,
     };
   });
   return modules;

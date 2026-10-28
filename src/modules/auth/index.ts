@@ -25,8 +25,10 @@ export default new CoreModule({
     'infra', // seems to be tracking related
     'portal', // dont know if used somewhere
     'userinfo', // wtf is this thing ?
-    'timeline', // needed for push-notifications at login
   ],
+  // `auth/accounts` (screens/accounts.tsx) is not declared here on purpose: it is a screen of the independent navigator of
+  // `auth/load-account`, which drives it (see `AuthNavigationWrapper`). Declared here, it would be a root screen that this navigator
+  // can't reset: it must stay out of the global navigation.
   screens: {
     'auth/load-account': AuthLoadAccountScreen,
   },

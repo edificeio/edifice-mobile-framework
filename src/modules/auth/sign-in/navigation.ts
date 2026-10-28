@@ -5,9 +5,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import type { ModuleModals, ModuleScreens, NavigationParamsOfScreens } from '~/app/module';
 import appConf, { Platform } from '~/framework/util/appConf';
-import type { AuthMixedAccountMap } from '~/modules/auth/model';
-import { useAccountsStore } from '~/modules/auth/store/accounts';
-import { type SignInStatus, useSignInStore } from '~/modules/auth/store/sign-in';
+import type { SignInStatus } from '~/modules/auth/sign-in/store';
 
 import type signInModule from '.';
 
@@ -49,11 +47,17 @@ export const getRouteForPlatformSelect = (platform: Platform['name']) => {
 /**
  * Return the navigation action to be performed for going to the login screen of the given platform.
  * @param platform name of the platform
- * @param accountId Saved account to log in again, to skip identification input for the user.
- * @param loginUsed When account is not provided, given loginUsed will be passed to the screen as a param.
+ * @param accountId Account to sign in again: the sign-in will replace it.
+ * @param loginUsed Login to fill in.
+ * @param lockLogin The login to fill in can't be changed.
  * @returns
  */
-export const getRouteForLoginRedirection = (platform: Platform['name'], accountId?: string, loginUsed?: string) => {
+export const getRouteForLoginRedirection = (
+  platform: Platform['name'],
+  accountId?: string,
+  loginUsed?: string,
+  lockLogin?: boolean,
+) => {
   const { redirect, wayf } = appConf.assertPlatformOfName(platform);
   if (redirect) return { name: 'sign-in/redirect', params: { platform } } as const;
   else if (wayf) return { name: 'sign-in/wayf-intro', params: { accountId, platform } } as const;
@@ -62,7 +66,8 @@ export const getRouteForLoginRedirection = (platform: Platform['name'], accountI
       name: 'sign-in/credentials',
       params: {
         accountId,
-        loginUsed: accountId === undefined ? loginUsed : undefined,
+        lockLogin,
+        loginUsed,
         platform,
       },
     } as const;
@@ -87,37 +92,49 @@ export const getRouteForOneTimeCode = (status: Extract<SignInStatus, { type: 'ac
   }
 };
 
+/** The login screen to go to: the platform to sign in to, and what is known about the user (its account, its login). */
+export interface SignInLoginTarget {
+  platform: Platform['name'];
+  /** The account to sign in again, which the sign-in will replace. */
+  accountId?: string;
+  loginUsed?: string;
+  /** The login can't be changed. */
+  lockLogin?: boolean;
+}
+
 /**
- * Get the navigation state of the sign-in navigator from the sign-in situation (accounts + sign-in status).
+ * Get the navigation state of the sign-in navigator from what the screen that holds it knows. The sign-in knows nothing of the
+ * accounts: that screen tells it where the user stands (see `screens/load-account.tsx`).
  * If newly returned state differs from the previous one, it must be reset into navigation container (see `navigation-container.tsx`).
  *
  * While `showWelcome` is true (until the user signed in once), the welcome screen comes first, so the user can go back to it.
  * Then the user lands on the screen of its situation:
- * - fresh start (no account, no status): welcome screen, or platforms / login screen if the welcome screen is not shown anymore
+ * - fresh start (nothing to go to, no status): welcome screen, or platforms / login screen if the welcome screen is not shown anymore
  *   (e.g. all the accounts were removed). With `showIntroduction` (add-account modal), the introduction screen comes first instead:
  *   it is alone, the user goes on from it
  * - activation / password renew code: matching screen
- * - saved accounts: accounts selection (several accounts) or login screen of the account / platform
+ * - else the screens of `before` (the accounts selector, for instance), then the login screen of the `login` target, if any. Without
+ *   `before`, the choice of the platform comes first if there are several.
  */
 export const getSignInNavigationState = ({
-  accounts = {},
-  lastDeletedAccount,
+  before = [],
+  login,
   showIntroduction = false,
   showWelcome = false,
   status,
 }: {
-  accounts?: AuthMixedAccountMap;
-  lastDeletedAccount?: string;
+  /** Screens to show before the login screen, that the sign-in does not know about. */
+  before?: { name: string; params?: object }[];
+  /** The login screen to go to. */
+  login?: SignInLoginTarget;
   /** The introduction screen (what having several accounts means) comes first. Used by the add-account modal, not by the main sign-in. */
   showIntroduction?: boolean;
-  /** The welcome screen comes first, until the user signed in once (see `showWelcome` of the accounts store). */
+  /** The welcome screen comes first, until the user signed in once. */
   showWelcome?: boolean;
   status?: SignInStatus;
 }): PartialState<NavigationState> => {
   const firstRoute = showWelcome ? { name: 'sign-in/welcome' } : showIntroduction ? { name: 'sign-in/introduction' } : undefined;
   const routes: PartialState<NavigationState>['routes'] = firstRoute ? [firstRoute] : [];
-  const accountIds = Object.keys(accounts);
-  const nbAccounts = accountIds.length;
 
   // A. Activation & Password renew. The welcome screen stays below (the user can go back to it), the introduction screen does not:
   // the user already is past it, as it leads to the login.
@@ -126,67 +143,37 @@ export const getSignInNavigationState = ({
   }
 
   // B. Nothing to start from: the welcome (or introduction) screen, or if there is none the way to log in.
-  if (nbAccounts === 0 && !status) {
+  if (!login && before.length === 0 && !status) {
     if (!firstRoute) routes.push(getRouteForOnboarding());
     return { routes, stale: true };
   }
 
-  // C.1. Platforms / Multi-account selector
-  if (nbAccounts > 0 && nbAccounts + (lastDeletedAccount ? 1 : 0) > 1) {
-    routes.push({ name: 'sign-in/accounts' });
-  } else if (appConf.hasMultiplePlatform) {
-    routes.push({ name: 'sign-in/platforms' });
-  }
+  // C.1. Screens before the login, or the choice of the platform
+  if (before.length > 0) routes.push(...before);
+  else if (appConf.hasMultiplePlatform) routes.push({ name: 'sign-in/platforms' });
 
   // C.2. Login screen (Credentials / Wayf / Redirect)
-  const accountId = nbAccounts === 1 ? accountIds[0] : status?.accountId;
-  const account = accountId ? accounts[accountId] : undefined;
-  const platform = account?.platform
-    ? typeof account.platform === 'string'
-      ? account.platform
-      : account.platform.name
-    : status?.platform;
-  // After an account deletion, the accounts selector is shown instead of the login screen of the remaining account,
-  // unless there is a sign-in status (failed restore, password renew...): then the login screen must show up with the error.
-  if (platform && (!lastDeletedAccount || status)) {
-    routes.push(getRouteForLoginRedirection(platform, account?.user.id, status?.loginUsed));
+  const platform = login?.platform ?? status?.platform;
+  if (platform) {
+    routes.push(
+      getRouteForLoginRedirection(
+        platform,
+        login?.accountId ?? status?.accountId,
+        login?.loginUsed ?? status?.loginUsed,
+        login?.lockLogin,
+      ),
+    );
   }
 
   return { routes, stale: true };
 };
 
-/** Keeps the same navigation state object while the screens to show do not change, so the navigation is not reset for nothing. */
-const useStableNavigationState = (state: PartialState<NavigationState>, attempt: number) => {
-  // `attempt` makes the state change when the same status is set again (e.g. a second failed restore of the same account).
+/**
+ * Keeps the same navigation state object while the screens to show do not change, so the navigation is not reset for nothing.
+ * `attempt` makes the state change when the same status is set again (e.g. a second failed restore of the same account).
+ */
+export const useStableNavigationState = (state: PartialState<NavigationState>, attempt: number) => {
   const key = `${attempt}:${JSON.stringify(state)}`;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return React.useMemo(() => state, [key]);
-};
-
-/**
- * Navigation state of the sign-in screens when an account is loaded (no account connected), computed from the sign-in
- * situation (accounts + sign-in status).
- * The state only changes if the screens to show actually change, so the navigation is not reset by unrelated store updates
- * (token refresh...).
- */
-export const useLoadAccountNavigationState = () => {
-  const accounts = useAccountsStore(s => s.accounts);
-  const lastDeletedAccount = useAccountsStore(s => s.lastDeletedAccount);
-  const showWelcome = useAccountsStore(s => s.showWelcome);
-  const status = useSignInStore(s => s.status);
-  const attempt = useSignInStore(s => s.attempt);
-  return useStableNavigationState(getSignInNavigationState({ accounts, lastDeletedAccount, showWelcome, status }), attempt);
-};
-
-/**
- * Navigation state of the sign-in screens when an account is added to the existing ones: the saved accounts and the welcome
- * screen are ignored. The user starts from the introduction screen, always (whatever the accounts or `showWelcome` are), then goes on
- * to the platforms / login screen.
- * Only an activation / password renew code changes that: it leads to its own screen, without the introduction.
- */
-export const useAddAccountNavigationState = () => {
-  const status = useSignInStore(s => s.status);
-  const attempt = useSignInStore(s => s.attempt);
-  const oneTimeCodeStatus = status?.type === 'activation' || status?.type === 'passwordRenew' ? status : undefined;
-  return useStableNavigationState(getSignInNavigationState({ showIntroduction: true, status: oneTimeCodeStatus }), attempt);
 };

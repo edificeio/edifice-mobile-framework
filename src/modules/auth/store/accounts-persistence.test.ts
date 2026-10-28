@@ -177,7 +177,7 @@ describe('writing the storage (what follows the stores)', () => {
     });
   });
 
-  describe('the startup (the account to restore at next launch)', () => {
+  describe('the startup (what the app resumes at next launch)', () => {
     it('is the connected account', () => {
       const { initAccountsStore, readJSON, useAccountsStore } = setup();
       initAccountsStore();
@@ -193,41 +193,55 @@ describe('writing the storage (what follows the stores)', () => {
       expect(lib.data.has('auth.startup')).toBe(false);
     });
 
-    it('is the account that a failed restore waits for, once the account that was connected left', () => {
-      const { initAccountsStore, readJSON, seed, useAccountsStore, useSignInStore } = setup();
-      seed('accounts', { b: createSavedAccount({ id: 'b' }) });
+    it('is nothing once the connected account is put to sleep, until another one signs in', () => {
+      const { initAccountsStore, lib, readJSON, useAccountsStore } = setup();
       initAccountsStore();
       useAccountsStore.getState().setAccount(createActiveAccount({ id: 'a' }));
-      useSignInStore.getState().setStatus({ accountId: 'b', platform: 'platform', type: 'restore' });
-      expect(readJSON('startup')).toEqual({ account: 'a', platform: 'platform' });
       useAccountsStore.getState().sleep();
+      expect(lib.data.has('auth.startup')).toBe(false);
+      useAccountsStore.getState().setAccount(createActiveAccount({ id: 'b' }));
       expect(readJSON('startup')).toEqual({ account: 'b', platform: 'platform' });
     });
 
-    it('is the platform of a restore that has no account', () => {
-      const { initAccountsStore, readJSON, useSignInStore } = setup();
+    it('is the platform of the last account, when it is removed', () => {
+      const { initAccountsStore, readJSON, seed, useAccountsStore } = setup();
+      seed('accounts', { a: createSavedAccount({ id: 'a' }) });
       initAccountsStore();
-      useSignInStore.getState().setStatus({ loginUsed: 'login', platform: 'pf1', type: 'restore' });
-      expect(readJSON('startup')).toEqual({ platform: 'pf1' });
+      useAccountsStore.getState().removeAccount('a');
+      expect(readJSON('startup')).toEqual({ platform: 'platform' });
     });
 
-    it('is nothing again when the sign-in goes back to the neutral situation', () => {
-      const { initAccountsStore, lib, useSignInStore } = setup();
+    it('does not change a failed restore, so the account is tried again at next launch', () => {
+      const { initAccountsStore, readJSON, seed, useSignInStore } = setup();
+      seed('accounts', { a: createSavedAccount({ id: 'a' }) });
+      seed('startup', { account: 'a', platform: 'platform' });
       initAccountsStore();
-      useSignInStore.getState().setStatus({ loginUsed: 'login', platform: 'pf1', type: 'restore' });
-      useSignInStore.getState().reset();
-      expect(lib.data.has('auth.startup')).toBe(false);
+      useSignInStore.getState().setStatus({ accountId: 'a', platform: 'platform', type: 'login' });
+      expect(readJSON('startup')).toEqual({ account: 'a', platform: 'platform' });
     });
 
-    it('is not written for a status that is not a restore (activation, password renew)', () => {
-      const { initAccountsStore, lib, useSignInStore } = setup();
+    it('is not changed by the choice of an account, nor by a restore that fails, whatever the sign-in status is', () => {
+      const { initAccountsStore, lib, seed, useSignInStore } = setup();
+      seed('accounts', { b: createSavedAccount({ id: 'b' }) });
       initAccountsStore();
+      useSignInStore.getState().setStatus({ accountId: 'b', platform: 'platform', type: 'login' });
+      useSignInStore.getState().setStatus({ loginUsed: 'login', platform: 'pf1', type: 'login' });
       useSignInStore.getState().setStatus({ code: '1', loginUsed: 'login', platform: 'pf1', type: 'activation' });
       expect(lib.data.has('auth.startup')).toBe(false);
     });
 
-    // A restore that is waiting must survive what happens meanwhile (token refresh of another account, profile...)
-    it('is only written when what it is made of changes', () => {
+    it('is nothing after a switch that failed: the account left is asleep and the one chosen was never signed in', () => {
+      const { initAccountsStore, lib, seed, useAccountsStore, useSignInStore } = setup();
+      seed('accounts', { b: createSavedAccount({ id: 'b' }) });
+      initAccountsStore();
+      useAccountsStore.getState().setAccount(createActiveAccount({ id: 'a' }));
+      useSignInStore.getState().setStatus({ accountId: 'b', platform: 'platform', type: 'login' });
+      useAccountsStore.getState().sleep();
+      expect(lib.data.has('auth.startup')).toBe(false);
+    });
+
+    // What happens meanwhile (token refresh of another account, profile...) must not rewrite it
+    it('is only written when it changes', () => {
       const { initAccountsStore, lib, seed, useAccountsStore } = setup();
       seed('accounts', { a: createSavedAccount({ id: 'a' }) });
       seed('startup', { account: 'a', platform: 'platform' });

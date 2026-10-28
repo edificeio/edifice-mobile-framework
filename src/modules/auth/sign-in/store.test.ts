@@ -1,8 +1,8 @@
-import { useSignInStore } from './sign-in';
+import { useSignInStore } from './store';
 
 const store = () => useSignInStore.getState();
 
-const restoreStatus = { accountId: 'acc1', platform: 'platform', type: 'restore' } as const;
+const restoreStatus = { accountId: 'acc1', platform: 'platform', type: 'login' } as const;
 
 describe('sign-in store', () => {
   beforeEach(() => {
@@ -86,5 +86,28 @@ describe('sign-in store', () => {
       expect(store().error).toBeUndefined();
       expect(store().attempt).toBe(1);
     });
+  });
+});
+
+describe('sign-in store, status applied once', () => {
+  beforeEach(() => {
+    useSignInStore.setState(useSignInStore.getInitialState(), true);
+  });
+
+  it('keeps the first situation a status was applied in', () => {
+    useSignInStore.getState().setStatus(restoreStatus);
+    useSignInStore.getState().markApplied('one');
+    useSignInStore.getState().markApplied('two');
+    expect(useSignInStore.getState().applied).toBe('one');
+  });
+
+  it('forgets it for a new status, and when the status is closed', () => {
+    useSignInStore.getState().setStatus(restoreStatus);
+    useSignInStore.getState().markApplied('one');
+    useSignInStore.getState().setStatus(restoreStatus);
+    expect(useSignInStore.getState().applied).toBeUndefined();
+    useSignInStore.getState().markApplied('one');
+    useSignInStore.getState().reset();
+    expect(useSignInStore.getState().applied).toBeUndefined();
   });
 });

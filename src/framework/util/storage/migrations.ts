@@ -57,7 +57,7 @@ const markerOf = ({ id, namespace }: MigrationEntry) => `${namespace}${StorageHa
 const nameOf = (entry: MigrationEntry, accountId?: string) =>
   `'${markerOf(entry)}'${accountId === undefined ? '' : ` for ${accountId}`}`;
 
-const runEntry = async (entry: MigrationEntry, accountId?: string) => {
+const runMigrationEntry = async (entry: MigrationEntry, accountId?: string) => {
   const markers = entry.type === 'account' ? accountMarkers.for(accountId!) : deviceMarkers;
   if (markers.contains(markerOf(entry))) return;
   try {
@@ -79,7 +79,7 @@ let devicePromise: Promise<void> | undefined;
  * @param storages every storage the modules declare (a storage may be declared by several modules). Only the ones that have migrations matter.
  * @throws if two migrations of the same namespace have the same id.
  */
-export const runDeviceMigrations = (storages: readonly StorageHandler<any>[]) => {
+export const runDeviceStorageMigrations = (storages: readonly StorageHandler<any>[]) => {
   devicePromise ??= (async () => {
     // A storage that several modules depend on is declared by each of them, but is the same one: migrated once
     declaredStorages = [...new Set(storages)].filter(storage => storage.migrations.length > 0);
@@ -93,7 +93,7 @@ export const runDeviceMigrations = (storages: readonly StorageHandler<any>[]) =>
     for (const storage of declaredStorages) {
       // Marked first: the migrations write with the handler of the storage, which checks that it is declared
       StorageHandler.markDeclared(storage);
-      for (const entry of storage.migrations) if (entry.type === 'device') await runEntry(entry);
+      for (const entry of storage.migrations) if (entry.type === 'device') await runMigrationEntry(entry);
     }
   })();
   return devicePromise;
@@ -102,8 +102,8 @@ export const runDeviceMigrations = (storages: readonly StorageHandler<any>[]) =>
 /**
  * Runs the migrations of the account storages that were not done yet for the given account, in the order the modules declare them.
  */
-export const runAccountMigrations = async (accountId: string) => {
+export const runAccountStorageMigrations = async (accountId: string) => {
   for (const entry of declaredStorages.flatMap(storage => storage.migrations)) {
-    if (entry.type === 'account') await runEntry(entry, accountId);
+    if (entry.type === 'account') await runMigrationEntry(entry, accountId);
   }
 };

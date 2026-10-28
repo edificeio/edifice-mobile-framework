@@ -15,7 +15,6 @@ import {
   getSerializedLoggedInAccountInfo,
 } from '~/modules/auth/model';
 import {
-  AuthStorageData,
   eraseStorageForAccount,
   readSavedAccounts,
   readSavedStartup,
@@ -26,7 +25,6 @@ import {
 } from '~/modules/auth/storage';
 
 import { getActiveAccount, useAccountsStore } from './accounts';
-import { useSignInStore } from './sign-in';
 
 /**
  * Tokens that are never persisted: they are fetched from the server at each login, or when needed.
@@ -45,21 +43,6 @@ const serializeAccounts = (accounts: AuthMixedAccountMap) =>
     ]),
   ) as Record<string, AuthSavedAccount>;
 
-/**
- * The `startup` to persist: the account (and platform) to restore at next launch.
- * It is the connected account; without any, it is the one the sign-in is waiting to restore (`restore` status).
- * So an account the user just left for another one that could not be restored is the one coming back at next launch.
- */
-const getStartup = (): AuthStorageData['startup'] | undefined => {
-  const { accounts, connected } = useAccountsStore.getState();
-  const status = useSignInStore.getState().status;
-  const accountId = connected ?? (status?.type === 'restore' ? status.accountId : undefined);
-  const account = accountId !== undefined ? accounts[accountId] : undefined;
-  if (account)
-    return { account: account.user.id, platform: typeof account.platform === 'string' ? account.platform : account.platform.name };
-  return connected === undefined && status?.type === 'restore' ? { platform: status.platform } : undefined;
-};
-
 // The preferences of the other modules belong to the active account.
 Storage.setAccountResolver(() => getActiveAccount()?.user.id);
 
@@ -75,20 +58,12 @@ export const initAccountsStore = () => {
   const accounts: AuthMixedAccountMap = Object.fromEntries(
     Object.entries(readSavedAccounts()).map(([id, account]) => [id, stripVolatileTokens(account)]),
   );
-  useAccountsStore.getState().hydrate(accounts, readShowWelcome());
+  useAccountsStore.getState().hydrate(accounts, readShowWelcome(), startup);
 
   unsubscribe?.();
-  // `startup` is only written when what it is made of changes: other changes of the stores don't touch it,
-  // so a pending restore survives them.
-  let lastStartup = JSON.stringify(getStartup());
-  const syncStartup = () => {
-    const startupToWrite = getStartup();
-    const key = JSON.stringify(startupToWrite);
-    if (key === lastStartup) return;
-    lastStartup = key;
-    writeStartup(startupToWrite);
-  };
-  const unsubscribeAccounts = useAccountsStore.subscribe((state, prev) => {
+  // `startup` is a field of the store: it is only written when it changes, so a restore that did not work, or what happens meanwhile
+  // (token refresh of another account, profile...), never touch it.
+  unsubscribe = useAccountsStore.subscribe((state, prev) => {
     if (state.accounts !== prev.accounts) {
       writeAccounts(serializeAccounts(state.accounts));
       // An account that disappears (removed, or replaced by another one) takes its preferences with it.
@@ -99,15 +74,10 @@ export const initAccountsStore = () => {
     if (state.showWelcome !== prev.showWelcome) {
       writeShowWelcome(state.showWelcome);
     }
-    syncStartup();
+    if (state.startup !== prev.startup && JSON.stringify(state.startup) !== JSON.stringify(prev.startup)) {
+      writeStartup(state.startup);
+    }
   });
-  const unsubscribeSignIn = useSignInStore.subscribe((state, prev) => {
-    if (state.status !== prev.status) syncStartup();
-  });
-  unsubscribe = () => {
-    unsubscribeAccounts();
-    unsubscribeSignIn();
-  };
 
   const accountIds = Object.keys(accounts);
   const startupAccountId = startup.account ?? (accountIds.length === 1 ? accountIds[0] : undefined);

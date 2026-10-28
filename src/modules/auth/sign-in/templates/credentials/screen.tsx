@@ -21,14 +21,14 @@ import { openUrl } from '~/framework/util/linking';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';
 import { AccountErrorCode } from '~/modules/auth/model/error';
 import { useSignInNavigation } from '~/modules/auth/sign-in/navigation';
-import { useSignInStore } from '~/modules/auth/store/sign-in';
+import { useSignInStore } from '~/modules/auth/sign-in/store';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { LoginState, SignInCredentialsScreenTemplateProps } from './types';
 
 export const SignInCredentialsScreenTemplate = React.memo(function ({
-  account,
+  accountId,
   handleSignIn,
   lockLogin,
   loginUsed,
@@ -38,7 +38,7 @@ export const SignInCredentialsScreenTemplate = React.memo(function ({
   const { navigate } = useSignInNavigation();
 
   const platform = appConf.assertPlatformOfName(_platform);
-  const initialLogin = (account?.user as { loginUsed?: string } | undefined)?.loginUsed ?? loginUsed ?? '';
+  const initialLogin = loginUsed ?? '';
   const [login, setLogin] = React.useState<string>(initialLogin);
   const [password, setPassword] = React.useState<string>('');
   const [typing, setTyping] = React.useState<boolean>(false);
@@ -59,7 +59,7 @@ export const SignInCredentialsScreenTemplate = React.memo(function ({
         username: login,
       };
 
-      await handleSignIn(loginCredentials, errkey, account?.user.id);
+      await handleSignIn(loginCredentials, errkey, accountId);
 
       if (mounted) {
         setTyping(false);
@@ -78,7 +78,7 @@ export const SignInCredentialsScreenTemplate = React.memo(function ({
         setLoginState(LoginState.IDLE);
       }
     }
-  }, [password, login, handleSignIn, errkey, account?.user.id, mounted]);
+  }, [password, login, handleSignIn, errkey, accountId, mounted]);
 
   const goToWeb = React.useCallback(() => {
     openUrl(platform.url);
@@ -231,7 +231,7 @@ export const SignInCredentialsScreenTemplate = React.memo(function ({
   const scrollViewRef = React.useRef<KeyboardAwareScrollViewRef>(null);
   React.useEffect(() => {
     const listener = Keyboard.addListener('keyboardDidShow', () => {
-      scrollViewRef.current?.scrollTo(styles.platformLogo.height + styles.platform.paddingTop);
+      scrollViewRef.current?.scrollTo({ y: styles.platformLogo.height + styles.platform.paddingTop });
     });
     return () => {
       listener.remove();

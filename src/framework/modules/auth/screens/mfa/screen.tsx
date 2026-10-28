@@ -32,10 +32,10 @@ import {
   mfaValidation,
   mobileValidation,
 } from '~/framework/modules/auth/service';
-import { refreshRequirementsAction } from '~/framework/modules/auth/thunks';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { tryAction } from '~/framework/util/redux/actions';
+import { useAuthFlows } from '~/modules/auth/flows';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';
@@ -90,7 +90,8 @@ const feedbackTexts = {
 };
 
 const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
-  const { navigation, route, tryRefreshRequirements, tryUpdateProfile } = props;
+  const { navigation, route, tryUpdateProfile } = props;
+  const { refreshRequirements } = useAuthFlows();
 
   const modificationType = route.params.modificationType;
   const mfaRedirectionRoute = route.params.mfaRedirectionRoute;
@@ -288,12 +289,12 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       }
     } else {
       try {
-        await tryRefreshRequirements();
+        await refreshRequirements();
       } catch {
         Toast.showError(I18n.get('auth-mfa-error-text'));
       }
     }
-  }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, tryRefreshRequirements]);
+  }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, refreshRequirements]);
 
   useEffect(() => setResendTimer(), []);
 
@@ -437,7 +438,6 @@ const mapStateToProps: (state: IGlobalState) => AuthMFAScreenStoreProps = () => 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthMFAScreenDispatchProps = dispatch => {
   return bindActionCreators<AuthMFAScreenDispatchProps>(
     {
-      tryRefreshRequirements: tryAction(refreshRequirementsAction),
       tryUpdateProfile: tryAction(profileUpdateAction),
     },
     dispatch,
