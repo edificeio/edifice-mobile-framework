@@ -49,7 +49,7 @@ export const useRootStackNavigation = () => {
     // Start screen must be the first one in the object.
     // Destructuring here to restructure just after to make sure GUEST_START_SCREEN is a first place.
     const { [GUEST_START_SCREEN]: startScreen, ...restCoreScreens } = coreScreens;
-    return { startScreen, ...restCoreScreens };
+    return { [GUEST_START_SCREEN]: startScreen, ...restCoreScreens };
   }, [coreScreens]);
 
   const groups = React.useMemo(
