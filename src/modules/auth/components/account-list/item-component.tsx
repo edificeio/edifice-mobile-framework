@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
@@ -31,17 +31,9 @@ const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
     onPress?.(item, index);
   };
 
+  // No confirmation here: it is up to `onDelete` (see the `confirmRemoveAccount` flow)
   const onRemoveAccount = () => {
-    Alert.alert(I18n.get('accountlistitem-removealert-title'), I18n.get('accountlistitem-removealert-description'), [
-      {
-        onPress: () => onDelete?.(item, index),
-        style: 'destructive',
-        text: I18n.get('common-delete'),
-      },
-      {
-        text: I18n.get('common-cancel'),
-      },
-    ]);
+    onDelete?.(item, index);
   };
 
   const avatarProps = React.useMemo(
