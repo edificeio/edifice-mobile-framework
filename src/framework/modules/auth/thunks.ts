@@ -732,8 +732,10 @@ export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgo
 /** Action that erases the session without Tracking anything. */
 export function logoutAction() {
   return async (dispatch: ThunkDispatch<any, any, any>) => {
-    // Unregister the device token from the backend
     const account = assertSession();
+    // Unregister userId with Trackers
+    await Trackers.resetUserId(account.user.id);
+    // Unregister the device token from the backend
     await firebaseService.disablePushNotificationsForAccount(account);
     // Writes new storage values
     storage.writeLogout(account);

@@ -413,7 +413,7 @@ export class ConcreteScreebTracker extends AbstractTracker<undefined> {
     }
     const hashedUserId = this.hashUserId(id);
     const session = getSession();
-    await resetIdentity();
+    //await resetIdentity();
     setIdentity(hashedUserId, {
       device: DeviceInfo.getModel(),
       language: I18n.getLanguage(),
