@@ -13,11 +13,14 @@ import {
   type PartialState,
   useNavigation,
   useNavigationContainerRef,
+  useRoute,
 } from '@react-navigation/native';
 import { createNativeStackNavigator, type NativeStackNavigatorProps } from '@react-navigation/native-stack';
 
+import { useTelemetryDelegatedRoutes } from '~/app/module/hooks';
 import { BaseStackScreenLayout } from '~/app/navigation-new/layout';
 import { visibleStackScreenOptions } from '~/app/navigation-new/options';
+import { useScreenTelemetry } from '~/app/navigation-new/telemetry';
 import { navigationLightTheme } from '~/app/navigation-new/theme';
 import AuthAccountsScreen from '~/modules/auth/screens/accounts';
 import signInModule from '~/modules/auth/sign-in';
@@ -81,12 +84,26 @@ export function AuthNavigationWrapper({ navigationState, onSignedIn, screenOptio
     initialNavigationDone.current = true;
   }, [navigationRef, navigationState]);
 
+  // The screen that hosts this navigator is not tracked by the app (`delegatesTelemetry`): it is tracked here, before the first screen.
+  const { name: hostRouteName } = useRoute();
+  const delegatedRoutes = useTelemetryDelegatedRoutes();
+  const { logNavigationState, logRoute, onScreenChange } = useScreenTelemetry();
+
   const onUnhandledAction = React.useCallback<NonNullable<React.ComponentProps<typeof AuthNavigation>['onUnhandledAction']>>(
     action => {
       navigation.dispatch(action);
     },
     [navigation],
   );
+
+  const onReady = React.useCallback<NonNullable<React.ComponentProps<typeof AuthNavigation>['onReady']>>(() => {
+    // Only if the app leaves it to this navigator, else it tracks it itself (and twice, in the wrong order, if it was done here too)
+    if (delegatedRoutes.has(hostRouteName)) logRoute(hostRouteName);
+    else
+      __DEV__ &&
+        console.warn(`[Navigation] "${hostRouteName}" hosts the sign-in navigator: it should declare \`delegatesTelemetry\`.`);
+    logNavigationState(navigationState);
+  }, [delegatedRoutes, hostRouteName, navigationState, logNavigationState, logRoute]);
 
   // Note: `useState` is used here only to prevent re-renders
   const [tree] = React.useState(() => (
@@ -96,6 +113,8 @@ export function AuthNavigationWrapper({ navigationState, onSignedIn, screenOptio
         ref={navigationRef}
         onUnhandledAction={onUnhandledAction}
         initialState={navigationState}
+        onStateChange={onScreenChange}
+        onReady={onReady}
       />
     </NavigationIndependentTree>
   ));

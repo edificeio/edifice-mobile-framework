@@ -47,6 +47,8 @@ const AuthAddAccountScreen = React.memo(function ({}: StaticScreenProps<undefine
 });
 AuthAddAccountScreen.displayName = 'AuthAddAccountScreen';
 export default defineModal({
+  // The sign-in navigator it hosts tracks it (see `AuthNavigationWrapper`)
+  delegatesTelemetry: true,
   options: () => ({ headerShown: false }),
   screen: AuthAddAccountScreen,
 });

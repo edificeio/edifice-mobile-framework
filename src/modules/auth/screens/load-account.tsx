@@ -30,6 +30,8 @@ const AuthLoadAccountScreen = React.memo(function ({}: StaticScreenProps<undefin
 });
 AuthLoadAccountScreen.displayName = 'AuthLoadAccountScreen';
 export default defineScreen({
+  // The sign-in navigator it hosts tracks it (see `AuthNavigationWrapper`)
+  delegatesTelemetry: true,
   options: () => ({ headerShown: false, title: 'Connexion' }),
   screen: AuthLoadAccountScreen,
 });
