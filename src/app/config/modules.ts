@@ -7,6 +7,7 @@ export default [
   import('~/app/test/cmodule'),
   import('~/app/test/dmodule'),
   import('~/app/test/emodule'),
+  import('~/modules/audience'),
   import('~/modules/auth'),
   import('~/modules/editor'),
   import('~/modules/notifications'),

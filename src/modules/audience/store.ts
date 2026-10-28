@@ -11,9 +11,6 @@ type Action = {
   setReactionTypes: (platform: Platform['name'], types: string[]) => void;
 };
 
-/**
- * ToDo: this does not belong to auth, move it to the `audience` module.
- */
 export const usePlatformReactionTypesStore = create<State & Action>()(set => ({
   setReactionTypes: (platform, types) => set(state => ({ types: { ...state.types, [platform]: types } })),
   types: {},
