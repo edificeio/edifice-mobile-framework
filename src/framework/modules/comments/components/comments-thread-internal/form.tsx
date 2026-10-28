@@ -20,12 +20,14 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { config } from '~/framework/modules/comments';
 
 import { CommentsThreadContext } from './context';
+import { CommentsThreadAddFormLoaderContent } from './loader';
 import styles from './styles';
 import { CommentsThreadInternalProps, CommentsThreadInternals } from './types';
 
 const FAKE_INPUT_STYLE = [UI_STYLES.flex1, chatInputStyles.wrapper, styles.fakeInput];
 
 export const CommentsThreadAddForm = ({
+  isLoading = false,
   onAddRichMessage,
   onBlur,
   onFocus,
@@ -36,6 +38,7 @@ export const CommentsThreadAddForm = ({
   style,
 }: {
   style?: AnimatedStyle<ViewStyle>;
+  isLoading?: boolean;
   onFocus?: ChatTextAreaProps['onFocus'];
   onBlur?: ChatTextAreaProps['onBlur'];
   onAddRichMessage?: CommentsThreadInternalProps['onAddRichMessage'];
@@ -84,33 +87,39 @@ export const CommentsThreadAddForm = ({
             },
             [dispatch],
           )}>
-          <SingleAvatar size="md" userId={session?.user.id} />
-          {onAddRichMessage ? (
-            <Pressable style={FAKE_INPUT_STYLE} onPress={onAddRichMessage} testID="open-editor-modal">
-              <SmallItalicText style={styles.fakeInputPlaceholder} numberOfLines={1}>
-                {placeholder}
-              </SmallItalicText>
-            </Pressable>
+          {isLoading ? (
+            <CommentsThreadAddFormLoaderContent hasSendButton={!onAddRichMessage} />
           ) : (
             <>
-              <ChatTextArea
-                ref={ref}
-                maxLength={config.maxLength}
-                wrapperStyle={[UI_STYLES.flex1]}
-                value={newCommentValue}
-                onChangeText={onChangeText}
-                editable={!isSending}
-                onFocus={onFocus}
-                onBlur={onBlur}
-                placeholder={placeholder}
-              />
-              <PrimaryButton
-                onPress={onPress}
-                testID="comment-add"
-                disabled={!newCommentValue.length}
-                icon="ui-send"
-                loading={isSending}
-              />
+              <SingleAvatar size="md" userId={session?.user.id} />
+              {onAddRichMessage ? (
+                <Pressable style={FAKE_INPUT_STYLE} onPress={onAddRichMessage} testID="open-editor-modal">
+                  <SmallItalicText style={styles.fakeInputPlaceholder} numberOfLines={1}>
+                    {placeholder}
+                  </SmallItalicText>
+                </Pressable>
+              ) : (
+                <>
+                  <ChatTextArea
+                    ref={ref}
+                    maxLength={config.maxLength}
+                    wrapperStyle={[UI_STYLES.flex1]}
+                    value={newCommentValue}
+                    onChangeText={onChangeText}
+                    editable={!isSending}
+                    onFocus={onFocus}
+                    onBlur={onBlur}
+                    placeholder={placeholder}
+                  />
+                  <PrimaryButton
+                    onPress={onPress}
+                    testID="comment-add"
+                    disabled={!newCommentValue.length}
+                    icon="ui-send"
+                    loading={isSending}
+                  />
+                </>
+              )}
             </>
           )}
         </View>

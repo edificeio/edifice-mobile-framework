@@ -4,20 +4,29 @@ import { View } from 'react-native';
 import { MessageDto } from '@edifice.io/community-client-rest-rn';
 import Animated, { useAnimatedRef, useScrollOffset } from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
+import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
-import { LOADING_ITEM_DATA, PaginatedFlatListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
-import { LoadingIndicator } from '~/framework/components/loading';
+import {
+  DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
+  LOADING_ITEM_DATA,
+  PaginatedFlatListProps,
+  staleOrSplice,
+} from '~/framework/components/list/paginated-list';
 import { BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { AccountType } from '~/framework/modules/auth/model';
 import { withSession } from '~/framework/modules/auth/util';
 import { PaginatedCommentsList, PaginatedCommentsListProps } from '~/framework/modules/comments/components/comments-list';
-import { CommentsThreadInternals } from '~/framework/modules/comments/components/comments-thread-internal';
+import {
+  CommentsThreadAddFormLoader,
+  CommentsThreadInternals,
+  CommentsThreadItemLoader,
+} from '~/framework/modules/comments/components/comments-thread-internal';
 import { CommentDeletedItem, CommentItem } from '~/framework/modules/comments/types';
 import { toInstant } from '~/framework/modules/communities/adapter';
-import DiscussionHeader from '~/framework/modules/communities/components/discussions/header';
+import DiscussionHeader, { DiscussionHeaderLoader } from '~/framework/modules/communities/components/discussions/header';
 import { useCollapsibleDiscussionHeader } from '~/framework/modules/communities/hooks/use-collapsible-discussion-header';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { deleteMessage, getDiscussion, getMessages } from '~/framework/modules/communities/service/discussions';
@@ -28,6 +37,8 @@ import styles, { SCROLL_INDICATOR_INSETS } from './styles';
 import { CommunitiesDiscussionDetailsScreen } from './types';
 
 const PAGE_SIZE = 20;
+const FIRST_MESSAGE_LOADER_LINES = [100, 100, 100, 70];
+const COMMENTS_LOADER_ROWS = Array.from({ length: DEFAULT_FLATLIST_PLACEHOLDER_ROWS }, (_, index) => index);
 
 const parseAccountTypesMap = {
   External: AccountType.External,
@@ -52,6 +63,25 @@ function hydrateMessage(message: MessageDto): Omit<CommentItem, 'replies'> | Omi
   return message.deleted ? { ...common, deleted: true as const } : { ...common, content: message.htmlContent, isRichContent: true };
 }
 
+const DiscussionDetailsLoader = React.memo(() => (
+  <View style={styles.loaderRoot}>
+    <DiscussionHeaderLoader />
+    <View style={styles.loaderContent}>
+      <Placeholder Animation={Fade}>
+        <View style={styles.firstMessageLoader}>
+          {FIRST_MESSAGE_LOADER_LINES.map((width, index) => (
+            <PlaceholderLine key={index} noMargin style={styles.firstMessageLoaderLine} width={width} />
+          ))}
+        </View>
+      </Placeholder>
+      {COMMENTS_LOADER_ROWS.map(index => (
+        <CommentsThreadItemLoader key={index} />
+      ))}
+    </View>
+    <CommentsThreadAddFormLoader />
+  </View>
+));
+
 export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function DiscussionDetailsScreen({
   navigation,
   route: {
@@ -62,9 +92,25 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
   const dispatch = useDispatch();
   const discussion = useSelector(communitiesSelectors.getCommunityDiscussion(communityId, discussionId));
   const [messages, setMessages] = React.useState<PaginatedCommentsListProps['data']>([]);
+  const [isMessagesLoading, setIsMessagesLoading] = React.useState(true);
   const scrollRef = useAnimatedRef<Animated.FlatList<CommentsThreadInternals.Item>>();
   const scrollOffset = useScrollOffset(scrollRef);
   const { collapse, expandedBandHeight } = useCollapsibleDiscussionHeader(scrollOffset);
+
+  /**
+   * The header is an overlay measured after its first render: until then, the band and the list spacer are 0 high.
+   * The loader stays on top of the (already rendered) content until it is laid out, then gives way to it in place.
+   * The extra frames let the list header and the comment form settle on the new spacer height.
+   */
+  const [isLayoutReady, setIsLayoutReady] = React.useState(false);
+  const isHeaderMeasured = expandedBandHeight > 0;
+  React.useEffect(() => {
+    if (!isHeaderMeasured) return;
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => setIsLayoutReady(true));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [isHeaderMeasured]);
 
   const fetchDiscussion = React.useCallback(async () => {
     const loaded = await getDiscussion(session, communityId, discussionId);
@@ -91,11 +137,15 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     NonNullable<PaginatedFlatListProps<Omit<CommentItem, 'replies'> | Omit<CommentDeletedItem, 'replies'>>['onPageReached']>
   >(
     async (page, reloadAll) => {
-      if (page === 0 || reloadAll) await fetchDiscussion();
+      try {
+        if (page === 0 || reloadAll) await fetchDiscussion();
 
-      const { messages: loadedMessages, total } = await getMessages(session, communityId, discussionId, page, PAGE_SIZE);
-      const newData = loadedMessages.map(hydrateMessage);
-      setMessages(previousData => staleOrSplice({ newData, previousData, reloadAll, start: page * PAGE_SIZE, total }));
+        const { messages: loadedMessages, total } = await getMessages(session, communityId, discussionId, page, PAGE_SIZE);
+        const newData = loadedMessages.map(hydrateMessage);
+        setMessages(previousData => staleOrSplice({ newData, previousData, reloadAll, start: page * PAGE_SIZE, total }));
+      } finally {
+        setIsMessagesLoading(false);
+      }
     },
     [communityId, discussionId, fetchDiscussion, session],
   );
@@ -180,35 +230,41 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     [discussion, spacerStyle],
   );
 
-  if (!discussion) return <LoadingIndicator />;
+  const showLoader = !isLayoutReady;
 
   return (
     <View style={styles.root}>
-      <PaginatedCommentsList
-        ref={scrollRef}
-        data={messages}
-        onPageReached={onPageReached}
-        pageSize={PAGE_SIZE}
-        ListHeaderComponent={listHeader}
-        canAddComment={true}
-        allowReplies={false}
-        deletedContentPlaceholder={I18n.get('communities-discussion-message-deleted')}
-        scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
-        contentInsetAdjustmentBehavior="never"
-        onDelete={onDelete}
-        onAddRichMessage={onAddRichMessage}
-        onEditRichMessage={onEditRichMessage}
-        addPlaceholder={I18n.get('communities-discussion-message-add')}
-      />
-      <DiscussionHeader
-        authorName={discussion.createdBy.displayName}
-        authorProfile={discussion.createdBy.profile as AccountType}
-        collapse={collapse}
-        createdAt={createdAt}
-        status={getDiscussionStatus(discussion)}
-        title={discussion.title}
-        type={discussion.icon}
-      />
+      {discussion ? (
+        <>
+          <PaginatedCommentsList
+            ref={scrollRef}
+            data={messages}
+            onPageReached={onPageReached}
+            pageSize={PAGE_SIZE}
+            ListHeaderComponent={listHeader}
+            canAddComment={true}
+            isLoading={isMessagesLoading}
+            allowReplies={false}
+            deletedContentPlaceholder={I18n.get('communities-discussion-message-deleted')}
+            scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
+            contentInsetAdjustmentBehavior="never"
+            onDelete={onDelete}
+            onAddRichMessage={onAddRichMessage}
+            onEditRichMessage={onEditRichMessage}
+            addPlaceholder={I18n.get('communities-discussion-message-add')}
+          />
+          <DiscussionHeader
+            authorName={discussion.createdBy.displayName}
+            authorProfile={discussion.createdBy.profile as AccountType}
+            collapse={collapse}
+            createdAt={createdAt}
+            status={getDiscussionStatus(discussion)}
+            title={discussion.title}
+            type={discussion.icon}
+          />
+        </>
+      ) : null}
+      {showLoader ? <DiscussionDetailsLoader /> : null}
     </View>
   );
 });

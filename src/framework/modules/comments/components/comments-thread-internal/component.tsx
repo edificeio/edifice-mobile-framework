@@ -44,6 +44,7 @@ export function CommentsThreadInternal({
   data,
   deletedContentPlaceholder,
   focusItem,
+  isLoading,
   ListHeaderComponent: _ListHeaderComponent,
   onAddRichMessage,
   onDelete,
@@ -133,12 +134,14 @@ export function CommentsThreadInternal({
     scrollProps => (
       <KeyboardChatScrollView
         {...scrollProps}
+        // While loading, the form gets measured: freezing prevents the "at end" scroll correction from shifting the placeholder list.
+        freeze={isLoading}
         keyboardLiftBehavior="whenAtEnd"
         offset={tabBarHeight + formBottomInset}
         extraContentPadding={extraContentPadding}
       />
     ),
-    [tabBarHeight, formBottomInset, extraContentPadding],
+    [isLoading, tabBarHeight, formBottomInset, extraContentPadding],
   );
 
   const UnwrappedListHeaderComponent = unwrapAnimatedProp(_ListHeaderComponent);
@@ -328,6 +331,7 @@ export function CommentsThreadInternal({
       />
       {canAddComment && !isInlineEditing && (
         <CommentsThreadAddForm
+          isLoading={isLoading}
           onAddRichMessage={onAddRichMessage}
           onSubmit={onSubmit}
           placeholder={addPlaceholder}

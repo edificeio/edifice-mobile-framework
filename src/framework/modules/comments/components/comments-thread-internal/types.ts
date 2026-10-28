@@ -47,6 +47,7 @@ export type CommentsThreadInternalProps<
     data: CommentsThreadInternals.Item[];
     deletedContentPlaceholder?: string;
     focusItem?: CommentsThread.AnyActualItem['id'];
+    isLoading?: boolean;
     onAddRichMessage?: () => void;
     onEditRichMessage?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem) => void;
     onUnfoldReplies?: (id: string, start: number, count: number) => void;
