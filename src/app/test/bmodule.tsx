@@ -13,7 +13,7 @@ function BModuleHomeScreen({}: StaticScreenProps<{
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
       <HeadingSText>Là c'est les mails</HeadingSText>
-      <AccountsButton />
+      <AccountsButton testID="b-accounts" />
     </View>
   );
 }
@@ -24,7 +24,6 @@ function BModuleDetailsScreen({}: StaticScreenProps<{
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
       <HeadingSText>Là c'est les mails</HeadingSText>
-      <AccountsButton />
     </View>
   );
 }

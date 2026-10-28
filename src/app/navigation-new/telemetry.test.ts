@@ -23,9 +23,9 @@ describe('useScreenTelemetry', () => {
   });
 
   it('does not track the ignored routes, and still tracks the others after', () => {
-    const ignoredRoutes = new Set(['auth/$load-account']);
+    const ignoredRoutes = new Set(['a/container']);
     const { result } = renderHook(() => useScreenTelemetry({ ignoredRoutes }));
-    result.current.logNavigationState(stateOn('auth/$load-account'));
+    result.current.logNavigationState(stateOn('a/container'));
     expect(trackView).not.toHaveBeenCalled();
     result.current.logNavigationState(stateOn('a/home'));
     expect(trackView.mock.calls).toEqual([[['a', 'home']]]);
@@ -33,8 +33,8 @@ describe('useScreenTelemetry', () => {
 
   it('tracks a route by its name, before the screens it hosts (a container that tracks itself)', () => {
     const { result } = renderHook(() => useScreenTelemetry());
-    result.current.logRoute('auth/$load-account');
-    result.current.logNavigationState(stateOn('auth/accounts'));
-    expect(trackView.mock.calls).toEqual([[['auth', 'load-account']], [['auth', 'accounts']]]);
+    result.current.logRoute('a/container');
+    result.current.logNavigationState(stateOn('a/inside'));
+    expect(trackView.mock.calls).toEqual([[['a', 'container']], [['a', 'inside']]]);
   });
 });

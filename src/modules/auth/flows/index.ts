@@ -28,7 +28,7 @@ import type { SessionLifecycle } from '~/modules/auth/lifecycle';
 import { createChangePassword } from './change-password';
 import { createChangePasswordRequirement } from './change-password-requirement';
 import { createEndSession } from './end-session';
-import { createLogout } from './logout';
+import { createConfirmLogout, createLogout } from './logout';
 import { refreshOAuth2Token } from './refresh-oauth2-token';
 import { refreshOneSessionId } from './refresh-one-session-id';
 import { refreshQueryParamToken } from './refresh-query-param-token';
@@ -66,6 +66,7 @@ export const createAuthFlows = ({ lifecycle }: { lifecycle: SessionLifecycle }) 
   return {
     changePassword,
     changePasswordRequirement: createChangePasswordRequirement(changePassword, logout),
+    confirmLogout: createConfirmLogout(logout),
     logout,
     refreshOAuth2Token,
     refreshOneSessionId,

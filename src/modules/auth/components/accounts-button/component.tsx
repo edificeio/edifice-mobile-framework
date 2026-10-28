@@ -8,10 +8,11 @@ import { useAccountsStore, useSession } from '~/modules/auth/store/accounts';
 import { trackingAccountEvents } from '~/modules/auth/tracking';
 import { I18n } from '~/util/i18n';
 
-import { LargeButton } from './large-button';
+import { LargeButton, LargeButtonProps } from './large-button';
 
 export interface AccountsButtonProps {
   style?: StyleProp<ViewStyle>;
+  testID: LargeButtonProps['testID'];
 }
 
 /**
@@ -20,7 +21,7 @@ export interface AccountsButtonProps {
  * - with several accounts: "change account", which opens the modal that lists them.
  * Nothing is shown otherwise (a single account that can't add another one).
  */
-export const AccountsButton = ({ style }: AccountsButtonProps) => {
+export const AccountsButton = ({ style, testID }: AccountsButtonProps) => {
   const navigation = useNavigation();
   const session = useSession();
   const accountsCount = useAccountsStore(s => Object.keys(s.accounts).length);
@@ -34,17 +35,19 @@ export const AccountsButton = ({ style }: AccountsButtonProps) => {
 
   if (canAddAccount && accountsCount === 1) {
     return (
-      <LargeButton
-        action={addAccount}
-        icon="ui-plus"
-        style={style}
-        testID="account-add-account"
-        text={I18n.get('auth-accountbutton-add')}
-      />
+      <LargeButton action={addAccount} icon="ui-plus" style={style} testID={testID} text={I18n.get('auth-accountbutton-add')} />
     );
   }
   if (accountsCount > 1) {
-    return <LargeButton action={switchAccount} icon="ui-refresh" style={style} text={I18n.get('auth-accountbutton-change')} />;
+    return (
+      <LargeButton
+        action={switchAccount}
+        icon="ui-refresh"
+        style={style}
+        testID={testID}
+        text={I18n.get('auth-accountbutton-change')}
+      />
+    );
   }
   return null;
 };

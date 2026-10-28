@@ -1,5 +1,8 @@
+import { Alert } from 'react-native';
+
 import { useSignInStore } from '~/modules/auth/sign-in/store';
 import { assertActiveAccount, useAccountsStore } from '~/modules/auth/store/accounts';
+import { I18n } from '~/util/i18n';
 
 import type { EndSession } from './end-session';
 
@@ -17,3 +20,14 @@ export const createLogout = (endSession: EndSession) => async () => {
 };
 
 export type LogoutFlow = ReturnType<typeof createLogout>;
+
+/**
+ * Gives `confirmLogout`: asks the user to confirm, then does `logout`. Nothing happens if the user cancels.
+ * It doesn't wait for the answer: it returns as soon as the question is shown.
+ */
+export const createConfirmLogout = (logout: LogoutFlow) => () => {
+  Alert.alert('', I18n.get('auth-disconnect-confirm'), [
+    { style: 'default', text: I18n.get('common-cancel') },
+    { onPress: logout, style: 'destructive', text: I18n.get('user-page-disconnect') },
+  ]);
+};
