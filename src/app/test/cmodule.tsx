@@ -1,16 +1,17 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { StaticScreenProps } from '@react-navigation/native';
 
 import { EntModule } from '~/app/module';
+import { HeadingSText } from '~/framework/components/text';
 
 function CModuleHomeScreen({}: StaticScreenProps<{
   cParam: boolean;
 }>) {
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-      <Text>C Home Screen</Text>
+      <HeadingSText>Là c'est les communautés</HeadingSText>
     </View>
   );
 }
@@ -20,7 +21,7 @@ function CModuleDetailsScreen({}: StaticScreenProps<{
 }>) {
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-      <Text>C Details Screen</Text>
+      <HeadingSText>Là c'est les communautés</HeadingSText>
     </View>
   );
 }
@@ -30,7 +31,7 @@ function CModuleModalScreen({}: StaticScreenProps<{
 }>) {
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-      <Text>C Modal Screen</Text>
+      <HeadingSText>Là c'est les communautés</HeadingSText>
     </View>
   );
 }
@@ -44,5 +45,11 @@ export default new EntModule({
     'cmodule/details': { screen: CModuleDetailsScreen },
     'cmodule/home': { screen: CModuleModalScreen },
   },
-  tab: { iconActive: 'ui-sparkle', iconInactive: 'ui-answer', order: 1, route: 'cmodule/home', testId: 'c' },
+  tab: {
+    iconActive: 'communities-fill',
+    iconInactive: 'communities-outline',
+    order: 30,
+    route: 'cmodule/home',
+    testId: 'tabbar-communities',
+  },
 });

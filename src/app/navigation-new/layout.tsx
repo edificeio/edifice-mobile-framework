@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { ActivityIndicator, Platform, StyleSheet, ViewStyle } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { NativeStackNavigatorProps } from '@react-navigation/native-stack';
@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StackPresentationTypes } from 'react-native-screens';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import ErrorScreenView from '~/framework/components/screen/error';
 import { ToastContainer } from '~/framework/components/toast';
 
@@ -25,6 +25,8 @@ const modalPresentations: (StackPresentationTypes | 'card')[] = [
   'pageSheet',
   'transparentModal',
 ];
+
+const sheetPresentations: (StackPresentationTypes | 'card')[] = ['formSheet', 'pageSheet'];
 
 const IsModalContext = React.createContext(false);
 
@@ -55,8 +57,14 @@ export function BaseStackScreenLayout({
   const isModal = options.presentation && modalPresentations.includes(options.presentation);
   const Wrapper = isModal ? BottomSheetModalProvider : React.Fragment;
 
+  const isFormSheet = options.presentation && sheetPresentations.includes(options.presentation);
+
   return (
     <Wrapper>
+      {
+        /* Native Android formSheets does not have a grabber so were have to do it ourselves. */
+        isFormSheet && Platform.OS === 'android' && options.sheetGrabberVisible && <AndroidSheetGrabber />
+      }
       <IsModalProvider presentedAsModal={!!isModal}>
         <ErrorBoundary FallbackComponent={ErrorScreenView}>
           <React.Suspense fallback={<ActivityIndicator color={theme.palette.primary.regular} />}>{children}</React.Suspense>
@@ -93,3 +101,18 @@ export const sheetSpacingStyles = StyleSheet.create({
   paddingTop: { paddingTop: sheetStylePadding },
   paddingVertical: { paddingVertical: sheetStylePadding },
 });
+
+const sheetStylesInternal = StyleSheet.create({
+  grabberAndroid: {
+    alignSelf: 'center',
+    backgroundColor: theme.palette.grey.grey,
+    borderRadius: getScaleWidth(2),
+    height: getScaleWidth(4),
+    position: 'absolute',
+    top: getScaleWidth(6),
+    width: getScaleWidth(48),
+  },
+});
+function AndroidSheetGrabber() {
+  return <View style={sheetStylesInternal.grabberAndroid} />;
+}

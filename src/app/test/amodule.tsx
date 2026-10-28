@@ -1,16 +1,16 @@
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { HeaderButton } from '@react-navigation/elements';
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import Animated from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EntModule } from '~/app/module';
 import { defineModal, defineScreen, sharedTransitions, StackNavigation } from '~/app/navigation-new';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { SelfAvatar } from '~/framework/components/avatar/self';
 import { PrimaryButton } from '~/framework/components/button';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/text';
 import { useStorageNumber } from '~/framework/util/storage/hooks';
 import { AccountsButton } from '~/modules/auth/components';
@@ -19,7 +19,6 @@ import { withSession } from '~/modules/auth/hoc';
 import { I18n } from '~/util/i18n';
 
 import { preferences, storage } from './amodule-storage';
-import { modalCloseButtonStyle } from '../navigation-new/options';
 
 const styles = StyleSheet.create({
   button: { alignSelf: 'center' },
@@ -59,7 +58,7 @@ const AModuleHomeScreen = withSession<
       <View style={styles.col}>
         <View style={styles.row}>
           <SingleAvatar size="sm" userId={session.user.id} />
-          <BodyBoldText style={{ flex: 1 }} numberOfLines={1}>
+          <BodyBoldText style={UI_STYLES.flex1} numberOfLines={1}>
             {session.user.displayName}
           </BodyBoldText>
           <PrimaryButton
@@ -185,29 +184,26 @@ function AModuleDetailsScreen({}: StaticScreenProps<{
 }
 
 const AModuleDetailsScreenDeclaration = defineScreen({
-  options: ({
-    route: {
-      params: { aId },
-    },
-  }) => ({ title: 'Écran de détails avec un nom vraiment très très long' }),
+  options: () => ({ title: 'Écran de détails avec un nom vraiment très très long' }),
   screen: AModuleDetailsScreen,
 });
 
 function AModuleModalScreen({}: StaticScreenProps<{
   skibidi: string;
 }>) {
+  const insets = useSafeAreaInsets();
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom, paddingLeft: insets.left, paddingRight: insets.right }}>
       <BodyText>A Modal Screen</BodyText>
-      {new Array(20).fill(true).map((_, index) => (
-        <BodyText key={index}>{index}</BodyText>
+      {new Array(40).fill(true).map((_, index) => (
+        <HeadingSText key={index}>{index}</HeadingSText>
       ))}
     </ScrollView>
   );
 }
 
 const AModuleModalScreenDeclaration = defineModal({
-  options: ({}) => ({ title: 'Un modale wow !' }),
+  options: ({}) => ({ title: 'Une modale wow !' }),
   screen: AModuleModalScreen,
 });
 
@@ -221,5 +217,5 @@ export default new EntModule({
     'amodule/home': AModuleHomeScreenDeclaration,
   },
   storages: [storage, preferences],
-  tab: { iconActive: 'ui-camera', iconInactive: 'ui-anniversary', order: 1, route: 'amodule/home', testId: 'a' },
+  tab: { iconActive: 'home-fill', iconInactive: 'home-outline', order: 10, route: 'amodule/home', testId: 'tabbar-timeline' },
 });

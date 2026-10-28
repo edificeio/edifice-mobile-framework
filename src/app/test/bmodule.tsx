@@ -1,9 +1,10 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { StaticScreenProps } from '@react-navigation/native';
 
 import { EntModule } from '~/app/module';
+import { HeadingSText } from '~/framework/components/text';
 import { AccountsButton } from '~/modules/auth/components';
 
 function BModuleHomeScreen({}: StaticScreenProps<{
@@ -11,7 +12,7 @@ function BModuleHomeScreen({}: StaticScreenProps<{
 }>) {
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-      <Text>B Home Screen</Text>
+      <HeadingSText>Là c'est les mails</HeadingSText>
       <AccountsButton />
     </View>
   );
@@ -22,7 +23,7 @@ function BModuleDetailsScreen({}: StaticScreenProps<{
 }>) {
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-      <Text>B Details Screen</Text>
+      <HeadingSText>Là c'est les mails</HeadingSText>
       <AccountsButton />
     </View>
   );
@@ -33,7 +34,7 @@ function BModuleModalScreen({}: StaticScreenProps<{
 }>) {
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-      <Text>B Modal Screen</Text>
+      <HeadingSText>Là c'est les mails</HeadingSText>
     </View>
   );
 }
@@ -47,5 +48,5 @@ export default new EntModule({
     'bmodule/details': { screen: BModuleDetailsScreen },
     'bmodule/home': { screen: BModuleHomeScreen },
   },
-  tab: { iconActive: 'ui-eyeSlash', iconInactive: 'ui-eye', order: 1, route: 'bmodule/home', testId: 'b' },
+  tab: { iconActive: 'ui-mails-fill', iconInactive: 'ui-mails', order: 20, route: 'bmodule/home', testId: 'tabbar-mails' },
 });

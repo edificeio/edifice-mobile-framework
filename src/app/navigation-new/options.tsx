@@ -61,13 +61,18 @@ export const tabStackOptions: NativeStackNavigatorProps['screenOptions'] = {
   ...visibleStackScreenOptions,
 };
 
-export const tabsOptions: BottomTabNavigatorProps['screenOptions'] = {
+export const tabsOptions: BottomTabNavigatorProps['screenOptions'] = ({ theme: navTheme }) => ({
   ...commonScreenOptions,
   freezeOnBlur: true,
   headerShown: false,
   lazy: true,
   popToTopOnBlur: true,
-};
+  tabBarStyle: {
+    backgroundColor: navTheme.colors.background,
+    borderTopColor: navTheme.colors.border,
+    borderTopWidth: UI_SIZES.border.thin,
+  },
+});
 
 /**
  * Android system "close" icon (`abc_ic_clear_material` from appcompat), 24dp.
