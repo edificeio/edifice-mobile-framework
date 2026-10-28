@@ -46,7 +46,7 @@ const AuthAccountsScreen = React.memo(function ({}: StaticScreenProps<undefined>
   );
 
   // The navigator of the sign-in doesn't know this route: the action is forwarded to the parent navigation.
-  const onAddAccount = React.useCallback(() => navigation.navigate('auth/add-account'), [navigation]);
+  const onAddAccount = React.useCallback(() => navigation.navigate('auth/$add-account'), [navigation]);
 
   return (
     <AccountsScreenTemplate

@@ -10,9 +10,13 @@ import AuthLoadAccountScreen from './screens/load-account';
 import AuthManageAccountsScreen from './screens/manage-accounts';
 import AuthSwitchAccountScreen from './screens/switch-account';
 
+/**
+ * Note: '$' prefixed route names means that the screen is a navigation container and delegates its telemetry.
+ */
+
 export default new CoreModule({
   modals: {
-    'auth/add-account': AuthAddAccountScreen,
+    'auth/$add-account': AuthAddAccountScreen,
     'auth/manage-accounts': AuthManageAccountsScreen,
     'auth/switch-account': AuthSwitchAccountScreen,
   },
@@ -30,6 +34,6 @@ export default new CoreModule({
   // `auth/load-account`, which drives it (see `AuthNavigationWrapper`). Declared here, it would be a root screen that this navigator
   // can't reset: it must stay out of the global navigation.
   screens: {
-    'auth/load-account': AuthLoadAccountScreen,
+    'auth/$load-account': AuthLoadAccountScreen,
   },
 });

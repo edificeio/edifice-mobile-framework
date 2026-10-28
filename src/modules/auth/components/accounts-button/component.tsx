@@ -26,7 +26,7 @@ export const AccountsButton = ({ style }: AccountsButtonProps) => {
   const accountsCount = useAccountsStore(s => Object.keys(s.accounts).length);
   const canAddAccount = userCanAddAccount(session);
 
-  const addAccount = React.useCallback(() => navigation.navigate('auth/add-account'), [navigation]);
+  const addAccount = React.useCallback(() => navigation.navigate('auth/$add-account'), [navigation]);
   const switchAccount = React.useCallback(() => {
     trackingAccountEvents.switchAccountPressButton();
     navigation.navigate('auth/switch-account');
