@@ -102,11 +102,11 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
     implementation("com.facebook.react:react-android")
     implementation("com.facebook.react:hermes-android")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.22.3")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.3")
-    implementation("com.google.android.gms:play-services-base:18.11.0")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.22.4")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.4")
+    implementation("com.google.android.gms:play-services-base:18.11.1")
     // Fix OkHttp version mismatch
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:5.5.0"))
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:5.5.1"))
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:okhttp-urlconnection")
     // Fix Duplicate class
