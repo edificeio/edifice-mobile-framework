@@ -37,7 +37,7 @@ const useIsSignedOut = () => useAuthStage() === 'signedOut';
 const useHasRequirement = () => useAuthStage() === 'requirement';
 const useIsSignedIn = () => useAuthStage() === 'signedIn';
 
-const GUEST_START_SCREEN: keyof ReturnType<typeof useCoreModuleScreens> = 'auth/load-account';
+const GUEST_START_SCREEN: keyof ReturnType<typeof useCoreModuleScreens> = 'auth/$load-account';
 
 export const useRootStackNavigation = () => {
   const coreModals = useCoreModuleModals();
