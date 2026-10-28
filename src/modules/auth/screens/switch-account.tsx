@@ -4,6 +4,7 @@ import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 
 import { defineModal } from '~/app/navigation-new';
 import { useAuthFlows } from '~/modules/auth/flows';
+import { useRemoveAccountHandler } from '~/modules/auth/hooks/remove-account';
 import type { AuthActiveAccount, AuthSavedAccount } from '~/modules/auth/model';
 import { getActiveAccount } from '~/modules/auth/store/accounts';
 import AccountListSheetScreenTemplate, { accountListSheetOptions } from '~/modules/auth/templates/account-list-sheet';
@@ -45,12 +46,14 @@ const AuthSwitchAccountScreen = React.memo(function ({}: StaticScreenProps<undef
     [loading, navigation, restoreAccount],
   );
 
+  const onDelete = useRemoveAccountHandler(trackingAccountEvents.deleteAccountFromSwitchAccount);
+
   return (
     <AccountListSheetScreenTemplate
       description={I18n.get('auth-accountlist-change-description')}
       onPress={onPress}
       title={I18n.get('auth-accountlist-change-title')}
-      onDelete={trackingAccountEvents.deleteAccountFromSwitchAccount}
+      onDelete={onDelete}
     />
   );
 });

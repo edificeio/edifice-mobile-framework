@@ -33,7 +33,7 @@ import { refreshOAuth2Token } from './refresh-oauth2-token';
 import { refreshOneSessionId } from './refresh-one-session-id';
 import { refreshQueryParamToken } from './refresh-query-param-token';
 import { createRefreshRequirements } from './refresh-requirements';
-import { createRemoveAccount } from './remove-account';
+import { createConfirmRemoveAccount, createRemoveAccount } from './remove-account';
 import { createRestoreAccount } from './restore-account';
 import { createRevalidateTerms } from './revalidate-terms';
 import { createSetActiveAccount } from './set-active-account';
@@ -63,16 +63,18 @@ export const createAuthFlows = ({ lifecycle }: { lifecycle: SessionLifecycle }) 
   const refreshRequirements = createRefreshRequirements(setActiveAccount);
   const changePassword = createChangePassword(setActiveAccount);
   const logout = createLogout(endSession);
+  const removeAccount = createRemoveAccount(lifecycle, logout);
   return {
     changePassword,
     changePasswordRequirement: createChangePasswordRequirement(changePassword, logout),
     confirmLogout: createConfirmLogout(logout),
+    confirmRemoveAccount: createConfirmRemoveAccount(removeAccount),
     logout,
     refreshOAuth2Token,
     refreshOneSessionId,
     refreshQueryParamToken,
     refreshRequirements,
-    removeAccount: createRemoveAccount(lifecycle, logout),
+    removeAccount,
     restoreAccount,
     restoreAtStartup: createRestoreAtStartup(restoreAccount),
     revalidateTerms: createRevalidateTerms(refreshRequirements),
