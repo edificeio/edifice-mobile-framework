@@ -15,7 +15,6 @@ import { activateAccount } from './activation';
 import { formatSession, formatStructuresWithClasses, parseAccountType } from './adapter';
 import { changePassword } from './change-password';
 import { forgot } from './forgot';
-import { notifications } from './notifications';
 import { platformConfig } from './platform';
 import { requirements, requirementsThatNeedLegalUrls, revalidateTerms } from './requirements';
 import { getOneSessionId, getQueryParamToken, getToken } from './token';
@@ -160,7 +159,6 @@ const service = {
   getUserData: userinfo.getUserData,
   mfaValidation,
   mobileValidation,
-  notifications,
   parseAccountType,
   platformConfig,
   requirements,

@@ -9,6 +9,8 @@ export enum AccountErrorCode {
   ACCOUNT_INELIGIBLE_PRE_DELETED = 'AuthErrorCode|ACCOUNT_INELIGIBLE_PRE_DELETED',
   /** Maximum multi-account reached */
   TOO_MANY_ACCOUNTS = 'AuthErrorCode|TOO_MANY_ACCOUNTS',
+  /** The data a module needs before the session can start could not be loaded (see `sessionSetup`) */
+  SESSION_SETUP_FAILED = 'AuthErrorCode|SESSION_SETUP_FAILED',
 }
 
 /**
@@ -31,5 +33,21 @@ export class AccountError extends global.Error implements Error.WithCode<Account
     this.name = 'AuthError'; // Note: built-in Error class break the prototype chain when extending it like this...
     Object.setPrototypeOf(this, new.target.prototype); // ... So, we need to restore the prototype chain like this.
     // @see https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html#example
+  }
+}
+
+/**
+ * A module could not load what it needs before the session starts (`sessionSetup`): the sign-in fails, nothing was changed.
+ * @param moduleName the module whose setup failed or took too long
+ * @param cause what went wrong
+ */
+export class SessionSetupError extends AccountError {
+  constructor(
+    public readonly moduleName: string,
+    cause?: unknown,
+  ) {
+    super(AccountErrorCode.SESSION_SETUP_FAILED, `[Auth] The session setup of the module "${moduleName}" failed`, { cause });
+    this.name = 'SessionSetupError';
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }

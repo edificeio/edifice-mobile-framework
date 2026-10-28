@@ -3,7 +3,7 @@ import React from 'react';
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 
 import { defineModal } from '~/app/navigation-new';
-import { restoreAccount } from '~/modules/auth/flows';
+import { useAuthFlows } from '~/modules/auth/flows';
 import type { AuthActiveAccount, AuthSavedAccount } from '~/modules/auth/model';
 import { getActiveAccount } from '~/modules/auth/store/accounts';
 import AccountListSheetScreenTemplate, { accountListSheetOptions } from '~/modules/auth/templates/account-list-sheet';
@@ -13,10 +13,11 @@ import { I18n } from '~/util/i18n';
 /**
  * The connected user chooses another saved account to switch to, or removes one.
  * If the account can't be switched to (no valid tokens, or the switch failed), `restoreAccount` sends the user to the sign-in
- * screens (`load-account`) with a `restore` status.
+ * screens (`load-account`) with a `login` status.
  */
 const AuthSwitchAccountScreen = React.memo(function ({}: StaticScreenProps<undefined>) {
   const navigation = useNavigation();
+  const { restoreAccount } = useAuthFlows();
   const [loading, setLoading] = React.useState(false);
 
   const onPress = React.useCallback(
@@ -30,7 +31,7 @@ const AuthSwitchAccountScreen = React.memo(function ({}: StaticScreenProps<undef
       // When it is switched, the modal goes away with the end of the session of the previous account: the loading is not reset.
       if (!(await restoreAccount(account))) setLoading(false);
     },
-    [loading, navigation],
+    [loading, navigation, restoreAccount],
   );
 
   return (

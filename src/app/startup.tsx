@@ -7,15 +7,18 @@ import { ThunkDispatch } from 'redux-thunk';
 
 // import { initEditor } from '~/framework/components/inputs/rich-text/editor/editor';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { restoreAtStartup } from '~/modules/auth/flows';
+import { useAuthFlows } from '~/modules/auth/flows';
 
 import { AppNavigation } from './navigation-new';
 import { appReadyAction, getState as getAppStartupState } from './store/startup';
 
 /**
  * Logic code that is run for the app start
+ * It must only run inside the `AuthSessionProvider` (itself inside the `ModuleLoader`, which suspends until every module is imported):
+ * the sessions it starts rely on all the modules (`sessionSetup`, `onSessionStart`...).
  */
 export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
+  const { restoreAtStartup } = useAuthFlows();
   useConstructor(async () => {
     try {
       await restoreAtStartup();

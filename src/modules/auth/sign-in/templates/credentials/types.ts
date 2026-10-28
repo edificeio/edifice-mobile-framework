@@ -1,5 +1,5 @@
 import { Platform } from '~/framework/util/appConf';
-import type { AuthActiveAccount, AuthCredentials, AuthSavedAccount } from '~/modules/auth/model';
+import type { AuthCredentials } from '~/modules/auth/model';
 
 export enum LoginState {
   IDLE = 'IDLE',
@@ -8,7 +8,8 @@ export enum LoginState {
 }
 
 export interface SignInCredentialsScreenTemplateProps {
-  account?: AuthSavedAccount | AuthActiveAccount;
+  /** The account to sign in again, which the sign-in replaces. */
+  accountId?: string;
   loginUsed?: string;
   platform: Platform['name'];
   lockLogin?: boolean;

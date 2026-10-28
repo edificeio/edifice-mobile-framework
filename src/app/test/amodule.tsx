@@ -10,7 +10,7 @@ import { PrimaryButton } from '~/framework/components/button';
 import { BodyText } from '~/framework/components/text';
 import { useStorageNumber } from '~/framework/util/storage/hooks';
 import { AccountsButton } from '~/modules/auth/components';
-import { logout } from '~/modules/auth/flows';
+import { useAuthFlows } from '~/modules/auth/flows';
 import { withSession } from '~/modules/auth/hoc';
 
 import { preferences, storage } from './amodule-storage';
@@ -22,6 +22,7 @@ const AModuleHomeScreen = withSession<
   }>
 >(function ({}) {
   const navigation = useNavigation();
+  const { logout } = useAuthFlows();
   // Pilot of the storage API: a counter of the device, and a number of the account. Both render again when they change.
   const [launchCount] = useStorageNumber(storage, 'launch-count');
   const [favoriteNumber, setFavoriteNumber] = useStorageNumber(preferences, 'favorite-number');

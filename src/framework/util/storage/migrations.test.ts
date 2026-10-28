@@ -24,10 +24,10 @@ describe('device migrations', () => {
     const { lib, migrations, Storage } = setup();
     const run = jest.fn();
     const storage = Storage.device<Data>({ migrations: [{ id: 'm1', run }], namespace: 'ns' });
-    await migrations.runDeviceMigrations([storage]);
+    await migrations.runDeviceStorageMigrations([storage]);
     expect(run).toHaveBeenCalledTimes(1);
     expect(lib.data.get('$migration.ns.m1')).toBe(1);
-    await migrations.runDeviceMigrations([storage]);
+    await migrations.runDeviceStorageMigrations([storage]);
     expect(run).toHaveBeenCalledTimes(1);
   });
 
@@ -36,9 +36,9 @@ describe('device migrations', () => {
     const run = jest.fn();
     const declare = (modules: ReturnType<typeof setup>) =>
       modules.Storage.device<Data>({ migrations: [{ id: 'm1', run }], namespace: 'ns' });
-    await first.migrations.runDeviceMigrations([declare(first)]);
+    await first.migrations.runDeviceStorageMigrations([declare(first)]);
     const second = restart(first);
-    await second.migrations.runDeviceMigrations([declare(second)]);
+    await second.migrations.runDeviceStorageMigrations([declare(second)]);
     expect(run).toHaveBeenCalledTimes(1);
   });
 
@@ -57,7 +57,7 @@ describe('device migrations', () => {
       ],
       namespace: 'ns',
     });
-    await migrations.runDeviceMigrations([storage]);
+    await migrations.runDeviceStorageMigrations([storage]);
     expect(storage.getNumber('a-count')).toBe(5);
     expect(lib.data.has('old-key')).toBe(false);
     expect(lib.data.get('$migration.ns.move-old-key')).toBe(1);
@@ -94,7 +94,7 @@ describe('device migrations', () => {
       ],
       namespace: 'second',
     });
-    await migrations.runDeviceMigrations([first, second]);
+    await migrations.runDeviceStorageMigrations([first, second]);
     expect(order).toEqual(['first.a', 'first.b', 'second.a']);
   });
 
@@ -102,7 +102,7 @@ describe('device migrations', () => {
     const { migrations, Storage } = setup();
     const run = jest.fn();
     const preferences = Storage.account<Data>({ migrations: [{ id: 'm1', run }], namespace: 'ns' });
-    await migrations.runDeviceMigrations([preferences]);
+    await migrations.runDeviceStorageMigrations([preferences]);
     expect(run).not.toHaveBeenCalled();
   });
 
@@ -123,14 +123,14 @@ describe('device migrations', () => {
         namespace: 'ns',
       });
     const storage = declare(first);
-    await first.migrations.runDeviceMigrations([storage]);
+    await first.migrations.runDeviceStorageMigrations([storage]);
     expect(error).toHaveBeenCalled();
     expect(first.lib.data.has('$migration.ns.m1')).toBe(false);
     expect(() => storage.set('a-count', 1)).not.toThrow();
 
     fails = false;
     const second = restart(first);
-    await second.migrations.runDeviceMigrations([declare(second)]);
+    await second.migrations.runDeviceStorageMigrations([declare(second)]);
     expect(second.lib.data.get('$migration.ns.m1')).toBe(1);
   });
 
@@ -138,7 +138,7 @@ describe('device migrations', () => {
     const { migrations, Storage } = setup();
     const run = jest.fn();
     const storage = Storage.device<Data>({ migrations: [{ id: 'm1', run }], namespace: 'ns' });
-    await expect(migrations.runDeviceMigrations([storage, storage])).resolves.toBeUndefined();
+    await expect(migrations.runDeviceStorageMigrations([storage, storage])).resolves.toBeUndefined();
     expect(run).toHaveBeenCalledTimes(1);
   });
 
@@ -146,7 +146,7 @@ describe('device migrations', () => {
     const { migrations, Storage } = setup();
     const first = Storage.device<Data>({ migrations: [{ id: 'm1', run: jest.fn() }], namespace: 'ns' });
     const second = Storage.device<Data>({ migrations: [{ id: 'm1', run: jest.fn() }], namespace: 'ns' });
-    await expect(migrations.runDeviceMigrations([first, second])).rejects.toThrow('same id');
+    await expect(migrations.runDeviceStorageMigrations([first, second])).rejects.toThrow('same id');
   });
 });
 
@@ -156,14 +156,14 @@ describe('the declaration of the storages', () => {
     const storage = Storage.device<Data>({ migrations: [{ id: 'm1', run: jest.fn() }], namespace: 'ns' });
     expect(() => storage.getNumber('a-count')).toThrow('no module declares it');
     expect(() => storage.set('a-count', 1)).toThrow('no module declares it');
-    await migrations.runDeviceMigrations([]);
+    await migrations.runDeviceStorageMigrations([]);
     expect(() => storage.getNumber('a-count')).toThrow('no module declares it');
   });
 
   it('lets use a storage that has migrations once a module declares it', async () => {
     const { migrations, Storage } = setup();
     const storage = Storage.device<Data>({ migrations: [{ id: 'm1', run: jest.fn() }], namespace: 'ns' });
-    await migrations.runDeviceMigrations([storage]);
+    await migrations.runDeviceStorageMigrations([storage]);
     expect(() => storage.set('a-count', 1)).not.toThrow();
     expect(storage.getNumber('a-count')).toBe(1);
   });
@@ -178,14 +178,14 @@ describe('the declaration of the storages', () => {
     const { migrations, Storage } = setup();
     const preferences = Storage.account<Data>({ migrations: [{ id: 'm1', run: jest.fn() }], namespace: 'ns' });
     expect(() => preferences.for('acc1').getNumber('a-count')).toThrow('no module declares it');
-    await migrations.runDeviceMigrations([preferences]);
+    await migrations.runDeviceStorageMigrations([preferences]);
     expect(() => preferences.for('acc1').getNumber('a-count')).not.toThrow();
   });
 
   it('is shared by the storages that have the same namespace (a storage created again by Fast Refresh)', async () => {
     const { migrations, Storage } = setup();
     const first = Storage.device<Data>({ migrations: [{ id: 'm1', run: jest.fn() }], namespace: 'ns' });
-    await migrations.runDeviceMigrations([first]);
+    await migrations.runDeviceStorageMigrations([first]);
     const recreated = Storage.device<Data>({ migrations: [{ id: 'm1', run: jest.fn() }], namespace: 'ns' });
     expect(() => recreated.getNumber('a-count')).not.toThrow();
   });
@@ -194,7 +194,7 @@ describe('the declaration of the storages', () => {
 describe('account migrations', () => {
   const declareAccountStorage = async (modules: ReturnType<typeof setup>, run: jest.Mock) => {
     const preferences = modules.Storage.account<Data>({ migrations: [{ id: 'm1', run }], namespace: 'ns' });
-    await modules.migrations.runDeviceMigrations([preferences]);
+    await modules.migrations.runDeviceStorageMigrations([preferences]);
     return preferences;
   };
 
@@ -202,7 +202,7 @@ describe('account migrations', () => {
     const modules = setup();
     const run = jest.fn((preferences, { accountId }) => preferences.set('a-count', accountId === 'acc1' ? 1 : 2));
     await declareAccountStorage(modules, run);
-    await modules.migrations.runAccountMigrations('acc1');
+    await modules.migrations.runAccountStorageMigrations('acc1');
     expect(run).toHaveBeenCalledTimes(1);
     expect(run.mock.calls[0][1]).toEqual({ accountId: 'acc1' });
     expect(modules.lib.data.get('@acc1.ns.a-count')).toBe(1);
@@ -214,7 +214,7 @@ describe('account migrations', () => {
     const run = jest.fn(preferences => preferences.set('a-count', 7));
     await declareAccountStorage(modules, run);
     modules.AccountStorageHandler.setAccountResolver(() => 'another');
-    await modules.migrations.runAccountMigrations('acc1');
+    await modules.migrations.runAccountStorageMigrations('acc1');
     expect(modules.lib.data.get('@acc1.ns.a-count')).toBe(7);
     expect(modules.lib.data.has('@another.ns.a-count')).toBe(false);
   });
@@ -223,9 +223,9 @@ describe('account migrations', () => {
     const modules = setup();
     const run = jest.fn();
     await declareAccountStorage(modules, run);
-    await modules.migrations.runAccountMigrations('acc1');
-    await modules.migrations.runAccountMigrations('acc1');
-    await modules.migrations.runAccountMigrations('acc2');
+    await modules.migrations.runAccountStorageMigrations('acc1');
+    await modules.migrations.runAccountStorageMigrations('acc1');
+    await modules.migrations.runAccountStorageMigrations('acc2');
     expect(run).toHaveBeenCalledTimes(2);
   });
 
@@ -236,9 +236,9 @@ describe('account migrations', () => {
       throw new Error('boom');
     });
     await declareAccountStorage(modules, run);
-    await modules.migrations.runAccountMigrations('acc1');
+    await modules.migrations.runAccountStorageMigrations('acc1');
     expect(modules.lib.data.has('@acc1.$migration.ns.m1')).toBe(false);
-    await modules.migrations.runAccountMigrations('acc1');
+    await modules.migrations.runAccountStorageMigrations('acc1');
     expect(run).toHaveBeenCalledTimes(2);
     expect(modules.lib.data.get('@acc1.$migration.ns.m1')).toBe(1);
   });
@@ -247,9 +247,9 @@ describe('account migrations', () => {
     const modules = setup();
     const run = jest.fn();
     await declareAccountStorage(modules, run);
-    await modules.migrations.runAccountMigrations('acc1');
+    await modules.migrations.runAccountStorageMigrations('acc1');
     modules.Storage.eraseForAccount('acc1');
-    await modules.migrations.runAccountMigrations('acc1');
+    await modules.migrations.runAccountStorageMigrations('acc1');
     expect(run).toHaveBeenCalledTimes(2);
   });
 
@@ -257,8 +257,8 @@ describe('account migrations', () => {
     const modules = setup();
     const run = jest.fn();
     modules.Storage.account<Data>({ migrations: [{ id: 'm1', run }], namespace: 'ns' });
-    await modules.migrations.runDeviceMigrations([]);
-    await modules.migrations.runAccountMigrations('acc1');
+    await modules.migrations.runDeviceStorageMigrations([]);
+    await modules.migrations.runAccountStorageMigrations('acc1');
     expect(run).not.toHaveBeenCalled();
   });
 });

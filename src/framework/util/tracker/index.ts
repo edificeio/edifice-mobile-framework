@@ -374,17 +374,17 @@ export class ConcreteTrackerSet {
   }
 
   async setCustomDimension(id: number, name: string, value: string) {
-    console.debug('[Tracking] Set Dimension :', id, '|', name, '|', value);
+    console.debug(`[Tracking] Set Dimension : ${id} | ${name} | ${value}`);
     await Promise.all(this._trackers.map(t => t.setCustomDimension(id, name, value)));
   }
 
   async setUserId(id: string) {
-    console.debug('[Tracking] Set ID :', id);
+    console.debug(`[Tracking] Set ID : ${id}`);
     await Promise.all(this._trackers.map(t => t.setUserId(id)));
   }
 
   async trackEvent(category: string, action: string, name?: string, value?: number) {
-    console.debug('[Tracking] Event :', [category, action, name, value].join(''));
+    console.debug(`[Tracking] Event : ${[category, action, name, value].join('')}`);
     await Promise.all(this._trackers.map(t => t.trackEvent(category, action, name, value)));
   }
 
@@ -406,7 +406,7 @@ export class ConcreteTrackerSet {
   }
 
   async trackView(path: string[]) {
-    console.debug('[Tracking] View :', path.join('/'));
+    console.debug(`[Tracking] View : ${path.join('/')}`);
     await Promise.all(this._trackers.map(t => t.trackView(path)));
   }
 

@@ -3,11 +3,11 @@ import CookieManager from '@preeternal/react-native-cookie-manager';
 import { AuthActiveAccount, AuthSavedLoggedInAccount, AuthTokenSet } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
-import { Error } from '~/framework/util/error';
 import { isTokenExpired } from '~/framework/util/oauth2';
 import { Trackers } from '~/framework/util/tracker';
 import { FetchError, FetchErrorCode, HTTPError } from '~/framework/util/transport/error';
 import { refreshOAuth2Token } from '~/modules/auth/flows/refresh-oauth2-token';
+import { getAccountWithTokens } from '~/modules/auth/store/accounts';
 import { I18n } from '~/util/i18n';
 
 import {
@@ -16,8 +16,9 @@ import {
   getDeviceHeaders,
   getOriginRequest,
   getPlatformRequest,
-  MAX_FETCH_TIMEOUT_MS,
 } from './common';
+import { trackSignedRequest } from './in-flight';
+import { timeoutFetch } from './timeout-fetch';
 
 /**
  * Returns the url that will be used by the provided fetch arguments
@@ -87,36 +88,6 @@ const _baseFetch = async (input: Parameters<typeof fetch>[0], init: Parameters<t
   }
   return response;
 };
-
-/**
- * Wraps a fetch function with a timeout mechanism.
- *
- * @param fetchFn - The fetch function to be wrapped.
- * @returns A function that performs a fetch request with a timeout.
- *
- * @param info - The resource that you want to fetch.
- * @param init - An optional object containing any custom settings that you want to apply to the request.
- * @returns A Promise that resolves to the Response object representing the response to the request.
- *
- * @throws {Error} If the request times out, an AbortError is thrown.
- */
-const timeoutFetch =
-  (fetchFn: typeof fetch) =>
-  async (info: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), MAX_FETCH_TIMEOUT_MS);
-    try {
-      return await fetchFn(info, { ...init, signal: controller.signal });
-    } catch (e) {
-      const deepError = Error.getDeepError(e);
-      if (deepError instanceof global.Error && deepError.name === 'AbortError') {
-        throw new FetchError(FetchErrorCode.TIMEOUT, undefined, { cause: e });
-      }
-      throw e;
-    } finally {
-      clearTimeout(timeout);
-    }
-  };
 
 export const baseFetch = timeoutFetch(_baseFetch);
 
@@ -208,8 +179,28 @@ tokenFetch.json = async <ReturnType>(tokens: Parameters<typeof getTokenFetch>[0]
 
 // # ACCOUNT (signed) FETCH
 
-export function getAccountFetch(account: AuthSavedLoggedInAccount | AuthActiveAccount) {
+/**
+ * A fetch function that signs its requests with the tokens of an account.
+ *
+ * It is tied to the **id** of the account, and reads the tokens of the account when each request starts: the most recent ones, even if
+ * they were refreshed by another request meanwhile. Given an account **object**, it also works with that object when the store does not
+ * know the account (yet), or does not have its tokens anymore: the object is then the credential.
+ *
+ * Its requests are canceled when the session of the account ends (see `abortSignedRequests`), or when the `signal` they were given
+ * aborts. They then throw a `FetchError` `SESSION_ENDED` or `ABORTED`, not a `TIMEOUT`.
+ *
+ * @todo: separate usages with id VS with account data.
+ */
+export function getAccountFetch(accountOrId: AuthSavedLoggedInAccount | AuthActiveAccount | string) {
+  const id = typeof accountOrId === 'string' ? accountOrId : accountOrId.user.id;
+  const given = typeof accountOrId === 'string' ? undefined : accountOrId;
+  const current = () => {
+    const account = getAccountWithTokens(id) ?? given;
+    if (!account) throw new FetchError(FetchErrorCode.NOT_LOGGED, `[getAccountFetch] No signed in account of id ${id}`);
+    return account;
+  };
   // 1. Get platform
+  const account = current();
   const platform = typeof account.platform === 'string' ? appConf.getExpandedPlatform(account.platform) : account.platform;
   if (!platform) throw new FetchError(FetchErrorCode.NOT_LOGGED, '[getAccountFetch] No platform provided');
   // 2. Check token origin match platform url
@@ -222,20 +213,35 @@ export function getAccountFetch(account: AuthSavedLoggedInAccount | AuthActiveAc
   }
   const _platformFetch = getPlatformFetch(platform);
   return async (input: Parameters<typeof _platformFetch>[0], init: Parameters<typeof _platformFetch>[1]) => {
-    // 3. Refresh token if needed
-    if (isTokenExpired(account.tokens.access)) {
+    // 3. Refresh token if needed: with the most recent tokens, and one refresh at a time for the account
+    if (isTokenExpired(current().tokens.access)) {
       Trackers.handleRefreshToken();
-      await refreshOAuth2Token(account);
+      // The object given (if any) gets the new tokens, as it always did; a copy of the account of the store is enough for an id.
+      await refreshOAuth2Token(given ?? { ...current() });
       // ToDo: What to do if the refresh token fails?
+      // TODO(auth-migration): the transport should depend on `useAuthFlows()` (`~/modules/auth/flows`), not on the
+      // static `refreshOAuth2Token`: when the token can't be refreshed, it may have to call `logout` (which ends the session through the
+      // hooks of the modules, so it can't be imported directly). It then needs the flows given to it (a hook, or injected by the
+      // `AuthSessionProvider`), instead of this import.
     }
-    // 4. Send request
-    return await _platformFetch(input, {
-      ...init,
-      headers: {
-        ...getAuthenticationHeaderForAccount(account),
-        ...init?.headers,
-      },
-    });
+    // 4. Send request, which the end of the session of the account cancels
+    const request = trackSignedRequest(id, init?.signal);
+    try {
+      return await _platformFetch(input, {
+        ...init,
+        headers: {
+          ...getAuthenticationHeaderForAccount(current()),
+          ...init?.headers,
+        },
+        signal: request.signal,
+      });
+    } catch (e) {
+      if (e instanceof FetchError && e.code === FetchErrorCode.ABORTED && request.endedBySession())
+        throw new FetchError(FetchErrorCode.SESSION_ENDED, undefined, { cause: e });
+      throw e;
+    } finally {
+      request.done();
+    }
   };
 }
 

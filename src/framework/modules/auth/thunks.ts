@@ -7,8 +7,8 @@
  */
 
 import type { Platform } from '~/framework/util/appConf';
-import { changePassword, logout, refreshOneSessionId, refreshQueryParamToken, refreshRequirements } from '~/modules/auth/flows';
-import type { AuthActiveAccount, AuthSavedLoggedInAccount, IChangePasswordPayload } from '~/modules/auth/model';
+import { refreshOneSessionId, refreshQueryParamToken } from '~/modules/auth/flows';
+import type { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/modules/auth/model';
 import service from '~/modules/auth/service';
 import { usePlatformContextStore } from '~/modules/auth/store/platform-context';
 import { usePlatformLegalUrlsStore } from '~/modules/auth/store/platform-legal-urls';
@@ -41,14 +41,15 @@ export const loadPlatformLegalUrlsAction = (platform: Platform) => async () => {
   return legalUrls;
 };
 
-/** @deprecated use `refreshRequirements` from `~/modules/auth/flows`. */
-export const refreshRequirementsAction = () => async () => {
-  await refreshRequirements();
-};
-
-/** @deprecated use `logout` from `~/modules/auth/flows`. */
+/**
+ * @deprecated use `logout` of `useAuthFlows()` (`~/modules/auth/flows`).
+ * TODO(auth-migration): `logout` ends the session through the hooks of the modules, so it needs the flows of the `AuthSessionProvider`
+ * (a hook): a thunk can't reach it. Until the screens that dispatch this thunk are migrated (`user/home`, `auth/change-email`,
+ * `auth/change-mobile`), their logout button throws.
+ */
 export const logoutAction = () => async () => {
-  await logout();
+  // await logout();
+  throw new Error('[Auth] logoutAction is not available anymore: use `logout` of `useAuthFlows()`.');
 };
 
 /** @deprecated use `refreshOneSessionId` from `~/modules/auth/flows`. */
@@ -58,16 +59,3 @@ export const refreshSessionIdForAccountAction = (account: AuthSavedLoggedInAccou
 /** @deprecated use `refreshQueryParamToken` from `~/modules/auth/flows`. */
 export const refreshQueryParamTokenAction = (account: AuthSavedLoggedInAccount | AuthActiveAccount) => async () =>
   refreshQueryParamToken(account);
-
-/* eslint-disable @typescript-eslint/no-unused-vars -- the parameters are kept for the callers */
-/**
- * Changes the password of the connected user, then signs in again with it.
- * Only the connected account is concerned: the account id and the platform given are those of the connected account.
- * @deprecated use `changePassword` from `~/modules/auth/flows`.
- */
-export const buildChangePasswordActionReplaceAccount =
-  (_accountId: string, _timestamp: number) =>
-  (_platform: Platform, p: IChangePasswordPayload, _forceChange?: boolean, _rememberMe?: boolean) =>
-  async () => {
-    await changePassword({ confirm: p.confirm, newPassword: p.newPassword, oldPassword: 'oldPassword' in p ? p.oldPassword : '' });
-  };

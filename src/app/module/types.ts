@@ -7,7 +7,7 @@ import type importModules from '~/app/config/modules';
 import type { ScreenComponent } from '~/app/navigation-new/types';
 import type { SvgIconName } from '~/framework/components/picture';
 import type { StorageHandler } from '~/framework/util/storage/storage-handler';
-import type { AuthActiveAccount } from '~/modules/auth/model';
+import type { AuthActiveAccount, AuthLoggedAccount } from '~/modules/auth/model';
 
 import { EntModule, Module } from '.';
 
@@ -103,13 +103,57 @@ interface ConfigForRedux<State = undefined, ActionType extends Action = never> {
   reducer: Reducer<State, ActionType>;
 }
 
+export interface SessionHookOptions {
+  signal: AbortSignal;
+}
+
+/** What `sessionSetup` gives back: `commit` writes what it loaded, once the session is created. */
+export type SessionSetupResult = void | { commit: () => void };
+
+/**
+ * What a module can do when sessions start and end. A session starts when an account becomes usable (signed in, nothing left to
+ * fulfil) and ends when it stops being (switch, logout, deletion, new requirement).
+ */
+export interface ConfigForSession {
+  /**
+   * Loads what the app can't show without, before the session is created (the sign-in waits for it). It runs on an account that
+   * is not connected yet, maybe while the previous session still runs: write nothing, give the `commit` that writes it, which the
+   * framework calls once the session exists (before `onSessionStart`). Use `accountFetch(session, …)`, not `sessionFetch`.
+   * A failure makes the sign-in fail (`SessionSetupError`) and no `commit` is called, for any module. It has no delay of its own: the
+   * timeout of each request applies.
+   * Everything that can be shown while loading belongs in `onSessionStart`.
+   */
+  sessionSetup?: (session: AuthActiveAccount, options: SessionHookOptions) => SessionSetupResult | Promise<SessionSetupResult>;
+
+  /**
+   * Called when a session starts. Not awaited: modules are independent and
+   * a failure is only logged. Not called at launch, nor when a restore fails.
+   * Stop local work (timers, subscriptions) on `signal`, aborted when the session ends. It says nothing about what happens when the
+   * app is killed: for what must be undone anyway (a registration on a server), use `onSessionRelease`.
+   */
+  onSessionStart?: (session: AuthActiveAccount, options: SessionHookOptions) => void | Promise<void>;
+
+  /**
+   * Undoes what the sessions of an account left durably (the pair of `onSessionStart`). Called by the framework when the session
+   * of the account ends, when another session starts (for every other account with tokens: it catches up what was missed or failed),
+   * and before an account with tokens is deleted. Never at launch. Must do nothing when there is nothing to undo.
+   * The requests it makes with `accountFetch(account, …)` work although the session is over (the account given carries its tokens,
+   * even if the store has dropped them), and are only limited by the timeout of a request. A release that fails is not retried
+   * before the next session starts.
+   */
+  onSessionRelease?: (account: AuthLoggedAccount) => void | Promise<void>;
+}
+
+/** What the framework needs to know of a loaded module to run the sessions. */
+export type ModuleWithSessionLifecycle = { name: string } & ConfigForSession;
+
 export interface ModuleConfig<
   Name extends string,
   Screens extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Screens> = {},
   Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
   ReduxState = undefined,
   ReduxAction extends Action = never,
-> {
+> extends ConfigForSession {
   // Technical name of this module. Needs to be the same as its folder name.
   name: Name;
 

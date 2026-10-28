@@ -7,4 +7,5 @@ export default [
   import('~/app/test/cmodule'),
   import('~/app/test/dmodule'),
   import('~/modules/auth'),
+  import('~/modules/notifications'),
 ] as const;

@@ -61,10 +61,10 @@ export const writeAccounts = (accounts: Record<string, AuthSavedAccount>) => {
 };
 
 /**
- * @param startup the account to restore at next app launch. Removes the item if undefined.
+ * @param startup what the app resumes at next launch. Removes the item if there is nothing to resume.
  */
-export const writeStartup = (startup: AuthStorageData['startup'] | undefined) => {
-  if (startup) storage.setJSON('startup', startup);
+export const writeStartup = (startup: AuthStorageData['startup']) => {
+  if (startup.account !== undefined || startup.platform !== undefined) storage.setJSON('startup', startup);
   else storage.remove('startup');
 };
 

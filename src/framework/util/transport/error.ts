@@ -101,12 +101,7 @@ export class HTTPError extends global.Error implements Omit<Response, 'clone' | 
    */
   async read<T = any>(
     parseFn:
-      | typeof this.arrayBuffer
-      | typeof this.blob
-      | typeof this.formData
-      | typeof this.json
-      | typeof this.text
-      | typeof this.bytes,
+      typeof this.arrayBuffer | typeof this.blob | typeof this.formData | typeof this.json | typeof this.text | typeof this.bytes,
   ): Promise<T | undefined> {
     return parseFn.call(this).catch(() => undefined);
   }
@@ -127,6 +122,10 @@ export enum FetchErrorCode {
   NOT_OK = 'FetchErrorCode|NOT_OK',
   /** Blocking signed request to another origin */
   TOKEN_ORIGIN_MISMATCH = 'FetchErrorCode|TOKEN_ORIGIN_MISMATCH',
+  /** Request canceled by the caller (its `signal`) */
+  ABORTED = 'FetchErrorCode|ABORTED',
+  /** Signed request canceled because the session of its account ended (logout, account switch...) */
+  SESSION_ENDED = 'FetchErrorCode|SESSION_ENDED',
 }
 
 /**

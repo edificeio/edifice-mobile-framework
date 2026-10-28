@@ -2,13 +2,13 @@
 
 import { ApiClientOptions, BaseApiClient } from '@edifice.io/community-client-rest-rn';
 
-import { getAccountFetch } from './fetch';
-
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import appConf from '~/framework/util/appConf';
 import { IUnkownModuleConfig } from '~/framework/util/moduleTool';
 import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
+
+import { getAccountFetch } from './fetch';
 
 export function accountApi<Client extends BaseApiClient>(
   account: AuthActiveAccount | AuthSavedLoggedInAccount,
