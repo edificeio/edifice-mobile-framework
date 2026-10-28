@@ -150,16 +150,16 @@ export const getAuthReduxNavigationState = ({
 }: Pick<AuthState, 'connected' | 'accounts' | 'lastDeletedAccount' | 'pending' | 'requirement' | 'showOnboarding'>): PartialState<
   NavigationState<NavigationRootParams>
 > => {
-  // A. Activation & Password Renew
-  if (pending) {
-    const routeForLoginRedirection = getRouteForRedirect(appConf.getHost(pending.platform), pending);
-    if (routeForLoginRedirection) return { routes: [routeForLoginRedirection], stale: true };
-  }
-
   // B. Requirements
   if (requirement && connected && accountIsActive(accounts[connected])) {
     const routeForRequirement = getRouteForRequirement(accounts[connected], requirement);
     return { routes: [routeForRequirement], stale: true };
+  }
+
+  // A. Activation & Password Renew
+  if (pending) {
+    const routeForLoginRedirection = getRouteForRedirect(appConf.getHost(pending.platform), pending);
+    if (routeForLoginRedirection) return { routes: [routeForLoginRedirection], stale: true };
   }
 
   // C. Onboarding

@@ -78,7 +78,6 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
         await presencesService.absence.create(session, structureId, childId, startDate, endDate, reason);
       }
       navigation.goBack();
-      Trackers.trackEvent('Présences', 'déclarer-absence', 'déclarer');
       Toast.showSuccess(I18n.get('presences-declareabsence-successmessage'));
     } catch {
       setCreating(false);

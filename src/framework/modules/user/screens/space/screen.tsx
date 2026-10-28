@@ -3,9 +3,6 @@ import * as React from 'react';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
 
-import styles from './styles';
-import { UserSpaceScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -16,7 +13,9 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media-deprecated';
-import { Trackers } from '~/framework/util/tracker';
+
+import styles from './styles';
+import { UserSpaceScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -36,7 +35,6 @@ const pic = require('ASSETS/images/space/person.png');
 
 function UserSpaceScreen(props: UserSpaceScreenPrivateProps) {
   const onPressButton = () => {
-    Trackers.trackEvent('onboarding', 'Inscription classe découverte');
     openUrl(I18n.get('user-space-buttonurl'));
   };
   return (

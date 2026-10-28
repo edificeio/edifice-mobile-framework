@@ -38,6 +38,7 @@ import redirect from '~/framework/modules/widgets/carnet-de-board/service/redire
 import { preferences } from '~/framework/modules/widgets/carnet-de-board/storage';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
+import { openUrl } from '~/framework/util/linking';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 
 export interface CarnetDeBordScreenDataProps {
@@ -114,6 +115,18 @@ function CarnetDeBordScreen({ data, error, handleLoadData, navigation, session, 
     [/*session, */ users],
   );
 
+  const pronoteConnectorsSorted = React.useMemo(() => {
+    const connectors = session?.rights.apps.filter(app => app.casType === 'PronoteRegisteredService');
+    connectors?.sort((a, b) => String(a.displayName ?? a.name).localeCompare(String(b.displayName ?? b.name)));
+    return connectors;
+  }, [session?.rights.apps]);
+
+  const openAddress = React.useMemo(() => {
+    const connector = pronoteConnectorsSorted?.[0];
+    const finalUrl = connector ? `/auth/redirect?url=${encodeURIComponent(connector.address.trim())}` : undefined;
+    return finalUrl;
+  }, [pronoteConnectorsSorted]);
+
   // Data & content
   const loadData = React.useCallback(async () => {
     const savedSelectedId = preferences.getString('carnet-de-bord.selected-user');
@@ -144,19 +157,22 @@ function CarnetDeBordScreen({ data, error, handleLoadData, navigation, session, 
     [selectedCdbData, users, selectedId, selectUser, isUserListShown, isStructureShown, navigation, structures, session],
   );
 
-  const is50xError = React.useMemo(() => error instanceof PronoteCdbInitError, [error]);
-
   return (
     <PageView>
       <ContentLoader
         renderError={refreshControl => {
           return (
             <ScrollView refreshControl={refreshControl}>
-              {is50xError ? (
+              {error instanceof PronoteCdbInitError ? (
                 <EmptyScreen
                   svgImage="empty-pronote-uri"
                   title={I18n.get('pronote-initfailed-title')}
                   text={I18n.get('pronote-initfailed-text')}
+                  buttonAction={() => {
+                    openAddress && openUrl(openAddress);
+                  }}
+                  buttonIcon="ui-external-link"
+                  buttonText={I18n.get('pronote-carnet-de-bord-error-redirect')}
                 />
               ) : (
                 <EmptyScreen

@@ -1,6 +1,6 @@
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import { OAuth2SamlMultipleVectorError } from '~/framework/util/oauth2';
-import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
+//import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { createTrackEvents, TRACK_DEFAULT, TRACK_ERROR } from '~/framework/util/tracker/track-opt';
 
 enum TrackCategory {
@@ -41,24 +41,24 @@ export default createTrackEvents({
 
 export const trackingWayfEvents = {
   loadError: (url: string, code?: number) => {
-    Trackers.trackEvent(TrackCategory.Authentification, trackingActionAddSuffix('Affichage WAYF', false), url, code);
+    //Trackers.trackEvent(TrackCategory.Authentification, trackingActionAddSuffix('Affichage WAYF', false), url, code);
   },
   loadSuccess: (url: string) => {
-    Trackers.trackEvent(TrackCategory.Authentification, trackingActionAddSuffix('Affichage WAYF', true), url);
+    //Trackers.trackEvent(TrackCategory.Authentification, trackingActionAddSuffix('Affichage WAYF', true), url);
   },
 };
 
 export const trackingAccountEvents = {
   deleteAccountFromManageAccounts: () => {
-    Trackers.trackEvent(TrackCategory.Compte, 'Supprimer compte', 'Sélection compte → Gérer comptes → Supprimer compte');
+    //Trackers.trackEvent(TrackCategory.Compte, 'Supprimer compte', 'Sélection compte → Gérer comptes → Supprimer compte');
   },
   deleteAccountFromSwitchAccount: () => {
-    Trackers.trackEvent(TrackCategory.Compte, 'Supprimer compte', 'Mon compte → Changer compte → Supprimer compte');
+    //Trackers.trackEvent(TrackCategory.Compte, 'Supprimer compte', 'Mon compte → Changer compte → Supprimer compte');
   },
   manageAccountsPressButton: () => {
-    Trackers.trackEvent(TrackCategory.Compte, 'Gérer comptes', 'Sélection compte → Gérer comptes');
+    //Trackers.trackEvent(TrackCategory.Compte, 'Gérer comptes', 'Sélection compte → Gérer comptes');
   },
   switchAccountPressButton: () => {
-    Trackers.trackEvent(TrackCategory.Compte, 'Changer compte', 'Mon compte → Changer compte');
+    //Trackers.trackEvent(TrackCategory.Compte, 'Changer compte', 'Mon compte → Changer compte');
   },
 };

@@ -3,9 +3,6 @@ import * as React from 'react';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
 
-import styles from './styles';
-import { TimelineSpaceScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { Svg } from '~/framework/components/picture';
@@ -15,7 +12,9 @@ import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modul
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media-deprecated';
-import { Trackers } from '~/framework/util/tracker';
+
+import styles from './styles';
+import { TimelineSpaceScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -35,7 +34,6 @@ const pic = require('ASSETS/images/space/person.png');
 
 function TimelineSpaceScreen(props: TimelineSpaceScreenPrivateProps) {
   const onPressButton = () => {
-    Trackers.trackEvent('onboarding', 'Inscription classe découverte');
     openUrl(I18n.get('user-space-buttonurl'));
   };
   return (

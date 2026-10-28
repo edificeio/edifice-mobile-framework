@@ -2,11 +2,10 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 
+
 import { ILocalAttachment } from './Attachment';
 import { AttachmentGroup } from './AttachmentGroup';
 import { AttachmentGroupImages } from './AttachmentGroupImages';
-
-import { Trackers } from '~/framework/util/tracker';
 
 class AttachmentPicker_Unconnected extends React.PureComponent<{
   attachments: ILocalAttachment[];
@@ -43,7 +42,9 @@ class AttachmentPicker_Unconnected extends React.PureComponent<{
         editMode
         attachments={attachments}
         onRemove={index => this.onRemoveAttachment(index)}
-        onOpen={() => Trackers.trackEvent('Conversation', 'OPEN ATTACHMENT', 'Edit mode')}
+        onOpen={() => {
+          //Trackers.trackEvent('Conversation', 'OPEN ATTACHMENT', 'Edit mode');
+        }}
         isContainerHalfScreen={isContainerHalfScreen}
         attachmentsHeightHalfScreen={attachmentsHeightHalfScreen}
         referer={undefined}
