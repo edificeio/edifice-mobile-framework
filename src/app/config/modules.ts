@@ -8,6 +8,7 @@ export default [
   import('~/app/test/dmodule'),
   import('~/app/test/emodule'),
   import('~/modules/auth'),
+  import('~/modules/editor'),
   import('~/modules/notifications'),
   import('~/modules/user'),
 ] as const;

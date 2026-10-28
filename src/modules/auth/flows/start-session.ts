@@ -6,8 +6,6 @@ import { accountIsLoggable, type AuthActiveAccount, type AuthSavedLoggedInAccoun
 import { useAccountsStore } from '~/modules/auth/store/accounts';
 import { usePlatformReactionTypesStore } from '~/modules/auth/store/platform-reaction-types';
 
-import { refreshOneSessionId } from './refresh-one-session-id';
-
 /**
  * Gives `startSession`: sets up everything that depends on the session. Not a flow of its own: it ends `setActiveAccount`.
  * Called AFTER the session is committed to the store.
@@ -47,11 +45,6 @@ export const createStartSession = (lifecycle: SessionLifecycle) => {
       .getValidReactionTypes()
       .then(types => usePlatformReactionTypesStore.getState().setReactionTypes(session.platform.name, types['reaction-types']))
       .catch(e => console.warn('[Auth] Unable to load valid reaction types:', e));
-
-    // Refresh oneSessionId token
-    // @todo move it to the `onSessionStart` of its future module (with the notifications), as the other effects of the session
-    // Not awaited, failures only logged, like `callAtLogin`: a failure must not fail the sign-in of an account that is connected.
-    refreshOneSessionId(session).catch(e => console.warn('[Auth] Unable to refresh the oneSessionId:', e));
   };
 };
 
