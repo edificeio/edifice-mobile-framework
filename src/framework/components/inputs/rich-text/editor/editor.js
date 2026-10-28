@@ -35,7 +35,7 @@ async function loadBase64File(fileName, type) {
 }
 
 async function loadFont(fontInfo) {
-  const { bold, cursive, fontFamily, fontFile, italic } = fontInfo;
+  const { bold, fontFamily, fontFile, italic, sizeAdjust } = fontInfo;
   try {
     const base64Font = await loadBase64File(fontFile, base64Type.FONT);
     fontFaces += `
@@ -44,7 +44,7 @@ async function loadFont(fontInfo) {
           src: url(data:font/woff;base64,${base64Font}) format('woff');
           ${bold ? 'font-weight: 700;' : ''}
           ${italic ? 'font-style: italic;' : ''}
-          ${cursive ? 'size-adjust: 187.5%;' : ''}
+          ${sizeAdjust ? `size-adjust: ${sizeAdjust};` : ''}
         }
     `;
   } catch (error) {
@@ -87,6 +87,8 @@ async function initEditor() {
     //Ecriture A
     { cursive: true, fontFamily: 'Ecriture A', fontFile: 'ecriturea_regular.woff' },
     { cursive: true, fontFamily: 'Ecriture A', fontFile: 'ecriturea_italic.woff', italic: true },
+    { fontFamily: 'Ecriture A', fontFile: 'ecriturea_regular.woff', sizeAdjust: '187.5%' },
+    { fontFamily: 'Ecriture A', fontFile: 'ecriturea_italic.woff', italic: true, sizeAdjust: '187.5%' },
     //Marelle
     { fontFamily: 'Marelle', fontFile: 'marelle_regular.woff' },
   ];

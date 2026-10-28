@@ -416,6 +416,13 @@ const performLogin = async (
   } else {
     await dispatch(deactivateLoggedAccountActionIfApplicable(reduxActions.success(accountInfo)));
   }
+
+  await dispatch(performPostLoginAction(accountInfo));
+
+  return accountInfo;
+};
+
+const performPostLoginAction = (accountInfo: AuthActiveAccount) => async (dispatch: AuthDispatch) => {
   await loadMyAppsAtLogin(accountInfo, dispatch);
 
   // Setup push-notifications for the new account
@@ -430,8 +437,6 @@ const performLogin = async (
 
   // Refresh oneSessionId token
   await dispatch(refreshSessionIdForAccountAction(accountInfo));
-
-  return accountInfo;
 };
 
 /** Generic thunk action that handle everything for a login with credentials */
@@ -656,6 +661,7 @@ export const refreshRequirementsAction = () => async (dispatch: AuthDispatch) =>
     }
   }
   dispatch(actions.updateRequirement(requirement, accountInfo, context));
+  await dispatch(performPostLoginAction(accountInfo));
 };
 
 /**
