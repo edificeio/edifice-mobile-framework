@@ -1,12 +1,14 @@
 import React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { HeaderButton } from '@react-navigation/elements';
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import Animated from 'react-native-reanimated';
 
 import { EntModule } from '~/app/module';
 import { defineModal, defineScreen, sharedTransitions, StackNavigation } from '~/app/navigation-new';
 import { SingleAvatar } from '~/framework/components/avatar';
+import { SelfAvatar } from '~/framework/components/avatar/self';
 import { PrimaryButton } from '~/framework/components/button';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/text';
@@ -14,8 +16,10 @@ import { useStorageNumber } from '~/framework/util/storage/hooks';
 import { AccountsButton } from '~/modules/auth/components';
 import { useAuthFlows } from '~/modules/auth/flows';
 import { withSession } from '~/modules/auth/hoc';
+import { I18n } from '~/util/i18n';
 
 import { preferences, storage } from './amodule-storage';
+import { modalCloseButtonStyle } from '../navigation-new/options';
 
 const styles = StyleSheet.create({
   button: { alignSelf: 'center' },
@@ -59,7 +63,7 @@ const AModuleHomeScreen = withSession<
             {session.user.displayName}
           </BodyBoldText>
           <PrimaryButton
-            testID="login"
+            testID="logout"
             text="Se déconnecter"
             onPress={() => {
               logout();
@@ -107,8 +111,50 @@ const AModuleHomeScreen = withSession<
   );
 });
 
+export const userButtonStyle = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: UI_SIZES.spacing.minor,
+    minHeight: UI_SIZES.navigation.headerButtonSizeAndroid,
+    minWidth: UI_SIZES.navigation.headerButtonSizeAndroid,
+  },
+});
+
 const AModuleHomeScreenDeclaration = defineScreen({
-  options: () => ({ title: 'Un super écran de test' }),
+  options: ({ navigation }) => ({
+    headerLeft: () => (
+      <Pressable
+        accessible
+        accessibilityLabel={I18n.get('user-profile-myaccount')}
+        accessibilityRole="button"
+        android_ripple={{ borderless: true, color: UI_SIZES.navigation.headerButtonRippleColor.light, radius: 20 }}
+        hitSlop={16}
+        style={userButtonStyle.button}
+        onPress={() => navigation.navigate('user')}
+        testID="timeline-profile-button">
+        <SelfAvatar size="sm" />
+      </Pressable>
+    ),
+    title: 'Un super écran de test',
+    unstable_headerLeftItems: () => [
+      {
+        element: (
+          <Pressable
+            accessible
+            accessibilityLabel={I18n.get('user-profile-myaccount')}
+            accessibilityRole="button"
+            android_ripple={{ borderless: true, color: UI_SIZES.navigation.headerButtonRippleColor.light, radius: 20 }}
+            hitSlop={16}
+            onPress={() => navigation.navigate('user')}
+            testID="timeline-profile-button">
+            <SelfAvatar size="sm" />
+          </Pressable>
+        ),
+        type: 'custom',
+      },
+    ],
+  }),
   screen: AModuleHomeScreen,
 });
 
@@ -161,7 +207,7 @@ function AModuleModalScreen({}: StaticScreenProps<{
 }
 
 const AModuleModalScreenDeclaration = defineModal({
-  options: ({}) => ({ title: 'SALUT' }),
+  options: ({}) => ({ title: 'Un modale wow !' }),
   screen: AModuleModalScreen,
 });
 
