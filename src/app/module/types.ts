@@ -4,7 +4,7 @@ import type { createNativeStackScreen } from '@react-navigation/native-stack';
 import type { Action, Reducer } from 'redux';
 
 import type importModules from '~/app/config/modules';
-import type { ScreenComponent } from '~/app/navigation-new/types';
+import type { ScreenComponent, ScreenTelemetryConfig } from '~/app/navigation-new/types';
 import type { SvgIconName } from '~/framework/components/picture';
 import type { StorageHandler } from '~/framework/util/storage/storage-handler';
 import type { AuthActiveAccount, AuthLoggedAccount } from '~/modules/auth/model';
@@ -54,7 +54,7 @@ export type NavigationParamsOfScreens<Components> = {
  * `Components` (route name -> screen component) is inferred from it.
  */
 export type ModuleScreensConfig<Components extends Record<string, ScreenComponent>> = {
-  [RouteName in keyof Components]: Parameters<typeof createNativeStackScreen<Components[RouteName]>>[0];
+  [RouteName in keyof Components]: Parameters<typeof createNativeStackScreen<Components[RouteName]>>[0] & ScreenTelemetryConfig;
 };
 
 /**

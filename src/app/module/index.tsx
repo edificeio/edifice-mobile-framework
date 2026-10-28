@@ -40,6 +40,8 @@ export abstract class Module<
   sessionSetup: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['sessionSetup'];
   screens: ModuleStaticScreens<Screens>;
   modals: ModuleStaticScreens<Modals>;
+  /** Routes (screens and modals) that only host another navigation container, which tracks them itself (`delegatesTelemetry`). */
+  telemetryDelegatedRoutes: ReadonlySet<string>;
 
   constructor(opts: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>) {
     this.name = opts.name;
@@ -48,18 +50,34 @@ export abstract class Module<
     this.storages = opts.storages ?? [];
     this.screens = Module.createScreens(opts.screens);
     this.modals = Module.createScreens(opts.modals);
+    this.telemetryDelegatedRoutes = new Set([
+      ...Module.getDelegatedRoutes(opts.screens),
+      ...Module.getDelegatedRoutes(opts.modals),
+    ]);
     this.onSessionRelease = opts.onSessionRelease;
     this.onSessionStart = opts.onSessionStart;
     this.sessionSetup = opts.sessionSetup;
   }
 
   // Screens and modals will always be added to a native stack navigator.
+  // `delegatesTelemetry` is for the app only: the navigator doesn't get it.
   private static createScreens<Components extends Record<string, ScreenComponent>>(
     configs: ModuleScreensConfig<Components> | undefined,
   ) {
     return Object.fromEntries(
-      Object.entries(configs ?? {}).map(([route, config]) => [route, createNativeStackScreen(config)]),
+      Object.entries(configs ?? {}).map(([route, config]) => {
+        const { delegatesTelemetry: _delegatesTelemetry, ...navigatorConfig } = config;
+        return [route, createNativeStackScreen(navigatorConfig)];
+      }),
     ) as ModuleStaticScreens<Components>;
+  }
+
+  private static getDelegatedRoutes<Components extends Record<string, ScreenComponent>>(
+    configs: ModuleScreensConfig<Components> | undefined,
+  ) {
+    return Object.entries(configs ?? {})
+      .filter(([, config]) => config.delegatesTelemetry)
+      .map(([route]) => route);
   }
 }
 

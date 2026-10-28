@@ -1,7 +1,7 @@
 import { SharedTransition } from 'react-native-reanimated';
 
 import { modalOptions } from './options';
-import type { ScreenComponent, ScreenConfig, ScreenOptionsProps } from './types';
+import type { ScreenComponent, ScreenConfig, ScreenOptionsProps, ScreenTelemetryConfig } from './types';
 
 /**
  * Config of a screen like `createNativeStackScreen` takes it, except that `options` can only be a function.
@@ -11,7 +11,7 @@ import type { ScreenComponent, ScreenConfig, ScreenOptionsProps } from './types'
  */
 export type StrictScreenConfig<Component extends ScreenComponent> = Omit<ScreenConfig<Component>, 'options'> & {
   options?: Extract<ScreenConfig<Component>['options'], Function>;
-};
+} & ScreenTelemetryConfig;
 
 /**
  * Typing helper to declare a screen (or modal) config in the screen's own file.
@@ -22,7 +22,7 @@ export type StrictScreenConfig<Component extends ScreenComponent> = Omit<ScreenC
  * `options` must be a function (see `StrictScreenConfig`).
  */
 export const defineScreen = <Component extends ScreenComponent>(config: StrictScreenConfig<Component>) =>
-  config as ScreenConfig<Component>;
+  config as ScreenConfig<Component> & ScreenTelemetryConfig;
 
 export const sharedTransitions = {
   default: SharedTransition.duration(500).springify(),

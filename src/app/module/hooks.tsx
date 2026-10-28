@@ -39,6 +39,15 @@ export const useCoreModuleModals = (): AllModulesStaticModals => {
 };
 
 /**
+ * Gather the routes of all modules that only host another navigation container, which tracks them itself (`delegatesTelemetry`).
+ * @returns
+ */
+export const useTelemetryDelegatedRoutes = (): ReadonlySet<string> => {
+  const modules = useModules();
+  return React.useMemo(() => new Set(modules.flatMap(module => [...module.telemetryDelegatedRoutes])), [modules]);
+};
+
+/**
  * Retrieves all modules scopes in a set.
  * @returns
  */

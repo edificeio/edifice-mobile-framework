@@ -11,6 +11,7 @@ import React from 'react';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { createStaticNavigation } from '@react-navigation/native';
 
+import { useTelemetryDelegatedRoutes } from '~/app/module/hooks';
 import { ToastContainer } from '~/framework/components/toast';
 import { CloudMessagingProvider } from '~/framework/util/notifications/cloudMessaging';
 
@@ -54,7 +55,8 @@ export const AppNavigation = React.memo(function ({ onReady: _onReady }: AppNavi
     </ConfirmRemoveProvider>
   ));
   const Navigation = createStaticNavigation(rootStack);
-  const { onReady: onReadyTelemetry, onScreenChange, onUnhandledAction } = useScreenTelemetry();
+  const ignoredRoutes = useTelemetryDelegatedRoutes();
+  const { onReady: onReadyTelemetry, onScreenChange, onUnhandledAction } = useScreenTelemetry({ ignoredRoutes });
   const onReady = React.useCallback(() => {
     onReadyTelemetry();
     _onReady?.();
