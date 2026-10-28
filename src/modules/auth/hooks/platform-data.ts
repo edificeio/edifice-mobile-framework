@@ -5,4 +5,3 @@
  */
 export { usePlatformContext } from '~/modules/auth/store/platform-context';
 export { usePlatformLegalUrls } from '~/modules/auth/store/platform-legal-urls';
-export { usePlatformReactionTypes } from '~/modules/auth/store/platform-reaction-types';

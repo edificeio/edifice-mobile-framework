@@ -8,6 +8,7 @@
 
 import type { IGlobalState } from '~/app/store';
 import type { HostId, Platform } from '~/framework/util/appConf';
+import { getPlatformReactionTypes } from '~/modules/audience/store';
 import { useSignInStore } from '~/modules/auth/sign-in/store';
 import {
   assertSession as assertStoreSession,
@@ -20,7 +21,6 @@ import {
   getPlatformLegalUrls as getStorePlatformLegalUrls,
   usePlatformLegalUrlsStore,
 } from '~/modules/auth/store/platform-legal-urls';
-import { getPlatformReactionTypes } from '~/modules/auth/store/platform-reaction-types';
 
 import type { AuthState } from './types';
 
@@ -110,7 +110,7 @@ export function getPlatformLegalUrlsOf(platform?: Platform) {
   return getStorePlatformLegalUrls(platform?.name);
 }
 
-/** @deprecated use `getPlatformReactionTypes(platformName)` from `~/modules/auth/store/platform-reaction-types`. */
+/** @deprecated use `getPlatformReactionTypes(platformName)` from `~/modules/audience/store`. */
 export function getValidReactionTypes() {
   return getPlatformReactionTypes(getSession()?.platform.name) ?? [];
 }

@@ -1,10 +1,8 @@
-import { audienceService } from '~/framework/modules/audience/service';
 import { Trackers } from '~/framework/util/tracker';
 import { getCallsAtLogin } from '~/modules/auth/calls-at-login';
 import type { SessionLifecycle } from '~/modules/auth/lifecycle';
 import { accountIsLoggable, type AuthActiveAccount, type AuthSavedLoggedInAccount } from '~/modules/auth/model';
 import { useAccountsStore } from '~/modules/auth/store/accounts';
-import { usePlatformReactionTypesStore } from '~/modules/auth/store/platform-reaction-types';
 
 /**
  * Gives `startSession`: sets up everything that depends on the session. Not a flow of its own: it ends `setActiveAccount`.
@@ -38,13 +36,6 @@ export const createStartSession = (lifecycle: SessionLifecycle) => {
     for (const account of accountsToReconcile(session.user.id, releasedId)) lifecycle.release(account);
 
     // ToDo: the MyApps data (loaded at login then enriched with module info) belongs to `myapps`, with `sessionSetup`.
-
-    // GET the audience valid reaction types for the platform
-    // ToDo : Get this out of there ! This needs to be in the `audience` module and called with `callAtLogin`.
-    audienceService.reaction
-      .getValidReactionTypes()
-      .then(types => usePlatformReactionTypesStore.getState().setReactionTypes(session.platform.name, types['reaction-types']))
-      .catch(e => console.warn('[Auth] Unable to load valid reaction types:', e));
   };
 };
 
