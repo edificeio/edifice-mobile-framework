@@ -55,7 +55,7 @@ export interface MenuStepsPlaceholderProps {
   style?: ViewStyle;
 }
 
-export function MenuStepsPlaceholder({ style }: MenuStepsPlaceholderProps) {
+export function MenuStepsPlaceholder({ style }: Readonly<MenuStepsPlaceholderProps>) {
   return (
     <Placeholder Animation={Fade} style={style}>
       {PLACEHOLDER_STEPS.map(step => (
