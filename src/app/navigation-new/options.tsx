@@ -1,7 +1,7 @@
 import { Platform, Pressable, StyleSheet } from 'react-native';
 
-import { BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
-import { HeaderTitle } from '@react-navigation/elements';
+import { BottomTabBarButtonProps, BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
+import { HeaderTitle, PlatformPressable } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackNavigatorProps } from '@react-navigation/native-stack';
 
 import { UI_SIZES } from '~/framework/components/constants';
@@ -61,12 +61,19 @@ export const tabStackOptions: NativeStackNavigatorProps['screenOptions'] = {
   ...visibleStackScreenOptions,
 };
 
+/**
+ * Button of the tab bar without the ripple of Android: the default one (`PlatformPressable`) draws it with no option to remove it,
+ * so its color is made transparent. It does nothing more than the default one (the tab press feedback is in the tab listeners).
+ */
+const TabBarButton = (props: BottomTabBarButtonProps) => <PlatformPressable {...props} pressColor="transparent" />;
+
 export const tabsOptions: BottomTabNavigatorProps['screenOptions'] = ({ theme: navTheme }) => ({
   ...commonScreenOptions,
   freezeOnBlur: true,
   headerShown: false,
   lazy: true,
   popToTopOnBlur: true,
+  tabBarButton: TabBarButton,
   tabBarStyle: {
     backgroundColor: navTheme.colors.background,
     borderTopColor: navTheme.colors.border,
