@@ -19,11 +19,11 @@ const styles = StyleSheet.create({
  * ToDo: bring the content of the legacy user module (`framework/modules/user`) here, step by step. For now only the accounts button.
  */
 const UserHomeScreen = React.memo(function ({}: StaticScreenProps<undefined>) {
-  const { logout } = useAuthFlows();
+  const { confirmLogout } = useAuthFlows();
   return (
     <View style={styles.container}>
-      <AccountsButton />
-      <PrimaryButton testID="logout" text="Se déconnecter" onPress={logout} />
+      <AccountsButton testID="account-add-account" />
+      <PrimaryButton testID="account-logout" text="Se déconnecter" onPress={confirmLogout} />
     </View>
   );
 });

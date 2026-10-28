@@ -584,7 +584,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
         </View>
         {accountMenu}
         <View style={styles.sectionBottom}>
-          <AccountsButton style={styles.accountButton} />
+          <AccountsButton testID="account-add-account" style={styles.accountButton} />
           {logoutButton}
           {versionDetails}
           <BottomRoundDecoration style={styles.bottomRoundDecoration} child={versionButton} />

@@ -44,7 +44,7 @@ const AModuleHomeScreen = withSession<
   }>
 >(function ({ session }) {
   const navigation = useNavigation();
-  const { logout } = useAuthFlows();
+  const { confirmLogout } = useAuthFlows();
   // Pilot of the storage API: a counter of the device, and a number of the account. Both render again when they change.
   const [launchCount] = useStorageNumber(storage, 'launch-count');
   const [favoriteNumber, setFavoriteNumber] = useStorageNumber(preferences, 'favorite-number');
@@ -61,16 +61,10 @@ const AModuleHomeScreen = withSession<
           <BodyBoldText style={UI_STYLES.flex1} numberOfLines={1}>
             {session.user.displayName}
           </BodyBoldText>
-          <PrimaryButton
-            testID="logout"
-            text="Se déconnecter"
-            onPress={() => {
-              logout();
-            }}
-          />
+          <PrimaryButton testID="logout" text="Se déconnecter" onPress={confirmLogout} />
         </View>
         <View style={styles.rowCenter}>
-          <AccountsButton />
+          <AccountsButton testID="home-accounts" />
         </View>
       </View>
 
