@@ -7,11 +7,10 @@ import { defineModal } from '~/app/navigation-new';
 import { modalCloseButtonOptions } from '~/app/navigation-new/options';
 import { useAuthFlows } from '~/modules/auth/flows';
 import { AuthNavigationWrapper } from '~/modules/auth/navigation/navigation-container';
+import { getAddAccountNavigationState } from '~/modules/auth/navigation/sign-in-navigation-state';
 import { useStableNavigationState } from '~/modules/auth/sign-in/navigation';
 import { AddAccountAuthPlatformsScreen } from '~/modules/auth/sign-in/screens/platforms';
 import { useSignInStore } from '~/modules/auth/sign-in/store';
-
-import { getAddAccountNavigationState } from '~/modules/auth/navigation/sign-in-navigation-state';
 
 /**
  * Add Account stack has special screen options for 'sign-in/platforms' screen.

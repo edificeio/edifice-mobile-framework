@@ -10,6 +10,9 @@ import AccountListSheetScreenTemplate, { accountListSheetOptions } from '~/modul
 import { trackingAccountEvents } from '~/modules/auth/tracking';
 import { I18n } from '~/util/i18n';
 
+/** Resolves after the next frame: the screen has rendered what was asked before (the animation needs it to be played). */
+const nextFrame = () => new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+
 /**
  * The connected user chooses another saved account to switch to, or removes one.
  * If the account can't be switched to (no valid tokens, or the switch failed), `restoreAccount` sends the user to the sign-in
@@ -29,7 +32,15 @@ const AuthSwitchAccountScreen = React.memo(function ({}: StaticScreenProps<undef
       }
       setLoading(true);
       // When it is switched, the modal goes away with the end of the session of the previous account: the loading is not reset.
-      if (!(await restoreAccount(account))) setLoading(false);
+      // When it can't be, the sheet stays during the attempt, then closes by itself before the session ends: the screens it was on
+      // being replaced under a presented modal would not animate. The next frame lets the closing start before they are replaced.
+      const restored = await restoreAccount(account, {
+        beforeLeave: async () => {
+          navigation.goBack();
+          await nextFrame();
+        },
+      });
+      if (!restored) setLoading(false);
     },
     [loading, navigation, restoreAccount],
   );

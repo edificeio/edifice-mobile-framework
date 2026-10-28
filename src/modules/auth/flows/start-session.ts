@@ -49,7 +49,9 @@ export const createStartSession = (lifecycle: SessionLifecycle) => {
       .catch(e => console.warn('[Auth] Unable to load valid reaction types:', e));
 
     // Refresh oneSessionId token
-    await refreshOneSessionId(session);
+    // @todo move it to the `onSessionStart` of its future module (with the notifications), as the other effects of the session
+    // Not awaited, failures only logged, like `callAtLogin`: a failure must not fail the sign-in of an account that is connected.
+    refreshOneSessionId(session).catch(e => console.warn('[Auth] Unable to refresh the oneSessionId:', e));
   };
 };
 
