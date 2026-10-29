@@ -1,29 +1,27 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 
-import { I18n } from '~/util/i18n';
-import { modalScreenOptions } from '~/app/navigation/util';
+import { defineModal } from '~/app/navigation-new';
 import theme from '~/app/theme';
-import { useFileHandler } from '~/framework/components/carousel/hooks/use-file-handler';
 import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
-import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
+import { useCarouselFileHandler } from '~/modules/media/screens/carousel/hooks';
+import type { FileMedia } from '~/modules/media/types';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 
-export interface DownloadModalProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Download> {}
+export type MediaDownloadParams = {
+  media: FileMedia;
+};
 
-export const DownloadModalScreenOptions = modalScreenOptions('transparentModal', () => ({
-  headerShown: false,
-}));
-
-const DownloadModal = (props: DownloadModalProps) => {
-  const { navigation, route } = props;
+const DownloadModal = ({ route }: StaticScreenProps<MediaDownloadParams>) => {
+  const navigation = useNavigation();
   const { media } = route.params;
   const [progress, setProgress] = React.useState(0);
 
-  const { cancelDownload, isCancelledRef, onSave } = useFileHandler(media, res => {
+  const { cancelDownload, isCancelledRef, onSave } = useCarouselFileHandler(media, res => {
     if (res.contentLength > 0) setProgress(res.bytesWritten / res.contentLength);
   });
 
@@ -37,6 +35,8 @@ const DownloadModal = (props: DownloadModalProps) => {
     return () => {
       cancelDownload();
     };
+    // The download starts once, when the modal opens.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onCancel = React.useCallback(() => {
@@ -60,4 +60,7 @@ const DownloadModal = (props: DownloadModalProps) => {
   );
 };
 
-export default DownloadModal;
+export default defineModal({
+  options: () => ({ headerShown: false, presentation: 'transparentModal' }),
+  screen: DownloadModal,
+});

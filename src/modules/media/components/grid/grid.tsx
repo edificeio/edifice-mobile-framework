@@ -1,22 +1,24 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { NavigationProp } from '@react-navigation/native';
 import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
 
-import { NavigationRootParams } from '~/app/navigation/types';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Media, openMedias, toURISource } from '~/framework/modules/media';
+import { useOpenMedia } from '~/modules/media/hooks/open-media';
+import type { Media } from '~/modules/media/types';
+import { toURISource } from '~/modules/media/util';
 
 import { MediaItem } from './item';
 import styles from './styles';
 
 export interface MediaGridProps {
   media?: Media[];
-  navigation: NavigationProp<NavigationRootParams>;
+  /** @deprecated Not used anymore: medias open with the navigation of the screen. */
+  navigation?: unknown;
 }
 
-export function MediaGrid({ media = MediaGrid.EMPTY_MEDIA, navigation }: Readonly<MediaGridProps>) {
+export function MediaGrid({ media = MediaGrid.EMPTY_MEDIA }: Readonly<MediaGridProps>) {
+  const { openMedias } = useOpenMedia();
   const isSingle = media.length === 1;
   const [itemHeight, setItemHeight] = React.useState(0);
   const onLayout = React.useCallback<NonNullable<ViewProps['onLayout']>>(({ nativeEvent }) => {
@@ -37,11 +39,11 @@ export function MediaGrid({ media = MediaGrid.EMPTY_MEDIA, navigation }: Readonl
               style={itemStyle}
               testID={`media-grid-${index}`}
               onPress={() => {
-                openMedias(navigation, media, index);
+                openMedias(media, index);
               }}
             />
           ),
-          [itemStyle, media, navigation],
+          [itemStyle, media, openMedias],
         ),
       )}
       {!isSingle && <View style={styles.item} />}

@@ -6,21 +6,21 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
+import { Image } from '~/modules/media/components/image';
+import { getMediaIcon } from '~/modules/media/display';
+import { resolveUrl } from '~/modules/media/source';
 import {
-  FileMedia,
-  ImageMedia,
+  type FileMedia,
+  type ImageMedia,
   isFileMedia,
   isImageMedia,
   isLinkMedia,
   isVideoMedia,
-  LinkMedia,
-  Media,
-  toURISource,
-  VideoMedia,
-} from '~/framework/modules/media';
-import { getMediaIcon } from '~/framework/modules/media/navigation';
-import { Image } from '~/framework/util/media-deprecated';
-import { sessionImageSource, sessionURISource } from '~/framework/util/transport';
+  type LinkMedia,
+  type Media,
+  type VideoMedia,
+} from '~/modules/media/types';
+import { toURISource } from '~/modules/media/util';
 
 import styles from './styles';
 
@@ -82,15 +82,15 @@ export function MediaImageItem({
 }: Readonly<{
   media: ImageMedia;
 }>) {
-  const source = sessionImageSource(toURISource(media.src));
-  return <Image source={source} style={styles.mediaImageCard} />;
+  return <Image source={toURISource(media.src)} style={styles.mediaImageCard} />;
 }
 
 const toThumbnailSource = (source: Media['src'], size: [number, number] | number): ReturnType<typeof toURISource> => {
-  const uri = sessionURISource(toURISource(source)).uri;
+  const uri = toURISource(source).uri;
   if (!uri) return { uri: undefined };
-  const url = new URL(uri);
-  const sizeParamValue = Array.isArray(size) ? `${size[0]}x${size[1]}` : `${size[0]}x0}`;
+  // The url must be complete to be changed (a source that has no domain is the one of the platform)
+  const url = new URL(resolveUrl(uri));
+  const sizeParamValue = Array.isArray(size) ? `${size[0]}x${size[1]}` : `${size}x0`;
   url.searchParams.set('thumbnail', sizeParamValue);
   return toURISource(url.href);
 };
@@ -104,11 +104,7 @@ export function MediaVideoItem({
   const onLayout = React.useCallback<NonNullable<ViewProps['onLayout']>>(({ nativeEvent }) => {
     setWidth(nativeEvent.layout.width);
   }, []);
-  const source = width
-    ? media.poster
-      ? toThumbnailSource(sessionURISource(toURISource(media.poster)), width)
-      : toThumbnailSource(media.src, width)
-    : undefined;
+  const source = width ? (media.poster ? toThumbnailSource(media.poster, width) : toThumbnailSource(media.src, width)) : undefined;
   return (
     <>
       <Image source={source} style={styles.mediaImageCard} />

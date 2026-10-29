@@ -3,10 +3,10 @@
  */
 import { ParamListBase } from '@react-navigation/native';
 
-import type { CarouselNavParams } from '~/framework/components/carousel/screen/types';
+// import type { ICarouselNavParams } from '~/framework/components/carousel/screen';
 import type { FileImportScreenProps } from '~/framework/components/inputs/rich-text/file-import';
 import type { RichEditorFormReduxNavParams } from '~/framework/components/inputs/rich-text/form/types';
-import type { DownloadModalNavParams } from '~/framework/components/modals/download/types';
+import type { MediaPlayerParams } from '~/framework/components/media/player/types';
 import { AudienceReactionsScreenNavParams } from '~/framework/modules/audience/screens/reactions/types';
 import { AudienceViewsScreenNavParams } from '~/framework/modules/audience/screens/views/types';
 import { AttachmentsImportScreenProps } from '~/framework/modules/mails/components/attachments/modal-import';
@@ -17,10 +17,10 @@ export enum ModalsRouteNames {
   AudienceReactions = 'audience-reactions',
   AudienceViews = 'audience-views',
   Carousel = 'carousel',
-  Download = 'download',
   FileImport = 'file-import',
   Infos = 'infos',
   Log = 'log',
+  MediaPlayer = 'media-player',
   Network = 'network',
   Pdf = 'pdf',
   RichTextEditor = 'rich-editor',
@@ -31,8 +31,8 @@ export enum ModalsRouteNames {
 
 export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.Pdf]: { title: string; src?: string };
-  [ModalsRouteNames.Carousel]: CarouselNavParams;
-  [ModalsRouteNames.Download]: DownloadModalNavParams;
+  // [ModalsRouteNames.Carousel]: ICarouselNavParams;
+  [ModalsRouteNames.MediaPlayer]: MediaPlayerParams;
   [ModalsRouteNames.AudienceReactions]: AudienceReactionsScreenNavParams;
   [ModalsRouteNames.AudienceViews]: AudienceViewsScreenNavParams;
   [ModalsRouteNames.FileImport]: FileImportScreenProps.NavParams;

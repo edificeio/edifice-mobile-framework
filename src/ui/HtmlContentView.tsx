@@ -10,20 +10,19 @@ import { View, ViewProps } from 'react-native';
 
 import { connect } from 'react-redux';
 
-import { I18n } from '~/util/i18n';
-import { navigationRef } from '~/app/navigation';
 import { IGlobalState } from '~/app/store';
-import { convertNotificationToFileMedia } from '~/framework/components/carousel/utils/adapter';
+import { openMultimediaCarousel } from '~/framework/components/carousel-multimedia/openCarousel';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { FileMedia } from '~/framework/modules/media';
-import { extractMediaFromHtml } from '~/framework/util/htmlParser/content';
+import { convertNotificationToFileMedia, extractMediaFromHtml } from '~/framework/util/htmlParser/content';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { openUrl } from '~/framework/util/linking';
 import { sessionFetch } from '~/framework/util/transport';
 import { Loading } from '~/ui/Loading';
+import { I18n } from '~/util/i18n';
 
 import { IRemoteAttachment } from './Attachment';
 import { AttachmentGroup } from './AttachmentGroup';
@@ -149,7 +148,7 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
           return m.src === src;
         });
 
-        navigationRef.navigate('media/carousel', {
+        openMultimediaCarousel({
           media: fileMedia,
           startIndex: selectedIndex !== -1 ? selectedIndex : 0,
         });

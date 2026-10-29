@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import Carousel from '~/framework/components/carousel/';
-import { CarouselScreenOptions } from '~/framework/components/carousel/screen/navbar';
+import CarouselScreen from '~/framework/components/carousel';
+import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel/screen';
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
-import DownloadModal from '~/framework/components/modals/download/component';
+import MediaPlayer from '~/framework/components/media/player';
 import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pdf/pdf-reader';
 import AudienceReactionsScreen, { computeNavBar as audienceReactionsNavBar } from '~/framework/modules/audience/screens/reactions';
 import AudienceViewsScreen, { computeNavBar as audienceViewsNavBar } from '~/framework/modules/audience/screens/views';
@@ -44,17 +44,12 @@ export default (
       />
       <RootStack.Screen name={ModalsRouteNames.AudienceViews} options={audienceViewsNavBar} component={AudienceViewsScreen} />
       <RootStack.Screen name={ModalsRouteNames.Pdf} options={PDFNavBar} component={PDFReader} initialParams={{ title: '' }} />
-      <RootStack.Screen
-        name={ModalsRouteNames.Download}
-        component={DownloadModal}
-        options={{ headerShown: false, presentation: 'transparentModal' }}
-      />
     </RootStack.Group>
     <RootStack.Group
       screenOptions={{
         presentation: 'fullScreenModal',
       }}>
-      <RootStack.Screen name={ModalsRouteNames.Carousel} options={CarouselScreenOptions} component={Carousel} />
+      <RootStack.Screen name={ModalsRouteNames.Carousel} options={CarouselNavBar} component={CarouselScreen} />
       <RootStack.Screen
         name={ModalsRouteNames.FileImport}
         options={FileAddNavBar}
@@ -62,6 +57,7 @@ export default (
         initialParams={{}}
       />
       <RootStack.Screen name={ModalsRouteNames.Infos} options={infosNavBar} component={InfosScreen} />
+      <RootStack.Screen name={ModalsRouteNames.MediaPlayer} options={{ headerShown: false }} component={MediaPlayer} />
       <RootStack.Screen name={ModalsRouteNames.Log} options={logNavBar} component={LogScreen} />
       <RootStack.Screen name={ModalsRouteNames.Network} options={networkNavBar} component={NetworkScreen} />
       <RootStack.Screen
@@ -89,10 +85,10 @@ setModalModeForRoutes([
   ModalsRouteNames.AudienceViews,
   ModalsRouteNames.AttachmentsImport,
   ModalsRouteNames.Carousel,
-  ModalsRouteNames.Download,
   ModalsRouteNames.FileImport,
   ModalsRouteNames.Infos,
   ModalsRouteNames.Log,
+  ModalsRouteNames.MediaPlayer,
   ModalsRouteNames.Network,
   ModalsRouteNames.Pdf,
   ModalsRouteNames.RichTextEditor,

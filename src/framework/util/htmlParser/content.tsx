@@ -2,18 +2,19 @@ import * as React from 'react';
 
 import { decode } from 'html-entities';
 
-import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import MediaButton from '~/framework/components/media/button';
 import { SmallItalicText } from '~/framework/components/text';
 import { AudienceParameter } from '~/framework/modules/audience/types';
-import { MediaType } from '~/framework/modules/media';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { formatSource } from '~/framework/util/media-deprecated';
 import { INotificationMedia } from '~/framework/util/notifications';
+import { type FileMedia, MediaType } from '~/modules/media/types';
+import { toURISource } from '~/modules/media/util';
 import AttachmentCount from '~/ui/AttachmentCount';
 import Images from '~/ui/Images';
+import { I18n } from '~/util/i18n';
 
 /**
  * Extracts text from an input html string
@@ -217,4 +218,32 @@ export const renderMediaPreview = (medias: INotificationMedia[], referer: Audien
     video: () => renderAudioVideoPreview(firstMedia, referer, onPreviewPress),
   };
   return firstMedia && components[firstMedia.type]?.();
+};
+
+/** The url without its parameters. */
+const normalizeUrl = (url: string) => url.split('?')[0];
+
+/**
+ * The medias extracted from a html content (`extractMediaFromHtml`), as medias the carousel can show. The sources are not signed: the
+ * components that show them do it.
+ */
+export const convertNotificationToFileMedia = (notificationMedias: INotificationMedia[]): FileMedia[] => {
+  return notificationMedias
+    .filter(media => ['image', 'audio', 'video', 'iframe'].includes(media.type))
+    .map(media => {
+      if (media.type === 'iframe') {
+        const src = typeof media.src === 'string' && media.src.startsWith('//') ? 'https:' + media.src : (media.src as string);
+        return { mime: MediaType.EMBEDDED, name: media.name, src, type: MediaType.EMBEDDED } as unknown as FileMedia;
+      }
+      return {
+        mime: media.type === 'image' ? 'image/*' : media.type === 'audio' ? 'audio/*' : 'video/*',
+        name: media.name,
+        poster:
+          media.type === 'video' && media['document-id'] && media['video-resolution']
+            ? computeVideoThumbnail(media['document-id'], extractVideoResolution(media['video-resolution']) || undefined)
+            : undefined,
+        src: normalizeUrl(toURISource(media.src.toString()).uri || ''),
+        type: media.type,
+      } as FileMedia;
+    });
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, View } from 'react-native';
+import RN, { View } from 'react-native';
 
 import theme from '~/app/theme';
 import { PictureProps, Svg } from '~/framework/components/picture';
@@ -49,7 +49,7 @@ export const ImageFallback: React.FC<ImageFallbackProps> = ({
     ) : picture.type === 'Icon' ? (
       <Svg {...DEFAULT_FALLBACK.icon} height={iconSize} width={iconSize} />
     ) : picture.type === 'Image' ? (
-      <Image {...picture} />
+      <RN.Image {...picture} />
     ) : null;
 
   return (

@@ -23,13 +23,11 @@ const fixedRNConfig = fixupConfigRules(reactNativeConfig).map(config => {
   return config;
 });
 
-// Flat config replaces a rule's whole options when a later block redefines it,
-// so the shared entry is reused by the app-info exemption below.
-const restrictedReactNativeImport = {
-  importNames: ['Text', 'Image'],
-  message: 'Please use @app/blueprints for importing main elements.',
-  name: 'react-native',
-};
+// Components of react-native that the app replaces (shared by the blocks that set `no-restricted-imports`: a rule is replaced as a whole)
+const restrictedReactNativeImports = [
+  { importNames: ['Text'], message: 'Use the text components of `~/framework/components/text`.', name: 'react-native' },
+  { importNames: ['Image'], message: 'Use `Image` of `~/modules/media/components`: it signs its source.', name: 'react-native' },
+];
 const appInfoMessage = 'Use AppInfo from ~/framework/util/app-info instead.';
 
 module.exports = [
@@ -132,12 +130,16 @@ module.exports = [
       // ── Console ─────────────────────────────────────────────────────
       'no-console': ['error', { allow: ['debug', 'error', 'info', 'warn'] }],
       // ── Restricted imports ──────────────────────────────────────────
-      'no-restricted-imports': [
-        'error',
-        restrictedReactNativeImport,
-        { message: appInfoMessage, name: 'react-native-device-info' },
-        { message: appInfoMessage, name: '~/specs/NativeBuildInfo' },
-      ],
+      'no-restricted-imports': ['error', {
+        paths: [
+          ...restrictedReactNativeImports,
+          { allowTypeImports: true, message: 'Use `FastImage` of `~/modules/media/components`: it signs its source.', name: '@d11/react-native-fast-image' },
+          { allowTypeImports: true, message: 'Use `Video` of `~/modules/media/components`: it signs its source.', name: 'react-native-video' },
+          { allowTypeImports: true, message: 'Use `Pdf` of `~/modules/media/components`: it signs its source.', name: 'react-native-pdf' },
+          { message: appInfoMessage, name: 'react-native-device-info' },
+          { message: appInfoMessage, name: '~/specs/NativeBuildInfo' },
+        ],
+      }],
       // ── Prettier ────────────────────────────────────────────────────
       'prettier/prettier': ['error', {
         arrowParens: 'avoid',
@@ -155,11 +157,17 @@ module.exports = [
       }],
     },
   },
-  // ── AppInfo — the only place allowed to read device and build info ────
+  // ── Media module ────────────────────────────────────────────────────────
+  // It holds the bridges of FastImage, react-native-video and react-native-pdf (they sign their `source`), so it may use them.
+  // Note: a rule is replaced as a whole, so the restrictions of `Text` and `Image` are stated again (shared constant).
   {
-    files: ['src/framework/util/app-info/**'],
+    files: [
+      'src/modules/media/**/*.{ts,tsx}'
+	// ── AppInfo — the only place allowed to read device and build info ────
+      'src/framework/util/app-info/**'
+    ],
     rules: {
-      'no-restricted-imports': ['error', restrictedReactNativeImport],
+      'no-restricted-imports': ['error', { paths: restrictedReactNativeImports }],
     },
   },
   // ── Jest — only for test files ────────────────────────────────────────
