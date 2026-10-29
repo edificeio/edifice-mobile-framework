@@ -1,0 +1,24 @@
+import React from 'react';
+import { View } from 'react-native';
+
+import theme from '~/app/theme';
+import { Svg } from '~/framework/components/picture';
+import { SmallBoldText } from '~/framework/components/text';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+
+const ICON_SIZE = 95;
+
+const UnknownItem = () => {
+  return (
+    <View style={styles.container}>
+      <Svg name="image-not-found" width={ICON_SIZE} height={ICON_SIZE} fill={theme.palette.grey.white} />
+      <View style={styles.textContainer}>
+        <SmallBoldText style={styles.text}>{I18n.get('carousel-unknown-file')}</SmallBoldText>
+      </View>
+    </View>
+  );
+};
+
+export default UnknownItem;

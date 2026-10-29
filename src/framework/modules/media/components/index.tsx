@@ -1,2 +1,2 @@
-export * from './grid';
-export * from './image';
+/** @deprecated Use `~/modules/media/components`. */
+export * from '~/modules/media/components';

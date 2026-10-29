@@ -1,14 +1,11 @@
 import { navigationRef } from '~/app/navigation';
-import { FileMedia } from '~/framework/modules/media/types';
+import type { MediaCarouselParams } from '~/modules/media/screens/carousel/screen';
 
-export interface MultimediaCarouselNavParams {
-  startIndex: number;
-  media: FileMedia[];
-  title?: string;
-}
+/** @deprecated Use `MediaCarouselParams` of `~/modules/media/screens/carousel/screen`. */
+export type MultimediaCarouselNavParams = MediaCarouselParams;
 
 /**
- * @deprecated navigate directly (screens are now strongly typed)
+ * @deprecated Use `useOpenMedia().openCarousel` of `~/modules/media/hooks` (or navigate directly: screens are now strongly typed).
  * @param props
  */
 export function openMultimediaCarousel(props: MultimediaCarouselNavParams) {

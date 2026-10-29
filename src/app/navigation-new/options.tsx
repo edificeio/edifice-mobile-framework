@@ -33,18 +33,25 @@ export const hiddenStackScreenOptions: NativeStackNavigatorProps['screenOptions'
 /**
  * Every stack screen that **shows** navBar have these options
  *
- * E2E TESTS (Appium): identifiers of the header are the same on iOS and Android, in modals or not (full explanation: see the
- * comment of `modalCloseButtonOptions`, and `patches/react-native-screens+*.patch`).
- * - Title: `header-title`, given here. The title must be a React component to carry a `testID` (the native title can't), so
- *   `HeaderTitle` of react-navigation is used, which forwards `testID` to its text. A screen that gives its own `headerTitle`
- *   replaces this one: it must then set its own `testID="header-title"` (an empty title doesn't need one).
+ * E2E TESTS (Appium): the identifiers of the header are the same on iOS and Android, in modals or not
+ * (see also the comment of `modalCloseButtonOptions`).
+ * - Title: `header-title`.
+ *   - iOS: the title is the NATIVE one (UIKit truncates it correctly, a React title would overflow under the header items).
+ *     It can't carry a `testID`, so its identifier is set natively by `ios/appe/UINavigationBarTitleIdentifier.m`.
+ *   - Android: `headerTitleAlign: 'center'` makes react-navigation render the title as a React view (`ScreenStackHeaderCenterView`),
+ *     never as the native one. It is given here with a `testID` (`HeaderTitle` of react-navigation forwards it to its text).
+ *   - A screen that gives its own `headerTitle` replaces this one on Android: it must then set its own `testID="header-title"`
+ *     (an empty title doesn't need one). On iOS a custom `headerTitle` is a React view too, so it needs it as well.
  * - Back button: `BackButton`. It is the NATIVE button (we don't render it, so we can't give it a `testID`):
- *   on iOS UIKit already names it `BackButton`, on Android our patch of `react-native-screens` does.
+ *   on iOS UIKit already names it `BackButton`, on Android the patch of `react-native-screens`
+ *   (`patches/react-native-screens+*.patch`) does.
  */
 export const visibleStackScreenOptions: NativeStackNavigatorProps['screenOptions'] = {
   headerBackButtonDisplayMode: 'minimal',
-  headerTitle: titleProps => <HeaderTitle {...titleProps} testID="header-title" />,
   headerTitleAlign: 'center',
+  ...(Platform.OS === 'android' && {
+    headerTitle: titleProps => <HeaderTitle {...titleProps} testID="header-title" />,
+  }),
 };
 /**
  * Only the root stack navigator have these options

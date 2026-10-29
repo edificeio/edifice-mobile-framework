@@ -1,6 +1,5 @@
 export default [
   // import('~/framework/modules/auth'),
-  // import('~/framework/modules/media'),
   // import('~/framework/modules/timeline'),
   import('~/app/test/amodule'),
   import('~/app/test/bmodule'),
@@ -10,6 +9,7 @@ export default [
   import('~/modules/audience'),
   import('~/modules/auth'),
   import('~/modules/editor'),
+  import('~/modules/media'),
   import('~/modules/notifications'),
   import('~/modules/user'),
 ] as const;

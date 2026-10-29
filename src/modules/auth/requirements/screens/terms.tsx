@@ -1,14 +1,13 @@
 import React from 'react';
 
-import { type NavigationProp, type StaticScreenProps, useNavigation } from '@react-navigation/native';
+import type { StaticScreenProps } from '@react-navigation/native';
 
-import type { NavigationRootParams } from '~/app/navigation/types';
 import { defineScreen } from '~/app/navigation-new';
-import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { useAuthFlows } from '~/modules/auth/flows';
 import { usePlatformAuthLegalUrls } from '~/modules/auth/hooks';
 import RequirementTermsScreenTemplate from '~/modules/auth/requirements/templates/terms';
 import { useAccountWithRequirement } from '~/modules/auth/store/accounts';
+import { useOpenMedia } from '~/modules/media/hooks';
 import { I18n } from '~/util/i18n';
 
 /**
@@ -20,11 +19,8 @@ const RequirementTermsScreen = React.memo(function ({}: StaticScreenProps<undefi
   const platform = useAccountWithRequirement()!.platform.name;
   const { logout, revalidateTerms } = useAuthFlows();
   const legalUrls = usePlatformAuthLegalUrls(platform);
-  const navigation = useNavigation<NavigationProp<NavigationRootParams>>();
-  const onOpenLegalUrl = React.useCallback(
-    (title: string, url: string) => openPDFReader(navigation, { src: url, title }),
-    [navigation],
-  );
+  const { openPdf } = useOpenMedia();
+  const onOpenLegalUrl = React.useCallback((title: string, url: string) => openPdf({ src: url, title }), [openPdf]);
   return (
     <RequirementTermsScreenTemplate
       legalUrls={legalUrls}
