@@ -1,4 +1,4 @@
-import { Platform, Pressable, StyleSheet } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { BottomTabBarButtonProps, BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
 import { HeaderTitle, PlatformPressable } from '@react-navigation/elements';
@@ -31,6 +31,17 @@ export const hiddenStackScreenOptions: NativeStackNavigatorProps['screenOptions'
 };
 
 /**
+ * Android: the centered title is a React view, as wide as the room left between the header items, so it touches the one on the
+ * right when it is long. The header item on the left (back or close button) is `headerButtonSizeAndroid` wide: an empty item of
+ * the same width on the right keeps the title centered, with the same margins on both sides.
+ * It is only a default: a screen giving its own `headerRight` replaces it.
+ */
+const androidHeaderRightSpacerStyle = StyleSheet.create({
+  closeButton: { width: UI_SIZES.navigation.headerButtonSizeAndroid + UI_SIZES.spacing.minor },
+  default: { width: UI_SIZES.navigation.headerButtonSizeAndroid },
+});
+
+/**
  * Every stack screen that **shows** navBar have these options
  *
  * E2E TESTS (Appium): the identifiers of the header are the same on iOS and Android, in modals or not
@@ -40,6 +51,7 @@ export const hiddenStackScreenOptions: NativeStackNavigatorProps['screenOptions'
  *     It can't carry a `testID`, so its identifier is set natively by `ios/appe/UINavigationBarTitleIdentifier.m`.
  *   - Android: `headerTitleAlign: 'center'` makes react-navigation render the title as a React view (`ScreenStackHeaderCenterView`),
  *     never as the native one. It is given here with a `testID` (`HeaderTitle` of react-navigation forwards it to its text).
+ *     A default empty `headerRight` balances the left button, so the title is centered and keeps equal margins when it is long.
  *   - A screen that gives its own `headerTitle` replaces this one on Android: it must then set its own `testID="header-title"`
  *     (an empty title doesn't need one). On iOS a custom `headerTitle` is a React view too, so it needs it as well.
  * - Back button: `BackButton`. It is the NATIVE button (we don't render it, so we can't give it a `testID`):
@@ -50,6 +62,7 @@ export const visibleStackScreenOptions: NativeStackNavigatorProps['screenOptions
   headerBackButtonDisplayMode: 'minimal',
   headerTitleAlign: 'center',
   ...(Platform.OS === 'android' && {
+    headerRight: () => <View style={androidHeaderRightSpacerStyle.default} />,
     headerTitle: titleProps => <HeaderTitle {...titleProps} testID="header-title" />,
   }),
 };
@@ -118,6 +131,8 @@ const modalCloseButtonStyle = StyleSheet.create({
     minHeight: UI_SIZES.navigation.headerButtonSizeAndroid,
     minWidth: UI_SIZES.navigation.headerButtonSizeAndroid,
   },
+  // Space between the cross and the title (Android): the matching `headerRight` spacer keeps the title centered
+  buttonMargin: { marginRight: UI_SIZES.spacing.minor },
 });
 
 /**
@@ -137,6 +152,14 @@ export const modalCloseButtonOptions = (
 ): NativeStackNavigationOptions => ({
   // Android (and iOS fallback) close button : `unstable_headerLeftItems` overrides this one on iOS.
   // `accessibilityLabel` is what screen readers say (translated), `testID` is what tests look for (never translated).
+  ...(Platform.OS === 'android' && {
+    headerRight: ({ canGoBack }) =>
+      always || canGoBack ? (
+        <View style={androidHeaderRightSpacerStyle.closeButton} />
+      ) : (
+        <View style={androidHeaderRightSpacerStyle.default} />
+      ),
+  }),
   headerLeft: ({ canGoBack, tintColor }) =>
     always || canGoBack ? (
       <Pressable
@@ -146,7 +169,7 @@ export const modalCloseButtonOptions = (
         android_ripple={{ borderless: true, color: UI_SIZES.navigation.headerButtonRippleColor.light, radius: 20 }}
         hitSlop={16}
         onPress={() => navigation.goBack()}
-        style={modalCloseButtonStyle.button}
+        style={[modalCloseButtonStyle.button, modalCloseButtonStyle.buttonMargin]}
         testID="BackButton">
         <ModalCloseIcon color={tintColor} />
       </Pressable>
