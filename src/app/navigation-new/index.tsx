@@ -16,7 +16,7 @@ import { ToastContainer } from '~/framework/components/toast';
 import { CloudMessagingProvider } from '~/framework/util/notifications/cloudMessaging';
 
 import { ConfirmRemoveProvider } from './confirm-remove';
-import { useRootStackNavigation } from './rootStack';
+import { useRootStackNavigation } from './root-stack';
 import { useScreenTelemetry } from './telemetry';
 import { navigationLightTheme } from './theme';
 
