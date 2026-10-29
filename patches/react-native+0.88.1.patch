@@ -1,0 +1,38 @@
+diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
+index 5c7974f..4337259 100644
+--- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
++++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollView.js
+@@ -1803,7 +1803,8 @@ class ScrollView extends React.Component<ScrollViewProps, ScrollViewState> {
+               scrollAnimatedValue={this._scrollAnimatedValue}
+               inverted={this.props.invertStickyHeaders}
+               hiddenOnScroll={this.props.stickyHeaderHiddenOnScroll}
+-              scrollViewHeight={this.state.layoutHeight}>
++              scrollViewHeight={this.state.layoutHeight}
++              index={index}>
+               {child}
+             </StickyHeaderComponent>
+           );
+diff --git a/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js b/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
+index 692b4b7..7a15a45 100644
+--- a/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
++++ b/node_modules/react-native/Libraries/Components/ScrollView/ScrollViewStickyHeader.js
+@@ -37,6 +37,7 @@ export type ScrollViewStickyHeaderProps = Readonly<{
+   scrollViewHeight: ?number,
+   nativeID?: ?string,
+   hiddenOnScroll?: ?boolean,
++  index: number,
+ }>;
+ 
+ interface Instance extends React.ElementRef<typeof Animated.View> {
+diff --git a/node_modules/react-native/types_generated/Libraries/Components/ScrollView/ScrollViewStickyHeader.d.ts b/node_modules/react-native/types_generated/Libraries/Components/ScrollView/ScrollViewStickyHeader.d.ts
+index 685d34f..300b037 100644
+--- a/node_modules/react-native/types_generated/Libraries/Components/ScrollView/ScrollViewStickyHeader.d.ts
++++ b/node_modules/react-native/types_generated/Libraries/Components/ScrollView/ScrollViewStickyHeader.d.ts
+@@ -22,6 +22,7 @@ export type ScrollViewStickyHeaderProps = Readonly<{
+   scrollViewHeight: number | undefined;
+   nativeID?: string | undefined;
+   hiddenOnScroll?: boolean | undefined;
++  index: number;
+ }>;
+ interface Instance extends React.ElementRef<typeof Animated.View> {
+   readonly setNextHeaderY: ($$PARAM_0$$: number) => void;
