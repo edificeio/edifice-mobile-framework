@@ -3,7 +3,6 @@ import { ListRenderItemInfo, PixelRatio, TouchableOpacity, TouchableOpacityProps
 
 import { PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PaginatedFlashListProps, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
@@ -11,8 +10,9 @@ import { Picture, Svg } from '~/framework/components/picture';
 import ImageWithFallback from '~/framework/components/picture/image-with-fallback';
 import { CaptionText, HeadingSText, HeadingXXSText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
 import { Media } from '~/framework/modules/media';
-import { useMediaDisplay } from '~/framework/modules/media/hooks';
 import { sessionImageSource } from '~/framework/util/transport';
+import { useResourceDisplay } from '~/modules/media/hooks/resource-display';
+import { I18n } from '~/util/i18n';
 
 import { DOCUMENT_SPACER_ITEM_DATA, FOLDER_SPACER_ITEM_DATA } from './component';
 import styles from './styles';
@@ -22,7 +22,7 @@ export function DocumentListItemIcon({
   color,
   icon,
   size,
-}: { size: 'large' | 'small' } & Pick<ReturnType<typeof useMediaDisplay>, 'color' | 'icon'>) {
+}: { size: 'large' | 'small' } & Pick<ReturnType<typeof useResourceDisplay>, 'color' | 'icon'>) {
   const iconSize = size === 'large' ? UI_SIZES.elements.icon.xxlarge : UI_SIZES.elements.icon.default;
 
   if (size === 'large') {
@@ -69,7 +69,7 @@ export function DocumentListItem<IdType, MediaT extends Media>({
   Pick<TouchableOpacityProps, 'onPress' | 'style' | 'testID'> &
   Pick<PaginatedDocumentFlashListProps<IdType, MediaT> & PaginatedDocumentFlatListProps<IdType, MediaT>, 'alwaysShowAppIcon'>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
-  const { color, icon, thumbnail } = useMediaDisplay(item);
+  const { color, icon, thumbnail } = useResourceDisplay(item);
 
   const thumbnailElement = React.useMemo(() => {
     if (thumbnail)

@@ -1,12 +1,9 @@
 import * as React from 'react';
 
 import CarouselScreen from '~/framework/components/carousel';
-import MultimediaCarousel, { CarouselMultimediaNavBar } from '~/framework/components/carousel-multimedia/';
-// eslint-disable-next-line import/order
 import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel/screen';
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
 import MediaPlayer from '~/framework/components/media/player';
-import DownloadModal from '~/framework/components/modals/download/component';
 import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pdf/pdf-reader';
 import AudienceReactionsScreen, { computeNavBar as audienceReactionsNavBar } from '~/framework/modules/audience/screens/reactions';
 import AudienceViewsScreen, { computeNavBar as audienceViewsNavBar } from '~/framework/modules/audience/screens/views';
@@ -44,21 +41,11 @@ export default (
       />
       <RootStack.Screen name={ModalsRouteNames.AudienceViews} options={audienceViewsNavBar} component={AudienceViewsScreen} />
       <RootStack.Screen name={ModalsRouteNames.Pdf} options={PDFNavBar} component={PDFReader} initialParams={{ title: '' }} />
-      <RootStack.Screen
-        name={ModalsRouteNames.Download}
-        component={DownloadModal}
-        options={{ headerShown: false, presentation: 'transparentModal' }}
-      />
     </RootStack.Group>
     <RootStack.Group
       screenOptions={{
         presentation: 'fullScreenModal',
       }}>
-      <RootStack.Screen
-        name={ModalsRouteNames.CarouselMultimedia}
-        options={CarouselMultimediaNavBar}
-        component={MultimediaCarousel}
-      />
       <RootStack.Screen name={ModalsRouteNames.Carousel} options={CarouselNavBar} component={CarouselScreen} />
       <RootStack.Screen
         name={ModalsRouteNames.FileImport}
@@ -90,8 +77,6 @@ setModalModeForRoutes([
   ModalsRouteNames.AudienceViews,
   ModalsRouteNames.AttachmentsImport,
   ModalsRouteNames.Carousel,
-  ModalsRouteNames.CarouselMultimedia,
-  ModalsRouteNames.Download,
   ModalsRouteNames.FileImport,
   ModalsRouteNames.Infos,
   ModalsRouteNames.Log,

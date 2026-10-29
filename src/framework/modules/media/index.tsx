@@ -1,38 +1,9 @@
-import React from 'react';
-
-import { Action } from 'redux';
-
-import { CoreModule } from '~/app/module';
-import MultimediaCarousel, { MultimediaCarouselScreenOptions } from '~/framework/components/carousel-multimedia/';
-import { MultimediaCarouselNavParams } from '~/framework/components/carousel-multimedia/openCarousel';
-import DownloadModal, { DownloadModalScreenOptions } from '~/framework/components/modals/download/component';
-import { DownloadModalNavParams } from '~/framework/components/modals/download/types';
-import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
-
-export default new CoreModule<
-  'media',
-  {
-    'media/carousel': MultimediaCarouselNavParams;
-    'media/download': DownloadModalNavParams;
-  },
-  {},
-  Action
->(
-  {
-    name: 'media',
-  },
-  Stack => (
-    <>
-      <Stack.Screen name="media/carousel" component={MultimediaCarousel} options={MultimediaCarouselScreenOptions} />
-      <Stack.Screen name="media/download" component={DownloadModal} options={DownloadModalScreenOptions} />
-    </>
-  ),
-);
-
-setModalModeForRoutes(['media/carousel', 'media/download']);
-
-export * from './components';
-export * from './mime';
+/**
+ * @deprecated Façade of the media module, which is now `~/modules/media`: import what you need from there
+ * (`~/modules/media/types`, `/mime`, `/util`, `/components`, `/hooks`).
+ */
+export * from '~/modules/media/components';
+export * from '~/modules/media/mime';
+export * from '~/modules/media/types';
+export * from '~/modules/media/util';
 export * from './hooks';
-export * from './types';
-export * from './util';

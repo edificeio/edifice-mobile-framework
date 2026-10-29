@@ -3,13 +3,10 @@
  */
 import { ParamListBase } from '@react-navigation/native';
 
-import { MultimediaCarouselNavParams } from '~/framework/components/carousel-multimedia/openCarousel';
-// eslint-disable-next-line import/order
 // import type { ICarouselNavParams } from '~/framework/components/carousel/screen';
 import type { FileImportScreenProps } from '~/framework/components/inputs/rich-text/file-import';
 import type { RichEditorFormReduxNavParams } from '~/framework/components/inputs/rich-text/form/types';
 import type { MediaPlayerParams } from '~/framework/components/media/player/types';
-import type { DownloadModalNavParams } from '~/framework/components/modals/download/types';
 import { AudienceReactionsScreenNavParams } from '~/framework/modules/audience/screens/reactions/types';
 import { AudienceViewsScreenNavParams } from '~/framework/modules/audience/screens/views/types';
 import { AttachmentsImportScreenProps } from '~/framework/modules/mails/components/attachments/modal-import';
@@ -20,8 +17,6 @@ export enum ModalsRouteNames {
   AudienceReactions = 'audience-reactions',
   AudienceViews = 'audience-views',
   Carousel = 'carousel',
-  CarouselMultimedia = 'carousel-multimedia',
-  Download = 'download',
   FileImport = 'file-import',
   Infos = 'infos',
   Log = 'log',
@@ -36,8 +31,6 @@ export enum ModalsRouteNames {
 export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.Pdf]: { title: string; src?: string };
   // [ModalsRouteNames.Carousel]: ICarouselNavParams;
-  [ModalsRouteNames.CarouselMultimedia]: MultimediaCarouselNavParams;
-  [ModalsRouteNames.Download]: DownloadModalNavParams;
   [ModalsRouteNames.MediaPlayer]: MediaPlayerParams;
   [ModalsRouteNames.AudienceReactions]: AudienceReactionsScreenNavParams;
   [ModalsRouteNames.AudienceViews]: AudienceViewsScreenNavParams;

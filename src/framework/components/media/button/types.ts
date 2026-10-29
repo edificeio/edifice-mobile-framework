@@ -1,6 +1,6 @@
 import { ImageURISource, ViewStyle } from 'react-native';
 
-import { ReactVideoSourceProperties } from 'react-native-video';
+import type { ReactVideoSourceProperties } from 'react-native-video';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import { AudienceParameter } from '~/framework/modules/audience/types';

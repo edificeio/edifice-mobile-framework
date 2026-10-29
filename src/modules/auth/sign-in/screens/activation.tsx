@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { StaticScreenProps, useNavigation } from '@react-navigation/native';
+import type { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
 import type { Platform } from '~/framework/util/appConf';
@@ -9,6 +9,7 @@ import SignInActivationScreenTemplate, {
   type SignInActivationScreenTemplateProps,
 } from '~/modules/auth/sign-in/templates/activation';
 import { useSignIn } from '~/modules/auth/sign-in/use-sign-in';
+import { useOpenMedia } from '~/modules/media/hooks';
 import { I18n } from '~/util/i18n';
 
 const SignInActivationScreen = React.memo(function ({
@@ -20,14 +21,21 @@ const SignInActivationScreen = React.memo(function ({
   credentials: AuthCredentials;
   accountId?: string;
 }>) {
-  const navigation = useNavigation<SignInActivationScreenTemplateProps['navigation']>();
+  // The sign-in navigator hands the actions it can't handle (the media modals) to the navigation of the app: see `AuthNavigationWrapper`.
+  const { openPdf } = useOpenMedia();
+  const onOpenLegalUrl = React.useCallback((title: string, url: string) => openPdf({ src: url, title }), [openPdf]);
   const { activate } = useSignIn();
   const trySubmit = React.useCallback<SignInActivationScreenTemplateProps['trySubmit']>(
     (activationPlatform, model) => activate(activationPlatform, model, accountId),
     [accountId, activate],
   );
   return (
-    <SignInActivationScreenTemplate credentials={credentials} navigation={navigation} platform={platform} trySubmit={trySubmit} />
+    <SignInActivationScreenTemplate
+      credentials={credentials}
+      onOpenLegalUrl={onOpenLegalUrl}
+      platform={platform}
+      trySubmit={trySubmit}
+    />
   );
 });
 SignInActivationScreen.displayName = 'SignInActivationScreen';
