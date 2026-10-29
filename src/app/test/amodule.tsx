@@ -131,7 +131,7 @@ const AModuleHomeScreenDeclaration = defineScreen({
         <SelfAvatar size="sm" />
       </Pressable>
     ),
-    title: 'Un super écran de test',
+    title: 'Accueil',
     unstable_headerLeftItems: () => [
       {
         element: (
@@ -170,7 +170,7 @@ function AModuleDetailsScreen({}: StaticScreenProps<{
               src: { uri: 'https://picsum.photos/id/39/200' },
               type: MediaType.IMAGE,
             } as ImageMedia,
-            { title: 'Un super long texte pour casser la navbar' },
+            { title: 'Un super titre' },
           );
         }}>
         <Animated.Image
