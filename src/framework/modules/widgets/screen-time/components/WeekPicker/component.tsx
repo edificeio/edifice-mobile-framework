@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Insets, View } from 'react-native';
 
 import { Moment } from 'moment';
 
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
+import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
 import { addTime, displayWeekRange, subtractTime, today } from '~/framework/util/date';
 
@@ -12,6 +13,13 @@ import styles from './styles';
 import { WeekPickerProps } from './types';
 
 const DISABLED_ICON_COLOR = theme.palette.grey.stone;
+
+const CHEVRON_HIT_SLOP: Insets = {
+  bottom: UI_SIZES.spacing.medium,
+  left: UI_SIZES.spacing.medium,
+  right: UI_SIZES.spacing.medium,
+  top: UI_SIZES.spacing.medium,
+};
 
 const WeekPicker = ({
   disabled = false,
@@ -46,7 +54,13 @@ const WeekPicker = ({
 
   return (
     <View style={[styles.container, disabled && styles.disabledContainer, style]}>
-      <IconButton icon="ui-rafterLeft" color={iconColor} disabled={disabled} action={handlePreviousWeek} />
+      <IconButton
+        icon="ui-rafterLeft"
+        color={iconColor}
+        disabled={disabled}
+        action={handlePreviousWeek}
+        hitSlop={CHEVRON_HIT_SLOP}
+      />
 
       <View style={styles.weekTextContainer}>
         <BodyText style={styles.weekText}>{displayLabel}</BodyText>
@@ -57,6 +71,7 @@ const WeekPicker = ({
         color={canGoNext ? iconColor : DISABLED_ICON_COLOR}
         disabled={disabled || !canGoNext}
         action={handleNextWeek}
+        hitSlop={CHEVRON_HIT_SLOP}
       />
     </View>
   );
