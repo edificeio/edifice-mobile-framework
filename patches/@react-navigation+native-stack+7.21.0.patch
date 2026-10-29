@@ -1,0 +1,79 @@
+diff --git a/node_modules/@react-navigation/native-stack/src/types.tsx b/node_modules/@react-navigation/native-stack/src/types.tsx
+index 5d63f41..8747a64 100644
+--- a/node_modules/@react-navigation/native-stack/src/types.tsx
++++ b/node_modules/@react-navigation/native-stack/src/types.tsx
+@@ -307,6 +307,13 @@ export type NativeStackNavigationOptions = {
+    * @platform ios
+    */
+   headerBlurEffect?: ScreenStackHeaderConfigProps['blurEffect'];
++  /**
++   * PATCH: forces the interface style (light/dark) of the header, whatever the theme of the navigation.
++   * Liquid Glass of the header items follows it. Defaults to the theme.
++   *
++   * @platform ios
++   */
++  headerUserInterfaceStyle?: 'light' | 'dark';
+   /**
+    * Tint color for the header. Changes the color of back button and title.
+    */
+diff --git a/node_modules/@react-navigation/native-stack/src/views/useHeaderConfigProps.tsx b/node_modules/@react-navigation/native-stack/src/views/useHeaderConfigProps.tsx
+index 739134e..1f0c4da 100644
+--- a/node_modules/@react-navigation/native-stack/src/views/useHeaderConfigProps.tsx
++++ b/node_modules/@react-navigation/native-stack/src/views/useHeaderConfigProps.tsx
+@@ -227,6 +227,7 @@ export function useHeaderConfigProps({
+   headerShown,
+   headerStyle,
+   headerBlurEffect,
++  headerUserInterfaceStyle,
+   headerTintColor,
+   headerTitle,
+   headerTitleAlign,
+@@ -560,6 +561,7 @@ export function useHeaderConfigProps({
+     children,
+     headerLeftBarButtonItems: processBarButtonItems(leftItems, colors, fonts),
+     headerRightBarButtonItems: processBarButtonItems(rightItems, colors, fonts),
+-    experimental_userInterfaceStyle: dark ? 'dark' : 'light',
++    experimental_userInterfaceStyle:
++      headerUserInterfaceStyle ?? (dark ? 'dark' : 'light'),
+   } as const;
+ }
+diff --git a/node_modules/@react-navigation/native-stack/lib/module/views/useHeaderConfigProps.js b/node_modules/@react-navigation/native-stack/lib/module/views/useHeaderConfigProps.js
+index 08055b2..3532ba0 100644
+--- a/node_modules/@react-navigation/native-stack/lib/module/views/useHeaderConfigProps.js
++++ b/node_modules/@react-navigation/native-stack/lib/module/views/useHeaderConfigProps.js
+@@ -154,6 +154,7 @@ export function useHeaderConfigProps({
+   headerShown,
+   headerStyle,
+   headerBlurEffect,
++  headerUserInterfaceStyle,
+   headerTintColor,
+   headerTitle,
+   headerTitleAlign,
+@@ -380,7 +381,7 @@ export function useHeaderConfigProps({
+     children,
+     headerLeftBarButtonItems: processBarButtonItems(leftItems, colors, fonts),
+     headerRightBarButtonItems: processBarButtonItems(rightItems, colors, fonts),
+-    experimental_userInterfaceStyle: dark ? 'dark' : 'light'
++    experimental_userInterfaceStyle: headerUserInterfaceStyle ?? (dark ? 'dark' : 'light')
+   };
+ }
+ //# sourceMappingURL=useHeaderConfigProps.js.map
+\ No newline at end of file
+diff --git a/node_modules/@react-navigation/native-stack/lib/typescript/src/types.d.ts b/node_modules/@react-navigation/native-stack/lib/typescript/src/types.d.ts
+index 27a3d8e..e9ccb15 100644
+--- a/node_modules/@react-navigation/native-stack/lib/typescript/src/types.d.ts
++++ b/node_modules/@react-navigation/native-stack/lib/typescript/src/types.d.ts
+@@ -263,6 +263,13 @@ export type NativeStackNavigationOptions = {
+      * @platform ios
+      */
+     headerBlurEffect?: ScreenStackHeaderConfigProps['blurEffect'];
++  /**
++   * PATCH: forces the interface style (light/dark) of the header, whatever the theme of the navigation.
++   * Liquid Glass of the header items follows it. Defaults to the theme.
++   *
++   * @platform ios
++   */
++  headerUserInterfaceStyle?: 'light' | 'dark';
+     /**
+      * Tint color for the header. Changes the color of back button and title.
+      */

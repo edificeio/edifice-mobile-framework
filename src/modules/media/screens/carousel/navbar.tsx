@@ -22,6 +22,8 @@ export const getCarouselHeaderOptions = (): NativeStackNavigationOptions => ({
   headerShadowVisible: false,
   headerStyle: { backgroundColor: isAndroid ? theme.ui.shadowColorTransparent?.toString() : undefined },
   headerTransparent: true,
+  // The screen is dark: the header (Liquid Glass buttons) must be too, whatever the theme. Option added by our patch of `@react-navigation/native-stack`.
+  headerUserInterfaceStyle: 'dark',
   scrollEdgeEffects: { bottom: 'hidden', left: 'hidden', right: 'hidden', top: 'hidden' },
   statusBarStyle: 'light',
   // Note: ENABLING-769 for some reason title declared here cannot be overriden in the screen itself with setOptions.
