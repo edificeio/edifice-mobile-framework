@@ -1,13 +1,13 @@
 import { ImageSourcePropType, ImageURISource } from 'react-native';
 
-import { ReactVideoSourceProperties } from 'react-native-video';
+import type { ReactVideoSourceProperties } from 'react-native-video';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
-import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { isRequireSource } from '~/framework/modules/media';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
+import { getActiveAccount } from '~/modules/auth/store/accounts';
+import { isRequireSource } from '~/modules/media/util';
 
 import { getAuthenticationHeaderForAccount, getDeviceHeaders, getUrlWithBase } from './common';
 
@@ -56,6 +56,17 @@ export function platformImageSource(platform: Platform, input: ImageSourcePropTy
 
 // # ACCOUNT FETCH
 
+/**
+ * Whether both urls have the same origin. An url that can't be parsed has none: it is never the same.
+ */
+export const hasSameOrigin = (url: string, otherUrl: string) => {
+  try {
+    return new URL(url).origin === new URL(otherUrl).origin;
+  } catch {
+    return false;
+  }
+};
+
 export function accountURISource<SourceType extends ImageURISource | ReactVideoSourceProperties | WebViewSourceUri>(
   account: AuthSavedLoggedInAccount | AuthActiveAccount,
   input: SourceType,
@@ -70,9 +81,9 @@ export function accountURISource<SourceType extends ImageURISource | ReactVideoS
     return result;
   }
 
-  // Only sign urls that point toward the account's platform and scheme (https!).
-  // This is important regarding to the security of the user's auth token.
-  if (result.uri && result.uri.startsWith(platform.url)) {
+  // Only sign urls that point toward the account's platform: same origin (scheme, host and port), not just the same beginning
+  // (`https://ent.fr.evil.com` starts like `https://ent.fr`). This is important regarding to the security of the user's auth token.
+  if (result.uri && hasSameOrigin(result.uri, platform.url)) {
     result.headers = {
       ...getAuthenticationHeaderForAccount(account),
       ...result.headers,
@@ -91,17 +102,19 @@ export function accountImageSource(
 }
 
 // # SESSION FETCH
+// "Session" here is the connected account, even if it still has a requirement to fulfil (terms...): it has its tokens, and what it needs to
+// show (the terms pdf...) is signed like the rest.
 
 export function sessionURISource<SourceType extends ImageURISource | ReactVideoSourceProperties | WebViewSourceUri>(
   input: SourceType,
 ): typeof input {
-  const account = getSession();
-  if (!account) throw new FetchError(FetchErrorCode.NOT_LOGGED, '[sessionImageURISource] No session provided');
+  const account = getActiveAccount();
+  if (!account) throw new FetchError(FetchErrorCode.NOT_LOGGED, '[sessionImageURISource] No connected account');
   return accountURISource(account, input);
 }
 
 export function sessionImageSource(input: ImageSourcePropType): typeof input {
-  const account = getSession();
-  if (!account) throw new FetchError(FetchErrorCode.NOT_LOGGED, '[sessionImageSource] No session provided');
+  const account = getActiveAccount();
+  if (!account) throw new FetchError(FetchErrorCode.NOT_LOGGED, '[sessionImageSource] No connected account');
   return accountImageSource(account, input);
 }

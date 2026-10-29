@@ -15,7 +15,6 @@ import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import EmailInput from '~/framework/components/inputs/email/';
 import PasswordInput from '~/framework/components/inputs/password';
 import InputPhone from '~/framework/components/inputs/phone/';
-import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { Svg } from '~/framework/components/picture';
 import { HeadingSText, SmallActionText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
@@ -120,7 +119,7 @@ export class ActivationScreen extends React.PureComponent<
   };
 
   private doOpenLegalUrls = (title: string, url?: string) => {
-    openPDFReader(this.props.navigation, { src: url, title });
+    if (url) this.props.onOpenLegalUrl(title, url);
   };
 
   private getIsValidMobileNumberForRegion = (toVerify: string) => {

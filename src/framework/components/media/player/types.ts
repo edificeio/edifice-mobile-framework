@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ReactVideoSource } from 'react-native-video';
+import type { ReactVideoSource } from 'react-native-video';
 import { WebViewSourceUri } from 'react-native-webview/lib/WebViewTypes';
 
 import { AudienceParameter } from '~/framework/modules/audience/types';

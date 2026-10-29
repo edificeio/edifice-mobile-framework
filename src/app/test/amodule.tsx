@@ -16,6 +16,8 @@ import { useStorageNumber } from '~/framework/util/storage/hooks';
 import { AccountsButton } from '~/modules/auth/components';
 import { useAuthFlows } from '~/modules/auth/flows';
 import { withSession } from '~/modules/auth/hoc';
+import { useOpenMedia } from '~/modules/media/hooks';
+import { ImageMedia, MediaType } from '~/modules/media/types';
 import { I18n } from '~/util/i18n';
 
 import { preferences, storage } from './amodule-storage';
@@ -155,17 +157,29 @@ function AModuleDetailsScreen({}: StaticScreenProps<{
   aId: number;
 }>) {
   const navigation = useNavigation<StackNavigation>();
+  const { openMedia } = useOpenMedia();
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}>
       <HeadingSText>Détails</HeadingSText>
-      <View style={styles.rowCenter}>
+      <TouchableOpacity
+        style={styles.rowCenter}
+        onPress={() => {
+          openMedia(
+            {
+              mime: 'image/*',
+              src: { uri: 'https://picsum.photos/id/39/200' },
+              type: MediaType.IMAGE,
+            } as ImageMedia,
+            { title: 'Un super long texte pour casser la navbar' },
+          );
+        }}>
         <Animated.Image
           source={{ uri: 'https://picsum.photos/id/39/200' }}
           style={styles.imageFull}
           sharedTransitionTag="sharedTag"
           sharedTransitionStyle={sharedTransitions.default}
         />
-      </View>
+      </TouchableOpacity>
       <PrimaryButton
         testID="1"
         text="Ouvrir écran"
