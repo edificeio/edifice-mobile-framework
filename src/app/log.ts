@@ -1,6 +1,7 @@
 import { getCrashlytics, log, recordError } from '@react-native-firebase/crashlytics';
 import RNFS from 'react-native-fs';
 import { consoleTransport, fileAsyncTransport, logger } from 'react-native-logs';
+import { startNetworkLogging } from 'react-native-network-logger';
 import Share from 'react-native-share';
 
 import appConf from '~/framework/util/appConf';
@@ -29,10 +30,7 @@ export namespace Log {
     const isDebuggable = appConf.isDebugEnabled;
     try {
       // Start network logging if debug is enabled
-      if (isDebuggable) {
-        const { startNetworkLogging } = await import('react-native-network-logger');
-        startNetworkLogging();
-      }
+      if (isDebuggable) startNetworkLogging();
       // initialize logger
       appLog = logger.createLogger({
         async: true,
