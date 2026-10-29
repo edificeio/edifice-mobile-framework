@@ -8,11 +8,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/util/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { openMultimediaCarousel } from '~/framework/components/carousel-multimedia/openCarousel';
-import { convertIFileToFileMedia } from '~/framework/components/carousel-multimedia/util';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -40,6 +38,7 @@ import {
 import { createWorkspaceFolderAction, listWorkspaceFoldersAction } from '~/framework/modules/workspace/actions/folder';
 import { WorkspaceFileListItem } from '~/framework/modules/workspace/components/WorkspaceFileListItem';
 import WorkspaceModal, { WorkspaceModalType } from '~/framework/modules/workspace/components/WorkspaceModal';
+import { convertIFileToFileMedia } from '~/framework/modules/workspace/media';
 import moduleConfig from '~/framework/modules/workspace/module-config';
 import { WorkspaceNavigationParams, workspaceRouteNames } from '~/framework/modules/workspace/navigation';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
@@ -47,6 +46,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { IWorkspaceFileListScreenProps } from './types';

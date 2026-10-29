@@ -28,8 +28,8 @@ import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getCommunityBannerImage } from '~/framework/modules/communities/utils';
 import { isFileMedia, isResourceMedia, MediaType, mime, UNKNOWN_MIME_TYPE } from '~/framework/modules/media';
-import { openMedia } from '~/framework/modules/media/hooks';
 import { accountApi } from '~/framework/util/transport';
+import { useOpenMedia } from '~/modules/media/hooks';
 import { I18n } from '~/util/i18n';
 
 import { DecoratedDocumentFlatList } from './community-paginated-document-list';
@@ -147,11 +147,12 @@ export default sessionScreen<CommunitiesDocumentsScreen.AllProps>(function Commu
     }, [communityId, session]),
   );
 
+  const { openMedia } = useOpenMedia();
   const openDocument = React.useCallback(
     async (doc: CommunitiesDocumentItem) => {
-      openMedia(navigation, doc);
+      openMedia(doc);
     },
-    [navigation],
+    [openMedia],
   );
 
   const isFocused = useIsFocused();

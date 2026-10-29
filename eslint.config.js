@@ -23,6 +23,12 @@ const fixedRNConfig = fixupConfigRules(reactNativeConfig).map(config => {
   return config;
 });
 
+// Components of react-native that the app replaces (shared by the blocks that set `no-restricted-imports`: a rule is replaced as a whole)
+const restrictedReactNativeImports = [
+  { importNames: ['Text'], message: 'Use the text components of `~/framework/components/text`.', name: 'react-native' },
+  { importNames: ['Image'], message: 'Use `Image` of `~/modules/media/components`: it signs its source.', name: 'react-native' },
+];
+
 module.exports = [
   // ── Ignores (replaces eslintIgnore in package.json) ──────────────────
   {
@@ -124,9 +130,12 @@ module.exports = [
       'no-console': ['error', { allow: ['debug', 'error', 'info', 'warn'] }],
       // ── Restricted imports ──────────────────────────────────────────
       'no-restricted-imports': ['error', {
-        importNames: ['Text', 'Image'],
-        message: 'Please use @app/blueprints for importing main elements.',
-        name: 'react-native',
+        paths: [
+          ...restrictedReactNativeImports,
+          { allowTypeImports: true, message: 'Use `FastImage` of `~/modules/media/components`: it signs its source.', name: '@d11/react-native-fast-image' },
+          { allowTypeImports: true, message: 'Use `Video` of `~/modules/media/components`: it signs its source.', name: 'react-native-video' },
+          { allowTypeImports: true, message: 'Use `Pdf` of `~/modules/media/components`: it signs its source.', name: 'react-native-pdf' },
+        ],
       }],
       // ── Prettier ────────────────────────────────────────────────────
       'prettier/prettier': ['error', {
@@ -143,6 +152,15 @@ module.exports = [
         tabWidth: 2,
         trailingComma: 'all',
       }],
+    },
+  },
+  // ── Media module ────────────────────────────────────────────────────────
+  // It holds the bridges of FastImage, react-native-video and react-native-pdf (they sign their `source`), so it may use them.
+  // Note: a rule is replaced as a whole, so the restrictions of `Text` and `Image` are stated again (shared constant).
+  {
+    files: ['src/modules/media/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', { paths: restrictedReactNativeImports }],
     },
   },
   // ── Jest — only for test files ────────────────────────────────────────

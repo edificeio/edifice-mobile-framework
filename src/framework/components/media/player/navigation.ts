@@ -1,5 +1,5 @@
 import { navigationRef } from '~/app/navigation';
-import { MultimediaCarouselNavParams } from '~/framework/components/carousel-multimedia/openCarousel';
+import type { MediaCarouselParams as MultimediaCarouselNavParams } from '~/modules/media/screens/carousel/screen';
 
 import type { MediaPlayerParams } from './types';
 
