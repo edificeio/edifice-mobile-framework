@@ -21,7 +21,7 @@ import Feedback from '~/framework/util/feedback/feedback';
 
 import { useConfirmChangeTab } from './confirm-remove';
 import { tabsOptions } from './options';
-import { createTabStackNavigation } from './tabStack';
+import { createTabStackNavigation } from './tab-stack';
 import theme from '../theme';
 
 type TabScreenName<Name extends string> = `$tab/${Name}`;
