@@ -3,6 +3,7 @@ import { ParamListBase } from '@react-navigation/native';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesDiscussionDetailsScreen } from '~/framework/modules/communities/screens/discussions-details/types';
 import { CommunitiesDiscussionsScreen } from '~/framework/modules/communities/screens/discussions-list/types';
+import { CommunitiesDiscussionMessageEditorScreen } from '~/framework/modules/communities/screens/discussions-message-editor/types';
 import { CommunitiesDocumentsScreen } from '~/framework/modules/communities/screens/documents/types';
 import type { CommunitiesHomeScreen } from '~/framework/modules/communities/screens/home';
 import type { CommunitiesJoinConfirmScreen } from '~/framework/modules/communities/screens/join-confirm';
@@ -12,6 +13,7 @@ import { CommunitiesSpotlightedCourseScreen } from '~/framework/modules/communit
 
 export const communitiesRouteNames = {
   discussionDetails: `${moduleConfig.routeName}/discussions/details` as 'discussionDetails',
+  discussionMessageEditor: `${moduleConfig.routeName}/discussions/message-editor` as 'discussionMessageEditor',
   discussions: `${moduleConfig.routeName}/discussions` as 'discussions',
   documents: `${moduleConfig.routeName}/documents` as 'documents',
   home: `${moduleConfig.routeName}/home` as 'home',
@@ -23,6 +25,7 @@ export const communitiesRouteNames = {
 export interface CommunitiesNavigationParams extends ParamListBase {
   discussions: CommunitiesDiscussionsScreen.NavParams;
   discussionDetails: CommunitiesDiscussionDetailsScreen.NavParams;
+  discussionMessageEditor: CommunitiesDiscussionMessageEditorScreen.NavParams;
   list: CommunitiesListScreen.NavParams;
   home: CommunitiesHomeScreen.NavParams;
   documents: CommunitiesDocumentsScreen.NavParams;

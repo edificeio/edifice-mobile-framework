@@ -60,6 +60,8 @@ export const getDiscussionsSummary = async (session: AuthActiveAccount, communit
   };
 };
 
+export const MESSAGES_PAGE_SIZE = 20;
+
 export const getMessages = async (
   session: AuthActiveAccount,
   communityId: number,
