@@ -53,7 +53,7 @@ export const createSetActiveAccount =
     // data), unless it has now something to fulfil first: then its session ends.
     const previousSession = getSession();
     const sameSession = previousSession?.user.id === nextSession.user.id;
-    if (!sameSession) await sleepCurrentSession();
+    if (!sameSession) sleepCurrentSession();
     else if (nextSession.requirement) endSession(previousSession);
     useAccountsStore.getState().setAccount(nextSession, accountToReplaceId);
     useSignInStore.getState().reset();
