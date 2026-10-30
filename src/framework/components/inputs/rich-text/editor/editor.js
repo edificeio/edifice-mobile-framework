@@ -100,6 +100,7 @@ function createHTML(options = {}) {
   const {
     autoCapitalize = 'off',
     autoCorrect = false,
+    backgroundColor = theme.palette.grey.white,
     defaultParagraphSeparator = 'div',
     enterKeyHint = '',
     firstFocusEnd = true,
@@ -128,7 +129,7 @@ function createHTML(options = {}) {
         ${fontFaces}
         * {outline: 0px solid transparent;-webkit-tap-highlight-color: rgba(0,0,0,0);-webkit-touch-callout: none;box-sizing: border-box;}
         html, body { margin: 0; padding: 0;font-family: Font; font-size:1em; height: 100%;}
-        body { overflow-y: hidden; -webkit-overflow-scrolling: touch;background-color: ${theme.palette.grey.white};}
+        body { overflow-y: hidden; -webkit-overflow-scrolling: touch;background-color: ${backgroundColor};}
         .content {font-family: Font;color: ${theme.palette.grey.black}; width: 100%;${
           !useContainer ? 'height:100%;' : ''
         }-webkit-overflow-scrolling: touch;padding-left: 0;padding-right: 0;}
