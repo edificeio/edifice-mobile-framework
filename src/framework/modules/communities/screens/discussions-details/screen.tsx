@@ -5,25 +5,30 @@ import { MessageDto } from '@edifice.io/community-client-rest-rn';
 import { FlashListRef } from '@shopify/flash-list';
 import { useSharedValue } from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
+import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import {
+  DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
   LOADING_ITEM_DATA,
   PaginatedFlashList,
   PaginatedFlashListProps,
   PaginatedListItem,
   staleOrSplice,
 } from '~/framework/components/list/paginated-list';
-import { LoadingIndicator } from '~/framework/components/loading';
 import { BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { AccountType } from '~/framework/modules/auth/model';
 import { withSession } from '~/framework/modules/auth/util';
-import { CommentsThreadInternals } from '~/framework/modules/comments/components/comments-thread-internal';
+import {
+  CommentsThreadAddFormLoader,
+  CommentsThreadInternals,
+  CommentsThreadItemLoader,
+} from '~/framework/modules/comments/components/comments-thread-internal';
 import { CommentsThread } from '~/framework/modules/comments/components/comments-thread-internal/item';
 import { toInstant } from '~/framework/modules/communities/adapter';
-import DiscussionHeader from '~/framework/modules/communities/components/discussions/header';
+import DiscussionHeader, { DiscussionHeaderLoader } from '~/framework/modules/communities/components/discussions/header';
 import { MessageEditorLauncher } from '~/framework/modules/communities/components/discussions/message-editor-launcher';
 import { useCollapsibleDiscussionHeader } from '~/framework/modules/communities/hooks/use-collapsible-discussion-header';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
@@ -33,6 +38,11 @@ import { getDiscussionStatus } from '~/framework/modules/communities/utils';
 
 import styles, { SCROLL_INDICATOR_INSETS } from './styles';
 import { CommunitiesDiscussionDetailsScreen } from './types';
+
+const FIRST_MESSAGE_LOADER_LINES = [100, 100, 100, 70];
+const COMMENTS_LOADER_ROWS = Array.from({ length: DEFAULT_FLATLIST_PLACEHOLDER_ROWS }, (_, index) => index);
+/** The list stays at the bottom after a new message until its content doesn't change for this duration (ms). */
+const STICK_TO_BOTTOM_SETTLE_DELAY = 1500;
 
 const parseAccountTypesMap = {
   External: AccountType.External,
@@ -82,6 +92,25 @@ function hydrateMessage(message: MessageDto): DiscussionMessage {
     : { ...common, content: message.htmlContent, isRichContent: true, type: CommentsThreadInternals.ITEM_COMMENT };
 }
 
+const DiscussionDetailsLoader = React.memo(() => (
+  <View style={styles.loaderRoot}>
+    <DiscussionHeaderLoader />
+    <View style={styles.loaderContent}>
+      <Placeholder Animation={Fade}>
+        <View style={styles.firstMessageLoader}>
+          {FIRST_MESSAGE_LOADER_LINES.map((width, index) => (
+            <PlaceholderLine key={index} noMargin style={styles.firstMessageLoaderLine} width={width} />
+          ))}
+        </View>
+      </Placeholder>
+      {COMMENTS_LOADER_ROWS.map(index => (
+        <CommentsThreadItemLoader key={index} />
+      ))}
+    </View>
+    <CommentsThreadAddFormLoader />
+  </View>
+));
+
 export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function DiscussionDetailsScreen({
   navigation,
   route: {
@@ -92,6 +121,8 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
   const dispatch = useDispatch();
   const discussion = useSelector(communitiesSelectors.getCommunityDiscussion(communityId, discussionId));
   const [messages, setMessages] = React.useState<PaginatedListItem<DiscussionMessage>[]>([]);
+  const messagesRef = React.useRef(messages);
+  messagesRef.current = messages;
   const scrollRef = React.useRef<FlashListRef<PaginatedListItem<DiscussionMessage>>>(null);
   const scrollOffset = useSharedValue(0);
   const onScroll = React.useCallback(
@@ -101,6 +132,15 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     [scrollOffset],
   );
   const { collapse, expandedBandHeight } = useCollapsibleDiscussionHeader(scrollOffset);
+  const [isLayoutReady, setIsLayoutReady] = React.useState(false);
+  const isHeaderMeasured = expandedBandHeight > 0;
+  React.useEffect(() => {
+    if (!isHeaderMeasured) return;
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => setIsLayoutReady(true));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [isHeaderMeasured]);
 
   const fetchDiscussion = React.useCallback(async () => {
     const loaded = await getDiscussion(session, communityId, discussionId);
@@ -134,6 +174,23 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     [communityId, discussionId, fetchDiscussion, session],
   );
 
+  /** Replaces the loaded messages by the last page only (the previous ones are skeletons until they are reached). */
+  const reloadLastPage = React.useCallback(async () => {
+    await fetchDiscussion();
+    // The new total is expected to be the previous one + 1, then checked with the response (someone else may have posted)
+    let page = Math.floor(messagesRef.current.length / MESSAGES_PAGE_SIZE);
+    let result = await getMessages(session, communityId, discussionId, page, MESSAGES_PAGE_SIZE);
+    const lastPage = Math.max(0, Math.floor((result.total - 1) / MESSAGES_PAGE_SIZE));
+    if (lastPage !== page) {
+      page = lastPage;
+      result = await getMessages(session, communityId, discussionId, page, MESSAGES_PAGE_SIZE);
+    }
+    const newData = result.messages.map(hydrateMessage);
+    setMessages(previousData =>
+      staleOrSplice({ newData, previousData, reloadAll: true, start: page * MESSAGES_PAGE_SIZE, total: result.total }),
+    );
+  }, [communityId, discussionId, fetchDiscussion, session]);
+
   const onAddMessage = React.useCallback(() => {
     navigation.navigate(communitiesRouteNames.discussionMessageEditor, { communityId, discussionId });
   }, [communityId, discussionId, navigation]);
@@ -151,20 +208,38 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     [communityId, discussionId, navigation],
   );
 
+  /**
+   * After a new message, the heights of the list change while it settles: the previous page replaces its placeholders,
+   * and the WebViews measure their content. A single `scrollToEnd` would end up in the middle of the list,
+   * so the list is kept at the bottom until its content stops changing, or the user scrolls.
+   */
+  const isStickingToBottomRef = React.useRef(false);
+  const stickToBottomTimeoutRef = React.useRef<ReturnType<typeof setTimeout>>(undefined);
+  const stopStickingToBottom = React.useCallback(() => {
+    isStickingToBottomRef.current = false;
+    clearTimeout(stickToBottomTimeoutRef.current);
+  }, []);
+  const stickToBottom = React.useCallback(() => {
+    isStickingToBottomRef.current = true;
+    scrollRef.current?.scrollToEnd({ animated: false });
+    clearTimeout(stickToBottomTimeoutRef.current);
+    stickToBottomTimeoutRef.current = setTimeout(stopStickingToBottom, STICK_TO_BOTTOM_SETTLE_DELAY);
+  }, [stopStickingToBottom]);
+  const onContentSizeChange = React.useCallback(() => {
+    if (isStickingToBottomRef.current) stickToBottom();
+  }, [stickToBottom]);
+  React.useEffect(() => stopStickingToBottom, [stopStickingToBottom]);
+
   // Reload the affected page when coming back from the message editor
-  const messagesRef = React.useRef(messages);
-  messagesRef.current = messages;
   const handledMutationRef = React.useRef<number>(undefined);
   React.useEffect(() => {
     if (!lastMutation || handledMutationRef.current === lastMutation.at) return;
     handledMutationRef.current = lastMutation.at;
     const currentMessages = messagesRef.current;
     if (lastMutation.type === 'created') {
-      onPageReached(Math.floor(currentMessages.length / MESSAGES_PAGE_SIZE), true)
+      reloadLastPage()
         .then(() => {
-          requestAnimationFrame(() => {
-            scrollRef.current?.scrollToEnd({ animated: true });
-          });
+          stickToBottom();
         })
         .catch(e => {
           console.error('Error while reloading community discussion messages', e);
@@ -180,7 +255,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
         toast.showError();
       });
     }
-  }, [lastMutation, onPageReached, scrollRef]);
+  }, [lastMutation, onPageReached, reloadLastPage, stickToBottom]);
 
   const onDelete = React.useCallback(
     async (id: string) => {
@@ -246,36 +321,44 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     [deletedPlaceholder, onEditMessage, onPressDelete],
   );
 
-  const renderPlaceholderItem = React.useCallback(() => <View style={styles.placeholderItem} />, []);
+  const renderPlaceholderItem = React.useCallback(() => <CommentsThreadItemLoader />, []);
 
-  if (!discussion) return <LoadingIndicator />;
+  const showLoader = !isLayoutReady;
 
   return (
     <View style={styles.root}>
-      <PaginatedFlashList
-        ref={scrollRef}
-        data={messages}
-        getItemType={getItemType}
-        keyExtractor={keyExtractor}
-        onPageReached={onPageReached}
-        pageSize={MESSAGES_PAGE_SIZE}
-        renderItem={renderItem}
-        renderPlaceholderItem={renderPlaceholderItem}
-        ListHeaderComponent={listHeader}
-        onScroll={onScroll}
-        scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
-        contentInsetAdjustmentBehavior="never"
-      />
-      <MessageEditorLauncher onPress={onAddMessage} placeholder={I18n.get('communities-discussion-message-add')} />
-      <DiscussionHeader
-        authorName={discussion.createdBy.displayName}
-        authorProfile={discussion.createdBy.profile as AccountType}
-        collapse={collapse}
-        createdAt={createdAt}
-        status={getDiscussionStatus(discussion)}
-        title={discussion.title}
-        type={discussion.icon}
-      />
+      {discussion ? (
+        <>
+          <PaginatedFlashList
+            ref={scrollRef}
+            data={messages}
+            getItemType={getItemType}
+            keyExtractor={keyExtractor}
+            onPageReached={onPageReached}
+            pageSize={MESSAGES_PAGE_SIZE}
+            renderItem={renderItem}
+            renderPlaceholderItem={renderPlaceholderItem}
+            ListHeaderComponent={listHeader}
+            onScroll={onScroll}
+            onContentSizeChange={onContentSizeChange}
+            // stops list position fix if user starts scrolling
+            onScrollBeginDrag={stopStickingToBottom}
+            scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
+            contentInsetAdjustmentBehavior="never"
+          />
+          <MessageEditorLauncher onPress={onAddMessage} placeholder={I18n.get('communities-discussion-message-add')} />
+          <DiscussionHeader
+            authorName={discussion.createdBy.displayName}
+            authorProfile={discussion.createdBy.profile as AccountType}
+            collapse={collapse}
+            createdAt={createdAt}
+            status={getDiscussionStatus(discussion)}
+            title={discussion.title}
+            type={discussion.icon}
+          />
+        </>
+      ) : null}
+      {showLoader ? <DiscussionDetailsLoader /> : null}
     </View>
   );
 });
