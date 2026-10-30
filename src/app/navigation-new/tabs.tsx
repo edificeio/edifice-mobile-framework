@@ -85,6 +85,7 @@ type AllModulesTabRoutes = {
 export const useModuleTabRoutes = (): AllModulesTabRoutes => {
   const tabModules = useTabModules();
   const screens = useModuleScreens();
+  // ToDo : filter from session.rights / apps here
   return React.useMemo(() => {
     return Object.assign(
       {},
