@@ -102,10 +102,10 @@
     "hoist-non-react-statics": "3.3.2",
     "html-entities": "2.6.0",
     "html-to-text": "10.0.1",
-    "i18next": "26.5.11",
+    "i18next": "26.5.12",
     "i18next-chained-backend": "5.0.6",
     "i18next-resources-to-backend": "1.2.3",
-    "immer": "11.1.21",
+    "immer": "11.2.9",
     "jail-monkey": "3.0.0",
     "lodash.debounce": "4.0.8",
     "lottie-ios": "4.6.0",
@@ -185,7 +185,7 @@
     "unorm": "1.6.0",
     "whatwg-fetch": "3.6.20",
     "yargs": "18.2.0",
-    "zustand": "5.0.15"
+    "zustand": "5.0.16"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",
