@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { GhostButton, TerciaryButton } from '~/framework/components/button';
+import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { CaptionItalicText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { AccountTypeText } from '~/framework/modules/auth/components/account-type-text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
@@ -56,13 +57,33 @@ export namespace CommentsThread {
     );
   };
 
-  export const DeletedCommentItem = (info: ListRenderItemInfo<CommentsThreadInternals.CommentDeletedItem>) => {
+  export const DeletedCommentItem = ({
+    contentPlaceholder,
+    ...info
+  }: ListRenderItemInfo<CommentsThreadInternals.CommentDeletedItem> & { contentPlaceholder?: string }) => {
     const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
     const contentStyle = React.useMemo(
       () => [styles.itemCommentContentWrapper, info.item.nbReplies > 0 && styles.itemCommentContentWrapperDeletedComment],
       [info.item.nbReplies],
     );
+    const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeComment], []);
 
+    // Display deleted comment
+    if (contentPlaceholder) {
+      return (
+        <View style={itemStyle}>
+          <View style={itemTreeStyle}>
+            <SingleAvatar size="xsm" userId={info.item.authorId} />
+          </View>
+          <View style={styles.itemCommentContentWrapper}>
+            <ContentItemHeader {...info} />
+            <SmallItalicText style={styles.itemContentText}>{contentPlaceholder}</SmallItalicText>
+          </View>
+        </View>
+      );
+    }
+
+    // Don't display deleted comment, or display it with its responses
     return (
       <View style={itemStyle}>
         <View style={contentStyle}>
@@ -129,7 +150,12 @@ export namespace CommentsThread {
 
   export const ContentItemHeader = ({
     ...info
-  }: ListRenderItemInfo<CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem>) => {
+  }: ListRenderItemInfo<
+    | CommentsThreadInternals.CommentItem
+    | CommentsThreadInternals.ReplyItem
+    | CommentsThreadInternals.CommentDeletedItem
+    | CommentsThreadInternals.ReplyDeletedItem
+  >) => {
     const { item } = info;
     return (
       <View style={styles.itemUserHeader}>
@@ -175,7 +201,13 @@ export namespace CommentsThread {
       <>
         <ContentItemHeader {...info} />
         <View>
-          <SmallText style={styles.itemContentText}>{item.content}</SmallText>
+          {item.isRichContent ? (
+            <View style={styles.itemContentText}>
+              <RichEditorViewer content={item.content} backgroundColor="transparent" />
+            </View>
+          ) : (
+            <SmallText style={styles.itemContentText}>{item.content}</SmallText>
+          )}
           {session && canAddComment && (
             <View style={styles.itemContentButtons}>
               {canAddReply && item.type === CommentsThreadInternals.ITEM_COMMENT && (
@@ -293,6 +325,7 @@ export namespace CommentsThread {
   export const Item = ({
     canAddComment,
     canAddReply,
+    deletedContentPlaceholder,
     inputRef,
     listRef,
     onPressDelete,
@@ -339,7 +372,12 @@ export namespace CommentsThread {
         />
       );
     } else if (info.item.type === CommentsThreadInternals.ITEM_COMMENT_DELETED) {
-      return <DeletedCommentItem {...(info as ListRenderItemInfo<CommentsThreadInternals.CommentDeletedItem>)} />;
+      return (
+        <DeletedCommentItem
+          {...(info as ListRenderItemInfo<CommentsThreadInternals.CommentDeletedItem>)}
+          contentPlaceholder={deletedContentPlaceholder}
+        />
+      );
     } else if (info.item.type === CommentsThreadInternals.ITEM_REPLY_DELETED) {
       return <DeletedReplyItem {...(info as ListRenderItemInfo<CommentsThreadInternals.ReplyDeletedItem>)} />;
     } else if (info.item.type === CommentsThreadInternals.ITEM_REPLY_ELLIPSIS) {

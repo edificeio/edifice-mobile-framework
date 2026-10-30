@@ -17,6 +17,7 @@ export const RichEditorViewer = connect(state => ({
   return (
     <RichEditor
       navigation={navigation}
+      backgroundColor={props.backgroundColor}
       disabled
       useContainer
       initialContentHTML={props.content}
