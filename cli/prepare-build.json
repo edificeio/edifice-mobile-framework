@@ -5,9 +5,9 @@
   "comm": 0,
   "major": 1,
   "minor": 17,
-  "peda": 7,
-  "poc": 0,
-  "rc": 1,
+  "peda": 0,
+  "poc": 1,
+  "rc": 0,
   "rev": 10,
   "inte": 0
 }
