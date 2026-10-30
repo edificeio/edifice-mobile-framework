@@ -71,6 +71,7 @@ export default class RichEditor extends Component {
     const {
       autoCapitalize,
       autoCorrect,
+      backgroundColor,
       defaultParagraphSeparator,
       disabled,
       enterKeyHint,
@@ -96,6 +97,7 @@ export default class RichEditor extends Component {
           createHTML({
             autoCapitalize,
             autoCorrect,
+            backgroundColor,
             defaultParagraphSeparator,
             enterKeyHint,
             firstFocusEnd,
@@ -302,7 +304,7 @@ export default class RichEditor extends Component {
 
   renderWebView() {
     const that = this;
-    const { editorStyle, html, onLink, style, useContainer, ...rest } = that.props;
+    const { backgroundColor, editorStyle, html, onLink, style, useContainer, ...rest } = that.props;
     const { html: viewHTML } = that.state;
     const js = `document.cookie="oneSessionId=${this.props.oneSessionId?.value}"; true;`;
     const { height } = this.state;
@@ -319,7 +321,7 @@ export default class RichEditor extends Component {
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={!useContainer}
-          style={[styles.webview, { height }]}
+          style={[styles.webview, backgroundColor ? { backgroundColor } : undefined, { height }]}
           {...rest}
           ref={that.setRef}
           onMessage={that.onMessage}

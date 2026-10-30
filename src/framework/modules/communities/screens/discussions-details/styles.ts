@@ -15,5 +15,6 @@ export default StyleSheet.create({
     alignItems: 'center',
     paddingVertical: UI_SIZES.spacing.medium,
   },
+  placeholderItem: { height: UI_SIZES.elements.avatar.md * 2 },
   root: { flex: 1 },
 });
