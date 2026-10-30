@@ -1,7 +1,3 @@
-diff --git a/node_modules/react-native-modal/.DS_Store b/node_modules/react-native-modal/.DS_Store
-new file mode 100644
-index 0000000..5008ddf
-Binary files /dev/null and b/node_modules/react-native-modal/.DS_Store differ
 diff --git a/node_modules/react-native-modal/dist/back-handler.d.ts b/node_modules/react-native-modal/dist/back-handler.d.ts
 new file mode 100644
 index 0000000..aee851e
