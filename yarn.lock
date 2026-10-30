@@ -4188,37 +4188,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-firebase/analytics@npm:26.4.0":
-  version: 26.4.0
-  resolution: "@react-native-firebase/analytics@npm:26.4.0"
+"@react-native-firebase/analytics@npm:26.4.1":
+  version: 26.4.1
+  resolution: "@react-native-firebase/analytics@npm:26.4.1"
   dependencies:
     superstruct: "npm:^2.0.2"
   peerDependencies:
-    "@react-native-firebase/app": 26.4.0
+    "@react-native-firebase/app": 26.4.1
     expo: ">=47.0.0"
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10/a0782152dc08d8bf97126a883f363c3346aacda75bdb155fb9592f006ef927bb320c281576ac5b317cfe617f7715171a2f7cf3ad7924f81618067a2fe1134281
+  checksum: 10/9632df62dfb3bc4b192a8db1a2ab684b688eb9924cd526878bb9a49edd9240594ad2c74de3a154c493665ea900deadba797f3565aec78eb2a5d41ce18bfe1fb6
   languageName: node
   linkType: hard
 
-"@react-native-firebase/app-distribution@npm:26.4.0":
-  version: 26.4.0
-  resolution: "@react-native-firebase/app-distribution@npm:26.4.0"
+"@react-native-firebase/app-distribution@npm:26.4.1":
+  version: 26.4.1
+  resolution: "@react-native-firebase/app-distribution@npm:26.4.1"
   peerDependencies:
-    "@react-native-firebase/app": 26.4.0
+    "@react-native-firebase/app": 26.4.1
     expo: ">=47.0.0"
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10/29146d9a46852c89c00e6b25e6f9d947c803d8d5db90a5cbdd9856cb1b05c71cfe7f952977522416b3dbabffed0ed8cbd65bd95a6d9c32fb041f8272bcc4df6e
+  checksum: 10/f9cb6659fd19841e824b5261c00e86ed44bb4131b15fa0ebb3c73a8448f1a71242bb18fd1dd1009bb6f38b482ba91735550f2f8343b543b30c1ecf66d04e2832
   languageName: node
   linkType: hard
 
-"@react-native-firebase/app@npm:26.4.0":
-  version: 26.4.0
-  resolution: "@react-native-firebase/app@npm:26.4.0"
+"@react-native-firebase/app@npm:26.4.1":
+  version: 26.4.1
+  resolution: "@react-native-firebase/app@npm:26.4.1"
   dependencies:
     firebase: "npm:12.17.1"
   peerDependencies:
@@ -4228,45 +4228,45 @@ __metadata:
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10/07f6147b13547dcbc7fbb209e1b8d9788bb8da106e4d1a04c8e52380f3a8c665d1c51880307789fef9b789604376ff9770684deaf32a13894fc3b225e8b87ea1
+  checksum: 10/e07b3c3961321cb33fac68179766f6ebafc31182818c18f55dbdb14a60a2cbfb94af62925621f39070a327d91af7e73278fb1f21e736bc860829aef0e97713ff
   languageName: node
   linkType: hard
 
-"@react-native-firebase/crashlytics@npm:26.4.0":
-  version: 26.4.0
-  resolution: "@react-native-firebase/crashlytics@npm:26.4.0"
+"@react-native-firebase/crashlytics@npm:26.4.1":
+  version: 26.4.1
+  resolution: "@react-native-firebase/crashlytics@npm:26.4.1"
   dependencies:
     stacktrace-js: "npm:^2.0.2"
   peerDependencies:
-    "@react-native-firebase/app": 26.4.0
+    "@react-native-firebase/app": 26.4.1
     expo: ">=47.0.0"
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10/b13506f954b37e7adda20a2ab4d027b0859cc3cdda8273ee4b6500b391928380f0eeb6f3fac3fc638f03d0ab90a61e0945726c098f3446d795fe834b3432ace5
+  checksum: 10/dcf240613da46b451ffbca74cc62ab79309e78431a36b4b427cb91c1aa723118ca8be9b67b82c30af580f44299ed245972ff9a0241fb19d1f4d8c64577d51ab4
   languageName: node
   linkType: hard
 
-"@react-native-firebase/in-app-messaging@npm:26.4.0":
-  version: 26.4.0
-  resolution: "@react-native-firebase/in-app-messaging@npm:26.4.0"
+"@react-native-firebase/in-app-messaging@npm:26.4.1":
+  version: 26.4.1
+  resolution: "@react-native-firebase/in-app-messaging@npm:26.4.1"
   peerDependencies:
-    "@react-native-firebase/analytics": 26.4.0
-    "@react-native-firebase/app": 26.4.0
-  checksum: 10/6d313cc70db9b8ad8717201c277128e1a2d22a0bd759d86372ba21b2cbd28657592fe6b3bdf559c3b64e44f89bd02e0a22d78a252975530b38226475053995b3
+    "@react-native-firebase/analytics": 26.4.1
+    "@react-native-firebase/app": 26.4.1
+  checksum: 10/6697e0143a3146b49760d58673afd525042aff515df800311b064cccf04317c0592ab3197cddbe234a8ca306e2f9ef9e441fccdd054a7e18f760ce8213344d9f
   languageName: node
   linkType: hard
 
-"@react-native-firebase/messaging@npm:26.4.0":
-  version: 26.4.0
-  resolution: "@react-native-firebase/messaging@npm:26.4.0"
+"@react-native-firebase/messaging@npm:26.4.1":
+  version: 26.4.1
+  resolution: "@react-native-firebase/messaging@npm:26.4.1"
   peerDependencies:
-    "@react-native-firebase/app": 26.4.0
+    "@react-native-firebase/app": 26.4.1
     expo: ">=47.0.0"
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10/572b30de84eed608b553f55de03944742e8887845fdd52c0ce0f4e2b43bdffc5746f26ec08db17e3e4c76034d14fe065acd9f047ab587b1f2a434be4084b9237
+  checksum: 10/3a084fe873559eec2b6afa152968db697b79abd08b1e15b913228dd3143407ec5f8d76b8068ea98a1ab7631ea2db746b9c44f6d03fffa22d105b13eecd33cf9f
   languageName: node
   linkType: hard
 
@@ -6009,12 +6009,12 @@ __metadata:
     "@react-native-community/push-notification-ios": "npm:1.12.0"
     "@react-native-community/slider": "npm:5.2.2"
     "@react-native-documents/picker": "npm:12.0.3"
-    "@react-native-firebase/analytics": "npm:26.4.0"
-    "@react-native-firebase/app": "npm:26.4.0"
-    "@react-native-firebase/app-distribution": "npm:26.4.0"
-    "@react-native-firebase/crashlytics": "npm:26.4.0"
-    "@react-native-firebase/in-app-messaging": "npm:26.4.0"
-    "@react-native-firebase/messaging": "npm:26.4.0"
+    "@react-native-firebase/analytics": "npm:26.4.1"
+    "@react-native-firebase/app": "npm:26.4.1"
+    "@react-native-firebase/app-distribution": "npm:26.4.1"
+    "@react-native-firebase/crashlytics": "npm:26.4.1"
+    "@react-native-firebase/in-app-messaging": "npm:26.4.1"
+    "@react-native-firebase/messaging": "npm:26.4.1"
     "@react-native-menu/menu": "npm:2.0.0"
     "@react-native-picker/picker": "npm:2.11.4"
     "@react-native/babel-preset": "npm:0.88.1"
@@ -6115,7 +6115,7 @@ __metadata:
     react-native-global-props: "npm:1.1.5"
     react-native-haptic-feedback: "npm:3.0.0"
     react-native-image-pan-zoom: "npm:2.1.12"
-    react-native-image-picker: "npm:8.3.0"
+    react-native-image-picker: "npm:8.3.1"
     react-native-keyboard-avoiding-scroll-view: "npm:1.0.1"
     react-native-keyboard-controller: "npm:1.22.9"
     react-native-layout-debug: "npm:1.1.1"
@@ -13506,13 +13506,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-image-picker@npm:8.3.0":
-  version: 8.3.0
-  resolution: "react-native-image-picker@npm:8.3.0"
+"react-native-image-picker@npm:8.3.1":
+  version: 8.3.1
+  resolution: "react-native-image-picker@npm:8.3.1"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/e81588a1b1f3f509c3ce624ab66a9f1e2d8e43df4f52887dd287ba0687e298f31bac33900fa01aa252ea5b8bf00751fd17f028e515ed32bc527439b111265bc8
+  checksum: 10/3ebc227518a5fc3a682719e88c7a64882d6c3a58a1cdf293a8a13a29ced9a852140247e7ef5c005ce89456ef20696219c70d58a7db95f8006871865a298fd1ae
   languageName: node
   linkType: hard
 
