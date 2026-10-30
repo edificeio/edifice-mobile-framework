@@ -7,7 +7,7 @@ import type { EndSession } from './end-session';
  * flushed, but the account stays in the accounts with its tokens.
  * An account with a requirement has no session to put to sleep (it never started), so it is left as is.
  */
-export const createSleepCurrentSession = (endSession: EndSession) => async () => {
+export const createSleepCurrentSession = (endSession: EndSession) => () => {
   const session = getSession();
   if (!session) return;
   endSession(session);

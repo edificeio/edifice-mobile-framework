@@ -47,7 +47,7 @@ export const createRestoreAccount = (setActiveAccount: SetActiveAccount, sleepCu
       // Not worth stopping the user from reaching the sign-in screens
       console.warn('[Auth] beforeLeave failed :', e);
     }
-    await sleepCurrentSession();
+    sleepCurrentSession();
   };
 
   return async (account: AuthSavedAccount | AuthActiveAccount, options?: RestoreAccountOptions) => {
