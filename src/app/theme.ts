@@ -138,6 +138,10 @@ export interface ITheme {
     account: {
       headerImage: SvgIconName;
     };
+    alert: {
+      borderShade: 'pale' | 'light';
+      closeIcon: ColorValue;
+    };
     notificationBadge: ColorValue;
     shadowColor: ColorValue;
     shadowColorTransparent: ColorValue;
@@ -252,6 +256,10 @@ export const defaultTheme: ThemeInitializer = {
     (this as Partial<ITheme>).ui = {
       account: {
         headerImage: 'userpage-header',
+      },
+      alert: {
+        borderShade: 'pale',
+        closeIcon: this.palette.grey.graphite,
       },
       background: {
         card: this.palette.grey.white,
