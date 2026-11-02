@@ -39,19 +39,20 @@ function autoFillPicture(picture: PictureProps, shades: IShades) {
 function useToastStyles(type: AlertCardProps['type'], picture: AlertCardProps['icon']) {
   const colorShades = theme.palette.status[toastConfigColor[type]] as IShades;
   const cardBorderStyle = React.useMemo(() => [{ backgroundColor: colorShades.regular }, styles.cardBorder], [colorShades.regular]);
-  const cardContentStyle = React.useMemo(() => [{ borderColor: colorShades.pale }, styles.cardContent], [colorShades.pale]);
+  const borderColor = colorShades[theme.ui.alert.borderShade];
+  const cardContentStyle = React.useMemo(() => [{ borderColor }, styles.cardContent], [borderColor]);
   const cardShadowContainerStyle = React.useMemo(
     () => [
       {
         backgroundColor: Platform.select({
           // On iOS we set the coloured background to make pixel-perfect rounded corners.
           default: undefined,
-          ios: colorShades.pale, // Android sucks to render translucent views with subviews, we have to minimise backgrounded views.
+          ios: borderColor, // Android sucks to render translucent views with subviews, we have to minimise backgrounded views.
         }),
       },
       styles.cardShadowContainer,
     ],
-    [colorShades.pale],
+    [borderColor],
   );
   const pictureWithColor = React.useMemo(
     () => ({
@@ -72,7 +73,7 @@ function useToastStyles(type: AlertCardProps['type'], picture: AlertCardProps['i
 }
 
 const defaultRenderCloseButton: Required<AlertCardProps>['renderCloseButton'] = (shades, onClose) =>
-  onClose ? <IconButton icon="ui-close" action={onClose} /> : null;
+  onClose ? <IconButton icon="ui-close" color={theme.ui.alert.closeIcon} action={onClose} /> : null;
 
 export function AlertCard(props: AlertCardProps) {
   const {
