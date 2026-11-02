@@ -131,7 +131,7 @@ function ToastCard(params: ToastParams) {
       params.props.duration ? (
         <Animated.View onLayout={measureProgressLayout} style={progressStyle} />
       ) : (
-        <IconButton icon="ui-close" action={closeCallback!} />
+        <IconButton icon="ui-close" color={theme.ui.alert.closeIcon} action={closeCallback!} />
       ),
     [measureProgressLayout, params.props.duration, progressStyle],
   );
