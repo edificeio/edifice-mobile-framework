@@ -4,12 +4,12 @@ import { ColorValue, Platform, StyleSheet, ViewStyle } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment, { Moment } from 'moment';
 
+import theme from '~/app/theme';
+
 import { TouchCardWithoutPadding } from './card/base';
 import { UI_SIZES } from './constants';
 import { Svg } from './picture';
 import { SmallText } from './text';
-
-import theme from '~/app/theme';
 
 export interface DateTimePickerProps {
   mode: 'date' | 'time';
@@ -39,15 +39,18 @@ const styles = StyleSheet.create({
 
 const DateTimePickerIOS = (props: DateTimePickerProps) => {
   const [date, setDate] = React.useState<Moment>(props.value);
+  // the compact popover stays open on selection, remounting the picker closes it
+  const [pickerKey, setPickerKey] = React.useState<number>(0);
 
   return (
     <DateTimePicker
+      key={pickerKey}
       mode={props.mode}
-      onChange={(event, newDate) => {
-        if (event.type === 'set') {
-          setDate(moment(newDate));
-          props.onChangeValue(moment(newDate));
-        }
+      onValueChange={(_event, newDate) => {
+        setDate(moment(newDate));
+        props.onChangeValue(moment(newDate));
+        // the time wheel sends a change on each scroll, closing it would cut the selection
+        if (props.mode === 'date') setPickerKey(key => key + 1);
       }}
       value={date.toDate()}
       disabled={props.disabled}
@@ -64,6 +67,7 @@ const DateTimePickerAndroid = (props: DateTimePickerProps) => {
   const [isPickerVisible, setPickerVisible] = React.useState<boolean>(false);
 
   const showPicker = () => setPickerVisible(true);
+  const dismissPicker = () => setPickerVisible(false);
 
   return (
     <>
@@ -83,13 +87,13 @@ const DateTimePickerAndroid = (props: DateTimePickerProps) => {
           maximumDate={props.maximumDate?.toDate()}
           minimumDate={props.minimumDate?.toDate()}
           value={date.toDate()}
-          onChange={(event, newDate) => {
-            setPickerVisible(false);
-            if (event.type !== 'dismissed') {
-              setDate(moment(newDate));
-              props.onChangeValue(moment(newDate));
-            }
+          onError={dismissPicker}
+          onValueChange={(_event, newDate) => {
+            dismissPicker();
+            setDate(moment(newDate));
+            props.onChangeValue(moment(newDate));
           }}
+          onDismiss={dismissPicker}
         />
       ) : null}
     </>
