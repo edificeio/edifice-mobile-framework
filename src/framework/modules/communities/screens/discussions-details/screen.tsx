@@ -41,6 +41,8 @@ import { CommunitiesDiscussionDetailsScreen } from './types';
 
 const FIRST_MESSAGE_LOADER_LINES = [100, 100, 100, 70];
 const COMMENTS_LOADER_ROWS = Array.from({ length: DEFAULT_FLATLIST_PLACEHOLDER_ROWS }, (_, index) => index);
+/** The list stays at the bottom after a new message until its content doesn't change for this duration (ms). */
+const STICK_TO_BOTTOM_SETTLE_DELAY = 1500;
 
 const parseAccountTypesMap = {
   External: AccountType.External,
@@ -119,6 +121,8 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
   const dispatch = useDispatch();
   const discussion = useSelector(communitiesSelectors.getCommunityDiscussion(communityId, discussionId));
   const [messages, setMessages] = React.useState<PaginatedListItem<DiscussionMessage>[]>([]);
+  const messagesRef = React.useRef(messages);
+  messagesRef.current = messages;
   const scrollRef = React.useRef<FlashListRef<PaginatedListItem<DiscussionMessage>>>(null);
   const scrollOffset = useSharedValue(0);
   const onScroll = React.useCallback(
@@ -170,6 +174,23 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     [communityId, discussionId, fetchDiscussion, session],
   );
 
+  /** Replaces the loaded messages by the last page only (the previous ones are skeletons until they are reached). */
+  const reloadLastPage = React.useCallback(async () => {
+    await fetchDiscussion();
+    // The new total is expected to be the previous one + 1, then checked with the response (someone else may have posted)
+    let page = Math.floor(messagesRef.current.length / MESSAGES_PAGE_SIZE);
+    let result = await getMessages(session, communityId, discussionId, page, MESSAGES_PAGE_SIZE);
+    const lastPage = Math.max(0, Math.floor((result.total - 1) / MESSAGES_PAGE_SIZE));
+    if (lastPage !== page) {
+      page = lastPage;
+      result = await getMessages(session, communityId, discussionId, page, MESSAGES_PAGE_SIZE);
+    }
+    const newData = result.messages.map(hydrateMessage);
+    setMessages(previousData =>
+      staleOrSplice({ newData, previousData, reloadAll: true, start: page * MESSAGES_PAGE_SIZE, total: result.total }),
+    );
+  }, [communityId, discussionId, fetchDiscussion, session]);
+
   const onAddMessage = React.useCallback(() => {
     navigation.navigate(communitiesRouteNames.discussionMessageEditor, { communityId, discussionId });
   }, [communityId, discussionId, navigation]);
@@ -187,20 +208,38 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     [communityId, discussionId, navigation],
   );
 
+  /**
+   * After a new message, the heights of the list change while it settles: the previous page replaces its placeholders,
+   * and the WebViews measure their content. A single `scrollToEnd` would end up in the middle of the list,
+   * so the list is kept at the bottom until its content stops changing, or the user scrolls.
+   */
+  const isStickingToBottomRef = React.useRef(false);
+  const stickToBottomTimeoutRef = React.useRef<ReturnType<typeof setTimeout>>(undefined);
+  const stopStickingToBottom = React.useCallback(() => {
+    isStickingToBottomRef.current = false;
+    clearTimeout(stickToBottomTimeoutRef.current);
+  }, []);
+  const stickToBottom = React.useCallback(() => {
+    isStickingToBottomRef.current = true;
+    scrollRef.current?.scrollToEnd({ animated: false });
+    clearTimeout(stickToBottomTimeoutRef.current);
+    stickToBottomTimeoutRef.current = setTimeout(stopStickingToBottom, STICK_TO_BOTTOM_SETTLE_DELAY);
+  }, [stopStickingToBottom]);
+  const onContentSizeChange = React.useCallback(() => {
+    if (isStickingToBottomRef.current) stickToBottom();
+  }, [stickToBottom]);
+  React.useEffect(() => stopStickingToBottom, [stopStickingToBottom]);
+
   // Reload the affected page when coming back from the message editor
-  const messagesRef = React.useRef(messages);
-  messagesRef.current = messages;
   const handledMutationRef = React.useRef<number>(undefined);
   React.useEffect(() => {
     if (!lastMutation || handledMutationRef.current === lastMutation.at) return;
     handledMutationRef.current = lastMutation.at;
     const currentMessages = messagesRef.current;
     if (lastMutation.type === 'created') {
-      onPageReached(Math.floor(currentMessages.length / MESSAGES_PAGE_SIZE), true)
+      reloadLastPage()
         .then(() => {
-          requestAnimationFrame(() => {
-            scrollRef.current?.scrollToEnd({ animated: true });
-          });
+          stickToBottom();
         })
         .catch(e => {
           console.error('Error while reloading community discussion messages', e);
@@ -216,7 +255,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
         toast.showError();
       });
     }
-  }, [lastMutation, onPageReached, scrollRef]);
+  }, [lastMutation, onPageReached, reloadLastPage, stickToBottom]);
 
   const onDelete = React.useCallback(
     async (id: string) => {
@@ -301,6 +340,9 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
             renderPlaceholderItem={renderPlaceholderItem}
             ListHeaderComponent={listHeader}
             onScroll={onScroll}
+            onContentSizeChange={onContentSizeChange}
+            // stops list position fix if user starts scrolling
+            onScrollBeginDrag={stopStickingToBottom}
             scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
             contentInsetAdjustmentBehavior="never"
           />
