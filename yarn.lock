@@ -2871,7 +2871,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@humanfs/node@npm:^0.16.6":
+"@humanfs/node@npm:^0.16.8":
   version: 0.16.8
   resolution: "@humanfs/node@npm:0.16.8"
   dependencies:
@@ -6053,7 +6053,7 @@ __metadata:
     deepmerge: "npm:4.3.1"
     depcheck: "npm:1.4.7"
     deprecated-react-native-prop-types: "npm:5.0.0"
-    eslint: "npm:10.13.0"
+    eslint: "npm:10.14.0"
     eslint-config-prettier: "npm:10.1.8"
     eslint-import-resolver-typescript: "npm:4.4.5"
     eslint-plugin-import: "npm:2.32.0"
@@ -6071,14 +6071,14 @@ __metadata:
     filesize: "npm:11.0.29"
     flat: "npm:6.0.1"
     global: "npm:4.4.0"
-    globals: "npm:17.13.0"
+    globals: "npm:17.14.0"
     hoist-non-react-statics: "npm:3.3.2"
     html-entities: "npm:2.6.0"
     html-to-text: "npm:10.0.1"
     husky: "npm:9.1.7"
-    i18next: "npm:26.5.11"
-    i18next-chained-backend: "npm:5.0.6"
-    i18next-resources-to-backend: "npm:1.2.3"
+    i18next: "npm:26.7.1"
+    i18next-chained-backend: "npm:5.0.8"
+    i18next-resources-to-backend: "npm:1.2.4"
     jail-monkey: "npm:3.0.0"
     jest: "npm:30.5.2"
     lint-staged: "npm:17.6.0"
@@ -6097,12 +6097,12 @@ __metadata:
     query-string: "npm:9.5.1"
     querystring: "npm:0.2.1"
     react: "npm:19.3.0"
-    react-i18next: "npm:17.1.9"
+    react-i18next: "npm:17.1.11"
     react-is: "npm:19.3.1"
     react-native: "npm:0.88.1"
     react-native-app-link: "npm:1.0.1"
     react-native-blob-util: "npm:0.25.1"
-    react-native-bootsplash: "npm:7.3.4"
+    react-native-bootsplash: "npm:7.3.5"
     react-native-color-matrix-image-filters: "npm:8.0.2"
     react-native-confirmation-code-field: "npm:9.0.0"
     react-native-device-info: "npm:15.0.2"
@@ -6134,7 +6134,7 @@ __metadata:
     react-native-phrase-sdk: "npm:1.1.5"
     react-native-rate: "npm:1.2.12"
     react-native-reanimated: "npm:4.7.1"
-    react-native-reanimated-carousel: "npm:5.2.0"
+    react-native-reanimated-carousel: "npm:5.2.1"
     react-native-restart: "npm:0.0.29"
     react-native-safe-area-context: "npm:5.11.0"
     react-native-screens: "npm:4.30.1"
@@ -8729,9 +8729,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:10.13.0":
-  version: 10.13.0
-  resolution: "eslint@npm:10.13.0"
+"eslint@npm:10.14.0":
+  version: 10.14.0
+  resolution: "eslint@npm:10.14.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.8.0"
     "@eslint-community/regexpp": "npm:^4.12.2"
@@ -8739,7 +8739,7 @@ __metadata:
     "@eslint/config-helpers": "npm:^0.7.0"
     "@eslint/core": "npm:^1.2.1"
     "@eslint/plugin-kit": "npm:^0.7.3"
-    "@humanfs/node": "npm:^0.16.6"
+    "@humanfs/node": "npm:^0.16.8"
     "@humanwhocodes/module-importer": "npm:^1.0.1"
     "@humanwhocodes/retry": "npm:^0.4.2"
     "@types/estree": "npm:^1.0.6"
@@ -8760,7 +8760,7 @@ __metadata:
     imurmurhash: "npm:^0.1.4"
     is-glob: "npm:^4.0.0"
     json-stable-stringify-without-jsonify: "npm:^1.0.1"
-    minimatch: "npm:^10.2.5"
+    minimatch: "npm:^10.2.6"
     natural-compare: "npm:^1.4.0"
     optionator: "npm:^0.9.3"
   peerDependencies:
@@ -8770,7 +8770,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10/04b7140a6fb4614d3cd5feb35041cd3b2b92f80d7fd015d8d320c76e015577863dc530c1bcf228eb3b58b06151e45b6452dd349a6863d21eeefa02ceaee1377f
+  checksum: 10/66743528bfef3961deb3141fc6893e1f137f2ed2602ee36482107cdd49b1a14a1c3da9bb9824fd3530003a23f041b6854f28c20306e99d9b7222a825998e8ed9
   languageName: node
   linkType: hard
 
@@ -9650,10 +9650,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:17.13.0":
-  version: 17.13.0
-  resolution: "globals@npm:17.13.0"
-  checksum: 10/f723714cfb07bcf3163d44661d63b2a6076d93fd2f3724622b22084c62bcbbdb3ea3c601ec39635f1430d5cdf60bbf6fd7e458f12b5381ed422ed355c699537b
+"globals@npm:17.14.0":
+  version: 17.14.0
+  resolution: "globals@npm:17.14.0"
+  checksum: 10/3d889e226ee8f4401abc568cd853d017b6407b24744c28b3d8260c65200174082bb77eeefecf4d2b40ab48e9484a2b163b1372c8addf782f49ecd546faf27ceb
   languageName: node
   linkType: hard
 
@@ -9950,33 +9950,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next-chained-backend@npm:5.0.6":
-  version: 5.0.6
-  resolution: "i18next-chained-backend@npm:5.0.6"
+"i18next-chained-backend@npm:5.0.8":
+  version: 5.0.8
+  resolution: "i18next-chained-backend@npm:5.0.8"
   dependencies:
     "@babel/runtime": "npm:^7.28.4"
-  checksum: 10/9a028cf37cf4bb2b5a86edd45e9addf18dc93aa8ffe407619d598ce1b4acd3bcec1b0eee05ff4d49b8a1001861b3a99c32a5b22361d0a76d8b704bdb8806b5bb
+  checksum: 10/9a05dd3435c1bf93f3ad3a35428ec85522394e23960726a9befdc6581813a49d2819126ef905e5f4071c7066da7bea42eacb54b579b4b293524dc3fd833da48b
   languageName: node
   linkType: hard
 
-"i18next-resources-to-backend@npm:1.2.3":
-  version: 1.2.3
-  resolution: "i18next-resources-to-backend@npm:1.2.3"
+"i18next-resources-to-backend@npm:1.2.4":
+  version: 1.2.4
+  resolution: "i18next-resources-to-backend@npm:1.2.4"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
-  checksum: 10/6f7e47a09861cba52eb79e84ffab89ce2e7b8841949442090bc4dd4e3024efb5a8bebb105acefe410abf015245162c52ba61525397f646d67507655387b25d34
+  checksum: 10/9ba285552ef68cafbc5f71664829ef8e6a4e0094af800ab0b7da69c1a5ec13444bf5920be1a2e7f73112ebdffb062c2395287b9ce21a73324857fba2c7d0756b
   languageName: node
   linkType: hard
 
-"i18next@npm:26.5.11":
-  version: 26.5.11
-  resolution: "i18next@npm:26.5.11"
+"i18next@npm:26.7.1":
+  version: 26.7.1
+  resolution: "i18next@npm:26.7.1"
   peerDependencies:
     typescript: ^5 || ^6 || ^7
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/613c219e7312fdb5e0763d596251c8af5fdf922dc575e31a244819a0914db658f9e3f89a10f2707c19ad11bb8d352d72f00c947c8f09b4bb2d12a553fcc993b0
+  checksum: 10/f3305d668fff3a3bab45c6ac2b28048774e9f814a7a9bf7e50d179a75ae0570f5d594853f014e63412b28e9ca793fcb1d46bc624e0de64125e00e77c5d86c5f6
   languageName: node
   linkType: hard
 
@@ -12040,7 +12040,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^10.2.2, minimatch@npm:^10.2.4, minimatch@npm:^10.2.5":
+"minimatch@npm:^10.2.2, minimatch@npm:^10.2.4, minimatch@npm:^10.2.6":
   version: 10.2.6
   resolution: "minimatch@npm:10.2.6"
   dependencies:
@@ -13236,9 +13236,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-i18next@npm:17.1.9":
-  version: 17.1.9
-  resolution: "react-i18next@npm:17.1.9"
+"react-i18next@npm:17.1.11":
+  version: 17.1.11
+  resolution: "react-i18next@npm:17.1.11"
   dependencies:
     "@babel/runtime": "npm:^7.29.7"
     html-parse-stringify: "npm:^4.0.1"
@@ -13254,7 +13254,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10/8e1f309c94ea5917f57103417ba183ae2bc30820cb664a8ff7089cc0b3cc20257f313b863f2e9f4e805fe583d2b2ffc7d38652f279057d5efbe4ecfcc13ffb52
+  checksum: 10/80eca1a1be6ed84b18ec865925f912cbf737d9d4ccebd0866d9bb14ede8d65590f86c9d47566baec0d30c102d2980dbd207f108f1b5b8bbd8aeffaa773949ff3
   languageName: node
   linkType: hard
 
@@ -13303,9 +13303,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-bootsplash@npm:7.3.4":
-  version: 7.3.4
-  resolution: "react-native-bootsplash@npm:7.3.4"
+"react-native-bootsplash@npm:7.3.5":
+  version: 7.3.5
+  resolution: "react-native-bootsplash@npm:7.3.5"
   dependencies:
     "@expo/config-plugins": "npm:*"
     commander: "npm:^14.0.3"
@@ -13315,6 +13315,7 @@ __metadata:
     picocolors: "npm:^1.1.1"
     prettier: "npm:^3.8.1"
     react-native-is-edge-to-edge: "npm:^1.3.1"
+    semver: "npm:^7.7.4"
     sharp: "npm:^0.35.4"
     ts-dedent: "npm:^2.2.0"
     xml-formatter: "npm:^3.7.0"
@@ -13323,7 +13324,7 @@ __metadata:
     react-native: "*"
   bin:
     react-native-bootsplash: cli.js
-  checksum: 10/0739ea658028b85303784ebf07823d0eca5bdd2d15fbed32ba189bb4837dd101b53c5873c9955246a2e7c8d5b0c53338421ca08b49a32c387b87a882080efe24
+  checksum: 10/6a6e3ffe7496a864f894353a024cda33b6cf494282af2bf9e3365cc0f130bcbf1d7b85313abe25f6a59204e4c1d620856c24ffcc78602273da50db2dc6f5cd4c
   languageName: node
   linkType: hard
 
@@ -13711,9 +13712,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-reanimated-carousel@npm:5.2.0":
-  version: 5.2.0
-  resolution: "react-native-reanimated-carousel@npm:5.2.0"
+"react-native-reanimated-carousel@npm:5.2.1":
+  version: 5.2.1
+  resolution: "react-native-reanimated-carousel@npm:5.2.1"
   peerDependencies:
     react: ">=18.0.0"
     react-native: ">=0.80.0"
@@ -13722,7 +13723,7 @@ __metadata:
     react-native-worklets: ">=0.5.0"
   bin:
     rnrc-v5-codemod: scripts/codemods/v5.mjs
-  checksum: 10/aafe94e92e0fb3ba8c9a4ed91a05666698b66920490f54ee710ce384107e3edf1432081fb98905d3be655999cb30d62e8725caf0b2266dd4f5977c492d6b0b2a
+  checksum: 10/f701f390d79daf5d36c110b37d44fe0a396b5461eaa87d674a1fe9daf6c7fe55f14367786ae0a863be58a96268d43a5e6542084852fc516611f57b30f02e351c
   languageName: node
   linkType: hard
 
