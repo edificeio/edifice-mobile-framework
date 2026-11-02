@@ -18,5 +18,6 @@ export default new CoreModule({
     'media/download': MediaDownloadScreen,
   },
   name: 'media',
+  scope: ['workspace'], // ensure that all ent-hosted documents are loadable.
   storages: [mediaStorage],
 });
