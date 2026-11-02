@@ -11,7 +11,6 @@ import { usePlatformReactionTypesStore } from './store';
 
 export default new CoreModule({
   name: 'audience',
-
   // Failures are only logged: it must not prevent the use of the app
   onSessionStart: session => {
     audienceService.reaction
@@ -19,4 +18,6 @@ export default new CoreModule({
       .then(types => usePlatformReactionTypesStore.getState().setReactionTypes(session.platform.name, types['reaction-types']))
       .catch(e => console.warn('[Audience] Unable to load valid reaction types:', e));
   },
+
+  scope: ['audience'],
 });
