@@ -14,8 +14,7 @@ import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sh
 import { sessionScreen } from '~/framework/components/screen';
 import { SegmentedControlLoader } from '~/framework/components/segmented-control';
 import toast from '~/framework/components/toast';
-import CommunityCardSmall from '~/framework/modules/communities/components/community-card-small';
-import CommunityCardSmallLoader from '~/framework/modules/communities/components/community-card-small/community-card-small-loader';
+import CommunityCardSmall, { CommunityCardSmallLoader } from '~/framework/modules/communities/components/community-card-small';
 import CommunityListFilters, { styles as filtersStyles } from '~/framework/modules/communities/components/community-list-filters';
 import { CommunityListFilterButtonLoader } from '~/framework/modules/communities/components/community-list-filters/community-list-filter-button';
 import ListFiltersBottomSheet from '~/framework/modules/communities/components/community-list-filters/list-filters-bottom-sheet';
