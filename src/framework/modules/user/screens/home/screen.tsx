@@ -301,6 +301,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               icon="ui-notif"
               testID="account-notifications"
             />
+            <LineButton
+              title={I18n.get('user-page-sentnotifications')}
+              onPress={() => navigation.navigate(userRouteNames.sentNotifications, {})}
+              icon="ui-megaphone"
+              testID="account-sent-notifications"
+            />
           </ButtonLineGroup>
         </View>
         <View style={styles.section}>
