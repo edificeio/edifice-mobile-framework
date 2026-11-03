@@ -23,6 +23,10 @@ import PushNotifsItemsListScreen, {
 import PushNotifsTopicsListScreen, {
   computeNavBar as pushNotifsTopicsListNavBar,
 } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
+import UserSentNotificationsScreen, {
+  computeNavBar as sentNotificationsNavBar,
+} from '~/framework/modules/user/screens/sent-notifications/screen';
+import UserThemeScreen, { computeNavBar as themeNavBar } from '~/framework/modules/user/screens/theme';
 import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework/modules/user/screens/who-are-we';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
@@ -40,6 +44,12 @@ export default () =>
         name={userRouteNames.notifPrefs}
         component={PushNotifsTopicsListScreen}
         options={pushNotifsTopicsListNavBar}
+        initialParams={{}}
+      />
+      <Stack.Screen
+        name={userRouteNames.sentNotifications}
+        component={UserSentNotificationsScreen}
+        options={sentNotificationsNavBar}
         initialParams={{}}
       />
       <Stack.Screen

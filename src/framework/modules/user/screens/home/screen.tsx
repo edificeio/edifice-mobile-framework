@@ -11,7 +11,7 @@ import { I18n } from '~/app/i18n';
 import { navigationDispatchMultiple } from '~/app/navigation';
 import { screenOptions } from '~/app/navigation/util';
 import { IGlobalState } from '~/app/store';
-import theme from '~/app/theme';
+import theme, { getThemes } from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import DefaultButton from '~/framework/components/buttons/default';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
@@ -51,6 +51,7 @@ import BottomRoundDecoration from '~/framework/modules/user/components/bottom-ro
 import AddAccountButton from '~/framework/modules/user/components/buttons/add-account';
 import ChangeAccountButton from '~/framework/modules/user/components/buttons/change-account';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { getSwitchThemeRight } from '~/framework/modules/user/rights';
 import { UserPreferences, userService } from '~/framework/modules/user/service';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import appConf from '~/framework/util/appConf';
@@ -92,7 +93,7 @@ function useCurvedNavBarFeature() {
         height={svgDisplayHeight}
         style={[styles.navBarSvgDecoration, { top: svgDisplayTopOffset }]}
         fill={theme.palette.primary.regular}
-        name="userpage-header"
+        name={theme.ui.account.headerImage}
       />
     );
   }, [svgDisplayHeight, svgDisplayTopOffset, svgDisplayWidth]);
@@ -165,7 +166,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
   const authContextRef = React.useRef<PlatformAuthContext | undefined>(undefined);
-
+  const availableThemes = getThemes();
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
     if (!authContextRef.current) authContextRef.current = await platformConfig.context(session.platform);
@@ -267,7 +268,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         Toast.showError(`Zendesk initialisation failed: ${(error as Error).message}`);
       }
   }, []);
-
   const openHelpCenter = React.useCallback(async () => {
     if (showHelpCenter)
       try {
@@ -290,8 +290,8 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     () => (
       <>
         <View style={styles.section}>
-          <HeadingSText style={styles.sectionTitle} testID="account-configuration">
-            {I18n.get('user-page-configuration')}
+          <HeadingSText style={styles.sectionTitle} testID="account-notifications-section">
+            {I18n.get('user-page-section-notifications')}
           </HeadingSText>
           <ButtonLineGroup>
             <LineButton
@@ -302,6 +302,42 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               icon="ui-notif"
               testID="account-notifications"
             />
+            <LineButton
+              title={I18n.get('user-page-sentnotifications')}
+              onPress={() => navigation.navigate(userRouteNames.sentNotifications, {})}
+              icon="ui-megaphone"
+              testID="account-sent-notifications"
+            />
+          </ButtonLineGroup>
+        </View>
+        <View style={styles.section}>
+          <HeadingSText style={styles.sectionTitle} testID="account-preferences-section">
+            {I18n.get('user-page-section-preferences')}
+          </HeadingSText>
+          <ButtonLineGroup>
+            <LineButton
+              disabled={!!currentLoadingMenu}
+              title={I18n.get('user-page-editlang')}
+              onPress={() => navigation.navigate(userRouteNames.lang, {})}
+              icon="ui-globe"
+              testID="account-change-language"
+            />
+            {availableThemes?.length > 1 && getSwitchThemeRight(session!) && (
+              <LineButton
+                disabled={!!currentLoadingMenu}
+                title={I18n.get('user-page-edittheme')}
+                onPress={() => navigation.navigate(userRouteNames.theme, {})}
+                icon="ui-image"
+                testID="account-change-theme"
+              />
+            )}
+          </ButtonLineGroup>
+        </View>
+        <View style={styles.section}>
+          <HeadingSText style={styles.sectionTitle} testID="account-security-section">
+            {I18n.get('user-page-section-security')}
+          </HeadingSText>
+          <ButtonLineGroup>
             {!isFederated ? (
               <LineButton
                 loading={currentLoadingMenu === ModificationType.PASSWORD}
@@ -332,18 +368,11 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 />
               </>
             ) : null}
-            <LineButton
-              disabled={!!currentLoadingMenu}
-              title={I18n.get('user-page-editlang')}
-              onPress={() => navigation.navigate(userRouteNames.lang, {})}
-              icon="ui-globe"
-              testID="account-change-language"
-            />
           </ButtonLineGroup>
         </View>
         <View style={[styles.section, styles.sectionLast]}>
-          <HeadingSText style={styles.sectionTitle} testID="account-others">
-            {I18n.get('user-page-others')}
+          <HeadingSText style={styles.sectionTitle} testID="account-help-section">
+            {I18n.get('user-page-section-help')}
           </HeadingSText>
           <ButtonLineGroup>
             {showHelpCenter ? (
@@ -390,6 +419,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       </>
     ),
     [
+      availableThemes,
       isFederated,
       currentLoadingMenu,
       canEditPersonalInfo,
@@ -550,7 +580,7 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
  * @returns the React Element of the version details text
  */
 function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session'], debugVisible: boolean) {
-  const currentPlatform = session?.platform.displayName;
+  const currentPlatform = session?.platform.name;
   return React.useMemo(() => {
     if (debugVisible)
       return (
