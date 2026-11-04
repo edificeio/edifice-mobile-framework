@@ -6,7 +6,7 @@ import React from 'react';
 
 import moduleImports from '~/app/config/modules';
 
-import { AllModulesArray, AnyEntTabModule, EntModule, Module } from '.';
+import { AllModulesArray, AnyTabModule, Module } from '.';
 
 /**
  * @deprecated
@@ -53,10 +53,10 @@ export const useModulesOfType = <T extends typeof Module>(type: T): InstanceType
  * Retrieves all modules that are displayed in the tab bar.
  * @returns
  */
-export const useTabModules = (): AnyEntTabModule[] => {
+export const useTabModules = (): AnyTabModule[] => {
   const modules = useModules();
   return React.useMemo(
-    () => modules.filter(module => module instanceof EntModule && module.tab !== undefined) as unknown as AnyEntTabModule[],
+    () => modules.filter(module => module.tab !== undefined) as unknown as AnyTabModule[],
     [modules],
   );
 };

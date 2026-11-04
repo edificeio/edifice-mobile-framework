@@ -13,7 +13,7 @@ import {
   createBottomTabScreen,
 } from '@react-navigation/bottom-tabs';
 
-import { AllModulesStaticScreens, AnyEntTabModule, useModuleScreens, useTabModules } from '~/app/module';
+import { AllModulesStaticScreens, AnyTabModule, useModuleScreens, useTabModules } from '~/app/module';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
@@ -29,12 +29,12 @@ type TabScreenName<Name extends string> = `$tab/${Name}`;
 /**
  * Name of the tab screen of a module. Use it to navigate to the tab itself.
  */
-export const getTabScreenName = <Name extends AnyEntTabModule['name']>(name: Name): TabScreenName<Name> => `$tab/${name}`;
+export const getTabScreenName = <Name extends AnyTabModule['name']>(name: Name): TabScreenName<Name> => `$tab/${name}`;
 
 function TabLabel({
   color,
   testId,
-}: AnyEntTabModule['tab'] & Parameters<Extract<BottomTabNavigationOptions['tabBarLabel'], Function>>[0]) {
+}: AnyTabModule['tab'] & Parameters<Extract<BottomTabNavigationOptions['tabBarLabel'], Function>>[0]) {
   // @todo get names from myApps innstead of write testId !
   return (
     <CaptionText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
@@ -50,12 +50,12 @@ function TabIcon({
   focused,
   iconActive,
   iconInactive,
-}: AnyEntTabModule['tab'] & Parameters<Extract<BottomTabNavigationOptions['tabBarIcon'], Function>>[0]) {
+}: AnyTabModule['tab'] & Parameters<Extract<BottomTabNavigationOptions['tabBarIcon'], Function>>[0]) {
   // @todo get colors from myApps !
   return <Svg width={tabBarIconSize} height={tabBarIconSize} name={focused ? iconActive : iconInactive} fill={color} />;
 }
 
-const createTabRoute = (screens: AllModulesStaticScreens, tabConfig: AnyEntTabModule['tab']) =>
+const createTabRoute = (screens: AllModulesStaticScreens, tabConfig: AnyTabModule['tab']) =>
   createBottomTabScreen({
     options: {
       tabBarActiveTintColor: theme.palette.primary.regular!.toString(),
@@ -75,7 +75,7 @@ const createTabRoute = (screens: AllModulesStaticScreens, tabConfig: AnyEntTabMo
  * Tab screens of all modules that have a tab, indexed by `getTabScreenName(module.name)`.
  */
 type AllModulesTabRoutes = {
-  [Module in AnyEntTabModule as TabScreenName<Module['name']>]: ReturnType<typeof createTabRoute>;
+  [Module in AnyTabModule as TabScreenName<Module['name']>]: ReturnType<typeof createTabRoute>;
 };
 
 /**
