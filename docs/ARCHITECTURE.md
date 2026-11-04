@@ -1,9 +1,6 @@
 # ARCHITECTURE.md
 
-Architecture du code de l'app, à destination des agents IA. Complète `CLAUDE.md`.
-Document **intermédiaire** : il sera enrichi (voir « À compléter » en fin de fichier).
-
-> Deux générations de code cohabitent (modules et navigation). **Avant de modifier un module, identifie sa génération** (§2) et suis ses conventions. Ne mélange pas les deux dans un même module.
+> Important : deux générations de code cohabitent (modules et navigation). **Avant de modifier un module, identifie sa génération** (§2) et suis ses conventions. Ne mélange pas les deux dans un même module. L'objectif à court terme est de migrer l'ancienne génration vers la nouvelle.
 
 ## 1. Arborescence
 
@@ -229,14 +226,14 @@ Les reducers s'enregistrent dans une map globale : `Reducers.register(moduleConf
 
 Ces fichiers existent mais sont **encore vides** à date. Leur sujet est déduit de leur nom. Si tu as besoin d'une info qui devrait s'y trouver, demande plutôt que d'inventer.
 
-| Fichier | Sujet attendu |
-| --- | --- |
-| [BUILD.md](BUILD.md) | Build et release (Fastlane, overrides, natif) |
-| [CODEREVIEW.md](CODEREVIEW.md) | Conventions et checklist de revue de code |
-| [FETCH.md](FETCH.md) | Appels réseau (transport, `service/`) |
-| [NOTIFICATIONS.md](NOTIFICATIONS.md) | Notifications / push (voir §4 et §6) |
-| [STORAGE.md](STORAGE.md) | Stockage local (`storage`, migrations, `storages` des modules) |
-| [TESTS.md](TESTS.md) | Stratégie et exécution des tests |
+| Fichier                              | Sujet attendu                                                  |
+| ------------------------------------ | -------------------------------------------------------------- |
+| [BUILD.md](BUILD.md)                 | Build et release (Fastlane, overrides, natif)                  |
+| [CODEREVIEW.md](CODEREVIEW.md)       | Conventions et checklist de revue de code                      |
+| [FETCH.md](FETCH.md)                 | Appels réseau (transport, `service/`)                          |
+| [NOTIFICATIONS.md](NOTIFICATIONS.md) | Notifications / push (voir §4 et §6)                           |
+| [STORAGE.md](STORAGE.md)             | Stockage local (`storage`, migrations, `storages` des modules) |
+| [TESTS.md](TESTS.md)                 | Stratégie et exécution des tests                               |
 
 Voir aussi `AGENTS.md` (règles de collaboration, conventions, vérification) à la racine du repo.
 
@@ -247,4 +244,4 @@ Voir aussi `AGENTS.md` (règles de collaboration, conventions, vérification) à
 - Liste des modules déjà migrés sur place dans `framework/modules/`.
 - Rôle exact de `src/infra`, `src/ui`, `src/util`, `src/modules` hors `auth`/`media`.
 - Services / transport, rights, couche réseau (voir [FETCH.md](FETCH.md), §1 de `AGENTS.md`).
-- Statut de migration module par module (ancien → nouveau).
+- ~~Statut de migration module par module~~ : voir [migrations/STATUS.md](migrations/STATUS.md) (et le protocole de suivi dans [migrations/README.md](migrations/README.md)).
