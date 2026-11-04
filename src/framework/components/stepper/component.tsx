@@ -90,10 +90,11 @@ export function Stepper<ItemT>({ keyExtractor, renderItem, sections, ...listProp
   );
 
   const rowKeyExtractor = React.useCallback(
-    (row: StepperRow<ItemT>) =>
-      row.type === 'header'
-        ? row.section.key
-        : `${row.section.key}-${keyExtractor ? keyExtractor(row.item, row.index) : row.index}`,
+    (row: StepperRow<ItemT>) => {
+      if (row.type === 'header') return row.section.key;
+      const itemKey = keyExtractor ? keyExtractor(row.item, row.index) : row.index;
+      return `${row.section.key}-${itemKey}`;
+    },
     [keyExtractor],
   );
 
