@@ -3650,7 +3650,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nodable/entities@npm:^3.0.1":
+"@nodable/entities@npm:^3.1.0":
   version: 3.1.0
   resolution: "@nodable/entities@npm:3.1.0"
   checksum: 10/b07d97b1dac8e0bc8a124ea52cdb6d6a50a8a750592acf540e47c4740a8b96b5add8d9dcce4dfbe74e08b2ab95303c1a2078cf4ba01a085a6de88a879f45576e
@@ -6067,8 +6067,8 @@ __metadata:
     eslint-plugin-sort-destructure-keys: "npm:3.0.0"
     eslint-plugin-sort-keys-fix: "npm:1.1.2"
     events: "npm:3.3.0"
-    fast-xml-parser: "npm:5.11.2"
-    filesize: "npm:11.0.29"
+    fast-xml-parser: "npm:5.12.0"
+    filesize: "npm:11.0.30"
     flat: "npm:6.0.1"
     global: "npm:4.4.0"
     globals: "npm:17.14.0"
@@ -6097,7 +6097,7 @@ __metadata:
     query-string: "npm:9.5.1"
     querystring: "npm:0.2.1"
     react: "npm:19.3.0"
-    react-i18next: "npm:17.1.11"
+    react-i18next: "npm:17.1.12"
     react-is: "npm:19.3.1"
     react-native: "npm:0.88.1"
     react-native-app-link: "npm:1.0.1"
@@ -6127,7 +6127,6 @@ __metadata:
     react-native-network-logger: "npm:3.0.0"
     react-native-nitro-modules: "npm:0.37.1"
     react-native-orientation-locker: "npm:1.7.0"
-    react-native-pager-view: "npm:9.0.11"
     react-native-pdf: "npm:7.0.5"
     react-native-permissions: "npm:5.6.3"
     react-native-phone-number-input: "npm:2.1.0"
@@ -6136,7 +6135,7 @@ __metadata:
     react-native-reanimated: "npm:4.7.1"
     react-native-reanimated-carousel: "npm:5.2.1"
     react-native-restart: "npm:0.0.29"
-    react-native-safe-area-context: "npm:5.11.0"
+    react-native-safe-area-context: "npm:5.11.1"
     react-native-screens: "npm:4.30.1"
     react-native-share: "npm:12.3.1"
     react-native-snap-carousel: "npm:3.9.1"
@@ -9014,7 +9013,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-builder@npm:^1.2.0":
+"fast-xml-builder@npm:^1.2.0, fast-xml-builder@npm:^1.3.1":
   version: 1.3.1
   resolution: "fast-xml-builder@npm:1.3.1"
   dependencies:
@@ -9024,19 +9023,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:5.11.2":
-  version: 5.11.2
-  resolution: "fast-xml-parser@npm:5.11.2"
+"fast-xml-parser@npm:5.12.0":
+  version: 5.12.0
+  resolution: "fast-xml-parser@npm:5.12.0"
   dependencies:
-    "@nodable/entities": "npm:^3.0.1"
-    fast-xml-builder: "npm:^1.2.0"
-    is-unsafe: "npm:^2.0.0"
+    "@nodable/entities": "npm:^3.1.0"
+    fast-xml-builder: "npm:^1.3.1"
+    is-unsafe: "npm:^2.0.3"
     path-expression-matcher: "npm:^1.6.2"
-    strnum: "npm:^2.4.2"
+    strnum: "npm:^2.5.1"
     xml-naming: "npm:^0.3.0"
   bin:
     fxparser: src/cli/cli.js
-  checksum: 10/aa88bd2af831876b458a51c302a84f83a92bbd747606a1f0a85f7085461e2f3c52cb7438f4ef2dc136fbcb0cb33d450d007178a24b23c148d8a84b5ccfb70c58
+  checksum: 10/86b16fd9f4458350e95b5fcfe0bfe2b76a6c508dcc5fdeda128ecf8ed41f419a7e33acaf2718f2fd7b694392d7e204d242a0fd871368efbfb24f96b457e556d5
   languageName: node
   linkType: hard
 
@@ -9128,10 +9127,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"filesize@npm:11.0.29":
-  version: 11.0.29
-  resolution: "filesize@npm:11.0.29"
-  checksum: 10/5d3aa407a22dc04dfff60e9347c08c2b0bea118d48d9d2bcc4626d42b1bce537415f425df2735dfd961c8a5343ed311a3c663107842991fdbb10fd0290c4e8a0
+"filesize@npm:11.0.30":
+  version: 11.0.30
+  resolution: "filesize@npm:11.0.30"
+  checksum: 10/7240e74f0c799a953118e1bf78f4191685a0953cb5c9e4004229ea55b04e359f59c03bd9bfb68ff9666281078ffb8e0ef8ebee07936109ad8075ec6a43c25213
   languageName: node
   linkType: hard
 
@@ -10451,6 +10450,13 @@ __metadata:
   version: 2.0.2
   resolution: "is-unsafe@npm:2.0.2"
   checksum: 10/ebd5b9abfa1e66b221649c9e7f6ed5f1de51dc9913a5c35b192be81b2aeeccb99ef97ae11535d1aa32817e43f73538fb9271c709148f634173b78cebe2eebd2e
+  languageName: node
+  linkType: hard
+
+"is-unsafe@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "is-unsafe@npm:2.0.3"
+  checksum: 10/c3287873db0107ff00933b6cea08bb732479af2fefe3a9fe3f49086e094ba7dc7ce09d3e5ce90417a4d604cf8aaedc74c554257a75e1cacbb93e99460bb732ef
   languageName: node
   linkType: hard
 
@@ -13236,9 +13242,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-i18next@npm:17.1.11":
-  version: 17.1.11
-  resolution: "react-i18next@npm:17.1.11"
+"react-i18next@npm:17.1.12":
+  version: 17.1.12
+  resolution: "react-i18next@npm:17.1.12"
   dependencies:
     "@babel/runtime": "npm:^7.29.7"
     html-parse-stringify: "npm:^4.0.1"
@@ -13254,7 +13260,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10/80eca1a1be6ed84b18ec865925f912cbf737d9d4ccebd0866d9bb14ede8d65590f86c9d47566baec0d30c102d2980dbd207f108f1b5b8bbd8aeffaa773949ff3
+  checksum: 10/c218a01fcce10218909fac6b8d2c893941bbb633faeb7c821ff7991c61d9364d625ea3f63264297a5e0100417616d5b8f82ff5662355c26f0e9e9f57f4707002
   languageName: node
   linkType: hard
 
@@ -13644,16 +13650,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-pager-view@npm:9.0.11":
-  version: 9.0.11
-  resolution: "react-native-pager-view@npm:9.0.11"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10/c0ecc34eb6da43ab4253cec116ef72f1eb14d87e03b4647146db9a8b8238cc97fd5b6e17d933ab29dbddcb389612be1e013db1a79cca2f3d2c38649cf7b3a51f
-  languageName: node
-  linkType: hard
-
 "react-native-pdf@npm:7.0.5":
   version: 7.0.5
   resolution: "react-native-pdf@npm:7.0.5"
@@ -13755,13 +13751,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-safe-area-context@npm:5.11.0":
-  version: 5.11.0
-  resolution: "react-native-safe-area-context@npm:5.11.0"
+"react-native-safe-area-context@npm:5.11.1":
+  version: 5.11.1
+  resolution: "react-native-safe-area-context@npm:5.11.1"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/d6484585d525f4b4534c7a256001c9b569178dd5db04c6e533022621518dc55575e92bfb1c31e6def1a4ccf5307be108cfeca7f0dc339208d6e561ad4346ad98
+  checksum: 10/0bfe4313dd5369b565c8378c66488444d1d35cdb4ff52c050622faed7bcd48f154cd1ddfbda7558cb6265f615ef453f716ab4e38e7a9d379081f59cecd365e39
   languageName: node
   linkType: hard
 
@@ -15360,6 +15356,15 @@ __metadata:
   dependencies:
     anynum: "npm:^1.0.1"
   checksum: 10/c624b2f1a4ba0962cfa66e645b583782e868d0f0ab2e038c3c554e81c2040c3e48463d1e078ff1d6ab4932a0b352f34bc51fdd4f8bbd9bf8da66bf9332c85cf4
+  languageName: node
+  linkType: hard
+
+"strnum@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "strnum@npm:2.5.1"
+  dependencies:
+    anynum: "npm:^1.0.1"
+  checksum: 10/97918f9e6a30a9a79b4de616e09778e846f8cbce1230ed67c1b68db06e3baaf8c89e4c255ef6eafb2404b26f2bd59627e94647c2389388e5897e5707dbe98178
   languageName: node
   linkType: hard
 
