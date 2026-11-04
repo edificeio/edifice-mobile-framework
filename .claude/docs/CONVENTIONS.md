@@ -12,8 +12,7 @@ Source unique des conventions de l'équipe, pour les devs et les agents IA. Elle
 main                      production, jamais de commit direct
 dev/m.n.r                 version en chantier (ex. dev/1.17.10)
 └── dev/<squad>           intégration de la squad (ex. dev/comm, dev/peda)
-    └── <type>/<squad>/…  travail : feat/comm/IMPULS-6276-sent-notifications, fix/comm/IMPULS-6434
-        └── feat/…       brouillons locaux
+    └── <type>/<squad>/…  travail : feat/comm/IMPULS-XXXX-sent-notifications, fix/comm/IMPULS-XXXX
 ```
 
 `<type>` : `feat`, `fix`, `chore`, `refactor`, `update` (upgrade de stack). Tout ticket de plus de 3 story points a sa branche de travail ; les autres tiennent en un seul commit.
@@ -22,21 +21,19 @@ dev/m.n.r                 version en chantier (ex. dev/1.17.10)
 
 - **Descendre = rebase.** Un enfant se rebase sur son parent, jamais de merge dans ce sens (les commits du parent réapparaîtraient en double à la remontée).
 - **Remonter = merge + squash, une seule fois.** La branche de travail entre dans `dev/<squad>` finie et testée, conflits résolus au rebase. `dev/<squad>` entre dans `dev/m.n.r` à la préparation d'une RC.
-- **Cascade** : mettre à jour `dev/<squad>`, puis chaque branche de travail, puis les brouillons. Sauter un étage laisse les branches du bas sur l'ancien parent.
+- **Cascade** : mettre à jour `dev/<squad>`, puis chaque branche de travail. Sauter un étage laisse les branches du bas sur l'ancien parent.
 - **Reports entre versions** (`dev/1.5.0` → `dev/1.5.1` → `dev/1.5.2`) : souvent, peu de commits, en cascade, à l'initiative des devs de la branche cible.
 - **Fichiers de build** (`cli/last-build.json`, `cli/prepare-build.json`, `packageManager`) : la branche courante garde les siens. Les dépendances se tranchent champ par champ.
-- **Push** : le dev pousse au moins chaque soir (branche temporaire si besoin). Un agent IA ne pousse jamais, il donne la commande(acceptable).
+- **Push** : le dev pousse au moins chaque soir (branche temporaire si besoin).
 
-## 2. Commits
+## 2. Commits: conventional commit
 
 Format : `type(scope): TICKET, description en minuscules`, sans `#`.
-Ex. `feat(cantine): IMPULS-6346, scroll the menu under a collapsing structure picker`.
+Ex. `feat(cantine): IMPULS-XXXX, scroll the menu under a collapsing structure picker`.
 
 - Types : `feat`, `fix`, `chore`, `refactor`, `perf`, `update` (stack), `release`. Le ticket est obligatoire sauf pour les commits techniques (`chore(stack): …`) et générés (`release: …`).
 - Le message dit ce que fait le commit, pas d'où vient la demande.
-- Un commit = une chose. Deux commits ne portent pas la même heure.
-- Non poussé : `fixup` / `amend`. Poussé avec PR ouverte : nouveau commit, jamais de réécriture.
-- Un agent IA fait valider ses messages avant de committer.
+- Un commit = une chose spécifique.
 
 Commitlint et husky sont désactivés (`.husky/*-todo`) : rien ne vérifie le message.
 
@@ -82,7 +79,7 @@ Commitlint et husky sont désactivés (`.husky/*-todo`) : rien ne vérifie le me
 
 ## 7. Commentaires
 
-En anglais,consis. Ils expliquent le **pourquoi** (maquette, contournement, décision écartée), jamais une paraphrase. En remplaçant du code, reporter ses commentaires de règles métier. Supprimer un commentaire devenu faux.
+En anglais, concis. Ils expliquent le **pourquoi** (maquette, contournement, décision écartée), jamais une paraphrase. Supprimer un commentaire devenu faux.
 
 ## 8. i18n
 
@@ -96,7 +93,7 @@ En anglais,consis. Ils expliquent le **pourquoi** (maquette, contournement, déc
 - Tester iOS **et** Android (simulateur à défaut d'appareil), petit et grand écran pour l'UI.
 - Formulaires sur appareil physique : champ et saisie visibles clavier ouvert, « Suivant » passe au champ suivant.
 - Perf : `why-did-you-render` (ligne à décommenter dans `wdyr.js`) et `console.time()`, jamais commités.
-- Revue : avant de créer un composant ou une logique, vérifier l'existant (composants partagés, `timelineWidgets`, `CustomRegister`, `getNotifTypeLookupMap`) ; sinon justifier dans la PR.
+- Revue : avant de créer un composant ou une logique, vérifier l'existant (composants partagés, utilitaires du framework) ; sinon justifier dans la PR.
 
 ## Suivis
 
