@@ -7,6 +7,7 @@ const ICON_CONTAINER_SIZE = UI_SIZES.elements.icon.mediumlarge;
 
 export default StyleSheet.create({
   header: {
+    flex: 1,
     justifyContent: 'center',
     minHeight: ICON_CONTAINER_SIZE,
   },
@@ -17,15 +18,16 @@ export default StyleSheet.create({
     justifyContent: 'center',
     width: ICON_CONTAINER_SIZE,
   },
-
-  step: {
+  item: {
+    flex: 1,
+    paddingTop: UI_SIZES.spacing.minor,
+  },
+  row: {
     flexDirection: 'row',
     gap: UI_SIZES.spacing.small,
   },
-
-  stepContainer: {
-    flex: 1,
-    gap: UI_SIZES.spacing.minor,
+  // space between two steps, which the line goes through.
+  stepEnd: {
     paddingBottom: UI_SIZES.spacing.medium,
   },
   stepLine: {
@@ -35,5 +37,6 @@ export default StyleSheet.create({
   title: TextSizeStyle.Big,
   track: {
     alignItems: 'center',
+    width: ICON_CONTAINER_SIZE,
   },
 });

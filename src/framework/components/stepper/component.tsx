@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { ColorValue, View } from 'react-native';
 
+import { FlashList, FlashListProps } from '@shopify/flash-list';
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg, SvgIconName } from '~/framework/components/picture';
@@ -8,67 +10,104 @@ import { BodyBoldText } from '~/framework/components/text';
 
 import styles from './styles';
 
-export type StepperStepProps = React.PropsWithChildren<{
+export interface StepperSection<ItemT> {
+  key: string;
   title: string;
   color: ColorValue;
   icon?: SvgIconName;
-}>;
-
-export type StepperProps = {
-  children: React.ReactNode;
-  hideLastLine?: boolean;
-};
-
-interface StepperContextValue {
-  hideLine: boolean;
+  data: readonly ItemT[];
 }
 
-const StepperContext = React.createContext<StepperContextValue>({ hideLine: false });
-const HIDDEN_LINE: StepperContextValue = { hideLine: true };
+export interface StepperRenderItemInfo<ItemT> {
+  item: ItemT;
+  index: number;
+  section: StepperSection<ItemT>;
+}
 
-function Step({ children, color, icon, title }: Readonly<StepperStepProps>) {
-  const { hideLine } = React.useContext(StepperContext);
+type StepperRow<ItemT> =
+  | { type: 'header'; section: StepperSection<ItemT> }
+  | { type: 'item'; item: ItemT; index: number; isLast: boolean; section: StepperSection<ItemT> };
+
+export type StepperProps<ItemT> = Omit<
+  FlashListProps<StepperRow<ItemT>>,
+  'data' | 'getItemType' | 'keyExtractor' | 'renderItem'
+> & {
+  sections: readonly StepperSection<ItemT>[];
+  renderItem: (info: StepperRenderItemInfo<ItemT>) => React.ReactElement | null;
+  keyExtractor?: (item: ItemT, index: number) => string;
+};
+
+function StepHeader<ItemT>({ section }: Readonly<{ section: StepperSection<ItemT> }>) {
   return (
-    <View style={styles.step}>
+    <View style={styles.row}>
       <View style={styles.track}>
-        <View style={[styles.iconContainer, { backgroundColor: color }]}>
-          {icon ? (
+        <View style={[styles.iconContainer, { backgroundColor: section.color }]}>
+          {section.icon ? (
             <Svg
-              name={icon}
+              name={section.icon}
               fill={theme.palette.grey.darkness}
               width={UI_SIZES.elements.icon.xsmall}
               height={UI_SIZES.elements.icon.xsmall}
             />
           ) : null}
         </View>
-        {hideLine ? null : <View style={[styles.stepLine, { backgroundColor: color }]} />}
+        <View style={[styles.stepLine, { backgroundColor: section.color }]} />
       </View>
-      <View style={styles.stepContainer}>
-        <View style={styles.header}>
-          <BodyBoldText style={styles.title}>{title}</BodyBoldText>
-        </View>
-        {children}
+      <View style={[styles.header, section.data.length ? null : styles.stepEnd]}>
+        <BodyBoldText style={styles.title}>{section.title}</BodyBoldText>
       </View>
     </View>
   );
 }
 
-export function Stepper({ children, hideLastLine = false }: Readonly<StepperProps>) {
-  const steps = React.Children.toArray(children);
+function StepItem({ children, color, isLast }: Readonly<React.PropsWithChildren<{ color: ColorValue; isLast: boolean }>>) {
   return (
-    <View>
-      {steps.map((step, index) => {
-        const isLastStep = index === steps.length - 1;
-        return hideLastLine && isLastStep ? (
-          <StepperContext.Provider key={React.isValidElement(step) ? step.key : index} value={HIDDEN_LINE}>
-            {step}
-          </StepperContext.Provider>
-        ) : (
-          step
-        );
-      })}
+    <View style={styles.row}>
+      <View style={styles.track}>
+        <View style={[styles.stepLine, { backgroundColor: color }]} />
+      </View>
+      <View style={[styles.item, isLast ? styles.stepEnd : null]}>{children}</View>
     </View>
   );
 }
 
-Stepper.Step = Step;
+const getRowType = <ItemT,>(row: StepperRow<ItemT>) => row.type;
+
+export function Stepper<ItemT>({ keyExtractor, renderItem, sections, ...listProps }: Readonly<StepperProps<ItemT>>) {
+  const rows = React.useMemo(
+    () =>
+      sections.flatMap<StepperRow<ItemT>>(section => [
+        { section, type: 'header' },
+        ...section.data.map((item, index) => ({
+          index,
+          isLast: index === section.data.length - 1,
+          item,
+          section,
+          type: 'item' as const,
+        })),
+      ]),
+    [sections],
+  );
+
+  const rowKeyExtractor = React.useCallback(
+    (row: StepperRow<ItemT>) =>
+      row.type === 'header'
+        ? row.section.key
+        : `${row.section.key}-${keyExtractor ? keyExtractor(row.item, row.index) : row.index}`,
+    [keyExtractor],
+  );
+
+  const renderRow = React.useCallback(
+    ({ item: row }: { item: StepperRow<ItemT> }) =>
+      row.type === 'header' ? (
+        <StepHeader section={row.section} />
+      ) : (
+        <StepItem color={row.section.color} isLast={row.isLast}>
+          {renderItem({ index: row.index, item: row.item, section: row.section })}
+        </StepItem>
+      ),
+    [renderItem],
+  );
+
+  return <FlashList {...listProps} data={rows} getItemType={getRowType} keyExtractor={rowKeyExtractor} renderItem={renderRow} />;
+}
