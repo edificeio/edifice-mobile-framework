@@ -4,7 +4,7 @@ import { BottomTabNavigationOptions, BottomTabNavigatorProps, createBottomTabNav
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 
-import { EntModule, EntTabModule } from '~/app/module';
+import { EntModule, TabModule } from '~/app/module';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
@@ -203,7 +203,7 @@ function TabIcon({
   module,
   size,
 }: {
-  module: EntTabModule<string>;
+  module: TabModule<string>;
   focused: boolean;
   color: string;
   size: number;
