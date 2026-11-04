@@ -1,6 +1,6 @@
 # Migration : `myapps`
 
-> Statut : **spec** (v2 validée le 2026-11-04, prête pour la phase 0) — mise à jour le 2026-11-04
+> Statut : **en cours** (spec v2 validée le 2026-11-04 ; phase 0 faite) — mise à jour le 2026-11-04
 
 Les règles communes à toute la migration sont dans [CONVENTIONS.md](CONVENTIONS.md) et ne sont pas répétées ici.
 
@@ -60,7 +60,7 @@ Les règles communes à toute la migration sont dans [CONVENTIONS.md](CONVENTION
 
 ### 2.2 Module nouveau (`src/modules/myapps`), état actuel
 
-- `index.ts` : `CoreModule` avec l'écran `myapps/home` et un `tab` (ordre 40, icônes `ui-applications(-fill)`, `testId: 'tabbar-myapps'`).
+- `index.ts` : `CoreModule` avec l'écran `myapps/home`, `entry: 'myapps/home'` (phase 0) et un `tab` sans `route` (il hérite d'`entry` ; ordre 40, icônes `ui-applications(-fill)`, `testId: 'tabbar-myapps'`).
 - `screens/home.tsx` : vue vide. `store.ts` : store zustand vide (à supprimer : on reste en Redux).
 - `service.ts` : copie de l'ancien service, **ne compile pas**. À réécrire.
 
@@ -320,7 +320,7 @@ La recherche par **scope** de `buildAppLookupMap` (un `entcoreScope` pointe vers
 
 | #   | Phase                                | Contenu                                                                                                                                                                    | Validation                                                    |
 | --- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| 0   | Préalables                           | `isModuleAvailable` dans `src/app/module/` (+ filtrage des onglets) ; clé `entry` sur `ModuleConfig`, `tab.route` qui en hérite ; `useOpenModule` / `canOpenModule` (§5.6) | tsc, tests unitaires de la disponibilité                      |
+| 0   | Préalables (**fait**)                | `isModuleAvailable` dans `src/app/module/` (+ filtrage des onglets) ; clé `entry` sur `ModuleConfig`, `tab.route` qui en hérite ; `useOpenModule` / `canOpenModule` (§5.6) | tsc, tests unitaires de la disponibilité                      |
 | 1   | Modèle + service + reducer + storage | `model/`, `service/`, `reducer/`, `storage.ts` ; `EntModule` ; suppression de `store.ts` et de l'ancien `service.ts`                                                       | tests Jest de `model/business.ts`                             |
 | 2   | Chargement                           | `sessionSetup` (apps), `onSessionStart` (préférences), `refresh` ; retrait du `ToDo` de `start-session.ts`                                                                 | connexion : state rempli ; API en panne : connexion refusée   |
 | 3   | API publique                         | hooks §5.5 ; `tabs.tsx` ; façades §5.10 ; `media/resource-display.ts`                                                                                                      | libellés d'onglets ; thème des apps                           |
@@ -354,4 +354,11 @@ Aucune question bloquante. Ce qui est remis à plus tard est dans [later.md](lat
 
 ## 9. Avancement
 
-- 2026-11-04 : spec v1, puis v2 après revue ; toutes les questions tranchées ou reportées (§7). **Prête pour la phase 0.** Rien d'implémenté.
+- 2026-11-04 : spec v1, puis v2 après revue ; toutes les questions tranchées ou reportées (§7).
+- 2026-11-04 : **phase 0 faite.**
+  - `isModuleAvailable(module, session)` : `src/app/module/rights.ts` (+ `rights.test.ts`, 14 tests) ; `useAvailableModules()` dans `src/app/module/hooks.tsx` (aucun module sans session).
+  - Onglets filtrés par `if` sur chaque écran d'onglet (`src/app/navigation-new/tabs.tsx`) : la navigation reste statique. Sans session (onglets en train de partir), aucun onglet n'est masqué, pour ne jamais laisser le navigateur d'onglets vide.
+  - Clé `entry?` sur `ModuleConfig` (6ᵉ générique `Entry` de `Module` / `CoreModule` / `EntModule`), restreinte aux écrans sans params obligatoires (`EntryRoute`). `tab.route` facultatif, vaut `entry` par défaut ; un onglet sans l'un ni l'autre lève une erreur au chargement du module. `AllModulesWithEntryNames` liste les modules ouvrables.
+  - `useOpenModule()` / `useCanOpenModule()` : `src/app/navigation-new/open-module.ts`, exportés par `~/app/navigation-new`. Ne fonctionnent que depuis un écran des onglets (`JUMP_TO` / `navigate` remontent vers les navigateurs parents), pas depuis une modale.
+  - `myapps` : `entry: 'myapps/home'`, `tab.route` retiré.
+  - Prochaine étape : phase 1.

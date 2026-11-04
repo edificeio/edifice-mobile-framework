@@ -30,6 +30,7 @@ export * from './screen';
 export * from './types';
 export * from './confirm-remove';
 export { getTabScreenName } from './tabs';
+export { useCanOpenModule, useOpenModule } from './open-module';
 
 export interface AppNavigationProps {
   /** Called once the navigation is ready, after the telemetry. Must be stable (the navigation is not meant to re-render). */

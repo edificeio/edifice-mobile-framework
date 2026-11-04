@@ -53,7 +53,9 @@ Les modules du nouveau système sont de deux types (`src/app/module/types.ts`) :
 - `CoreModule` : module technique (auth, media, notifications, …), disponible sans droits ENT.
 - `EntModule` : module lié à une app ENT. Sa seule particularité est d'être **soumis aux droits d'accès** (`matchEntcoreApp`, `matchEntcoreWidget`, `hasRight`).
 
-Un onglet (`tab`) n'est pas propre à `EntModule` : une évolution en cours dans les sources permet aussi à un `CoreModule` d'en déclarer un. Les types actuels (`ConfigForTab`) ne l'exposent encore que sur `EntModuleConfig`.
+**Droits** : `isModuleAvailable(module, session)` (`src/app/module/rights.ts`) dit si la session peut utiliser un module. Chaque condition **déclarée** doit être remplie : `matchEntcoreApp` dans `session.rights.apps`, `matchEntcoreWidget` dans `session.rights.widgets`, `hasRight(session)` vrai. Un module qui n'en déclare aucune (tout `CoreModule`) est toujours disponible. Dans un composant : `useAvailableModules()`. Les onglets des modules indisponibles sont masqués.
+
+Un onglet (`tab`) n'est pas propre à `EntModule` : un `CoreModule` peut aussi en déclarer un (`ModuleConfig.tab`).
 
 ### 2.1 Structure d'un module ancien
 
@@ -108,7 +110,8 @@ export default new CoreModule({
   modals: { 'media/carousel': Screen }, // modales
   redux: { reducer }, // facultatif
   storages: [mediaStorage], // storages avec migrations (obligatoire de les déclarer)
-  // tab : onglet de la tab bar (évolution en cours : possible aussi sur un CoreModule)
+  entry: 'media/…', // facultatif : écran d'accueil du module, sans params obligatoires (`useOpenModule`)
+  // tab : onglet de la tab bar ; sa `route` vaut `entry` par défaut (l'une des deux est obligatoire)
   // EntModule : matchEntcoreApp, matchEntcoreWidget, hasRight, entTrackingName
   // Hooks de session : sessionSetup, onSessionStart, onSessionRelease
 });
@@ -159,7 +162,8 @@ Navigation **statique** (`createStaticNavigation`) : les modules déclarent leur
 navigation-new/
 ├── index.tsx              Conteneur, reset vers l'accueil à chaque nouvelle connexion
 ├── root-stack.tsx         Stack racine : modales + écrans selon l'état d'auth
-├── tabs.tsx               Onglets (`getTabScreenName`)
+├── tabs.tsx               Onglets (`getTabScreenName`), masqués si le module n'est pas disponible
+├── open-module.ts         `useOpenModule` / `useCanOpenModule`
 ├── tab-stack.tsx          Un stack par onglet, avec tous les écrans non modaux
 ├── screen.tsx             `defineScreen` / `defineModal`
 ├── options.tsx, layout.tsx, theme.ts, telemetry.ts, confirm-remove.tsx
@@ -183,6 +187,7 @@ Règles :
 - Déclarer chaque écran avec `defineScreen` ou `defineModal` dans son propre fichier. `options` est **toujours une fonction** (évite des valeurs non initialisées à l'import : i18n, thème).
 - Un écran ne reçoit que `route`. Naviguer par hooks, pas par la prop `navigation`. Les params sont déduits des props du composant.
 - Un onglet ne change pas tout seul quand on navigue vers un autre module : cibler l'onglet avec `getTabScreenName` (action JUMP_TO).
+- Ouvrir un module sur son `entry` : `const openModule = useOpenModule(); openModule('blog')` (onglet du module s'il en a un, sinon `entry` dans l'onglet courant ; `false` si le module n'est pas disponible). `useCanOpenModule()` fait le même test sans naviguer. Seulement depuis un écran des onglets, pas depuis une modale.
 - Le registre des écrans de tous les modules est dans `src/app/module/`.
 
 ### 3.3 Cohabitation
