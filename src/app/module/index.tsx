@@ -9,7 +9,6 @@ import type { Action } from 'redux';
 import type { ScreenComponent } from '~/app/navigation-new';
 
 import {
-  AnyModule,
   CoreModuleConfig,
   EntModuleConfig,
   ModuleConfig,
@@ -33,6 +32,7 @@ export abstract class Module<
 > {
   name: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['name'];
   scope: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['scope'];
+  tab: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['tab'];
   redux: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['redux'];
   storages: NonNullable<ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['storages']>;
   onSessionRelease: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['onSessionRelease'];
@@ -46,6 +46,7 @@ export abstract class Module<
   constructor(opts: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>) {
     this.name = opts.name;
     this.scope = opts.scope;
+    this.tab = opts.tab;
     this.redux = opts.redux;
     this.storages = opts.storages ?? [];
     this.screens = Module.createScreens(opts.screens);
@@ -104,7 +105,6 @@ export class EntModule<
   matchEntcoreApp: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['matchEntcoreApp'];
   matchEntcoreWidget: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['matchEntcoreWidget'];
   hasRight: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['hasRight'];
-  tab: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['tab'];
   entTrackingName: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>['entTrackingName'];
 
   constructor(config: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>) {
@@ -112,11 +112,6 @@ export class EntModule<
     this.matchEntcoreApp = config.matchEntcoreApp;
     this.matchEntcoreWidget = config.matchEntcoreWidget;
     this.hasRight = config.hasRight;
-    this.tab = config.tab;
     this.entTrackingName = config.entTrackingName;
-  }
-
-  private static isTabModule(m: AnyModule) {
-    return m instanceof EntModule && !!m.tab;
   }
 }
