@@ -19,6 +19,9 @@ export default StyleSheet.create({
     maxHeight: CANTINE_WIDGET_MENU_MAX_HEIGHT,
     overflow: 'hidden',
   },
+  menuList: {
+    flex: 0,
+  },
   // the height a long menu is cut at, which the steps overflow, so that the card keeps its size.
   placeholder: {
     height: CANTINE_WIDGET_MENU_MAX_HEIGHT,

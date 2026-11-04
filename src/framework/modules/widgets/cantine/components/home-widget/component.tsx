@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LayoutChangeEvent, View } from 'react-native';
+import { View } from 'react-native';
 
 import { NavigationProp, ParamListBase, useFocusEffect, useNavigation } from '@react-navigation/native';
 
@@ -24,7 +24,8 @@ export interface CantineWidgetProps {
 
 export function CantineWidget({ session }: Readonly<CantineWidgetProps>) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  const [isMenuCut, setIsMenuCut] = React.useState<boolean>(false);
+  // a list renders nothing at 0 height, so it starts at the box height before knowing its content.
+  const [menuHeight, setMenuHeight] = React.useState<number>(CANTINE_WIDGET_MENU_MAX_HEIGHT);
 
   const [structure, setStructure] = React.useState(() => getSelectedStructure(session.user.structures));
 
@@ -37,11 +38,9 @@ export function CantineWidget({ session }: Readonly<CantineWidgetProps>) {
 
   const onOpenCard = React.useCallback(() => navigation.navigate(cantineRouteNames.home), [navigation]);
 
-  // menu keeps its full height inside the clipped box, which tells whether its end is hidden.
-  const onMenuLayout = React.useCallback(
-    (event: LayoutChangeEvent) => setIsMenuCut(event.nativeEvent.layout.height > CANTINE_WIDGET_MENU_MAX_HEIGHT),
-    [],
-  );
+  // a list does not grow with its content, so it gets the height of its steps, cut at the box height.
+  const onMenuContentSizeChange = React.useCallback((_width: number, height: number) => setMenuHeight(height), []);
+  const isMenuCut = menuHeight > CANTINE_WIDGET_MENU_MAX_HEIGHT;
 
   if (!structure) return null;
 
@@ -71,9 +70,12 @@ export function CantineWidget({ session }: Readonly<CantineWidgetProps>) {
     <>
       {renderStructureName()}
       <View style={styles.menu}>
-        <View onLayout={onMenuLayout}>
-          <MenuSteps menuItems={menu} />
-        </View>
+        <MenuSteps
+          menuItems={menu}
+          scrollEnabled={false}
+          onContentSizeChange={onMenuContentSizeChange}
+          style={[styles.menuList, { height: Math.min(menuHeight, CANTINE_WIDGET_MENU_MAX_HEIGHT) }]}
+        />
         {isMenuCut ? <View style={styles.fade} /> : null}
       </View>
     </>
