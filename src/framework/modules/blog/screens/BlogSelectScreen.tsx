@@ -10,8 +10,8 @@ import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { BlogList } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
-import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { useModuleAppDisplay } from '~/modules/myapps/hooks';
 import { I18n } from '~/util/i18n';
 
 export interface BlogSelectScreenNavParams {
@@ -35,7 +35,7 @@ export const computeNavBar = ({
 });
 
 function BlogSelectScreenComponent(props: BlogSelectScreenProps) {
-  const appTheme = useAppTheme('blog');
+  const appTheme = useModuleAppDisplay('blog');
   const dispatch = useDispatch() as any; // Thunk dispatch typing
   const session = useSelector(selectors.session);
   const [blogsData, setBlogsData] = React.useState<BlogList>(props.route.params.blogsData);

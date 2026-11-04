@@ -29,7 +29,20 @@ export { useIsModal } from './layout';
 export * from './screen';
 export * from './types';
 export * from './confirm-remove';
+export {
+  headerAction,
+  HeaderActionButton,
+  headerCustom,
+  headerLeftActions,
+  headerMenu,
+  headerRightActions,
+  headerSpacing,
+  menuAction,
+  menuSubmenu,
+} from './header';
+export type { HeaderActionButtonProps, HeaderIcon, HeaderItem, HeaderMenuEntry, HeaderMenuIcon } from './header';
 export { getTabScreenName } from './tabs';
+export { useCanOpenModule, useOpenModule } from './open-module';
 
 export interface AppNavigationProps {
   /** Called once the navigation is ready, after the telemetry. Must be stable (the navigation is not meant to re-render). */

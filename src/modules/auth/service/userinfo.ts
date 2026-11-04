@@ -1,9 +1,12 @@
 import { Error } from '~/framework/util/error';
-import { tokenFetch } from '~/framework/util/transport';
+import { getModuleTransport } from '~/framework/util/transport';
 import { AuthLoggedAccount, AuthRequirement } from '~/modules/auth/model';
 import { AccountError, AccountErrorCode } from '~/modules/auth/model/error';
 
 import { AccountTypeBackend, IUserInfoBackend, UserPersonDataBackend, UserPrivateData } from './types';
+
+// Typed with the scopes of the module (see `getModuleTransport`)
+const { tokenFetch } = getModuleTransport('auth');
 
 export async function fetchUserInfo({ tokens }: Pick<AuthLoggedAccount, 'tokens'>) {
   try {

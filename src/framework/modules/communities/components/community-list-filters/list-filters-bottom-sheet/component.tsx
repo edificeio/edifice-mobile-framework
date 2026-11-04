@@ -3,7 +3,6 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { CommunityType } from '@edifice.io/community-client-rest-rn';
 
-import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -14,6 +13,7 @@ import bottomSheetModalStyles from '~/framework/components/modals/bottom-sheet/s
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 import { AVAILABLE_FILTERS } from '~/framework/modules/communities/screens/list/screen';
+import { I18n } from '~/util/i18n';
 
 import { ListFiltersBottomSheetProps } from './types';
 

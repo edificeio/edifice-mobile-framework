@@ -36,6 +36,9 @@
  * sessionFetch.text(info, init) => Promise<string>
  * sessionFetch.json<ResponseBody>(info, init) => Promise<ResponseBody>
  *
+ * ### Same functions, typed to only accept the paths under the scopes of a module (opt-in, types only: see `module-transport.ts`).
+ * getModuleTransport(moduleName) => { accountFetch, sessionFetch, tokenFetch, accountApi, sessionApi }
+ *
  * ## Api consumer factories
  *
  * ### Intanciate given clientApi with `accountFetch` features.
@@ -72,6 +75,8 @@
 export { accountApi, sessionApi } from './api';
 export { accountFetch, deviceFetch, platformFetch, sessionFetch, tokenFetch } from './fetch';
 export { abortSignedRequests } from './in-flight';
+export { getModuleTransport } from './module-transport';
+export type { ModuleTransport, ScopedPath } from './module-transport';
 export {
   deviceImageSource,
   deviceURISource,

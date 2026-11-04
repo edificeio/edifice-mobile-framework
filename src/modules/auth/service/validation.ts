@@ -1,4 +1,4 @@
-import { tokenFetch } from '~/framework/util/transport';
+import { getModuleTransport } from '~/framework/util/transport';
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/modules/auth/model';
 
 import {
@@ -9,6 +9,9 @@ import {
   IEntcoreMobileValidationInfos,
   IEntcoreMobileValidationState,
 } from './types';
+
+// Typed with the scopes of the module (see `getModuleTransport`)
+const { tokenFetch } = getModuleTransport('auth');
 
 export const mobileValidation = {
   getValidationState: async ({ tokens }: Pick<AuthActiveAccount | AuthSavedLoggedInAccount, 'tokens'>) =>

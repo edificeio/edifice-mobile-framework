@@ -29,7 +29,8 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
 }) => {
   const handlePress = () => {
     if (resource.source === Source.SIGNET) {
-      return openUrl(resource.link);
+      openUrl(resource.link);
+      return;
     }
     const session = getSession();
     if (!session) {
