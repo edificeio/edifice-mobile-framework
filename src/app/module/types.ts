@@ -160,6 +160,9 @@ export interface ModuleConfig<
   // Scope needed to use APIs in this modules.
   scope?: string[];
 
+  // Makes the module appear in the tab bar. The route must be one of its screens.
+  tab?: ConfigForTab<keyof Screens>;
+
   // Screens and Modals, each one configured like with `createNativeStackScreen`.
   screens?: ModuleScreensConfig<Screens>;
   modals?: ModuleScreensConfig<Modals>;
@@ -188,18 +191,17 @@ export interface EntModuleConfig<
   ReduxAction extends Action = never,
 >
   extends ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction>, ConfigForRights {
-  tab?: ConfigForTab<keyof Screens>;
   entTrackingName?: string;
 }
 
-export type EntTabModule<
+export type TabModule<
   Name extends string,
   Screens extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Screens> = {},
   Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
   ReduxState = undefined,
   ReduxAction extends Action = never,
-> = Omit<EntModule<Name, Screens, Modals, ReduxState, ReduxAction>, 'tab'> & {
-  tab: NonNullable<EntModule<Name, Screens, Modals, ReduxState, ReduxAction>['tab']>;
+> = Omit<Module<Name, Screens, Modals, ReduxState, ReduxAction>, 'tab'> & {
+  tab: NonNullable<Module<Name, Screens, Modals, ReduxState, ReduxAction>['tab']>;
 };
 
 export type ModuleScreens<T> =
@@ -226,10 +228,10 @@ export type AllModulesArray = ArrayElement<AllModulesImports>['default'][];
 export type AnyModule = ArrayElement<AllModulesArray>;
 export type AllModulesNames = AnyModule['name'];
 
-// Ent modules of the collection, typed as modules that have a tab (a module that has no tab is filtered at runtime).
-export type AnyEntTabModule = AnyModule extends infer M
-  ? M extends EntModule<infer Name, infer Screens, infer Modals, infer State, infer ReduxAction>
-    ? EntTabModule<Name, Screens, Modals, State, ReduxAction>
+// Modules of the collection, typed as modules that have a tab (a module that has no tab is filtered at runtime).
+export type AnyTabModule = AnyModule extends infer M
+  ? M extends Module<infer Name, infer Screens, infer Modals, infer State, infer ReduxAction>
+    ? TabModule<Name, Screens, Modals, State, ReduxAction>
     : never
   : never;
 

@@ -5,11 +5,11 @@ export default [
   import('~/app/test/bmodule'),
   import('~/app/test/cmodule'),
   import('~/app/test/dmodule'),
-  import('~/app/test/emodule'),
   import('~/modules/audience'),
   import('~/modules/auth'),
   import('~/modules/editor'),
   import('~/modules/media'),
+  import('~/modules/myapps'),
   import('~/modules/notifications'),
   import('~/modules/user'),
 ] as const;
