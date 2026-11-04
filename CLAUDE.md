@@ -3,6 +3,8 @@
 Instructions pour les agents IA (Claude Code, etc.) travaillant sur ce repository.
 Le code et les commentaires sont en **anglais**.
 
+> **Conventions de l'équipe (git, commits, nommage, React / TypeScript, commentaires, i18n) : lire [`.claude/docs/CONVENTIONS.md`](.claude/docs/CONVENTIONS.md) avant toute opération git ou toute écriture de code** (non chargé automatiquement).
+
 ## 1. Projet
 
 Application mobile **iOS & Android (smartphone uniquement)** : client d'un **Espace Numérique de Travail (ENT)** pour les **enseignants, parents et élèves**. L'app n'a pas de logique serveur propre : elle consomme le backend ENT.
@@ -28,7 +30,7 @@ Application mobile **iOS & Android (smartphone uniquement)** : client d'un **Esp
 - **Pas de nouvelle dépendance** (JS, Pod, Gradle) sans validation explicite du dev.
 - **Natif (`ios/`, `android/`)** : explicite toute modification prévue et **demande l'accord avant**.
 - **Branches** : demande avant d'en créer.
-- **Commits** : [Conventional Commits](https://www.conventionalcommits.org) (`commitlint.config.js`) avec le ticket, ex. `fix(auth): ENABLING-1234, short description` ou `update(stack): ENABLING-1234, …`. Ne commit/push que sur demande.
+- **Commits** : format et types dans `.claude/docs/CONVENTIONS.md` §2. Ne commit/push que sur demande.
 - **Plans en plusieurs étapes** : préférer des **lots de petite taille**, vérifiables séparément.
 - **Pas de code sans dire comment on le vérifie** (test, lint, type-check, critère observable).
 - **Ne pas générer de tests** sauf demande explicite.
