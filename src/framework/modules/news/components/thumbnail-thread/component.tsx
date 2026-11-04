@@ -3,15 +3,15 @@ import { ColorValue, View } from 'react-native';
 
 import { Grayscale } from 'react-native-color-matrix-image-filters';
 
-import styles from './styles';
-import { ThumbnailThreadProps } from './types';
-
 import { getScaleHeight } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
-import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { ThreadItemStatus } from '~/framework/modules/news/components/thread-item';
 import moduleConfig from '~/framework/modules/news/module-config';
 import { Image } from '~/framework/util/media-deprecated';
+import { useModuleAppDisplay } from '~/modules/myapps/hooks';
+
+import styles from './styles';
+import { ThumbnailThreadProps } from './types';
 
 const rawNewsIconName = 'actualites';
 
@@ -23,7 +23,7 @@ const Selected = ({ borderColor }: SelectedProps) => <View style={[styles.thumbn
 
 export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...props }: ThumbnailThreadProps) {
   const { icon, square } = props;
-  const appTheme = useAppTheme(moduleConfig.name);
+  const appTheme = useModuleAppDisplay(moduleConfig.name);
 
   const [error, setError] = React.useState(false);
 

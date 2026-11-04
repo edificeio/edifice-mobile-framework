@@ -1,7 +1,10 @@
-import { tokenFetch } from '~/framework/util/transport';
+import { getModuleTransport } from '~/framework/util/transport';
 import { AuthLoggedAccount, AuthRequirement } from '~/modules/auth/model';
 
 import type { IUserRequirements } from './types';
+
+// Typed with the scopes of the module (see `getModuleTransport`)
+const { tokenFetch } = getModuleTransport('auth');
 
 export const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
 

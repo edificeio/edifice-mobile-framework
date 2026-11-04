@@ -38,8 +38,7 @@ export const communitiesActionTypes = {
 };
 
 export type CommunitiesAction<T> = T extends
-  | typeof communitiesActionTypes.LOAD_ALL_COMMUNITIES_PAGE
-  | typeof communitiesActionTypes.LOAD_PENDING_COMMUNITIES_PAGE
+  typeof communitiesActionTypes.LOAD_ALL_COMMUNITIES_PAGE | typeof communitiesActionTypes.LOAD_PENDING_COMMUNITIES_PAGE
   ? {
       type: typeof communitiesActionTypes.LOAD_ALL_COMMUNITIES_PAGE | typeof communitiesActionTypes.LOAD_PENDING_COMMUNITIES_PAGE;
       payload: { newData: { items: InvitationResponseDto[]; from: number; total: number }; reloadAll?: boolean };

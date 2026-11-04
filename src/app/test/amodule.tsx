@@ -1,12 +1,26 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EntModule } from '~/app/module';
-import { defineModal, defineScreen, sharedTransitions, StackNavigation } from '~/app/navigation-new';
+import {
+  defineModal,
+  defineScreen,
+  headerAction,
+  HeaderActionButton,
+  headerCustom,
+  headerLeftActions,
+  headerMenu,
+  headerRightActions,
+  headerSpacing,
+  menuAction,
+  menuSubmenu,
+  sharedTransitions,
+  StackNavigation,
+} from '~/app/navigation-new';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { SelfAvatar } from '~/framework/components/avatar/self';
 import { PrimaryButton } from '~/framework/components/button';
@@ -102,53 +116,86 @@ const AModuleHomeScreen = withSession<
         <BodyText>{`Stockage compte : ${favoriteNumber ?? 0}`}</BodyText>
         <PrimaryButton testID="favorite" text="Compte +1" onPress={() => setFavoriteNumber((favoriteNumber ?? 0) + 1)} />
       </View>
+
+      <HeadingSText>Test scroll</HeadingSText>
+      <BodyText style={styles.row}>1</BodyText>
+      <BodyText style={styles.row}>2</BodyText>
+      <BodyText style={styles.row}>3</BodyText>
+      <BodyText style={styles.row}>4</BodyText>
+      <BodyText style={styles.row}>5</BodyText>
     </ScrollView>
   );
 });
 
-export const userButtonStyle = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: UI_SIZES.spacing.minor,
-    minHeight: UI_SIZES.navigation.headerButtonSizeAndroid,
-    minWidth: UI_SIZES.navigation.headerButtonSizeAndroid,
-  },
-});
+/** Shows what an item of the header does (test module). */
+const showPressed = (name: string) => Alert.alert('Header', name);
 
 const AModuleHomeScreenDeclaration = defineScreen({
   options: ({ navigation }) => ({
-    headerLeft: () => (
-      <Pressable
-        accessible
-        accessibilityLabel={I18n.get('user-profile-myaccount')}
-        accessibilityRole="button"
-        android_ripple={{ borderless: true, color: UI_SIZES.navigation.headerButtonRippleColor.light, radius: 20 }}
-        hitSlop={16}
-        style={userButtonStyle.button}
-        onPress={() => navigation.navigate('user')}
-        testID="timeline-profile-button">
-        <SelfAvatar size="sm" />
-      </Pressable>
-    ),
     title: 'Accueil',
-    unstable_headerLeftItems: () => [
-      {
-        element: (
-          <Pressable
-            accessible
-            accessibilityLabel={I18n.get('user-profile-myaccount')}
-            accessibilityRole="button"
-            android_ripple={{ borderless: true, color: UI_SIZES.navigation.headerButtonRippleColor.light, radius: 20 }}
-            hitSlop={16}
-            onPress={() => navigation.navigate('user')}
-            testID="timeline-profile-button">
-            <SelfAvatar size="sm" />
-          </Pressable>
-        ),
-        type: 'custom',
-      },
-    ],
+    ...headerLeftActions(
+      headerCustom(
+        <HeaderActionButton
+          accessibilityLabel={I18n.get('user-profile-myaccount')}
+          icon={<SelfAvatar size="sm" />}
+          onPress={() => navigation.navigate('user')}
+          testID="timeline-profile-button"
+        />,
+      ),
+      // A button with text only: native on iOS, padded text on Android
+      // headerAction({ label: 'Modifier', onPress: () => showPressed('Modifier'), testID: 'amodule-header-edit' }),
+    ),
+    // Showcase of the items of the header, from right to left: a button with an icon of the app, a native menu, a space, a native button
+    // (badge on iOS 26)
+    ...headerRightActions(
+      // headerAction({ icon: 'ui-infoCircle', label: 'Infos', onPress: () => showPressed('Infos'), testID: 'amodule-header-info' }),
+      headerMenu({
+        icon: { android: 'ui-options', ios: { name: 'ellipsis.circle', type: 'sfSymbol' } },
+        items: [
+          menuAction({
+            icon: { android: 'ic_share', ios: { name: 'square.and.arrow.up', type: 'sfSymbol' } },
+            label: 'Partager',
+            onPress: () => showPressed('Partager'),
+            testID: 'amodule-header-menu-share',
+          }),
+          menuSubmenu({
+            items: [
+              menuAction({
+                label: 'Copier',
+                onPress: () => showPressed('Copier'),
+                state: 'on',
+                testID: 'amodule-header-menu-copy',
+              }),
+              menuAction({
+                disabled: true,
+                label: 'Désactivé',
+                onPress: () => showPressed('Désactivé'),
+                testID: 'amodule-header-menu-disabled',
+              }),
+              menuAction({
+                destructive: true,
+                label: 'Supprimer',
+                onPress: () => showPressed('Supprimer'),
+                testID: 'amodule-header-menu-delete',
+              }),
+            ],
+            label: 'Plus',
+            testID: 'amodule-header-menu-more',
+          }),
+        ],
+        label: 'Options',
+        testID: 'amodule-header-menu',
+        title: 'Options',
+      }),
+      // headerSpacing(),
+      // headerAction({
+      //  icon: { android: 'ui-plus', ios: { name: 'plus', type: 'sfSymbol' } },
+      //  ios: { badge: { value: 3 } },
+      //  label: 'Ajouter',
+      //  onPress: () => showPressed('Ajouter'),
+      //  testID: 'amodule-header-add',
+      // }),
+    ),
   }),
   screen: AModuleHomeScreen,
 });

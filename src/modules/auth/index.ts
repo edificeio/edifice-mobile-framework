@@ -27,7 +27,6 @@ export default new CoreModule({
     'directory',
     /* ToDo: put the followg scopes anywhere else that not belongs to auth module */
     'infra', // seems to be tracking related
-    'portal', // dont know if used somewhere
     'userinfo', // wtf is this thing ?
   ],
   // `auth/accounts` (screens/accounts.tsx) is not declared here on purpose: it is a screen of the independent navigator of
