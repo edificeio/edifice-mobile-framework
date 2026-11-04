@@ -31,7 +31,7 @@ export default StyleSheet.create({
     width: 13, // value provided by react navigation
   },
   // Color litteral is needed for transparent
-  // eslint-disable-next-line react-native/no-color-literals
+
   header: {
     backgroundColor: 'transparent',
   },

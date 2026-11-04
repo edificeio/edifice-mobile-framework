@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
-import { DocumentsTileProps } from './types';
-
-import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { DocumentsTileProps } from './types';
 
 const DocumentsTile = ({ communityId, navigation }: Readonly<DocumentsTileProps>) => (
   <TouchableOpacity

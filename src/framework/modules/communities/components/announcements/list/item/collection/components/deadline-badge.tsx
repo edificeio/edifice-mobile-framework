@@ -3,12 +3,12 @@ import { View } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
 
-import { I18n } from '~/util/i18n';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionText, HeadingLText } from '~/framework/components/text';
 import { CollectionStatusColors } from '~/framework/modules/communities/components/announcements/list/item/collection/status';
 import styles from '~/framework/modules/communities/components/announcements/list/item/collection/styles';
+import { I18n } from '~/util/i18n';
 
 const CALENDAR_TOP_HEIGHT = getScaleWidth(12);
 const CALENDAR_TOP_WIDTH = getScaleWidth(34);

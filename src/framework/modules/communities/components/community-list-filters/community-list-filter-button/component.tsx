@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import styles from './styles';
-import { CommunityListFilterButtonProps } from './types';
-
-import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { Badge } from '~/framework/components/badge';
 import DefaultButton from '~/framework/components/buttons/default';
 import { BodyText } from '~/framework/components/text';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { CommunityListFilterButtonProps } from './types';
 
 const CommunityListFilterButton = ({ activeFiltersCount, onPress }: Readonly<CommunityListFilterButtonProps>) => {
   return (

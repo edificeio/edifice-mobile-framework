@@ -4,7 +4,6 @@ import { TouchableOpacity, View } from 'react-native';
 import { MembershipRole } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
 
-import { I18n } from '~/util/i18n';
 import { UI_STYLES } from '~/framework/components/constants';
 import { BodyText, SmallText } from '~/framework/components/text';
 import { getCollectionStatus } from '~/framework/modules/communities/components/announcements/list/item/collection/status';
@@ -12,6 +11,7 @@ import styles from '~/framework/modules/communities/components/announcements/lis
 import { CollectionItemProps } from '~/framework/modules/communities/components/announcements/list/item/collection/types';
 import { CollectAnnouncementDetails } from '~/framework/modules/communities/service/announcements';
 import { openUrl } from '~/framework/util/linking';
+import { I18n } from '~/util/i18n';
 
 import DeadlineBadge from './deadline-badge';
 import StatusPill from './status-pill';

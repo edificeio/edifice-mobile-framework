@@ -5,9 +5,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PlaceholderMedia } from 'rn-placeholder';
 
 import theme from '~/app/theme';
+import type { SvgIconName } from '~/framework/components/picture';
 import { Image } from '~/framework/modules/media/components/image';
-import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { sessionImageSource } from '~/framework/util/transport';
+import { useModuleAppDisplay } from '~/modules/myapps/hooks';
 
 import styles, { BANNER_BASE_HEIGHT } from './styles';
 import { CommunityNavbarProps } from './types';
@@ -18,7 +19,7 @@ export const useCommunityBannerHeight = () => {
 };
 
 export function CommunityNavbar({ image, style: _style }: Readonly<CommunityNavbarProps>) {
-  const appTheme = useAppTheme('communities');
+  const appTheme = useModuleAppDisplay('communities');
   const source = React.useMemo(() => image && sessionImageSource(image), [image]);
   const height = useCommunityBannerHeight();
   const style = React.useMemo(
@@ -37,7 +38,7 @@ export function CommunityNavbar({ image, style: _style }: Readonly<CommunityNavb
       <Image
         fallback={{
           accentColors: appTheme.colors,
-          icon: typeof appTheme.icon === 'string' ? { name: appTheme.icon, type: 'Svg' } : appTheme.icon,
+          icon: { name: appTheme.icon as SvgIconName, type: 'Svg' },
         }}
         style={StyleSheet.absoluteFill}
         source={source}

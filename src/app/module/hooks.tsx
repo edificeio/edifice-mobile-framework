@@ -1,6 +1,17 @@
 import React from 'react';
 
-import { AllModulesReducers, AllModulesStaticModals, AllModulesStaticScreens, CoreModule, useModules, useModulesOfType } from '.';
+import { useSession } from '~/modules/auth/store/accounts';
+
+import {
+  AllModulesArray,
+  AllModulesReducers,
+  AllModulesStaticModals,
+  AllModulesStaticScreens,
+  CoreModule,
+  isModuleAvailableForUser,
+  useModules,
+  useModulesOfType,
+} from '.';
 
 /**
  * Gather all static screens from modules.
@@ -77,5 +88,17 @@ export const useModuleReducers = (): AllModulesReducers => {
         modules.flatMap(module => (module.redux ? [[module.name, module.redux.reducer]] : [])),
       ) as AllModulesReducers,
     [modules],
+  );
+};
+
+/**
+ * The modules the user can use, by the rights of the session (see `isModuleAvailableForUser`). None without a session.
+ */
+export const useUserAvailableModules = (): AllModulesArray => {
+  const modules = useModules();
+  const session = useSession();
+  return React.useMemo(
+    () => (session === undefined ? [] : (modules.filter(module => isModuleAvailableForUser(module, session)) as AllModulesArray)),
+    [modules, session],
   );
 };

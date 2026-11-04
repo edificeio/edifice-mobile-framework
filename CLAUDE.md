@@ -11,6 +11,7 @@ Application mobile **iOS & Android (smartphone uniquement)** : client d'un **Esp
 
 - **Stack** : React Native **bare (pas d'Expo)**, TypeScript, Redux, react-navigation, react-native-firebase, Phrase (i18n), Swift / Kotlin (natif), Fastlane, CocoaPods.
 - **Marque blanche** : une même base de code produit plusieurs apps (neo, one, ent77, openent, lyceeconnecte, …) via un système d'**overrides** (voir §3).
+- **Smartphone uniquement** : L'application n'est pas compatible tablette : ne pas designer ou corriger pour tablettes.
 
 ### Lien front ↔ back (résumé)
 
@@ -20,6 +21,7 @@ Application mobile **iOS & Android (smartphone uniquement)** : client d'un **Esp
 
 ### Architecture
 
+- Architecture de l'application mobile: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 - **Système de modules** : `src/framework/modules/<module>/` (ex. `communities`, `news`, `auth`, `mails`, …). Un module typique contient `module-config.ts`, `index.ts`, `navigation/`, `screens/`, `components/`, `service/`, `model/`, `store.ts`/`reducer.ts`, `notif-handler.ts`.
 - Composants partagés : `src/framework/components`. Navigation : `src/framework/navigation`. Utilitaires : `src/framework/util`.
 - Documentation d'onboarding dev / fonctions principales du framework : **à compléter** (seul `src/framework/modules/mails/DOCUMENTATION.md` existe aujourd'hui dans le dépôt). Si tu as besoin d'une info absente, demande plutôt que d'inventer.

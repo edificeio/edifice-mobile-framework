@@ -34,8 +34,6 @@ export const createStartSession = (lifecycle: SessionLifecycle) => {
     // The other accounts that may have left something are released (a release that failed or never ran, because the app was killed,
     // is replayed here)
     for (const account of accountsToReconcile(session.user.id, releasedId)) lifecycle.release(account);
-
-    // ToDo: the MyApps data (loaded at login then enriched with module info) belongs to `myapps`, with `sessionSetup`.
   };
 };
 

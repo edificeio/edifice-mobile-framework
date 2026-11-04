@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 
-import styles from './styles';
-import { DocumentsTileProps } from './types';
-
-import { I18n } from '~/util/i18n';
 import { AvatarStack } from '~/framework/components/avatar/stack';
 import { UI_STYLES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { DocumentsTileProps } from './types';
 
 const MembersTile = ({ communityId, membersId, navigation, totalMembers }: Readonly<DocumentsTileProps>) => (
   <TouchableOpacity
