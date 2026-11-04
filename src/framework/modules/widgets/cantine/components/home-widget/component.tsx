@@ -73,6 +73,7 @@ export function CantineWidget({ session }: Readonly<CantineWidgetProps>) {
         <MenuSteps
           menuItems={menu}
           scrollEnabled={false}
+          showsVerticalScrollIndicator={false}
           onContentSizeChange={onMenuContentSizeChange}
           style={[styles.menuList, { height: Math.min(menuHeight, CANTINE_WIDGET_MENU_MAX_HEIGHT) }]}
         />

@@ -1,6 +1,9 @@
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 
 import type { MenuItem } from '.';
+
+export const ALLERGENS_COLOR = theme.palette.complementary.yellow.regular;
 
 const ALLERGENS = [
   { key: 'allerg_gluten', labelI18n: 'widget-cantine-menu-allergene-gluten' },

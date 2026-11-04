@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { BodyText, SmallItalicText } from '~/framework/components/text';
+import { BodyText, SmallItalicText, TextSizeStyle } from '~/framework/components/text';
 import { MenuItemLabels } from '~/framework/modules/widgets/cantine/components/menu/item-labels';
 import { MenuItem } from '~/framework/modules/widgets/cantine/model';
-import { formatAllergens, hasAllergens } from '~/framework/modules/widgets/cantine/model/allergens';
+import { ALLERGENS_COLOR, formatAllergens, hasAllergens } from '~/framework/modules/widgets/cantine/model/allergens';
 
 export interface MenuItemRowProps {
   item: MenuItem;
@@ -21,25 +20,29 @@ export function MenuItemRow({ item, showAllergens }: Readonly<MenuItemRowProps>)
       <View style={styles.details}>
         <BodyText>{name}</BodyText>
         {showAllergens && hasAllergens(item) ? (
-          <SmallItalicText style={styles.allergens} numberOfLines={1}>
-            {formatAllergens(item)}
-          </SmallItalicText>
+          <SmallItalicText style={styles.allergens}>{formatAllergens(item)}</SmallItalicText>
         ) : null}
       </View>
-      <MenuItemLabels item={item} />
+      <View style={styles.labels}>
+        <MenuItemLabels item={item} />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   allergens: {
-    color: theme.palette.complementary.yellow.regular,
+    color: ALLERGENS_COLOR,
   },
   details: {
     flex: 1,
   },
+  labels: {
+    justifyContent: 'center',
+    minHeight: TextSizeStyle.Medium.lineHeight,
+  },
   row: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'row',
     gap: UI_SIZES.spacing.small,
   },

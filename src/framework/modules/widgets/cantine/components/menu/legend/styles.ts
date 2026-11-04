@@ -2,8 +2,12 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { getScaleFontSize, UI_SIZES } from '~/framework/components/constants';
+import { ALLERGENS_COLOR } from '~/framework/modules/widgets/cantine/model/allergens';
 
 export default StyleSheet.create({
+  allergens: {
+    color: ALLERGENS_COLOR,
+  },
   container: {
     backgroundColor: theme.palette.grey.white,
     borderRadius: UI_SIZES.radius.medium,

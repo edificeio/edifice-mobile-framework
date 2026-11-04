@@ -231,7 +231,7 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
               menuItems={isLoaded ? mealMenu : []}
               showAllergens
               scrollEnabled={!(embedded && noScroll)}
-              contentContainerStyle={[styles.menuContent, { paddingTop: collapsingHeader.headerHeight }]}
+              contentContainerStyle={[styles.menuContent, { paddingTop: collapsingHeader.headerHeight + UI_SIZES.spacing.medium }]}
               onScroll={collapsingHeader.onScroll}
               scrollEventThrottle={16}
               ListEmptyComponent={renderStatus()}

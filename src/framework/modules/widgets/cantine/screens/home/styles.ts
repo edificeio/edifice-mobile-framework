@@ -20,8 +20,10 @@ export default StyleSheet.create({
   },
   header: {
     backgroundColor: theme.ui.background.card,
+    borderBottomColor: theme.ui.border.listItem,
+    borderBottomWidth: UI_SIZES.border.thin,
     left: 0,
-    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.big,
     paddingTop: UI_SIZES.spacing.medium,
     position: 'absolute',
     right: 0,
@@ -33,7 +35,7 @@ export default StyleSheet.create({
   },
   menuContent: {
     paddingBottom: UI_SIZES.spacing.medium,
-    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.big,
   },
   menuWrapper: {
     flex: 1,
