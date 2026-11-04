@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent, View } from 'react-native';
 
 import moment from 'moment';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -11,7 +11,6 @@ import { modalScreenOptions } from '~/app/navigation/util';
 import { UI_SIZES } from '~/framework/components/constants';
 import DayPicker from '~/framework/components/pickers/day';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
-import ScrollView from '~/framework/components/scrollView';
 import SegmentedControl from '~/framework/components/segmented-control';
 import { withSession } from '~/framework/modules/auth/util';
 import { MenuLegend, MenuSteps, MenuStepsPlaceholder } from '~/framework/modules/widgets/cantine/components/menu';
@@ -93,6 +92,36 @@ function useDaySwipe(selectedDate: string, onDayChange: (date: string) => void) 
   return { gesture, style };
 }
 
+function useCollapsingHeader() {
+  const scrollY = useSharedValue(0);
+  const [headerHeight, setHeaderHeight] = React.useState<number>(0);
+  const [collapsibleHeight, setCollapsibleHeight] = React.useState<number>(0);
+
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateY: -Math.min(Math.max(scrollY.value, 0), collapsibleHeight) }],
+  }));
+
+  const onScroll = React.useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      scrollY.value = event.nativeEvent.contentOffset.y;
+    },
+    [scrollY],
+  );
+
+  const onHeaderLayout = React.useCallback((event: LayoutChangeEvent) => setHeaderHeight(event.nativeEvent.layout.height), []);
+
+  const onCollapsibleLayout = React.useCallback(
+    (event: LayoutChangeEvent) => setCollapsibleHeight(event.nativeEvent.layout.height + UI_SIZES.spacing.medium),
+    [],
+  );
+
+  const reset = React.useCallback(() => {
+    scrollY.value = 0;
+  }, [scrollY]);
+
+  return { headerHeight, onCollapsibleLayout, onHeaderLayout, onScroll, reset, style };
+}
+
 export const computeNavBar = modalScreenOptions('modal', () => ({ title: I18n.get('widget-cantine-home-title') }));
 
 const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }>(
@@ -138,18 +167,24 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
       [selectedStructureValue],
     );
 
+    const collapsingHeader = useCollapsingHeader();
+    const resetHeader = collapsingHeader.reset;
+    React.useEffect(resetHeader, [isDinner, resetHeader, selectedDate]);
+
     const renderPickers = () => (
       <View style={styles.contentHeader}>
         {dropdownItemsStructures.length > 1 && (
-          <DropdownPicker
-            open={isOpen}
-            value={selectedStructureValue}
-            items={dropdownItemsStructures}
-            setOpen={setIsOpen}
-            setValue={onStructureChange}
-            placeholder={I18n.get('widget-cantine-home-select-structure')}
-            style={styles.dropdownContainer}
-          />
+          <View onLayout={collapsingHeader.onCollapsibleLayout}>
+            <DropdownPicker
+              open={isOpen}
+              value={selectedStructureValue}
+              items={dropdownItemsStructures}
+              setOpen={setIsOpen}
+              setValue={onStructureChange}
+              placeholder={I18n.get('widget-cantine-home-select-structure')}
+              style={styles.dropdownContainer}
+            />
+          </View>
         )}
         <DayPicker
           onDateChange={date => {
@@ -177,38 +212,38 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
         </View>
       ) : null;
 
-    const renderLoaded = () => (
-      <>
-        <MenuSteps menuItems={isDinner && dinnerMenu ? dinnerMenu : menu} showAllergens />
-        <MenuLegend />
-      </>
-    );
+    const isLoaded = !loading && !error && menu.length > 0;
+    const mealMenu = isDinner && dinnerMenu ? dinnerMenu : menu;
 
-    const renderMenuContent = () => {
+    const renderStatus = () => {
       if (loading) return <MenuStepsPlaceholder />;
       if (error) return <WidgetMessage illustration="illu-error" text={I18n.get('widget-cantine-widget-error-text')} />;
-      if (!menu.length) return <WidgetMessage illustration="illu-error" text={I18n.get('widget-cantine-widget-empty-text')} />;
-      return renderLoaded();
+      return <WidgetMessage illustration="illu-error" text={I18n.get('widget-cantine-widget-empty-text')} />;
     };
 
-    const inner = (
+    // pickers float over the steps list, only the menu moves when swiping the day.
+    return (
       <View style={styles.container}>
-        <View style={styles.contentContainer}>
+        <GestureDetector gesture={daySwipe.gesture}>
+          <Animated.View style={[styles.menuWrapper, daySwipe.style]}>
+            <MenuSteps
+              key={selectedDate}
+              menuItems={isLoaded ? mealMenu : []}
+              showAllergens
+              scrollEnabled={!(embedded && noScroll)}
+              contentContainerStyle={[styles.menuContent, { paddingTop: collapsingHeader.headerHeight }]}
+              onScroll={collapsingHeader.onScroll}
+              scrollEventThrottle={16}
+              ListEmptyComponent={renderStatus()}
+              ListFooterComponent={isLoaded ? <MenuLegend /> : null}
+            />
+          </Animated.View>
+        </GestureDetector>
+        <Animated.View style={[styles.header, collapsingHeader.style]} onLayout={collapsingHeader.onHeaderLayout}>
           {renderPickers()}
           {renderMealSegments()}
-          <GestureDetector gesture={daySwipe.gesture}>
-            <Animated.View style={[styles.menuWrapper, daySwipe.style]}>{renderMenuContent()}</Animated.View>
-          </GestureDetector>
-        </View>
+        </Animated.View>
       </View>
-    );
-
-    if (embedded && noScroll) return inner;
-
-    return (
-      <ScrollView bottomInset={false} contentContainerStyle={styles.scrollContent}>
-        {inner}
-      </ScrollView>
     );
   },
 );
