@@ -4,7 +4,7 @@
 
 ## 1. Périmètre
 
-Comptes, connexion (sign-in), prérequis (CGU, mot de passe, MFA, vérification e-mail / mobile), sessions et leur cycle de vie, transport signé. `src/framework/modules/auth` → `src/modules/auth`, redux → zustand.
+Comptes, connexion (sign-in), requirements (CGU, mot de passe, MFA, vérification e-mail / mobile), sessions et leur cycle de vie, transport signé. `src/framework/modules/auth` → `src/modules/auth`, redux → zustand.
 
 ## 2. Ce qui est en place
 
@@ -18,14 +18,14 @@ Comptes, connexion (sign-in), prérequis (CGU, mot de passe, MFA, vérification 
 
 ## 3. Reste à faire
 
-| Sujet                                  | Bloqué par          | Détail                                                                                                                                                                                                                                                                       |
-| -------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Supprimer `src/framework/modules/auth` | `user`, 274 imports | Façades `@deprecated` (`thunks`, `service`, `redux/*`, `model`, `tracking`, `calls-at-login`, `util`) + anciens écrans `change-email` / `change-mobile` / `mfa` et `templates/change-password` encore utilisés par `user`. `new-navigation.ts` = ancienne navigation racine. |
-| `logoutAction` legacy                  | `user`              | Lève une erreur (`TODO(auth-migration)` dans `thunks.ts`) : les boutons de déconnexion de `user/home`, `change-email`, `change-mobile` doivent passer à `useAuthFlows().logout`.                                                                                             |
-| `flows/legacy-redux.ts`                | `viescolaire`       | Dispatch encore `addAccount` / `replaceAccount` pour les `sessionReducers` de vie scolaire.                                                                                                                                                                                  |
-| Transport → flows                      | —                   | `TODO(auth-migration)` dans `src/framework/util/transport/fetch.ts` : un refresh de jeton impossible devrait pouvoir appeler `logout`.                                                                                                                                       |
-| Tests des flows                        | doc du service      | Reporté (décision utilisateur).                                                                                                                                                                                                                                              |
-| Documentation                          | —                   | Série `docs-temp/auth/` absente de ce checkout (voir [STATUS.md](STATUS.md)).                                                                                                                                                                                                |
+| Sujet                                     | Bloqué par          | Détail                                                                                                                                                                                                                                                                       |
+| ----------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Supprimer `src/framework/modules/auth`    | `user`, 274 imports | Façades `@deprecated` (`thunks`, `service`, `redux/*`, `model`, `tracking`, `calls-at-login`, `util`) + anciens écrans `change-email` / `change-mobile` / `mfa` et `templates/change-password` encore utilisés par `user`. `new-navigation.ts` = ancienne navigation racine. |
+| `logoutAction` legacy                     | `user`              | Lève une erreur (`TODO(auth-migration)` dans `thunks.ts`) : les boutons de déconnexion de `user/home`, `change-email`, `change-mobile` doivent passer à `useAuthFlows().logout`.                                                                                             |
+| `flows/legacy-redux.ts`                   | `viescolaire`       | Dispatch encore `addAccount` / `replaceAccount` pour les `sessionReducers` de vie scolaire.                                                                                                                                                                                  |
+| Transport : refresh impossible → `logout` | —                   | **Tâche indépendante** (voir [STATUS.md](STATUS.md), chantiers transverses). `TODO(auth-migration)` dans `src/framework/util/transport/fetch.ts`.                                                                                                                            |
+| Tests des flows                           | doc du service      | Reporté (décision utilisateur).                                                                                                                                                                                                                                              |
+| Documentation                             | —                   | À écrire dans `docs/`.                                                                                                                                                                                                                                                       |
 
 ## 4. Décisions clés
 

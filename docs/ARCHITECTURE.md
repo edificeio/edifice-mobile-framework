@@ -173,7 +173,7 @@ navigation-new/
 Arbre : `RootStack` (modales de tous les modules + écrans selon l'auth) → `Tabs` → `TabStack` (écrans non modaux de tous les modules). Le `RootStack` dépend de l'état d'auth (`useAuthStage`) :
 
 - `signedOut` : écrans des modules core (dont la connexion) ;
-- `requirement` : prérequis à remplir (CGU, mot de passe, …) ;
+- `requirement` : requirements à remplir (CGU, mot de passe, …) ;
 - `signedIn` : les onglets.
 
 Les modales des modules core sont disponibles à tous les états, celles des modules ent uniquement connecté.

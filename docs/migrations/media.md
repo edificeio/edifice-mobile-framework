@@ -16,16 +16,16 @@ Affichage et ouverture des médias : carrousel, lecteur PDF, téléchargement, i
 
 ## 3. Reste à faire
 
-| Sujet                                   | Bloqué par            | Détail                                                                                                                             |
-| --------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `useResourceDisplay` → nouveau `myapps` | `myapps`              | `ToDo(media-migration)` dans `src/modules/media/hooks/resource-display.ts`.                                                        |
-| Ouverture des ressources d'apps         | `myapps` (intents)    | `ToDo(media-migration)` dans `src/modules/media/hooks/open-media.ts` : passe par `openIntent` (ancien).                            |
-| `framework/util/media-deprecated`       | migration des modules | 35 importeurs, migrés module par module puis suppression.                                                                          |
-| Façades                                 | consommateurs         | `framework/modules/media/{index,types,mime,components/*,hooks}`, shim `framework/components/carousel-multimedia/openCarousel.tsx`. |
+| Sujet                                       | Bloqué par         | Détail                                                                                                                             |
+| ------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `useResourceDisplay` → nouveau `myapps`     | `myapps`           | `ToDo(media-migration)` dans `src/modules/media/hooks/resource-display.ts`.                                                        |
+| Ouverture des ressources d'apps             | intents (reportés) | `ToDo(media-migration)` dans `src/modules/media/hooks/open-media.ts` : passe par `openIntent` (ancien).                            |
+| Supprimer `framework/util/media-deprecated` | —                  | **À supprimer entièrement** : ses 35 importeurs passent aux composants de `src/modules/media`.                                     |
+| Façades                                     | consommateurs      | `framework/modules/media/{index,types,mime,components/*,hooks}`, shim `framework/components/carousel-multimedia/openCarousel.tsx`. |
 
 ## 4. Décisions clés
 
 - Pas de pont WebView (le `queryParamToken` connecte ; l'éditeur riche construit son propre HTML).
-- La signature utilise le compte **connecté** (`getActiveAccount`, prérequis compris).
+- La signature utilise le compte **connecté** (`getActiveAccount`, requirements compris).
 - `openPdf` est un raccourci vers le carrousel (le carrousel est le lecteur PDF).
 - Le barrel `hooks/index.ts` n'exporte **pas** `resource-display` (il charge le redux legacy de `myapps`).

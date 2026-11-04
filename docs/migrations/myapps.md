@@ -1,6 +1,6 @@
 # Migration : `myapps`
 
-> Statut : **spec** (à valider : voir §7) — rédigée le 2026-11-04
+> Statut : **spec** (à valider : voir §8) — rédigée le 2026-11-04
 
 ## 1. Périmètre
 
@@ -12,7 +12,7 @@
 
 **Hors périmètre** (à suivre ailleurs) :
 
-- Le registre des **intents** (`src/app/intents.ts`) : `myapps` en est la destination naturelle mais c'est une phase séparée (§5, phase 6) qu'on peut reporter.
+- Les **intents** (`src/app/intents.ts`) : **reportés** (voir [STATUS.md](STATUS.md), « Reportés »). `myapps` en est la destination naturelle, mais n'y touche pas pour l'instant.
 - `useNotificationBadge` : dépend des définitions de notifications de `timeline` (redux). Reste en façade jusqu'à la migration de `timeline`.
 - Les widgets `MYAPPS_WIDGET` (`widgets/*`) : malgré leur nom, ils sont affichés par `timeline`.
 
@@ -55,7 +55,7 @@
 | `src/modules/media/hooks/resource-display.ts`                                                                         | `selectAggregatedApps` (couleur + icône par nom d'app ENT) | `useApp(name)`                             |
 | `src/app/navigation/main-navigation.tsx` (ancienne nav)                                                               | `getTabModuleDisplayName`, `selectAggregatedApps`          | rien (ancienne nav, à supprimer)           |
 | `src/framework/navigation/modals/navigator.tsx`                                                                       | modale `FavoritesManagement`                               | modale `myapps/favorites`                  |
-| `src/app/navigation-new/tabs.tsx`                                                                                     | — (`@todo get names / colors from myApps`)                 | `useTabLabel` (§4.5)                       |
+| `src/app/navigation-new/tabs.tsx`                                                                                     | — (`@todo get names / colors from myApps`)                 | `useTabLabel` (§5.5)                       |
 
 > ⚠️ `buildAppLookupMap` lit `AllModules()`, qui renvoie `[]` : **`useAppTheme` / `useAppBadge` renvoient toujours le thème par défaut aujourd'hui**, même si les données étaient chargées.
 
@@ -105,9 +105,26 @@
 - [ ] **Tous les `testID`** existants sont conservés : `tabbar-myapps`, `myapps-<app>`, `myapps-filter-*`, `myapps-navbar-notif(-empty)`, `myapps-navbar-context-menu`, `myapps-menu-manage-favorites`, `myapps-menu-access-by-browser`, `myapps-all-showed` / `myapps-all-hidden`, `myapps-toggle-favorite`, `myapps-app-info`, `myapps-empty-screen`, `myapps-empty-{favorites,search,other}`, `myapps-onboarding-modal(-later|-previous|-next|-complete)`.
 - [ ] Clés i18n inchangées (`myapp-*` : 50, `myapps-app-*` : 53).
 
-## 4. Cible
+## 4. Ancienneté de conception à corriger au passage
 
-### 4.1 Arborescence
+Défauts de l'ancien module. La règle reste de **porter tel quel** : on ne corrige au passage que ce qui est local au module ou déjà réglé par la cible ; le reste est noté ici et fera l'objet d'une validation.
+
+| #   | Constat                                                                                                                                                                                     | Correction                                                                                                         | Statut             |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------ |
+| 1   | L'agrégat est calculé une fois et stocké (redux) ; basculer un favori réécrit toutes les apps.                                                                                              | Stocker le brut, dériver l'agrégat (§5.2).                                                                         | réglé par la cible |
+| 2   | Thème / badge / route d'un module trouvés par le registre statique `AllModules()` (vide aujourd'hui).                                                                                       | `useModules()` (§5.2, §5.4).                                                                                       | réglé par la cible |
+| 3   | Service en deux variantes (`sessionFetch` / `tokenFetch`) ; les 3 lectures sont faites l'une après l'autre.                                                                                 | Un service paramétré par le compte (`accountFetch`), lectures en parallèle.                                        | réglé par la cible |
+| 4   | **Bug** : la version d'onboarding ne sert à rien. La condition est « jamais vu **et** version ≠ `v1` », or terminer l'onboarding écrit `seen: true` : passer à `v2` ne le remontrerait pas. | Montrer si la version enregistrée ≠ version courante.                                                              | à valider          |
+| 5   | « Une fois par session » repose sur la clé `userId:accessToken` : le jeton change à chaque refresh, l'onboarding peut se remontrer dans la même session.                                    | Un drapeau dans le store de session (vidé à la fin de session).                                                    | à valider          |
+| 6   | Deux politiques d'écriture des favoris : bottom sheet = état mis à jour après succès de l'API, modale = optimiste avec retour arrière.                                                      | Une seule politique.                                                                                               | à valider          |
+| 7   | Enchaînements par délais fixes : modale ouverte 300 ms après la fermeture de la sheet, fermeture 400 ms après l'enregistrement, focus de la recherche à 250 ms.                             | Attendre la fin de l'animation (événements de la sheet / de la navigation). Lié à « modale as promise » (reporté). | noté               |
+| 8   | `navigation` typée `any` ; boutons de navbar posés par `setOptions` dans un effet, en double (`headerRight` + `unstable_headerRightItems`).                                                 | Navigation typée, options de l'écran par `defineScreen`.                                                           | à faire au portage |
+| 9   | La route d'un module est recalculée à l'appui (`getModuleRouteName`) alors qu'elle est déjà dans l'agrégat (`routeName`).                                                                   | Une seule source (§5.4).                                                                                           | réglé par la cible |
+| 10  | `getDefaultAppTheme` fait un `require` dynamique du thème.                                                                                                                                  | Import normal.                                                                                                     | à faire au portage |
+
+## 5. Cible
+
+### 5.1 Arborescence
 
 ```
 src/modules/myapps/
@@ -124,7 +141,7 @@ src/modules/myapps/
 └── components/             Carte, liste, filtres, menu, onboarding (portés tels quels)
 ```
 
-### 4.2 Données : stocker le brut, dériver le reste
+### 5.2 Données : stocker le brut, dériver le reste
 
 Le store contient **ce que renvoie le serveur**, pas l'agrégat :
 
@@ -141,19 +158,19 @@ créé avec `createSessionStore` (`src/modules/auth/store/session.ts`) : vidé �
 
 L'agrégat (`isMobile`, route, catégorie, thème…) est **dérivé** dans les hooks, par des fonctions pures mémoïsées. Raison : `isMobile` et la route dépendent des **modules chargés**, qui ne s'obtiennent que par `useModules()` (pas de registre statique, décision `auth`) ; et un favori basculé n'a plus à réécrire tout l'agrégat (comme le fait le reducer actuel).
 
-### 4.3 Chargement
+### 5.3 Chargement
 
 - `sessionSetup(session, { signal })` : les trois lectures en parallèle avec `accountFetch(session, …)`, renvoie `{ commit }` qui remplit le store. Comme avant : les données (et donc les libellés d'onglets) sont là dès l'affichage de l'app.
 - **Tolérant aux pannes** : une erreur est attrapée et le `commit` pose `status: 'error'` (l'écran propose « réessayer »). Raison : un échec de `sessionSetup` fait échouer la connexion (`SessionSetupError`) pour tous les modules ; perdre la liste des apps ne doit pas empêcher de se connecter. **À valider** (Q2).
 - `refresh()` (tirer-pour-rafraîchir, réessayer) : mêmes lectures avec le transport de session.
 
-### 4.4 Ouvrir une app
+### 5.4 Ouvrir une app
 
-- Correspondance app ENT ↔ module : les modules `EntModule` chargés (`useModulesOfType(EntModule)`) dont `matchEntcoreApp === app.name` **et disponibles pour la session** (droits, §4.6).
+- Correspondance app ENT ↔ module : les modules `EntModule` chargés (`useModulesOfType(EntModule)`) dont `matchEntcoreApp === app.name` **et disponibles pour la session** (droits, §5.6).
 - Route cible : à définir dans la config de module (Q1). Navigation typée (`StackNavigation`), dans l'onglet courant (tous les écrans sont dans chaque `TabStack`) ; si le module a un onglet, `JUMP_TO` vers `getTabScreenName(name)`.
 - Sinon : `openUrl` (avec `/auth/redirect?url=` pour un connecteur), inchangé.
 
-### 4.5 API publique (`src/modules/myapps/hooks/`)
+### 5.5 API publique (`src/modules/myapps/hooks/`)
 
 | Hook                               | Rôle                                                                                                                 | Remplace                                        |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
@@ -166,50 +183,51 @@ L'agrégat (`isMobile`, route, catégorie, thème…) est **dérivé** dans les 
 
 `tabs.tsx` (`src/app/navigation-new/`) appelle `useTabLabel` à la place du `testId`.
 
-### 4.6 Droits
+### 5.6 Droits
 
-`isMobile` ne doit compter que les modules **disponibles** pour la session. Il n'existe pas encore de fonction pour ça dans le nouveau système (`tabs.tsx` affiche tous les onglets). À créer dans `src/app/module/` (pas dans `myapps`) : `isModuleAvailable(module, session)` = `CoreModule` toujours ; `EntModule` si `matchEntcoreApp` est dans `session.rights.apps` (et `matchEntcoreWidget` dans `widgets`) **et** `hasRight(session)`. Prérequis partagé avec le filtrage des onglets (Q3).
+`isMobile` ne doit compter que les modules **disponibles** pour la session. Il n'existe pas encore de fonction pour ça dans le nouveau système (`tabs.tsx` affiche tous les onglets). À créer dans `src/app/module/` (pas dans `myapps`) : `isModuleAvailable(module, session)` = `CoreModule` toujours ; `EntModule` si `matchEntcoreApp` est dans `session.rights.apps` (et `matchEntcoreWidget` dans `widgets`) **et** `hasRight(session)`. Étape préalable partagée avec le filtrage des onglets (Q3).
 
-### 4.7 Navigation
+### 5.7 Navigation
 
 - Écran `myapps/home` (existant).
 - Modale `myapps/favorites` (`defineModal`, présentation `modal` comme aujourd'hui) remplace `ModalsRouteNames.FavoritesManagement`.
-- Onboarding (`ModalBox`) et bottom sheet restent des **composants** dans l'écran (portés tels quels). Leur passage en routes / « modale as promise » est un chantier ultérieur.
+- Onboarding (`ModalBox`) et bottom sheet restent des **composants** dans l'écran (portés tels quels). Leur passage en routes / « modale as promise » est reporté.
 
-### 4.8 Façades `@deprecated` (comme `auth`)
+### 5.8 Façades `@deprecated` (comme `auth`)
 
 `src/framework/modules/myapps/hooks` (`useAppTheme`, `useAppBadge`) et `reducer` (`selectAggregatedApps`) restent, réécrits pour lire le nouveau store : les 8 consommateurs anciens ne changent pas. `useNotificationBadge` garde son code (redux `timeline`) mais lit les apps du nouveau store. Le reste du module ancien est supprimé en phase 7.
 
-## 5. Plan par phases
+## 6. Plan par phases
 
 | #   | Phase                              | Contenu                                                                                                                                  | Validation                                                                                  |
 | --- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| 0   | Prérequis                          | `isModuleAvailable` dans `src/app/module/` ; clé de config pour la route d'entrée (Q1)                                                   | tsc, test unitaire de la disponibilité                                                      |
+| 0   | Préalables                         | `isModuleAvailable` dans `src/app/module/` ; clé de config pour la route d'entrée (Q1)                                                   | tsc, test unitaire de la disponibilité                                                      |
 | 1   | Modèle + service + store + storage | `model.ts`, `apps.ts` (ex-adapter, sans `AllModules`), `service.ts` réécrit, `store.ts`, `storage.ts` déplacé et déclaré dans `storages` | tests Jest de `apps.ts` (agrégation, connecteur, catégories, filtres, favoris, lien d'aide) |
 | 2   | Chargement                         | `sessionSetup` + `refresh` ; retrait du `ToDo` de `start-session.ts`                                                                     | connexion : store rempli ; échec réseau : connexion OK + `status: 'error'`                  |
-| 3   | API publique                       | hooks §4.5 ; `tabs.tsx` ; façades §4.8 ; `media/resource-display.ts`                                                                     | libellés d'onglets corrects ; thème des apps dans `blog` / `communities`                    |
+| 3   | API publique                       | hooks §5.5 ; `tabs.tsx` ; façades §5.8 ; `media/resource-display.ts`                                                                     | libellés d'onglets corrects ; thème des apps dans `blog` / `communities`                    |
 | 4   | Écran d'accueil                    | port de l'écran, de la liste, de la carte, des filtres, de l'interrupteur                                                                | parcours E2E (testIDs §3.5)                                                                 |
 | 5   | Favoris + onboarding               | bottom sheet, modale `myapps/favorites`, onboarding                                                                                      | règles §3.2-3.4                                                                             |
-| 6   | Ouvrir une app (+ intents ?)       | §4.4 ; éventuellement registre d'intents (Q4)                                                                                            | apps mobiles, web, connecteurs                                                              |
+| 6   | Ouvrir une app                     | §5.4 (sans les intents, reportés)                                                                                                        | apps mobiles, web, connecteurs                                                              |
 | 7   | Nettoyage                          | suppression de `framework/modules/myapps` hors façades, de la modale `FavoritesManagement`                                               | `grep -rn "framework/modules/myapps" src` = façades seulement                               |
 
 Chaque phase : eslint + tsc sans nouvelle erreur sur les fichiers touchés (le repo a une base d'erreurs tsc préexistantes).
 
-## 6. Décisions
+## 7. Décisions
 
-_Aucune décision validée pour l'instant : tout ce qui précède est une proposition._
+- **Intents hors périmètre** (2026-11-04) : sujet reporté pour toute la migration ; `src/app/intents.ts` reste tel quel, `media` continue d'y déléguer.
+
+Le reste de la spec est une proposition, pas encore validée.
 
 Reprises des migrations précédentes (s'appliquent d'office) : stores zustand indépendants ; noms kebab-case ; écrans et composants **portés tels quels**, améliorations plus tard ; façades `@deprecated` plutôt que modifier les consommateurs anciens ; accès aux modules par `useModules()`, pas de registre statique ; images via les composants ponts de `media` (pas de `FastImage` direct).
 
-## 7. Questions ouvertes
+## 8. Questions ouvertes
 
 1. **Route d'entrée d'un module** (pour ouvrir une app, et plus tard les intents) : nouvelle clé de config (ex. `home: 'blog'` sur `ModuleConfig`, défaut = `tab.route`), ou convention « la route qui porte le nom du module » (`'blog'`) ? La convention est sans config mais implicite.
-2. **Chargement tolérant aux pannes** (§4.3) : `sessionSetup` qui n'échoue jamais (recommandé), ou `sessionSetup` bloquant comme l'ancien (un `/myApps/config` en panne empêche toute connexion) ?
-3. **Droits** (§4.6) : faire `isModuleAvailable` dans cette migration (phase 0), ou dans un chantier « droits » séparé dont `myapps` dépend ?
-4. **Intents** : les migrer vers `myapps` (phase 6), ou les laisser dans `src/app/intents.ts` et ne faire que la navigation vers les apps ?
-5. **CoreModule ou EntModule** : l'ancien a `hasRight: () => true` (toujours visible), d'où `CoreModule`. Mais `matchEntcoreApp: 'Portal'` sert au nom d'onglet (alias `portal`) et au tracking (`Portal`). Garder `CoreModule` et gérer le nom par l'alias ?
-6. **Ordre des onglets** : l'ancien ordre est 3, le nouveau 40. Quelle échelle pour les autres modules (timeline = 0) ?
+2. **Chargement tolérant aux pannes** (§5.3) : `sessionSetup` qui n'échoue jamais (recommandé), ou `sessionSetup` bloquant comme l'ancien (un `/myApps/config` en panne empêche toute connexion) ?
+3. **Droits** (§5.6) : faire `isModuleAvailable` dans cette migration (phase 0), ou dans un chantier « droits » séparé dont `myapps` dépend ?
+4. **CoreModule ou EntModule** : l'ancien a `hasRight: () => true` (toujours visible), d'où `CoreModule`. Mais `matchEntcoreApp: 'Portal'` sert au nom d'onglet (alias `portal`) et au tracking (`Portal`). Garder `CoreModule` et gérer le nom par l'alias ?
+5. **Ordre des onglets** : l'ancien ordre est 3, le nouveau 40. Quelle échelle pour les autres modules (timeline = 0) ?
 
-## 8. Avancement
+## 9. Avancement
 
-- 2026-11-04 : spécification rédigée. Rien d'implémenté.
+- 2026-11-04 : spécification rédigée ; intents sortis du périmètre ; section 4 (conception ancienne) ajoutée. Rien d'implémenté.
