@@ -1,6 +1,6 @@
 import { Platform } from '~/framework/util/appConf';
 import { expirableTokenFactory, getOAuth2AccessToken } from '~/framework/util/oauth2';
-import { tokenFetch } from '~/framework/util/transport';
+import { getModuleTransport } from '~/framework/util/transport';
 import { FetchError, FetchErrorCode } from '~/framework/util/transport/error';
 import {
   AuthActiveAccount,
@@ -11,6 +11,9 @@ import {
   credentialsAreLoginPassword,
   credentialsAreSaml,
 } from '~/modules/auth/model';
+
+// Typed with the scopes of the module (see `getModuleTransport`)
+const { tokenFetch } = getModuleTransport('auth');
 
 export async function getToken(platform: Platform, credentials: AuthCredentials | AuthFederationCredentials) {
   if (credentialsAreLoginPassword(credentials)) {

@@ -21,8 +21,7 @@ import { createDecoratedArrayProxy } from './proxy';
 import { CommunitiesDocumentId } from './types';
 
 export type DecoratedDocumentListItem<MediaT extends Media> =
-  | PaginatedDocumentListItem<CommunitiesDocumentId, MediaT>
-  | React.ReactElement;
+  PaginatedDocumentListItem<CommunitiesDocumentId, MediaT> | React.ReactElement;
 
 export interface DecoratedDocumentFlatListProps<MediaT extends Media> extends Omit<
   PaginatedDocumentFlatListProps<CommunitiesDocumentId, MediaT>,

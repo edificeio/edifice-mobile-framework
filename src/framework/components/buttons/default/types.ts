@@ -9,7 +9,6 @@ export interface DefaultButtonProps extends Omit<TouchableOpacityProps, 'onPress
   contentColor?: ColorValue;
   url?: string;
   showConfirmation?: boolean;
-  requireSession?: boolean;
   loading?: boolean;
   round?: boolean;
   action?: () => void;

@@ -108,6 +108,7 @@ export const baseFetch = timeoutFetch(_baseFetch);
 export function deviceFetch(input: Parameters<typeof fetch>[0], init: Parameters<typeof fetch>[1]) {
   const headers: Record<string, string> = getDeviceHeaders();
   headers['Accept-Language'] = I18n.getLanguage();
+  headers['X-Force-Language'] = 'true'; // This is necessary to override the language specified in the account (backend) preferences.
   if (input instanceof Request) {
     input.headers.forEach((value: string, key: string) => {
       headers[key] = value;

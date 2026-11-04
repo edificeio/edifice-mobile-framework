@@ -6,10 +6,6 @@ import LottieView from 'lottie-react-native';
 import { Trans } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import styles from './styles';
-import { CommunityWelcomeBottomSheetModalProps } from './types';
-
-import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -17,6 +13,10 @@ import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/com
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, BodyText, HeadingMText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { useSyncRef } from '~/framework/hooks/ref';
+import { I18n } from '~/util/i18n';
+
+import styles from './styles';
+import { CommunityWelcomeBottomSheetModalProps } from './types';
 
 const introI18n = {
   [MembershipRole.ADMIN]: 'community-join-onboarding-intro-admin',

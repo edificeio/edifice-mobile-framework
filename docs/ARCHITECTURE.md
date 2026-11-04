@@ -53,7 +53,9 @@ Les modules du nouveau système sont de deux types (`src/app/module/types.ts`) :
 - `CoreModule` : module technique (auth, media, notifications, …), disponible sans droits ENT.
 - `EntModule` : module lié à une app ENT. Sa seule particularité est d'être **soumis aux droits d'accès** (`matchEntcoreApp`, `matchEntcoreWidget`, `hasRight`).
 
-Un onglet (`tab`) n'est pas propre à `EntModule` : une évolution en cours dans les sources permet aussi à un `CoreModule` d'en déclarer un. Les types actuels (`ConfigForTab`) ne l'exposent encore que sur `EntModuleConfig`.
+**Droits** : `isModuleAvailableForUser(module, session)` (`src/app/module/rights.ts`) dit si l'utilisateur peut utiliser un module, d'après les droits de la session. Chaque condition **déclarée** doit être remplie : `matchEntcoreApp` dans `session.rights.apps`, `matchEntcoreWidget` dans `session.rights.widgets`, `hasRight(session)` vrai. Un module qui n'en déclare aucune (tout `CoreModule`) est toujours disponible. Dans un composant : `useUserAvailableModules()`. Un module par son nom : `useModule(name)`, ou l'objet `useModulesRecord()` (typé `AllModulesRecord`, construit une fois avec le tableau dans le contexte de `ModuleLoader`) avec `getModuleByName` pour un nom venu des données. Les onglets des modules indisponibles sont masqués.
+
+Un onglet (`tab`) n'est pas propre à `EntModule` : un `CoreModule` peut aussi en déclarer un (`ModuleConfig.tab`).
 
 ### 2.1 Structure d'un module ancien
 
@@ -108,7 +110,9 @@ export default new CoreModule({
   modals: { 'media/carousel': Screen }, // modales
   redux: { reducer }, // facultatif
   storages: [mediaStorage], // storages avec migrations (obligatoire de les déclarer)
-  // tab : onglet de la tab bar (évolution en cours : possible aussi sur un CoreModule)
+  entry: 'media/…', // facultatif : écran d'accueil du module, sans params obligatoires (`useOpenModule`)
+  // tab : onglet de la tab bar ; sa `route` vaut `entry` par défaut (l'une des deux est obligatoire) ;
+  //   libellé : `tab.labelI18n` (clé i18n) s'il est donné, sinon l'`appName` de l'app du module (`myapps`), sinon `name` (`getTabLabel`)
   // EntModule : matchEntcoreApp, matchEntcoreWidget, hasRight, entTrackingName
   // Hooks de session : sessionSetup, onSessionStart, onSessionRelease
 });
@@ -116,7 +120,9 @@ export default new CoreModule({
 
 - Les noms de route doivent être préfixés par le nom du module (`<module>` ou `<module>/<suffixe>`), sinon le type résout en `never`.
 - Un préfixe `$` (ex. `auth/$load-account`) signale un écran qui héberge un conteneur de navigation indépendant et délègue sa télémétrie.
+- `scope` : scopes OAuth2 dont les API du module ont besoin (le jeton demande ceux de tous les modules). Leur type littéral est gardé dans celui du module : `getModuleTransport('<module>')` (`~/framework/util/transport`) donne les fonctions signées du transport (`accountFetch`, `sessionFetch`, `tokenFetch`, `accountApi`, `sessionApi`), typées pour n'accepter que les chemins sous ces scopes (`/timeline/…`). Types seulement, opt-in : voir `module-transport.ts`.
 - Les modules peuvent se brancher sur le cycle de session (`sessionSetup`, `onSessionStart`, `onSessionRelease`). Voir les commentaires de `src/app/module/types.ts`.
+- Structure attendue d'un module : `model/` (domaine agnostique, règles par objectif), `actions.ts` (actions de l'utilisateur), `util.ts`, `service/`, `store/`, `storage.ts`. Voir « Structure d'un module » dans `docs/migrations/CONVENTIONS.md` (exemple : `src/modules/myapps`).
 - Dossiers observés dans `modules/auth` (le plus complet) : `screens/`, `navigation/`, `components/`, `hooks/`, `service/`, `model/`, `store/`, `storage.ts`, `tracking.ts`, tests `*.test.ts` à côté du code.
 
 ## 3. Navigation
@@ -159,9 +165,11 @@ Navigation **statique** (`createStaticNavigation`) : les modules déclarent leur
 navigation-new/
 ├── index.tsx              Conteneur, reset vers l'accueil à chaque nouvelle connexion
 ├── root-stack.tsx         Stack racine : modales + écrans selon l'état d'auth
-├── tabs.tsx               Onglets (`getTabScreenName`)
+├── tabs.tsx               Onglets (`getTabScreenName`), masqués si le module n'est pas disponible
+├── open-module.ts         `useOpenModule` / `useCanOpenModule`
 ├── tab-stack.tsx          Un stack par onglet, avec tous les écrans non modaux
 ├── screen.tsx             `defineScreen` / `defineModal`
+├── header/              Items du header : `headerLeftActions` / `headerRightActions`, helpers `headerAction`, `headerMenu`…
 ├── options.tsx, layout.tsx, theme.ts, telemetry.ts, confirm-remove.tsx
 └── types.ts               Types déduits (`StackNavigation`, `RootNavigation`, `TabNavigation`)
 ```
@@ -183,6 +191,8 @@ Règles :
 - Déclarer chaque écran avec `defineScreen` ou `defineModal` dans son propre fichier. `options` est **toujours une fonction** (évite des valeurs non initialisées à l'import : i18n, thème).
 - Un écran ne reçoit que `route`. Naviguer par hooks, pas par la prop `navigation`. Les params sont déduits des props du composant.
 - Un onglet ne change pas tout seul quand on navigue vers un autre module : cibler l'onglet avec `getTabScreenName` (action JUMP_TO).
+- Ouvrir un module sur son `entry` : `const openModule = useOpenModule(); openModule('blog')` (onglet du module s'il en a un, sinon `entry` dans l'onglet courant ; `false` si le module n'est pas disponible). `useCanOpenModule()` fait le même test sans naviguer. Seulement depuis un écran des onglets, pas depuis une modale.
+- Items du header : `...headerRightActions(item, …)` (ou `headerLeftActions`) dans les `options`, avec des items construits par `headerAction()`, `headerMenu()` (entrées `menuAction()` / `menuSubmenu()`), `headerSpacing()`, `headerCustom()`. Ce sont les items de react-navigation (`unstable_headerRightItems`), réduits aux champs que les deux plateformes respectent (ceux d'iOS seul dans `ios`), avec un `testID` **obligatoire** sur chaque action. Ordre : chaque côté part du bord de l'écran (`headerRightActions` liste ses items **de droite à gauche**). Icône : une icône de l'app (SVG, rendue en React) ou une paire `{ ios: SF Symbol ou image, android: SVG }` (item natif sur iOS). Android : rendu en React (`headerLeft` / `headerRight`), menus par `@react-native-menu/menu`. Une action qui lit des hooks : `headerCustom(props => <Composant {...props} />)` avec un `HeaderActionButton`. Détail : `src/app/navigation-new/header/index.tsx`. Remplace `headerAction` de l'ancien `~/app/navigation/util`.
 - Le registre des écrans de tous les modules est dans `src/app/module/`.
 
 ### 3.3 Cohabitation

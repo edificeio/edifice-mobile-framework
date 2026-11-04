@@ -1,12 +1,9 @@
-import * as React from 'react';
 import { Platform } from 'react-native';
 
-import { NativeStackHeaderBackProps, NativeStackNavigationOptions } from '@react-navigation/native-stack';
+import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
-import { headerAction } from '~/app/navigation/util';
-import type { RootNavigation } from '~/app/navigation-new';
+import { headerAction, headerMenu, headerRightActions, menuAction, type RootNavigation } from '~/app/navigation-new';
 import theme from '~/app/theme';
-import PopupMenu from '~/framework/components/menus/popup';
 import { showPrivacyAlert } from '~/modules/media/privacy-alert';
 import { FileMedia } from '~/modules/media/types';
 import { I18n } from '~/util/i18n';
@@ -30,7 +27,8 @@ export const getCarouselHeaderOptions = (): NativeStackNavigationOptions => ({
 });
 
 /**
- * Actions on the right of the header: download and share (options).
+ * Actions on the right of the header, from right to left: the options (a menu with « share ») at the edge, then download.
+ * Native items on iOS (icons of SF Symbols), the icons of the app on Android.
  */
 export const getNavActions = ({
   isError,
@@ -42,48 +40,28 @@ export const getNavActions = ({
   media: FileMedia;
   navigation: RootNavigation;
   onShare: () => Promise<void>;
-}): Partial<NativeStackNavigationOptions> => {
-  const getDownloadAction = (props: NativeStackHeaderBackProps) =>
-    headerAction(
-      {
-        disabled: isError,
-        icon: 'ui-download',
-        onPress: () => showPrivacyAlert(() => navigation.navigate('media/download', { media })),
-        testID: 'media-navbar-download',
-      },
-      props,
-    );
-  const getOptionsActions = (props: NativeStackHeaderBackProps) => {
-    const action = headerAction(
-      {
-        disabled: isError,
-        icon: 'ui-options',
-        testID: 'media-navbar-options',
-      },
-      props,
-    );
-    action.element = (
-      <PopupMenu
-        testID="media-navbar-share"
-        disabled={isError}
-        actions={[
-          {
-            action: () => showPrivacyAlert(onShare),
-            icon: {
-              android: 'ic_share',
-              ios: 'square.and.arrow.up',
-            },
-            title: I18n.get('carousel-share'),
-          },
-        ]}>
-        {action.element}
-      </PopupMenu>
-    );
-    return action;
-  };
-
-  return {
-    headerRight: props => [getDownloadAction(props).element, getOptionsActions(props).element],
-    unstable_headerRightItems: props => [getDownloadAction(props), getOptionsActions(props)],
-  };
-};
+}) =>
+  headerRightActions(
+    headerMenu({
+      disabled: isError,
+      icon: { android: 'ui-options', ios: { name: 'ellipsis', type: 'sfSymbol' } },
+      items: [
+        menuAction({
+          icon: { android: 'ic_share', ios: { name: 'square.and.arrow.up', type: 'sfSymbol' } },
+          label: I18n.get('carousel-share'),
+          onPress: () => showPrivacyAlert(onShare),
+          testID: 'media-navbar-share',
+        }),
+      ],
+      // ToDo(media): a translation of « options » for screen readers (the menu only shares, for now)
+      label: I18n.get('carousel-share'),
+      testID: 'media-navbar-options',
+    }),
+    headerAction({
+      disabled: isError,
+      icon: { android: 'ui-download', ios: { name: 'square.and.arrow.down', type: 'sfSymbol' } },
+      label: I18n.get('carousel-filepreview-download'),
+      onPress: () => showPrivacyAlert(() => navigation.navigate('media/download', { media })),
+      testID: 'media-navbar-download',
+    }),
+  );

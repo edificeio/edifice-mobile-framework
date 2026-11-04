@@ -46,3 +46,39 @@ index c435fdd..2192d98 100644
  
  #if !TARGET_OS_TV || __TV_OS_VERSION_MAX_ALLOWED >= 170000
    if (@available(tvOS 17.0, *)) {
+diff --git a/node_modules/react-native-screens/RNScreens.podspec b/node_modules/react-native-screens/RNScreens.podspec
+--- a/node_modules/react-native-screens/RNScreens.podspec
++++ b/node_modules/react-native-screens/RNScreens.podspec
+@@ -52,7 +52,9 @@
+   s.requires_arc = true
+ 
+   if !gamma_project_enabled
+-    s.exclude_files = "ios/gamma/**/*.#{source_files_exts}"
++    # PATCH: `ScrollToTopGuard` (ios/gamma/scroll-to-top-guard) is built even without the gamma project: the app wraps the views of React
++    # of the navigation bar in it (iPhone iOS 27 scrolls to top when the navigation bar is tapped, see react-native#56061).
++    s.exclude_files = "ios/gamma/{modals,scroll-view-marker,split,stack}/**/*.#{source_files_exts}"
+   else
+     s.exclude_files = "ios/stubs/**/*.#{source_files_exts}"
+     Pod::UI.puts "[RNScreens] Gamma project enabled. Including source files."
+diff --git a/node_modules/react-native-screens/ios/stubs/RNSGammaStubs.h b/node_modules/react-native-screens/ios/stubs/RNSGammaStubs.h
+--- a/node_modules/react-native-screens/ios/stubs/RNSGammaStubs.h
++++ b/node_modules/react-native-screens/ios/stubs/RNSGammaStubs.h
+@@ -39,7 +39,6 @@
+ @interface RNSStackHeaderItemSpacerComponentView : NSObject
+ @end
+ 
+-@interface RNSScrollToTopGuard : NSObject
+-@end
++// PATCH: `RNSScrollToTopGuard` is built for real (see RNScreens.podspec)
+ 
+ NS_ASSUME_NONNULL_END
+diff --git a/node_modules/react-native-screens/ios/stubs/RNSGammaStubs.mm b/node_modules/react-native-screens/ios/stubs/RNSGammaStubs.mm
+--- a/node_modules/react-native-screens/ios/stubs/RNSGammaStubs.mm
++++ b/node_modules/react-native-screens/ios/stubs/RNSGammaStubs.mm
+@@ -30,5 +30,4 @@
+ @implementation RNSStackHeaderItemSpacerComponentView
+ @end
+ 
+-@implementation RNSScrollToTopGuard
+-@end
++// PATCH: `RNSScrollToTopGuard` is built for real (see RNScreens.podspec)

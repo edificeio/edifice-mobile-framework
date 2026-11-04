@@ -30,8 +30,10 @@ function ConnectorRedirectScreen(props: ConnectorRedirectScreenPrivateProps) {
         const isAppInstalled = await Linking.canOpenURL(appUrl);
         if (isAppInstalled) {
           openUrl(appUrl, {
-            message: I18n.get('linking-redirectapp-message'),
-            title: I18n.get('linking-redirectapp-title'),
+            confirmation: {
+              message: I18n.get('linking-redirectapp-message'),
+              title: I18n.get('linking-redirectapp-title'),
+            },
           });
           return;
         }

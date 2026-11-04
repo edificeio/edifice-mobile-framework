@@ -25,8 +25,6 @@ export enum ModalsRouteNames {
   Pdf = 'pdf',
   RichTextEditor = 'rich-editor',
   SplashAds = 'splashads',
-  FavoritesManagement = 'favorites-management',
-  FavoritesReorder = 'favorites-reorder',
 }
 
 export interface IModalsNavigationParams extends ParamListBase {
@@ -39,6 +37,4 @@ export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.AttachmentsImport]: AttachmentsImportScreenProps.NavParams;
   [ModalsRouteNames.RichTextEditor]: RichEditorFormReduxNavParams;
   [ModalsRouteNames.SplashAds]: SplashadsScreenNavParams;
-  [ModalsRouteNames.FavoritesManagement]: undefined;
-  [ModalsRouteNames.FavoritesReorder]: undefined;
 }

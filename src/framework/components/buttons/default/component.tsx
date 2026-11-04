@@ -10,7 +10,7 @@ import theme from '~/app/theme';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { openUrl } from '~/framework/util/linking';
+import { openUrlAsync } from '~/framework/util/linking';
 
 export const DefaultButton = (props: DefaultButtonProps) => {
   const {
@@ -20,7 +20,6 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     iconLeft,
     iconRight,
     loading,
-    requireSession = true,
     showConfirmation = true,
     style,
     testID,
@@ -38,7 +37,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     try {
       if (!url) throw new Error('DefaultButton: no url to open');
       setLoadingButton(true);
-      await openUrl(url, undefined, undefined, showConfirmation, requireSession);
+      await openUrlAsync(url, { confirmation: showConfirmation ? undefined : false });
     } catch {
       Toast.showError(I18n.get('toast-error-text'));
     } finally {

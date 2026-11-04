@@ -1,16 +1,24 @@
 import * as React from 'react';
 import { FlatList, Pressable, View } from 'react-native';
 
-import { I18n } from '~/util/i18n';
 import { CaptionBoldText, SmallBoldText } from '~/framework/components/text';
-import { getTranslatedAppLabel } from '~/framework/modules/myapps/utils/app-i18n';
 import styles from '~/framework/modules/timeline/components/widget-chip/styles';
 import { IWidgetChipProps, IWidgetChipsContainerProps } from '~/framework/modules/timeline/components/widget-chip/types';
 import { AnyNavigableModule, IEntcoreWidget } from '~/framework/util/moduleTool';
+import { I18n } from '~/util/i18n';
+
+// The label of a widget is the one of its app, in the translations of the app: `myapps-app-<name>`, where the dots of the name
+// become dashes (i18n keys never contain dots, but some names do). Its name in the config when there is no translation.
+const getTranslatedWidgetLabel = (name?: string | null): string | undefined => {
+  if (!name) return undefined;
+  const key = `myapps-app-${name.replaceAll('.', '-')}`;
+  const translated = I18n.get(key);
+  return translated !== key ? translated : undefined;
+};
 
 function WidgetChipItem(props: IWidgetChipProps) {
   const { entcoreWidget, onPress, testID, widget } = props;
-  const label = getTranslatedAppLabel(entcoreWidget?.name) ?? widget.config.name;
+  const label = getTranslatedWidgetLabel(entcoreWidget?.name) ?? widget.config.name;
   return (
     <Pressable onPress={onPress} style={styles.chipButton} testID={testID}>
       <SmallBoldText style={styles.chipsText}>{label}</SmallBoldText>

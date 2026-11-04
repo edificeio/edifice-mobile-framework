@@ -4,10 +4,10 @@ import { StyleSheet } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { WebView, WebViewProps } from 'react-native-webview';
 
+import AppInfo from '~/framework/util/app-info';
 import { getActiveAccount } from '~/modules/auth/store/accounts';
 
 import { WebviewItemProps } from './types';
-import AppInfo from '~/framework/util/app-info';
 
 const WebviewItem = ({ isCurrentItem, setIsWebviewError, src }: WebviewItemProps) => {
   const navBarHeight = useHeaderHeight();

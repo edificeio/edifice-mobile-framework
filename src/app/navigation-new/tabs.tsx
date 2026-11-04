@@ -13,16 +13,19 @@ import {
   createBottomTabScreen,
 } from '@react-navigation/bottom-tabs';
 
-import { AllModulesStaticScreens, AnyTabModule, useModuleScreens, useTabModules } from '~/app/module';
+import { AllModulesStaticScreens, AnyTabModule, isModuleAvailableForUser, useModuleScreens, useTabModules } from '~/app/module';
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
 import Feedback from '~/framework/util/feedback/feedback';
+import { useSession } from '~/modules/auth/store/accounts';
+import { type EntAppDisplay, useModuleAppDisplay } from '~/modules/myapps/hooks';
+import { I18n } from '~/util/i18n';
 
 import { useConfirmChangeTab } from './confirm-remove';
 import { tabsOptions } from './options';
 import { createTabStackNavigation } from './tab-stack';
-import theme from '../theme';
 
 type TabScreenName<Name extends string> = `$tab/${Name}`;
 
@@ -31,14 +34,27 @@ type TabScreenName<Name extends string> = `$tab/${Name}`;
  */
 export const getTabScreenName = <Name extends AnyTabModule['name']>(name: Name): TabScreenName<Name> => `$tab/${name}`;
 
+/**
+ * Label of the tab of a module: an arbitrary rule, kept here. In order:
+ * 1. the translation of `tab.labelI18n`, when the module gives one (and the key has a translation);
+ * 2. else the label of the app of the module (`useModuleAppDisplay`: `appName` translated by the server, loaded by `myapps`, else the
+ *    name of the module, always defined).
+ */
+export const getTabLabel = (module: { tab?: { labelI18n?: string } }, appDisplay: Pick<EntAppDisplay, 'label'>): string => {
+  const key = module.tab?.labelI18n;
+  const translated = key ? I18n.get(key) : undefined;
+  return translated && translated !== key ? translated : appDisplay.label;
+};
+
+/** Label of a tab: the translation of `tab.labelI18n`, else the label of the app of the module, else its name (see `getTabLabel`). */
 function TabLabel({
   color,
-  testId,
-}: AnyTabModule['tab'] & Parameters<Extract<BottomTabNavigationOptions['tabBarLabel'], Function>>[0]) {
-  // @todo get names from myApps innstead of write testId !
+  module,
+}: { module: AnyTabModule } & Parameters<Extract<BottomTabNavigationOptions['tabBarLabel'], Function>>[0]) {
+  const label = getTabLabel(module, useModuleAppDisplay(module.name));
   return (
     <CaptionText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
-      {testId}
+      {label}
     </CaptionText>
   );
 }
@@ -50,13 +66,25 @@ function TabIcon({
   focused,
   iconActive,
   iconInactive,
-}: AnyTabModule['tab'] & Parameters<Extract<BottomTabNavigationOptions['tabBarIcon'], Function>>[0]) {
-  // @todo get colors from myApps !
+}: Readonly<AnyTabModule['tab'] & Parameters<Extract<BottomTabNavigationOptions['tabBarIcon'], Function>>[0]>) {
   return <Svg width={tabBarIconSize} height={tabBarIconSize} name={focused ? iconActive : iconInactive} fill={color} />;
 }
 
-const createTabRoute = (screens: AllModulesStaticScreens, tabConfig: AnyTabModule['tab']) =>
-  createBottomTabScreen({
+/**
+ * Whether the tab of the module is shown: only if the session can use the module (see `isModuleAvailableForUser`).
+ * The tabs are only rendered with a session. Without one (while they are leaving, after a sign-out), they are all kept: hiding them
+ * all would leave the tab navigator without any screen, which throws.
+ */
+const useIsTabAvailable = (module: AnyTabModule) => {
+  const session = useSession();
+  return session === undefined || isModuleAvailableForUser(module, session);
+};
+
+const createTabRoute = (screens: AllModulesStaticScreens, module: AnyTabModule) => {
+  const tabConfig = module.tab;
+  const useIsAvailable = () => useIsTabAvailable(module);
+  return createBottomTabScreen({
+    if: useIsAvailable,
     options: {
       tabBarActiveTintColor: theme.palette.primary.regular!.toString(),
       tabBarButtonTestID: tabConfig.testId,
@@ -66,10 +94,11 @@ const createTabRoute = (screens: AllModulesStaticScreens, tabConfig: AnyTabModul
         width: tabBarIconSize,
       },
       tabBarInactiveTintColor: theme.ui.text.light!.toString(),
-      tabBarLabel: props => <TabLabel {...props} {...tabConfig} />,
+      tabBarLabel: props => <TabLabel {...props} module={module} />,
     },
     screen: createTabStackNavigation(screens, tabConfig.route),
   });
+};
 
 /**
  * Tab screens of all modules that have a tab, indexed by `getTabScreenName(module.name)`.
@@ -85,12 +114,12 @@ type AllModulesTabRoutes = {
 export const useModuleTabRoutes = (): AllModulesTabRoutes => {
   const tabModules = useTabModules();
   const screens = useModuleScreens();
-  // ToDo : filter from session.rights / apps here
+  // All the tabs are declared: each one is shown only if the session can use its module (`if`), so the navigation stays static.
   return React.useMemo(() => {
     return Object.assign(
       {},
       ...tabModules.map(module => ({
-        [getTabScreenName(module.name)]: createTabRoute(screens, module.tab),
+        [getTabScreenName(module.name)]: createTabRoute(screens, module),
       })),
     );
   }, [screens, tabModules]);

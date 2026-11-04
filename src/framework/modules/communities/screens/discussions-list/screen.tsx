@@ -6,7 +6,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { PlaceholderLine } from 'rn-placeholder';
 
-import { I18n } from '~/util/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import { getScaleImageSize } from '~/framework/components/constants';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
@@ -21,6 +20,7 @@ import { Discussion, getDiscussions } from '~/framework/modules/communities/serv
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getCommunityBannerImage, getDiscussionStatus } from '~/framework/modules/communities/utils';
 import { openUrl } from '~/framework/util/linking';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { CommunitiesDiscussionsScreen } from './types';

@@ -1,20 +1,7 @@
-import { SvgProps } from 'react-native-svg';
+import type { AllModulesNames } from '~/app/module';
+import type { EntAppImageProps } from '~/framework/components/picture/ent-app-image/types';
 
-import { PictureProps } from '~/framework/components/picture';
-import { ImageProps } from '~/framework/util/media-deprecated';
-import { IAppBadgeInfo } from '~/framework/util/moduleTool';
-
-export type ImageFallbackProps = Partial<PictureProps> &
-  Pick<ModuleImageProps, 'iconSize'> & {
-    badge?: IAppBadgeInfo;
-    fallbackIcon?: Partial<PictureProps>;
-    imageProps: ImageProps;
-  };
-
-export type ImageLoaderProps = Pick<ImageFallbackProps, 'imageProps'>;
-
-export type ModuleImageProps = ImageProps & {
-  appName: string;
-  fallbackIcon?: Partial<PictureProps>;
-  iconSize?: SvgProps['width'];
+export type ModuleImageProps = Omit<EntAppImageProps, 'entAppName'> & {
+  /** The module whose app gives the colors and the icon when there is no image. */
+  moduleName: AllModulesNames;
 };

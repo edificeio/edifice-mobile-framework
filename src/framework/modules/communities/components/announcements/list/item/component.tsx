@@ -3,13 +3,13 @@ import { View } from 'react-native';
 
 import { AnnouncementType } from '@edifice.io/community-client-rest-rn';
 
-import { I18n } from '~/util/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { UI_STYLES } from '~/framework/components/constants';
 import { CaptionItalicText, SmallBoldText } from '~/framework/components/text';
 import CollectionItem from '~/framework/modules/communities/components/announcements/list/item/collection';
 import PostDetails from '~/framework/modules/communities/components/announcements/post/details';
 import type { AnnouncementDetails } from '~/framework/modules/communities/service/announcements';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { AnnouncementListItemProps } from './types';
