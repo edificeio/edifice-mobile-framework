@@ -19,6 +19,8 @@ Liste vérifiable (données, règles métier, stockage, testIDs E2E, textes i18n
 
 Défauts de conception de l'ancien code (bugs, mécanismes contournés, dette). Pour chacun : constat, correction proposée, statut (`réglé par la cible` · `à faire au portage` · `à valider` · `noté`). Par défaut on porte tel quel : ne corriger au passage que ce qui est local au module.
 
+Y lister aussi : les conversions d'UI imposées par [CONVENTIONS.md](CONVENTIONS.md) (bottom sheet → `formSheet`, `react-native-modal` → `transparentModal`) et les cas où react-navigation ferait mieux que le code actuel.
+
 ## 5. Cible
 
 Architecture retenue : config du module, stores, service, API publique, navigation, stockage, façades `@deprecated`.

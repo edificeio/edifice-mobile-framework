@@ -17,7 +17,7 @@
 | `audience`      | en cours | Seulement ce qui était dans `auth` : chargement des types de réactions à `onSessionStart` (store `src/modules/audience/store.ts`). Le reste est encore dans `framework/modules/audience` (voir modules anciens). | —                      |
 | `editor`        | en cours | Rafraîchit le `oneSessionId` à `onSessionStart`. Pas d'écran.                                                                                                                                                    | —                      |
 | `notifications` | en cours | Enregistre / désenregistre le push (FCM) par session. **Pas d'ouverture de notification** (reportée, voir plus bas).                                                                                             | —                      |
-| `myapps`        | spec     | Onglet déclaré, écran vide, `service.ts` copié mais cassé (types non importés).                                                                                                                                  | [myapps.md](myapps.md) |
+| `myapps`        | spec     | Spec v2 validée, prête pour la phase 0. Code actuel : onglet déclaré, écran vide, `service.ts` cassé.                                                                                                            | [myapps.md](myapps.md) |
 | `user`          | en cours | Seulement l'accueil (comptes + déconnexion). Le reste est dans `framework/modules/user`.                                                                                                                         | —                      |
 
 ## Modules anciens (`src/framework/modules/`)
@@ -39,8 +39,9 @@ Tous `à faire` sauf mention. Ordre indicatif : **myapps → user → timeline**
 
 | Chantier                                           | Statut   | Notes                                                                                                                                                                                                                                                                                                           |
 | -------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Droits : filtrer les modules par session           | à faire  | `useModuleTabRoutes` (`src/app/navigation-new/tabs.tsx`) affiche tous les onglets (`ToDo : filter from session.rights`). Bloque `myapps` (voir sa fiche).                                                                                                                                                       |
-| Libellés / couleurs des onglets                    | à faire  | `tabs.tsx` affiche le `testId` comme libellé (`@todo get names from myApps`). Fourni par `myapps`.                                                                                                                                                                                                              |
+| Droits : filtrer les modules par session           | spec     | `isModuleAvailable(module, session)` dans `src/app/module/`, fait en **phase 0 de `myapps`** (décidé 2026-11-04). Sert aussi à `useModuleTabRoutes` (`src/app/navigation-new/tabs.tsx`, `ToDo : filter from session.rights`).                                                                                   |
+| Libellés / couleurs des onglets                    | spec     | `tabs.tsx` affiche le `testId` comme libellé (`@todo get names from myApps`). Fourni par `useTabLabel` de `myapps` (phase 3).                                                                                                                                                                                   |
+| Conversions d'UI (bottom sheets, modales)          | à faire  | Au fil des modules (règle de [CONVENTIONS.md](CONVENTIONS.md)) : `@gorhom/bottom-sheet` → `formSheet` (12 fichiers l'importent, 22 utilisent les wrappers), `react-native-modal` → `transparentModal` (3 fichiers, dont `ModalBox` utilisé par 15).                                                             |
 | Supprimer `framework/util/media-deprecated`        | à faire  | **À supprimer entièrement.** Ses 35 importeurs passent aux composants de `src/modules/media` (`Image`, `FastImage`…).                                                                                                                                                                                           |
 | Transport : refresh de jeton impossible → `logout` | à faire  | Tâche indépendante. `TODO(auth-migration)` dans `src/framework/util/transport/fetch.ts` : le transport importe `refreshOAuth2Token` en statique ; quand le refresh échoue, il devrait pouvoir appeler `logout`, qui n'est accessible que par les flows (`useAuthFlows()` ou injection par `AuthFlowsProvider`). |
 | Retirer l'ancienne auth                            | à faire  | Bloqué par `user` (écrans) et par les 274 imports des façades. `flows/legacy-redux.ts` dispatch encore pour `viescolaire`.                                                                                                                                                                                      |
@@ -49,15 +50,9 @@ Tous `à faire` sauf mention. Ordre indicatif : **myapps → user → timeline**
 | Doc authentification                               | à faire  | À écrire dans `docs/` (pas de reprise d'une série existante).                                                                                                                                                                                                                                                   |
 | Tests des flows auth                               | à faire  | Décision : après documentation du service auth (`setActiveAccount`, `restoreAccount`…).                                                                                                                                                                                                                         |
 
-## Reportés
+## Reportés et « plus tard »
 
-Sujets volontairement mis de côté. Ne pas les démarrer sans décision ; un module migré qui en dépend garde l'ancien mécanisme et laisse un `ToDo(<module>-migration)`.
-
-| Sujet                                        | Depuis     | Ce qui reste en ancien en attendant                                                                                                                                                         |
-| -------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Notifications : ouverture, redirection       | 2026-11-04 | Pas d'équivalent de `notif-handler.ts` / `registerNotifHandlers` dans le nouveau système.                                                                                                   |
-| Intents (`openIntent`, `src/app/intents.ts`) | 2026-11-04 | `media` (`useOpenMedia`) y délègue l'ouverture des ressources d'apps ; `myapps` ne les reprend pas pour l'instant.                                                                          |
-| Modal / FormSheet « as promise »             | 2026-11-04 | Ouvrir une modale et `await` son résultat. Candidats : modale favoris de `myapps`, sélecteurs (`BlogSelectScreen`, `HomeworkSelectScreen`). Les modales restent pilotées comme aujourd'hui. |
+Voir [later.md](later.md) : sujets reportés (notifications, intents, modale « as promise ») et décisions acceptées pour l'instant mais à revoir.
 
 ## Questions ouvertes
 
@@ -66,16 +61,15 @@ Points flous à valider ou à débattre. Une question tranchée part dans la fic
 ### Architecture
 
 1. **Notifications vs `timeline`.** Qui porte l'ouverture des notifications : un registre dans le module `notifications` (les modules s'y déclarent), ou une clé de config de module (`notifications: { 'BLOG.PUBLISH-POST': handler }`) lue par le framework ? Et que garde `timeline` : seulement l'écran du fil, ou aussi les définitions des types de notifications (`notif-definitions`, aujourd'hui en redux, lues par `useNotificationBadge`) ? Reporté, mais à trancher **avant de migrer `timeline`**.
-2. **Droits.** Où vit `isModuleAvailable(module, session)` (disponibilité d'un module pour une session) : chantier dédié dans `src/app/module/`, ou dans la migration de `myapps` ? Les onglets et `myapps` en ont besoin.
-3. **Route d'entrée d'un module.** Pour ouvrir un module depuis « Mes applis » (et plus tard les intents, les notifications) : nouvelle clé de config, ou convention « route = nom du module » ?
-4. **Ordre des onglets.** Échelle commune (`timeline` = 0, `myapps` = 40 dans le nouveau, 3 dans l'ancien).
-5. **Reste d'`audience`.** Ses composants (bouton de réactions) et écrans sont utilisés par des modules fonctionnels : les migrer dans `src/modules/audience` avant eux, ou au fil de l'eau ?
+2. **Reste d'`audience`.** Ses composants (bouton de réactions) et écrans sont utilisés par des modules fonctionnels : les migrer dans `src/modules/audience` avant eux, ou au fil de l'eau ?
+
+Tranchées le 2026-11-04 : `isModuleAvailable` en phase 0 de `myapps` ; ordre des onglets sur la nouvelle échelle (`timeline` = 0, `myapps` = 40) ; route d'entrée = clé `entry` facultative, dont `tab.route` hérite ; `useOpenModule` = API publique du framework.
 
 ### `myapps`
 
-Voir [myapps.md](myapps.md) §8 : chargement tolérant aux pannes, `CoreModule` ou `EntModule`, et les questions d'architecture 2 à 4 ci-dessus.
+Aucune question bloquante : spec prête pour la phase 0. Les détails de `GET /api/me/applications` sont dans [later.md](later.md).
 
 ## Prochaines étapes
 
-1. Trancher les questions d'architecture 2 et 3 et celles de [myapps.md](myapps.md) §8, puis démarrer `myapps`.
+1. Démarrer `myapps` : phase 0 (`isModuleAvailable`, `entry`, `useOpenModule`).
 2. Trancher la question 1 (notifications) avant `timeline`.
