@@ -16,6 +16,7 @@ export type NotificationFilterSelection = Record<string, boolean>;
 export interface NotificationFiltersTemplateProps {
   items: readonly NotificationFilterItem[];
   labelsI18n: {
+    description?: string;
     leaveAlertText: string;
     leaveAlertTitle: string;
     selectAll: string;
