@@ -2019,6 +2019,8 @@
   "user-sentnotifications-emptyscreen-text": "Les notifications que vous émettez en créant ou en partageant un contenu apparaîtront ici.",
   "user-sentnotifications-emptyscreen-title": "Aucune notification émise",
   "user-sentnotifications-filters-description": "Sélectionnez les notifications émises à afficher.",
+  "user-sentnotifications-info-text": "Retrouvez ici les notifications dont vous êtes l'émetteur. Glissez une notification vers la gauche pour la supprimer.",
+  "user-sentnotifications-info-title": "À quoi sert cette section ?",
   "user-sentnotifications-title": "Notifications émises",
   "user-space-button": "Inscrire sa classe",
   "user-space-buttonurl": "https://edifice.io/rencontre-inspirante-cap-sur-lespace/",

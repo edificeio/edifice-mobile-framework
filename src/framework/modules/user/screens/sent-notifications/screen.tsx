@@ -1,16 +1,20 @@
 import * as React from 'react';
-import { ListRenderItemInfo, RefreshControl, View } from 'react-native';
+import { ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
 
-import { NavigationProp } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
-import { UI_STYLES } from '~/framework/components/constants';
+import theme from '~/app/theme';
+import { genericHitSlop, UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
+import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
+import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
+import { Svg } from '~/framework/components/picture';
+import { BodyBoldText, BodyText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { loadAuthorizedNotificationTypesAction } from '~/framework/modules/home/actions';
 import {
@@ -23,7 +27,7 @@ import { canOpenNotification, isUserbookNotification } from '~/framework/modules
 import { useRefresh } from '~/framework/modules/home/hooks';
 import { notificationsService } from '~/framework/modules/home/service';
 import { loadSentNotificationFiltersAction } from '~/framework/modules/user/actions';
-import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { userRouteNames } from '~/framework/modules/user/navigation';
 import { userSelectors } from '~/framework/modules/user/reducer';
 import type { ITimelineNotification } from '~/framework/util/notifications';
 import { defaultNotificationActionStack, handleNotificationAction } from '~/framework/util/notifications/routing';
@@ -34,17 +38,7 @@ import type { UserSentNotificationsScreenPrivateProps } from './types';
 // the server sends pages of 25: a shorter page is the last one.
 const PAGE_SIZE = 25;
 
-// the header is rendered by the tab, so useNavigation would not reach the user stack: the screen gives its navigation.
-const FilterAction = ({ navigation }: Readonly<{ navigation: NavigationProp<UserNavigationParams> }>) => (
-  <NavBarAction
-    icon="ui-filter"
-    onPress={() => navigation.navigate(userRouteNames.sentNotificationsFilters, {})}
-    testID="user-sentnotifications-filter"
-  />
-);
-
-export const computeNavBar = screenOptions(({ navigation }) => ({
-  headerRight: () => <FilterAction navigation={navigation as unknown as NavigationProp<UserNavigationParams>} />,
+export const computeNavBar = screenOptions(() => ({
   title: I18n.get('user-sentnotifications-title'),
 }));
 
@@ -57,6 +51,15 @@ const renderEmpty = () => (
     svgImage="empty-timeline"
     title={I18n.get('user-sentnotifications-emptyscreen-title')}
     text={I18n.get('user-sentnotifications-emptyscreen-text')}
+  />
+);
+
+const renderHeaderActions = (onPressInfo: () => void, onPressFilter: () => void) => () => (
+  <NavBarActionsGroup
+    elements={[
+      <NavBarAction key="info" icon="ui-infoCircle" onPress={onPressInfo} testID="user-sentnotifications-info" />,
+      <NavBarAction key="filter" icon="ui-filter" onPress={onPressFilter} testID="user-sentnotifications-filter" />,
+    ]}
   />
 );
 
@@ -115,6 +118,16 @@ export default function UserSentNotificationsScreen({ navigation }: Readonly<Use
   }, [reload, sentNotificationFilters]);
 
   const { onRefresh, refreshing } = useRefresh(reload);
+
+  const infoRef = React.useRef<BottomSheetModalMethods>(null);
+  const closeInfo = React.useCallback(() => infoRef.current?.dismiss(), []);
+
+  const openInfo = React.useCallback(() => infoRef.current?.present(), []);
+  const openFilters = React.useCallback(() => navigation.navigate(userRouteNames.sentNotificationsFilters, {}), [navigation]);
+
+  React.useEffect(() => {
+    navigation.setOptions({ headerRight: renderHeaderActions(openInfo, openFilters) });
+  }, [navigation, openFilters, openInfo]);
 
   const onEndReached = React.useCallback(async () => {
     if (fetching.current || endReached.current || loading) return;
@@ -175,21 +188,66 @@ export default function UserSentNotificationsScreen({ navigation }: Readonly<Use
 
   const loadingOrRefreshing = loading || refreshing;
 
+  function renderListEmpty() {
+    if (loadingOrRefreshing) return <NotificationsPlaceholder preview={false} />;
+    return renderEmpty();
+  }
+
+  function renderListFooter() {
+    if (!loadingMore) return null;
+    return <NotificationsPlaceholder count={PLACEHOLDER_NEXT_PAGE_CARDS} preview={false} />;
+  }
+
+  function renderList() {
+    return (
+      <FlatList
+        style={UI_STYLES.flex1}
+        showsVerticalScrollIndicator={false}
+        scrollEnabled={!loadingOrRefreshing}
+        data={loadingOrRefreshing ? undefined : notifications}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        ItemSeparatorComponent={loadingOrRefreshing ? undefined : renderSeparator}
+        contentContainerStyle={UI_STYLES.flexGrow1}
+        ListEmptyComponent={renderListEmpty()}
+        ListFooterComponent={renderListFooter()}
+        refreshControl={refreshControl}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={1}
+      />
+    );
+  }
+
+  function renderInfoHeader() {
+    return (
+      <View style={styles.infoHeader}>
+        <TouchableOpacity onPress={closeInfo} hitSlop={genericHitSlop} testID="user-sentnotifications-info-close">
+          <Svg
+            name="ui-check"
+            width={UI_SIZES.elements.icon.default}
+            height={UI_SIZES.elements.icon.default}
+            fill={theme.palette.grey.black}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  function renderInfoBottomSheet() {
+    return (
+      <CustomBottomSheetModal ref={infoRef} gutters={false} handleIndicatorStyle={styles.infoHandle} header={renderInfoHeader()}>
+        <View style={styles.infoBody}>
+          <BodyBoldText style={styles.infoTitle}>{I18n.get('user-sentnotifications-info-title')}</BodyBoldText>
+          <BodyText>{I18n.get('user-sentnotifications-info-text')}</BodyText>
+        </View>
+      </CustomBottomSheetModal>
+    );
+  }
+
   return (
-    <FlatList
-      style={UI_STYLES.flex1}
-      showsVerticalScrollIndicator={false}
-      scrollEnabled={!loadingOrRefreshing}
-      data={loadingOrRefreshing ? undefined : notifications}
-      keyExtractor={keyExtractor}
-      renderItem={renderItem}
-      ItemSeparatorComponent={loadingOrRefreshing ? undefined : renderSeparator}
-      contentContainerStyle={UI_STYLES.flexGrow1}
-      ListEmptyComponent={loadingOrRefreshing ? <NotificationsPlaceholder preview={false} /> : renderEmpty}
-      ListFooterComponent={loadingMore ? <NotificationsPlaceholder count={PLACEHOLDER_NEXT_PAGE_CARDS} preview={false} /> : null}
-      refreshControl={refreshControl}
-      onEndReached={onEndReached}
-      onEndReachedThreshold={1}
-    />
+    <>
+      {renderList()}
+      {renderInfoBottomSheet()}
+    </>
   );
 }
