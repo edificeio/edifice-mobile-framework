@@ -1,41 +1,15 @@
 import * as React from 'react';
 import { ColorValue, View } from 'react-native';
 
-import { FlashList, FlashListProps } from '@shopify/flash-list';
+import { FlashList } from '@shopify/flash-list';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Svg, SvgIconName } from '~/framework/components/picture';
+import { Svg } from '~/framework/components/picture';
 import { BodyBoldText } from '~/framework/components/text';
 
 import styles from './styles';
-
-export interface StepperSection<ItemT> {
-  key: string;
-  title: string;
-  color: ColorValue;
-  icon?: SvgIconName;
-  data: readonly ItemT[];
-}
-
-export interface StepperRenderItemInfo<ItemT> {
-  item: ItemT;
-  index: number;
-  section: StepperSection<ItemT>;
-}
-
-type StepperRow<ItemT> =
-  | { type: 'header'; section: StepperSection<ItemT> }
-  | { type: 'item'; item: ItemT; index: number; isLast: boolean; section: StepperSection<ItemT> };
-
-export type StepperProps<ItemT> = Omit<
-  FlashListProps<StepperRow<ItemT>>,
-  'data' | 'getItemType' | 'keyExtractor' | 'renderItem'
-> & {
-  sections: readonly StepperSection<ItemT>[];
-  renderItem: (info: StepperRenderItemInfo<ItemT>) => React.ReactElement | null;
-  keyExtractor?: (item: ItemT, index: number) => string;
-};
+import type { StepperProps, StepperRow, StepperSection } from './types';
 
 function StepHeader<ItemT>({ section }: Readonly<{ section: StepperSection<ItemT> }>) {
   return (
@@ -73,7 +47,7 @@ function StepItem({ children, color, isLast }: Readonly<React.PropsWithChildren<
 
 const getRowType = <ItemT,>(row: StepperRow<ItemT>) => row.type;
 
-export function Stepper<ItemT>({ keyExtractor, renderItem, sections, ...listProps }: Readonly<StepperProps<ItemT>>) {
+export default function Stepper<ItemT>({ keyExtractor, renderItem, sections, ...listProps }: Readonly<StepperProps<ItemT>>) {
   const rows = React.useMemo(
     () =>
       sections.flatMap<StepperRow<ItemT>>(section => [
@@ -91,9 +65,9 @@ export function Stepper<ItemT>({ keyExtractor, renderItem, sections, ...listProp
 
   const rowKeyExtractor = React.useCallback(
     (row: StepperRow<ItemT>) => {
-      if (row.type === 'header') return row.section.key;
+      if (row.type === 'header') return `header:${row.section.key}`;
       const itemKey = keyExtractor ? keyExtractor(row.item, row.index) : row.index;
-      return `${row.section.key}-${itemKey}`;
+      return `item:${row.section.key}:${itemKey}`;
     },
     [keyExtractor],
   );
