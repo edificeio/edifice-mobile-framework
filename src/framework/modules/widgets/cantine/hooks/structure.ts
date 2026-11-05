@@ -9,9 +9,12 @@ import { restoreCantineStructureAction, selectCantineStructureAction } from '~/f
 
 const NO_STRUCTURES: UserStructureWithClasses[] = [];
 
+const hasUai = (structure: UserStructureWithClasses) => !!structure.UAI;
+
 /**
  * structure selected for the menu, shared by the home widget and menu screen.
- * defaults to the first structure if none valid is saved.
+ * only structures with a UAI are displayed;
+ * defaults to the first of them if none valid is saved.
  */
 export function useCantineStructure(structures: UserStructureWithClasses[] = NO_STRUCTURES) {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,12 +26,14 @@ export function useCantineStructure(structures: UserStructureWithClasses[] = NO_
     if (!isStructureRestored) dispatch(restoreCantineStructureAction());
   }, [dispatch, isStructureRestored]);
 
+  const cantineStructures = React.useMemo(() => structures.filter(hasUai), [structures]);
+
   const select = React.useCallback((uai: string) => dispatch(selectCantineStructureAction(uai)), [dispatch]);
 
   const structure = React.useMemo(() => {
     if (!isStructureRestored) return undefined;
-    return structures.find(item => item.UAI === selectedStructureUai) ?? structures[0];
-  }, [isStructureRestored, selectedStructureUai, structures]);
+    return cantineStructures.find(item => item.UAI === selectedStructureUai) ?? cantineStructures[0];
+  }, [cantineStructures, isStructureRestored, selectedStructureUai]);
 
-  return { select, structure };
+  return { cantineStructures, select, structure };
 }

@@ -130,8 +130,6 @@ export const computeNavBar = modalScreenOptions('modal', () => ({ title: I18n.ge
 
 const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }>(
   ({ embedded = false, noScroll = false, session }) => {
-    const dropdownItemsStructures = (session.user.structures ?? []).map(s => ({ label: s.name, value: s.UAI }));
-
     const [selectedDate, setSelectedDate] = React.useState<Temporal.PlainDate>(() => Temporal.Now.plainDateISO());
 
     const selectDate = React.useCallback(
@@ -139,7 +137,8 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
       [],
     );
     const selectedDay = selectedDate.toString();
-    const { select: selectStructure, structure } = useCantineStructure(session.user.structures);
+    const { cantineStructures, select: selectStructure, structure } = useCantineStructure(session.user.structures);
+    const dropdownItemsStructures = cantineStructures.map(s => ({ label: s.name, value: s.UAI }));
     const selectedStructureValue = structure?.UAI ?? null;
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
     const [isDinner, setIsDinner] = React.useState<boolean>(false);
