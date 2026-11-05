@@ -1,9 +1,6 @@
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
 
 import type { MenuItem } from '.';
-
-export const ALLERGENS_COLOR = theme.palette.complementary.yellow.regular;
 
 const ALLERGENS = [
   { key: 'allerg_gluten', labelI18n: 'widget-cantine-menu-allergene-gluten' },
@@ -28,4 +25,4 @@ export const hasAllergens = (item: MenuItem): boolean => ALLERGENS.some(allergen
 export const formatAllergens = (item: MenuItem): string =>
   ALLERGENS.filter(allergen => item[allergen.key] !== 0)
     .map(allergen => I18n.get(allergen.labelI18n))
-    .join(', ');
+    .join(I18n.get('widget-cantine-menu-allergene-separator'));

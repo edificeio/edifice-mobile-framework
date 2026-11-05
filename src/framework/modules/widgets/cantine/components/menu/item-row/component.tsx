@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText, SmallItalicText, TextSizeStyle } from '~/framework/components/text';
 import { MenuItemLabels } from '~/framework/modules/widgets/cantine/components/menu/item-labels';
 import { MenuItem } from '~/framework/modules/widgets/cantine/model';
-import { ALLERGENS_COLOR, formatAllergens, hasAllergens } from '~/framework/modules/widgets/cantine/model/allergens';
+import { formatAllergens, hasAllergens } from '~/framework/modules/widgets/cantine/model/allergens';
 
 export interface MenuItemRowProps {
   item: MenuItem;
@@ -32,7 +33,7 @@ export function MenuItemRow({ item, showAllergens }: Readonly<MenuItemRowProps>)
 
 const styles = StyleSheet.create({
   allergens: {
-    color: ALLERGENS_COLOR,
+    color: theme.color.cantine.allergens,
   },
   details: {
     flex: 1,

@@ -187,6 +187,9 @@ export interface ITheme {
   };
   // Semantic usage of the color palette
   color: {
+    cantine: {
+      allergens: ColorValue;
+    };
     mails: {
       unread: ColorValue;
       selected: ColorValue;
@@ -363,6 +366,9 @@ export const defaultTheme: ThemeInitializer = {
     };
 
     (this as Partial<ITheme>).color = {
+      cantine: {
+        allergens: this.palette.complementary.yellow.regular,
+      },
       homework: {
         days: {
           friday: {

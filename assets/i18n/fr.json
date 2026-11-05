@@ -2062,6 +2062,7 @@
   "widget-cantine-menu-allergene-moutarde": "Moutarde",
   "widget-cantine-menu-allergene-oeuf": "Oeufs",
   "widget-cantine-menu-allergene-poisson": "Poisson",
+  "widget-cantine-menu-allergene-separator": ", ",
   "widget-cantine-menu-allergene-sesame": "Sésame",
   "widget-cantine-menu-allergene-soja": "Soja",
   "widget-cantine-menu-allergenes-label": "Allergènes",
