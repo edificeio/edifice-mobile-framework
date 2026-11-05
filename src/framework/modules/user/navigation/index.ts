@@ -11,6 +11,7 @@ import type { UserEditMoodMottoScreenNavParams } from '~/framework/modules/user/
 import type { UserStructuresScreenNavParams } from '~/framework/modules/user/screens/profile/structures';
 import type { IPushNotifsItemsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
 import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
+import type { UserSentNotificationFiltersScreenNavParams } from '~/framework/modules/user/screens/sent-notification-filters/types';
 import type { UserSentNotificationsScreenNavParams } from '~/framework/modules/user/screens/sent-notifications/types';
 import type { UserThemeScreenNavParams } from '~/framework/modules/user/screens/theme/types';
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
@@ -29,6 +30,7 @@ export const userRouteNames = {
   notifPrefsDetails: `${moduleConfig.routeName}/notifPrefs/details` as 'notifPrefsDetails',
   profile: `${moduleConfig.routeName}/profile` as 'profile',
   sentNotifications: `${moduleConfig.routeName}/sent-notifications` as 'sentNotifications',
+  sentNotificationsFilters: `${moduleConfig.routeName}/sent-notifications/filters` as 'sentNotificationsFilters',
   structures: `${moduleConfig.routeName}/profile/structures` as 'structures',
   theme: `${moduleConfig.routeName}/theme` as 'theme',
   whoAreWe: `${moduleConfig.routeName}/who-are-we` as 'whoAreWe',
@@ -38,6 +40,7 @@ export interface UserNavigationParams extends ParamListBase {
   'notifPrefs': IPushNotifsTopicsListScreenNavigationParams;
   'notifPrefsDetails': IPushNotifsItemsListScreenNavigationParams;
   'sentNotifications': UserSentNotificationsScreenNavParams;
+  'sentNotificationsFilters': UserSentNotificationFiltersScreenNavParams;
   'profile': ProfileScreenNavigationParams;
   'structures': UserStructuresScreenNavParams;
   'editHobbies': UserEditHobbiesScreenNavParams;
