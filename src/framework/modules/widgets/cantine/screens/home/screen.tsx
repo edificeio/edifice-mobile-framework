@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent, View } from 'react-native';
 
+import { Temporal } from '@js-temporal/polyfill';
 import moment from 'moment';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -17,7 +18,7 @@ import { MenuLegend, MenuSteps, MenuStepsPlaceholder } from '~/framework/modules
 import { useCantineMenu } from '~/framework/modules/widgets/cantine/hooks/menu';
 import { getSelectedStructure, selectedStructureStorage } from '~/framework/modules/widgets/cantine/storage';
 import { WidgetMessage } from '~/framework/modules/widgets/components/message';
-import { ISO_DATE_FORMAT } from '~/framework/util/date';
+import { momentToPlainDate } from '~/framework/util/date';
 
 import styles from './styles';
 import { SwipeDirection } from './types';
@@ -31,14 +32,18 @@ const SWIPE_EXIT_MIN_DURATION = 80;
 const SWIPE_EXIT_MAX_DURATION = 200;
 const SWIPE_ENTER_EASING = Easing.out(Easing.cubic);
 
+const SATURDAY = 6;
+const MONDAY = 1;
+
 // skip Sunday because not available in the picker.
 const shiftDay = (date: string, direction: SwipeDirection) => {
-  const dayOfWeek = moment(date).day();
+  const day = Temporal.PlainDate.from(date);
   const step =
-    (direction === SwipeDirection.LEFT && dayOfWeek === 6) || (direction === SwipeDirection.RIGHT && dayOfWeek === 1) ? 2 : 1;
-  return direction === SwipeDirection.LEFT
-    ? moment(date).add(step, 'day').format(ISO_DATE_FORMAT)
-    : moment(date).subtract(step, 'day').format(ISO_DATE_FORMAT);
+    (direction === SwipeDirection.LEFT && day.dayOfWeek === SATURDAY) ||
+    (direction === SwipeDirection.RIGHT && day.dayOfWeek === MONDAY)
+      ? 2
+      : 1;
+  return (direction === SwipeDirection.LEFT ? day.add({ days: step }) : day.subtract({ days: step })).toString();
 };
 
 function useDaySwipe(selectedDate: string, onDayChange: (date: string) => void) {
@@ -130,7 +135,7 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
 
     const dropdownItemsStructures = userStructures.map(s => ({ label: s.name, value: s.UAI }));
 
-    const [selectedDate, setSelectedDate] = React.useState<string>(() => moment().format(ISO_DATE_FORMAT));
+    const [selectedDate, setSelectedDate] = React.useState<string>(() => Temporal.Now.plainDateISO().toString());
     const [selectedStructureValue, setSelectedStructureValue] = React.useState<string | null>(
       () => getSelectedStructure(userStructures)?.UAI ?? null,
     );
@@ -188,7 +193,7 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
         )}
         <DayPicker
           onDateChange={date => {
-            setSelectedDate(date.format(ISO_DATE_FORMAT));
+            setSelectedDate(momentToPlainDate(date).toString());
           }}
           initialSelectedDate={moment(selectedDate)}
           style={styles.dayPicker}

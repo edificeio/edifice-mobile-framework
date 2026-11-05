@@ -1,10 +1,12 @@
+import { Temporal } from '@js-temporal/polyfill';
 import moment, { DurationInputArg1, DurationInputArg2, Moment } from 'moment';
 
 import { I18n } from '~/app/i18n';
 
 import { uppercaseFirstLetter } from './string';
 
-export const ISO_DATE_FORMAT = 'YYYY-MM-DD';
+export const momentToPlainDate = (date: Moment): Temporal.PlainDate =>
+  Temporal.PlainDate.from({ day: date.date(), month: date.month() + 1, year: date.year() });
 
 export enum DayOfTheWeek {
   MONDAY = 'monday',

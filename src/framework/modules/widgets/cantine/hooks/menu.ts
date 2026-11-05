@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import moment from 'moment';
+import { Temporal } from '@js-temporal/polyfill';
 
 import { CantineData, MenuItem } from '~/framework/modules/widgets/cantine/model';
 import { cantineService } from '~/framework/modules/widgets/cantine/service';
@@ -10,7 +10,6 @@ import {
   fetchCantineMenuOnce,
   hasMenuItems,
 } from '~/framework/modules/widgets/cantine/service/cache';
-import { ISO_DATE_FORMAT } from '~/framework/util/date';
 import { HTTPError } from '~/framework/util/transport/error';
 
 interface CantineMenuState {
@@ -39,7 +38,7 @@ const initialState = (key?: string): CantineMenuState => {
 };
 
 export function useCantineMenu(userId: string, uai?: string, date?: string) {
-  const day = date ?? moment().format(ISO_DATE_FORMAT);
+  const day = date ?? Temporal.Now.plainDateISO().toString();
   const key = uai ? cantineMenuKey(userId, uai, day) : undefined;
 
   const [state, setState] = React.useState<CantineMenuState>(() => initialState(key));
@@ -67,7 +66,7 @@ export function useCantineMenu(userId: string, uai?: string, date?: string) {
       }
 
       try {
-        const data = await fetchCantineMenuOnce(key, () => cantineService.menu(uai, moment(day)));
+        const data = await fetchCantineMenuOnce(key, () => cantineService.menu(uai, Temporal.PlainDate.from(day)));
         cantineMenuCache.storeIfNotEmpty(key, data);
         if (request !== lastRequest.current) return;
         // keep cached menu if the response is empty.

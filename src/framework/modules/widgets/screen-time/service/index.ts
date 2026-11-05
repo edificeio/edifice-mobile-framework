@@ -1,18 +1,16 @@
-import moment from 'moment';
+import { Temporal } from '@js-temporal/polyfill';
 
 import { ScreenTimeDayResponse, ScreenTimeWeekResponse } from '~/framework/modules/widgets/screen-time/model';
-import { ISO_DATE_FORMAT } from '~/framework/util/date';
 import { sessionFetch } from '~/framework/util/transport';
 
 const fetchScreenTime = <T>(path: string) => sessionFetch.json<T>(`/appregistry/screen-time/${path}`);
 
 export const screenTimeService = {
-  day: (userId: string, date: moment.Moment) =>
-    fetchScreenTime<ScreenTimeDayResponse>(`${userId}/daily?date=${date.format(ISO_DATE_FORMAT)}&mock=false`),
+  day: (userId: string, date: Temporal.PlainDate) =>
+    fetchScreenTime<ScreenTimeDayResponse>(`${userId}/daily?date=${date.toString()}&mock=false`),
 
-  week: (userId: string, weekStart: moment.Moment) =>
+  week: (userId: string, firstDay: Temporal.PlainDate) =>
     fetchScreenTime<ScreenTimeWeekResponse>(
-      `${userId}/weekly?startDate=${weekStart.clone().startOf('week').format(ISO_DATE_FORMAT)}` +
-        `&endDate=${weekStart.clone().endOf('week').format(ISO_DATE_FORMAT)}&mock=false`,
+      `${userId}/weekly?startDate=${firstDay.toString()}&endDate=${firstDay.add({ days: 6 }).toString()}&mock=false`,
     ),
 };
