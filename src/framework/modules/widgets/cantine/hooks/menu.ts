@@ -1,84 +1,53 @@
 import * as React from 'react';
 
 import { Temporal } from '@js-temporal/polyfill';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { CantineData, MenuItem } from '~/framework/modules/widgets/cantine/model';
-import { cantineService } from '~/framework/modules/widgets/cantine/service';
-import {
-  cantineMenuCache,
-  cantineMenuKey,
-  fetchCantineMenuOnce,
-  hasMenuItems,
-} from '~/framework/modules/widgets/cantine/service/cache';
-import { HTTPError } from '~/framework/util/transport/error';
+import { AppDispatch } from '~/app/store';
+import { MenuItem } from '~/framework/modules/widgets/cantine/model';
+import { CantineMenuEntry, cantineMenuKey, cantineSelectors, hasLunchItems } from '~/framework/modules/widgets/cantine/store';
+import { loadCantineMenuAction } from '~/framework/modules/widgets/cantine/thunks';
 
-interface CantineMenuState {
-  menu: MenuItem[];
-  dinnerMenu?: MenuItem[];
-  error: boolean;
-  loading: boolean;
+interface CantineMenuDisplay {
+  dinnerItems?: MenuItem[];
+  isError: boolean;
+  isLoading: boolean;
+  lunchItems: MenuItem[];
 }
 
-const LOADING_STATE: CantineMenuState = { error: false, loading: true, menu: [] };
-const ERROR_STATE: CantineMenuState = { error: true, loading: false, menu: [] };
+const MENU_LOADING: CantineMenuDisplay = { isError: false, isLoading: true, lunchItems: [] };
 
-// treat a 400 response as an empty menu.
-const isMissingMenu = (error: unknown) => error instanceof HTTPError && error.status === 400;
-
-const loadedState = (data?: CantineData): CantineMenuState => ({
-  dinnerMenu: data?.dinnerAvailable ? data.dinnerMenu : undefined,
-  error: false,
-  loading: false,
-  menu: data?.menu ?? [],
-});
-
-const initialState = (key?: string): CantineMenuState => {
-  const cached = key ? cantineMenuCache.read(key) : undefined;
-  return cached ? loadedState(cached.data) : LOADING_STATE;
+const getMenuToDisplay = (menuEntry?: CantineMenuEntry): CantineMenuDisplay => {
+  const cachedMenu = menuEntry?.cachedMenu?.dayMenu;
+  if (cachedMenu && hasLunchItems(cachedMenu)) {
+    return {
+      dinnerItems: cachedMenu.dinnerAvailable ? cachedMenu.dinnerMenu : undefined,
+      isError: false,
+      isLoading: false,
+      lunchItems: cachedMenu.menu,
+    };
+  }
+  if (!menuEntry || menuEntry.isLoading) return MENU_LOADING;
+  return { isError: menuEntry.isError, isLoading: false, lunchItems: [] };
 };
 
-export function useCantineMenu(userId: string, uai?: string, date?: string) {
-  const day = date ?? Temporal.Now.plainDateISO().toString();
-  const key = uai ? cantineMenuKey(userId, uai, day) : undefined;
+export function useCantineMenu(structureUai?: string, menuDate?: Temporal.PlainDate) {
+  const dispatch = useDispatch<AppDispatch>();
 
-  const [state, setState] = React.useState<CantineMenuState>(() => initialState(key));
-  // reset state when the menu key changes.
-  const [stateKey, setStateKey] = React.useState(key);
-  if (stateKey !== key) {
-    setStateKey(key);
-    setState(initialState(key));
-  }
-  // ignore responses from previous requests.
-  const lastRequest = React.useRef<number>(0);
-
-  // force a refresh even when cache is fresh.
-  const load = React.useCallback(
-    async (force?: boolean) => {
-      if (!key || !uai) return;
-
-      const request = ++lastRequest.current;
-      const cached = cantineMenuCache.read(key);
-      if (cached) {
-        setState(loadedState(cached.data));
-        if (!force && cantineMenuCache.isFresh(cached)) return;
-      } else {
-        setState(LOADING_STATE);
-      }
-
-      try {
-        const data = await fetchCantineMenuOnce(key, () => cantineService.menu(uai, Temporal.PlainDate.from(day)));
-        cantineMenuCache.storeIfNotEmpty(key, data);
-        if (request !== lastRequest.current) return;
-        // keep cached menu if the response is empty.
-        if (hasMenuItems(data) || !cached) setState(loadedState(data));
-      } catch (error) {
-        // keep cached menu if the request fails.
-        if (request !== lastRequest.current || cached) return;
-        setState(isMissingMenu(error) ? loadedState() : ERROR_STATE);
-      }
-    },
-    [day, key, uai],
+  const displayedDay = (menuDate ?? Temporal.Now.plainDateISO()).toString();
+  const menuEntry = useSelector(
+    cantineSelectors.getMenuEntry(structureUai ? cantineMenuKey(structureUai, displayedDay) : undefined),
   );
 
-  return { ...state, load };
+  // forceRefresh fetches the menu even when the cached one is still fresh.
+  const loadMenu = React.useCallback(
+    async (forceRefresh?: boolean) => {
+      if (structureUai) await dispatch(loadCantineMenuAction(structureUai, Temporal.PlainDate.from(displayedDay), forceRefresh));
+    },
+    [dispatch, displayedDay, structureUai],
+  );
+
+  const menuDisplay = React.useMemo(() => getMenuToDisplay(menuEntry), [menuEntry]);
+
+  return { ...menuDisplay, loadMenu };
 }

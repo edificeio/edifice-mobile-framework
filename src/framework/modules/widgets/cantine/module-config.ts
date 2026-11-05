@@ -1,6 +1,8 @@
 import { ModuleType, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-export default new NavigableModuleConfig<'cantine', null>({
+import type { CantineStore } from './store';
+
+export default new NavigableModuleConfig<'cantine', CantineStore>({
   displayAs: ModuleType.MYAPPS_WIDGET,
   entcoreScope: ['appregistry'],
   entcoreTrackingName: 'Cantine',

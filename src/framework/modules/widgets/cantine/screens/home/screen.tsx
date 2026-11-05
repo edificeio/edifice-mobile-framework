@@ -16,7 +16,7 @@ import SegmentedControl from '~/framework/components/segmented-control';
 import { withSession } from '~/framework/modules/auth/util';
 import { MenuLegend, MenuSteps, MenuStepsPlaceholder } from '~/framework/modules/widgets/cantine/components/menu';
 import { useCantineMenu } from '~/framework/modules/widgets/cantine/hooks/menu';
-import { getSelectedStructure, selectedStructureStorage } from '~/framework/modules/widgets/cantine/storage';
+import { useCantineStructure } from '~/framework/modules/widgets/cantine/hooks/structure';
 import { WidgetMessage } from '~/framework/modules/widgets/components/message';
 import { momentToPlainDate } from '~/framework/util/date';
 
@@ -36,17 +36,16 @@ const SATURDAY = 6;
 const MONDAY = 1;
 
 // skip Sunday because not available in the picker.
-const shiftDay = (date: string, direction: SwipeDirection) => {
-  const day = Temporal.PlainDate.from(date);
+const shiftDay = (day: Temporal.PlainDate, direction: SwipeDirection) => {
   const step =
     (direction === SwipeDirection.LEFT && day.dayOfWeek === SATURDAY) ||
     (direction === SwipeDirection.RIGHT && day.dayOfWeek === MONDAY)
       ? 2
       : 1;
-  return (direction === SwipeDirection.LEFT ? day.add({ days: step }) : day.subtract({ days: step })).toString();
+  return direction === SwipeDirection.LEFT ? day.add({ days: step }) : day.subtract({ days: step });
 };
 
-function useDaySwipe(selectedDate: string, onDayChange: (date: string) => void) {
+function useDaySwipe(selectedDate: Temporal.PlainDate, onDayChange: (date: Temporal.PlainDate) => void) {
   const translateX = useSharedValue(0);
   const style = useAnimatedStyle(() => ({ transform: [{ translateX: translateX.value }] }));
   // start entering animation after the selected day has rendered.
@@ -131,27 +130,26 @@ export const computeNavBar = modalScreenOptions('modal', () => ({ title: I18n.ge
 
 const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }>(
   ({ embedded = false, noScroll = false, session }) => {
-    const userStructures = session.user.structures ?? [];
+    const dropdownItemsStructures = (session.user.structures ?? []).map(s => ({ label: s.name, value: s.UAI }));
 
-    const dropdownItemsStructures = userStructures.map(s => ({ label: s.name, value: s.UAI }));
+    const [selectedDate, setSelectedDate] = React.useState<Temporal.PlainDate>(() => Temporal.Now.plainDateISO());
 
-    const [selectedDate, setSelectedDate] = React.useState<string>(() => Temporal.Now.plainDateISO().toString());
-    const [selectedStructureValue, setSelectedStructureValue] = React.useState<string | null>(
-      () => getSelectedStructure(userStructures)?.UAI ?? null,
+    const selectDate = React.useCallback(
+      (date: Temporal.PlainDate) => setSelectedDate(previous => (previous.equals(date) ? previous : date)),
+      [],
     );
+    const selectedDay = selectedDate.toString();
+    const { select: selectStructure, structure } = useCantineStructure(session.user.structures);
+    const selectedStructureValue = structure?.UAI ?? null;
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
     const [isDinner, setIsDinner] = React.useState<boolean>(false);
 
-    const { dinnerMenu, error, load, loading, menu } = useCantineMenu(
-      session.user.id,
-      selectedStructureValue ?? undefined,
-      selectedDate,
-    );
+    const { dinnerItems, isError, isLoading, loadMenu, lunchItems } = useCantineMenu(structure?.UAI, selectedDate);
 
     React.useEffect(() => {
       setIsDinner(false);
-      load();
-    }, [load]);
+      loadMenu();
+    }, [loadMenu]);
 
     const onMealChange = React.useCallback((index?: number) => setIsDinner(index === DINNER_SEGMENT), []);
 
@@ -166,10 +164,9 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
     const onStructureChange = React.useCallback(
       (callback: (value: string | null) => string | null) => {
         const newValue = callback(selectedStructureValue);
-        setSelectedStructureValue(newValue);
-        if (newValue) selectedStructureStorage.write(newValue);
+        if (newValue) selectStructure(newValue);
       },
-      [selectedStructureValue],
+      [selectStructure, selectedStructureValue],
     );
 
     const collapsingHeader = useCollapsingHeader();
@@ -193,23 +190,23 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
         )}
         <DayPicker
           onDateChange={date => {
-            setSelectedDate(momentToPlainDate(date).toString());
+            selectDate(momentToPlainDate(date));
           }}
-          initialSelectedDate={moment(selectedDate)}
+          initialSelectedDate={moment(selectedDay)}
           style={styles.dayPicker}
-          key={selectedDate} // the picker only reads its initial date.
+          key={selectedDay} // the picker only reads its initial date.
         />
       </View>
     );
 
-    const daySwipe = useDaySwipe(selectedDate, setSelectedDate);
+    const daySwipe = useDaySwipe(selectedDate, selectDate);
 
     const renderMealSegments = () =>
-      dinnerMenu && menu.length ? (
+      dinnerItems && lunchItems.length ? (
         <View style={styles.mealSegments}>
           <SegmentedControl
             initialSelectedIndex={LUNCH_SEGMENT}
-            key={selectedDate}
+            key={selectedDay}
             matchParentWidth
             onChange={onMealChange}
             segments={mealSegments}
@@ -217,12 +214,12 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
         </View>
       ) : null;
 
-    const isLoaded = !loading && !error && menu.length > 0;
-    const mealMenu = isDinner && dinnerMenu ? dinnerMenu : menu;
+    const isLoaded = !isLoading && !isError && lunchItems.length > 0;
+    const mealItems = isDinner && dinnerItems ? dinnerItems : lunchItems;
 
     const renderStatus = () => {
-      if (loading) return <MenuStepsPlaceholder />;
-      if (error) return <WidgetMessage illustration="illu-error" text={I18n.get('widget-cantine-widget-error-text')} />;
+      if (isLoading) return <MenuStepsPlaceholder />;
+      if (isError) return <WidgetMessage illustration="illu-error" text={I18n.get('widget-cantine-widget-error-text')} />;
       return <WidgetMessage illustration="illu-error" text={I18n.get('widget-cantine-widget-empty-text')} />;
     };
 
@@ -232,8 +229,8 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
         <GestureDetector gesture={daySwipe.gesture}>
           <Animated.View style={[styles.menuWrapper, daySwipe.style]}>
             <MenuSteps
-              key={selectedDate}
-              menuItems={isLoaded ? mealMenu : []}
+              key={selectedDay}
+              menuItems={isLoaded ? mealItems : []}
               showAllergens
               scrollEnabled={!(embedded && noScroll)}
               contentContainerStyle={[styles.menuContent, { paddingTop: collapsingHeader.headerHeight + UI_SIZES.spacing.medium }]}
