@@ -8,6 +8,8 @@ import { IGlobalState } from '~/app/store';
 import { ILoggedUserProfile } from '~/framework/modules/auth/model';
 import { actions as authActions } from '~/framework/modules/auth/redux/actions';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
+import { userActions, userSelectors } from '~/framework/modules/user/reducer';
+import { getSentNotificationFilters, setSentNotificationFilters } from '~/framework/modules/user/storage';
 import { sessionFetch } from '~/framework/util/transport';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 
@@ -53,3 +55,18 @@ export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
     }
   };
 }
+
+export const loadSentNotificationFiltersAction =
+  (types: readonly string[]) =>
+  (dispatch: Dispatch, getState: () => IGlobalState): Record<string, boolean> => {
+    const loaded = userSelectors.getSentNotificationFilters(getState());
+    if (loaded) return loaded;
+    const sentNotificationFilters = getSentNotificationFilters(types);
+    dispatch(userActions.setSentNotificationFilters(sentNotificationFilters));
+    return sentNotificationFilters;
+  };
+
+export const setSentNotificationFiltersAction = (sentNotificationFilters: Record<string, boolean>) => (dispatch: Dispatch) => {
+  setSentNotificationFilters(sentNotificationFilters);
+  dispatch(userActions.setSentNotificationFilters(sentNotificationFilters));
+};

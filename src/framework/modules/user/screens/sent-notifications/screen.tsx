@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { ListRenderItemInfo, RefreshControl, View } from 'react-native';
 
-import { useDispatch } from 'react-redux';
+import { NavigationProp } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
@@ -9,8 +10,9 @@ import { screenOptions } from '~/app/navigation/util';
 import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import Toast from '~/framework/components/toast';
-import { loadAuthorizedNotifTypesAction } from '~/framework/modules/home/actions';
+import { loadAuthorizedNotificationTypesAction } from '~/framework/modules/home/actions';
 import {
   NotificationCard,
   NotificationsPlaceholder,
@@ -20,7 +22,9 @@ import {
 import { canOpenNotification, isUserbookNotification } from '~/framework/modules/home/components/notification/util';
 import { useRefresh } from '~/framework/modules/home/hooks';
 import { notificationsService } from '~/framework/modules/home/service';
-import { userRouteNames } from '~/framework/modules/user/navigation';
+import { loadSentNotificationFiltersAction } from '~/framework/modules/user/actions';
+import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { userSelectors } from '~/framework/modules/user/reducer';
 import type { ITimelineNotification } from '~/framework/util/notifications';
 import { defaultNotificationActionStack, handleNotificationAction } from '~/framework/util/notifications/routing';
 
@@ -30,7 +34,17 @@ import type { UserSentNotificationsScreenPrivateProps } from './types';
 // the server sends pages of 25: a shorter page is the last one.
 const PAGE_SIZE = 25;
 
-export const computeNavBar = screenOptions(() => ({
+// the header is rendered by the tab, so useNavigation would not reach the user stack: the screen gives its navigation.
+const FilterAction = ({ navigation }: Readonly<{ navigation: NavigationProp<UserNavigationParams> }>) => (
+  <NavBarAction
+    icon="ui-filter"
+    onPress={() => navigation.navigate(userRouteNames.sentNotificationsFilters, {})}
+    testID="user-sentnotifications-filter"
+  />
+);
+
+export const computeNavBar = screenOptions(({ navigation }) => ({
+  headerRight: () => <FilterAction navigation={navigation as unknown as NavigationProp<UserNavigationParams>} />,
   title: I18n.get('user-sentnotifications-title'),
 }));
 
@@ -46,7 +60,7 @@ const renderEmpty = () => (
   />
 );
 
-export default function UserSentNotificationsScreen({ navigation }: UserSentNotificationsScreenPrivateProps) {
+export default function UserSentNotificationsScreen({ navigation }: Readonly<UserSentNotificationsScreenPrivateProps>) {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const [notifications, setNotifications] = React.useState<ITimelineNotification[]>([]);
@@ -58,10 +72,15 @@ export default function UserSentNotificationsScreen({ navigation }: UserSentNoti
   const endReached = React.useRef<boolean>(false);
   const fetching = React.useRef<boolean>(false);
 
+  const sentNotificationFilters = useSelector(userSelectors.getSentNotificationFilters);
+  const appliedFilters = React.useRef<Record<string, boolean> | null>(null);
+
   const fetchPage = React.useCallback(
     async (page: number) => {
-      // until the sent notifications get their own filters, every type the user can see is asked.
-      const types = (await dispatch(loadAuthorizedNotifTypesAction())) as unknown as string[];
+      const authorizedTypes = await dispatch(loadAuthorizedNotificationTypesAction());
+      const filters = dispatch(loadSentNotificationFiltersAction(authorizedTypes));
+      if (page === 0) appliedFilters.current = filters;
+      const types = authorizedTypes.filter(type => filters[type] !== false);
       const pageNotifications = await notificationsService.sentPage(page, types);
       nextPage.current = page + 1;
       endReached.current = pageNotifications.length < PAGE_SIZE;
@@ -71,6 +90,8 @@ export default function UserSentNotificationsScreen({ navigation }: UserSentNoti
   );
 
   const reload = React.useCallback(async () => {
+    // a page already on its way would land after the reloaded list: skip, the next pull reloads.
+    if (fetching.current) return;
     fetching.current = true;
     try {
       setNotifications(await fetchPage(0));
@@ -86,6 +107,12 @@ export default function UserSentNotificationsScreen({ navigation }: UserSentNoti
   React.useEffect(() => {
     reload().finally(() => setLoading(false));
   }, [reload]);
+
+  React.useEffect(() => {
+    if (!sentNotificationFilters || appliedFilters.current === null || sentNotificationFilters === appliedFilters.current) return;
+    setLoading(true);
+    reload().finally(() => setLoading(false));
+  }, [reload, sentNotificationFilters]);
 
   const { onRefresh, refreshing } = useRefresh(reload);
 

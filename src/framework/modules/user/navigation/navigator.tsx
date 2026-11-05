@@ -23,9 +23,12 @@ import PushNotifsItemsListScreen, {
 import PushNotifsTopicsListScreen, {
   computeNavBar as pushNotifsTopicsListNavBar,
 } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
+import UserSentNotificationFiltersScreen, {
+  computeNavBar as sentNotificationFiltersNavBar,
+} from '~/framework/modules/user/screens/sent-notification-filters';
 import UserSentNotificationsScreen, {
   computeNavBar as sentNotificationsNavBar,
-} from '~/framework/modules/user/screens/sent-notifications/screen';
+} from '~/framework/modules/user/screens/sent-notifications';
 import UserThemeScreen, { computeNavBar as themeNavBar } from '~/framework/modules/user/screens/theme';
 import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework/modules/user/screens/who-are-we';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
@@ -94,6 +97,12 @@ export default () =>
           options={editMoodMottoNavBar}
           initialParams={{}}
         />
+        <Stack.Screen
+          name={userRouteNames.sentNotificationsFilters}
+          component={UserSentNotificationFiltersScreen}
+          options={sentNotificationFiltersNavBar}
+          initialParams={{}}
+        />
       </Stack.Group>
       <Stack.Screen name={'user/change-password'} component={UserChangePasswordScreen} options={UserChangePasswordScreenOptions} />
       <Stack.Screen name={'user/change-email'} component={AuthChangeEmailScreen} options={requirementChangeEmailScreenOptions} />
@@ -110,5 +119,6 @@ setModalModeForRoutes([
   userRouteNames.editHobbies,
   userRouteNames.editDescription,
   userRouteNames.editMoodMotto,
+  userRouteNames.sentNotificationsFilters,
   userRouteNames.space,
 ]);

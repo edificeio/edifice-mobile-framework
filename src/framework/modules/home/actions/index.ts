@@ -94,7 +94,7 @@ export const loadNotificationsPageAction =
 /**
  * Every notification type the user is allowed to see, loaded first if needed.
  */
-export const loadAuthorizedNotifTypesAction =
+export const loadAuthorizedNotificationTypesAction =
   () =>
   async (dispatch: ThunkDispatch<any, any, any>): Promise<string[]> => {
     const state = (await dispatch($prepareNotificationsAction())) as unknown as TimelineState; // TS BUG: await is needed here
