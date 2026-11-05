@@ -1,1 +1,4 @@
-export { CantineWidget, CantineWidget as default, type CantineWidgetProps } from './component';
+import CantineWidget from './component';
+
+export { CantineWidget };
+export default CantineWidget;

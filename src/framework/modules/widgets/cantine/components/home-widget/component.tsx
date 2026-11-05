@@ -6,7 +6,7 @@ import { NavigationProp, ParamListBase, useFocusEffect, useNavigation } from '@r
 import { I18n } from '~/app/i18n';
 import { SecondaryButton } from '~/framework/components/buttons/secondary';
 import { BodyText } from '~/framework/components/text';
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { withSession } from '~/framework/modules/auth/util';
 import { useHomeReload } from '~/framework/modules/home/hooks';
 import { MenuSteps, MenuStepsPlaceholder } from '~/framework/modules/widgets/cantine/components/menu';
 import { useCantineMenu } from '~/framework/modules/widgets/cantine/hooks/menu';
@@ -18,11 +18,7 @@ import { WidgetMessage } from '~/framework/modules/widgets/components/message';
 
 import styles from './styles';
 
-export interface CantineWidgetProps {
-  session: AuthActiveAccount;
-}
-
-export function CantineWidget({ session }: Readonly<CantineWidgetProps>) {
+const CantineWidget = withSession(({ session }) => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   // a list renders nothing at 0 height, so it starts at the box height before knowing its content.
   const [menuHeight, setMenuHeight] = React.useState<number>(CANTINE_WIDGET_MENU_MAX_HEIGHT);
@@ -103,4 +99,6 @@ export function CantineWidget({ session }: Readonly<CantineWidgetProps>) {
       ) : null}
     </WidgetCard>
   );
-}
+});
+
+export default CantineWidget;

@@ -16,6 +16,6 @@ export default function setUpCantineHomeWidget() {
     displayOrder: 200,
     isVisible,
     name: 'cantine',
-    renderComponent: session => React.createElement(CantineWidget, { session }),
+    renderComponent: () => <CantineWidget />,
   });
 }
