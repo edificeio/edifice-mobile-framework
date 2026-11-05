@@ -66,8 +66,9 @@ const keepCachedMenusUnderAllowedLimit = (menuEntries: CantineStore['menuEntries
     menuEntry.cachedMenu && !menuEntry.isLoading ? [{ fetchedAt: menuEntry.cachedMenu.fetchedAt, menuKey }] : [],
   );
   if (removableMenus.length <= MAX_CACHED_MENUS) return menuEntries;
-  const oldestMenu = removableMenus.reduce((oldest, removableMenu) =>
-    removableMenu.fetchedAt < oldest.fetchedAt ? removableMenu : oldest,
+  const oldestMenu = removableMenus.reduce(
+    (oldest, removableMenu) => (removableMenu.fetchedAt < oldest.fetchedAt ? removableMenu : oldest),
+    removableMenus[0],
   );
   const trimmedMenuEntries = { ...menuEntries };
   delete trimmedMenuEntries[oldestMenu.menuKey];
