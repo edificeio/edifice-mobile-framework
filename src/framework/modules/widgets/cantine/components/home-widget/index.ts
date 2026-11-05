@@ -1,4 +1,1 @@
-import CantineWidget from './component';
-
-export { CantineWidget };
-export default CantineWidget;
+export { default, default as CantineWidget } from './component';
