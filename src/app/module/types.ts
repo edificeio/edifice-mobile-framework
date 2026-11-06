@@ -256,43 +256,44 @@ export type AnyTabModule = AnyModule extends infer M
     : never
   : never;
 
-export type AllModulesMap = {
+/** Each module of the app, by its name: the type of the object given by `useModulesRecord`. */
+export type AllModulesRecord = {
   [name in AllModulesNames]: Extract<AnyModule, { name: name }>;
 };
 
 // Names of the modules that have an `entry`: the ones `useOpenModule` can open.
 export type AllModulesWithEntryNames = {
-  [Name in AllModulesNames]: [ModuleEntry<AllModulesMap[Name]>] extends [undefined] ? never : Name;
+  [Name in AllModulesNames]: [ModuleEntry<AllModulesRecord[Name]>] extends [undefined] ? never : Name;
 }[AllModulesNames];
 
 // Names of the modules that provide a redux configuration (a module without it has `undefined` as state).
 export type AllModulesWithReduxNames = {
-  [Name in AllModulesNames]: [ModuleReduxState<AllModulesMap[Name]>] extends [undefined] ? never : Name;
+  [Name in AllModulesNames]: [ModuleReduxState<AllModulesRecord[Name]>] extends [undefined] ? never : Name;
 }[AllModulesNames];
 
 export type AllModulesReducers = {
-  [Name in AllModulesWithReduxNames]: ModuleReduxReducer<AllModulesMap[Name]>;
+  [Name in AllModulesWithReduxNames]: ModuleReduxReducer<AllModulesRecord[Name]>;
 };
 
 export type AllModulesState = {
-  [Name in AllModulesWithReduxNames]: ModuleReduxState<AllModulesMap[Name]>;
+  [Name in AllModulesWithReduxNames]: ModuleReduxState<AllModulesRecord[Name]>;
 };
 
 export type AllModulesActions = {
-  [Name in AllModulesNames]: ModuleReduxAction<AllModulesMap[Name]>;
+  [Name in AllModulesNames]: ModuleReduxAction<AllModulesRecord[Name]>;
 }[AllModulesNames];
 
 type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
 
 export type AllModulesScreensParams = UnionToIntersection<
   {
-    [Name in AllModulesNames]: NavigationParamsOfScreens<ModuleScreens<AllModulesMap[Name]>>;
+    [Name in AllModulesNames]: NavigationParamsOfScreens<ModuleScreens<AllModulesRecord[Name]>>;
   }[AllModulesNames]
 >;
 
 export type AllModulesModalsParams = UnionToIntersection<
   {
-    [Name in AllModulesNames]: NavigationParamsOfScreens<ModuleModals<AllModulesMap[Name]>>;
+    [Name in AllModulesNames]: NavigationParamsOfScreens<ModuleModals<AllModulesRecord[Name]>>;
   }[AllModulesNames]
 >;
 
@@ -303,13 +304,13 @@ export type AllModulesModalsParams = UnionToIntersection<
 // Screens and modals of all modules, as returned by `createNativeStackScreen`, ready to be given to `createNativeStackNavigator({ screens })`.
 export type AllModulesStaticScreens = UnionToIntersection<
   {
-    [Name in AllModulesNames]: ModuleStaticScreens<ModuleScreens<AllModulesMap[Name]>>;
+    [Name in AllModulesNames]: ModuleStaticScreens<ModuleScreens<AllModulesRecord[Name]>>;
   }[AllModulesNames]
 >;
 
 export type AllModulesStaticModals = UnionToIntersection<
   {
-    [Name in AllModulesNames]: ModuleStaticScreens<ModuleModals<AllModulesMap[Name]>>;
+    [Name in AllModulesNames]: ModuleStaticScreens<ModuleModals<AllModulesRecord[Name]>>;
   }[AllModulesNames]
 >;
 

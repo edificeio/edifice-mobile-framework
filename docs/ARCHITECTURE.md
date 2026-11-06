@@ -53,7 +53,7 @@ Les modules du nouveau système sont de deux types (`src/app/module/types.ts`) :
 - `CoreModule` : module technique (auth, media, notifications, …), disponible sans droits ENT.
 - `EntModule` : module lié à une app ENT. Sa seule particularité est d'être **soumis aux droits d'accès** (`matchEntcoreApp`, `matchEntcoreWidget`, `hasRight`).
 
-**Droits** : `isModuleAvailableForUser(module, session)` (`src/app/module/rights.ts`) dit si l'utilisateur peut utiliser un module, d'après les droits de la session. Chaque condition **déclarée** doit être remplie : `matchEntcoreApp` dans `session.rights.apps`, `matchEntcoreWidget` dans `session.rights.widgets`, `hasRight(session)` vrai. Un module qui n'en déclare aucune (tout `CoreModule`) est toujours disponible. Dans un composant : `useUserAvailableModules()`. Les onglets des modules indisponibles sont masqués.
+**Droits** : `isModuleAvailableForUser(module, session)` (`src/app/module/rights.ts`) dit si l'utilisateur peut utiliser un module, d'après les droits de la session. Chaque condition **déclarée** doit être remplie : `matchEntcoreApp` dans `session.rights.apps`, `matchEntcoreWidget` dans `session.rights.widgets`, `hasRight(session)` vrai. Un module qui n'en déclare aucune (tout `CoreModule`) est toujours disponible. Dans un composant : `useUserAvailableModules()`. Un module par son nom : `useModule(name)`, ou l'objet `useModulesRecord()` (typé `AllModulesRecord`, construit une fois avec le tableau dans le contexte de `ModuleLoader`) avec `getModuleByName` pour un nom venu des données. Les onglets des modules indisponibles sont masqués.
 
 Un onglet (`tab`) n'est pas propre à `EntModule` : un `CoreModule` peut aussi en déclarer un (`ModuleConfig.tab`).
 

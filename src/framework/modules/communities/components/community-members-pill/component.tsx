@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { styles } from './styles';
-import { CommunityMembersPillProps } from './types';
-
-import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
+import { I18n } from '~/util/i18n';
+
+import { styles } from './styles';
+import { CommunityMembersPillProps } from './types';
 
 const CommunityMembersPill = ({ membersCount }: Readonly<CommunityMembersPillProps>) => {
   const memberString = I18n.get(membersCount > 1 ? 'communities-members' : 'communities-member', { count: membersCount });

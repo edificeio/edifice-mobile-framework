@@ -5,13 +5,11 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 
-import { I18n } from '~/util/i18n';
 import { IGlobalState } from '~/app/store';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { useNotificationBadge } from '~/framework/modules/myapps/hooks';
 import appConf from '~/framework/util/appConf';
 import {
   getAsNamedResourceNotification,
@@ -19,10 +17,13 @@ import {
   INamedResourceNotification,
   ITimelineNotification,
 } from '~/framework/util/notifications';
+import { useNotificationDisplay } from '~/modules/notifications/hooks';
 import HtmlContentView from '~/ui/HtmlContentView';
+import { I18n } from '~/util/i18n';
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: AuthActiveAccount }) => {
-  const badge = useNotificationBadge(notification.type, notification['event-type']);
+  const appDisplay = useNotificationDisplay(notification.type, notification['event-type']);
+  const badge = appDisplay && { color: appDisplay.colors.regular, icon: appDisplay.icon };
   const message = notification && notification.message;
   const date = notification && notification.date;
   const sender = notification && getAsSenderNotification(notification)?.sender;

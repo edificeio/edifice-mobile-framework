@@ -1,7 +1,7 @@
 /**
  * How the apps are sorted out: categories, libraries, other services, and the filters of the list of « Mes applis ».
  */
-import { APP_CATEGORIES, AppCategory, AppModule, EntApp, KnownAppCategory } from '~/modules/myapps/model';
+import { APP_CATEGORIES, AppCategory, AppConfig, AppModule, EntApp, MyAppsFilter } from '~/modules/myapps/model';
 import { normalizeString } from '~/modules/myapps/util';
 
 // # Category
@@ -26,13 +26,6 @@ export const LIBRARY_HOST = 'library.edifice.io';
 /** Entry of `GET /api/me/applications` that holds the config of the libraries. Not an app. */
 export const LIBRARY_CONFIG_APP_NAME = 'library-info';
 
-/** What an app takes from its config: its own, or that of `library-info` for a library. */
-export interface AppConfig {
-  category?: string;
-  color?: string;
-  helpUrls: Record<string, string>;
-}
-
 export const isLibrary = (app: { address: string; category?: string }): boolean =>
   app.address.includes(LIBRARY_HOST) && !app.category;
 
@@ -53,17 +46,8 @@ export const isOtherService = (app: Pick<EntApp, 'category'>, module: AppModule 
 
 // # Filters of the list
 
-/** `other-services` lists the `isOtherService` apps: not the same as `category: 'other'`. */
-export type MyAppsFilter =
-  | { type: 'all' }
-  | { type: 'favorites' }
-  | { type: 'category'; value: KnownAppCategory }
-  | { type: 'other-services' }
-  | { type: 'libraries' }
-  | { type: 'search'; value: string };
-
-/** What the list needs besides the apps: each one is a data of its own (see `index.ts`). */
-export interface FilterAppsContext {
+/** What the list needs besides the apps (see `filterApps`): each one is a data of its own (see `model/index.ts`). */
+interface FilterAppsContext {
   /** Names of the favorite apps. */
   favorites: ReadonlySet<string>;
   /** The module of an app (by its `name`), if one is available for the user. */

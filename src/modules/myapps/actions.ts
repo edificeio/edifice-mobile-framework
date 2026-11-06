@@ -5,8 +5,7 @@
 import type { ThunkAction } from 'redux-thunk';
 
 import { getSession } from '~/modules/auth/store/accounts';
-import type { AppsPreferences } from '~/modules/myapps/model';
-import type { Translate } from '~/modules/myapps/model/display';
+import type { AppsPreferences, Translate } from '~/modules/myapps/model';
 import { withFavorites, withFavoriteToggled } from '~/modules/myapps/model/favorites';
 import { myAppsService } from '~/modules/myapps/service';
 import { MyAppsAction, myAppsActions, MyAppsRootState, selectPreferences } from '~/modules/myapps/store';

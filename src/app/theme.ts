@@ -27,6 +27,12 @@ export interface IShades {
   pale: ColorValue;
 }
 
+/**
+ * Name of a color of the palette, as the data name it (the color of an app…): a complementary color, the primary or the secondary.
+ * Typed this way for the autocompletion, and checked with `isThemeColorName` when it comes from outside (server).
+ */
+export type ThemeColorName = keyof ITheme['palette']['complementary'] | Extract<keyof ITheme['palette'], 'primary' | 'secondary'>;
+
 export type IntentIcon =
   | ({ type: 'Svg' } & Pick<SvgProps, 'name'>)
   | ({ type: 'Image' } & Pick<ImageProps, 'source' | 'src' | 'srcSet'>)
@@ -426,5 +432,17 @@ if (customThemeRest.color) {
 }
 
 if (init) init.call(totalTheme);
+
+/** Whether a name (sent by a server…) is the one of a color of the palette (see `ThemeColorName`). */
+export const isThemeColorName = (name: string | null | undefined): name is ThemeColorName =>
+  !!name &&
+  (name === 'primary' || name === 'secondary' || Object.prototype.hasOwnProperty.call(totalTheme.palette.complementary, name));
+
+/** The shades of a color of the palette, if it has all of them (`nabook-color` only has `regular`). */
+export const getThemeColorShades = (name: ThemeColorName | undefined): IShades | undefined => {
+  if (name === undefined) return undefined;
+  const shades = name === 'primary' || name === 'secondary' ? totalTheme.palette[name] : totalTheme.palette.complementary[name];
+  return 'pale' in shades ? (shades as IShades) : undefined;
+};
 
 export default totalTheme;

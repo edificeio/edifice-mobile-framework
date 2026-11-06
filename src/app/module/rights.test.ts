@@ -2,7 +2,14 @@ import type { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import type { AuthActiveAccount } from '~/modules/auth/model';
 import { createActiveAccount } from '~/test-utils/auth-accounts';
 
-import { isModuleAvailableForUser } from './rights';
+import { isModuleAvailableForUser as isAvailableForUser } from './rights';
+
+/**
+ * The tested modules have fictitious names, not the ones of the modules of the app (`AllModulesNames`), which come and go with the
+ * migration: the type of `isModuleAvailableForUser` is overridden here to take any name.
+ */
+type TestedModule = Omit<Parameters<typeof isAvailableForUser>[0], 'name'> & { name: string };
+const isModuleAvailableForUser = isAvailableForUser as (module: TestedModule, session: AuthActiveAccount) => boolean;
 
 const createSession = ({ apps = [], widgets = [] }: { apps?: string[]; widgets?: string[] } = {}): AuthActiveAccount => {
   const session = createActiveAccount();

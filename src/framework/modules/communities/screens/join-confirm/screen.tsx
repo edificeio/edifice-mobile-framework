@@ -8,7 +8,6 @@ import { useTheme } from '@react-navigation/native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
-import { I18n } from '~/util/i18n';
 import { defaultScreenOptions } from '~/app/navigation/layout';
 import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
@@ -28,6 +27,7 @@ import { communitiesSelectors } from '~/framework/modules/communities/store';
 import { toURISource } from '~/framework/modules/media';
 import { accountApi } from '~/framework/util/transport';
 import { HTTPError } from '~/framework/util/transport/error';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import type { CommunitiesJoinConfirmScreen } from './types';
@@ -61,8 +61,7 @@ export default sessionScreen<Readonly<CommunitiesJoinConfirmScreen.AllProps>>(fu
   const data =
     invitation ??
     ((pendingCommunities.find(isCurrentInvitation) ?? allCommunities.find(isCurrentInvitation)) as
-      | InvitationResponseDtoWithThumbnails
-      | undefined);
+      InvitationResponseDtoWithThumbnails | undefined);
   const hasJoinedWithCode = data?.status === InvitationStatus.REQUEST_ACCEPTED;
 
   const onValidate = React.useCallback(async () => {

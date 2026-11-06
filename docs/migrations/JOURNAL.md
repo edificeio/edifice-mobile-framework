@@ -12,6 +12,73 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-06 — Icônes typées, puis annulé (`feat/ia/vmou`)
+
+- Décidé : une icône `Svg` est typée `SvgIconName`. Règle dans [CONVENTIONS.md](CONVENTIONS.md).
+- Fait : `EntAppDisplay.icon`, `DEFAULT_APP_ICON`, surcharges d'icônes de `myapps` et des notifications ; `getAppSvgIcon` (via `svgExists`) ; `media/resource-display` et `communities` sans cast.
+- Constaté : `EntApp.icon` n'est pas toujours un `Svg` (image du workspace, URL : ancien `resolveAppIcon`) ; il reste une référence `string`, à traiter avec `MyAppsCard` en phase 4. Le modèle ne peut pas vérifier les noms (`svgExists`) : la liste des SVG ne se charge pas sous Jest (imports ESM) ; la vérification est dans les hooks.
+- Vérifié : tsc 775 (aucune nouvelle), eslint propre, `yarn test` 418/418. **Pas testé dans l'app.**
+- **Annulé** à la demande de l'utilisateur (le typage venait d'une erreur de sa part) : icônes de nouveau en `string`, règle « Icônes » retirée de CONVENTIONS. Au passage, `community-card-small` utilise `useModuleAppDisplay('communities')` (on est dans ce module) : tsc 776, erreur voulue.
+
+## 2026-11-06 — `EntAppImage` et `ModuleImage` (`feat/ia/vmou`)
+
+- Décidé : un composant par source du nom : `EntAppImage` (nom d'app ENT venu du serveur, `useEntAppDisplay`) et `ModuleImage` par-dessus (module connu du code, `AllModulesNames`). Règle « app ENT ou module » dans [CONVENTIONS.md](CONVENTIONS.md).
+- Fait : `src/framework/components/picture/ent-app-image/` (corps de l'ancien `ModuleImage`, styles déplacés) ; `module-image` réduit à `EntAppImage` + `useModuleAppName` (exporté par les hooks de `myapps`).
+- Vérifié : tsc 775 (aucune nouvelle ; les 2 erreurs préexistantes du rendu de remplacement ont suivi le code), eslint propre, `yarn test` 418/418. **Pas testé dans l'app.**
+
+## 2026-11-06 — Noms de modules typés (`feat/ia/vmou`)
+
+- Décidé (utilisateur) : `useModuleAppDisplay`, `useModuleApp` et `useModuleAppName` n'acceptent qu'un `AllModulesNames` ; `ModuleWithRights` prend `Pick<AnyModule, 'name'>`. On ne doit pouvoir obtenir qu'un module qui existe. Dans les tests, les noms de modules restent fictifs (les modules de test `amodule`… disparaîtront) : on surcharge les types.
+- Fait : `useModuleApp` / `useModuleAppName` typés ; `src/app/module/rights.test.ts` surcharge le type de `isModuleAvailableForUser` (nom quelconque).
+- `ModuleImage` (`src/framework/components/picture/module-image`) prend une prop `moduleName: AllModulesNames` (ex-`appName: string`) ; ses appelants `wiki` passent `moduleName`.
+- Conséquence : tsc 775 au lieu de 768. Erreurs **voulues** : 7 appels avec un module non migré (5 de `useModuleAppDisplay`, 2 de `ModuleImage` dans `wiki`), corrigés au fil des migrations. Ne pas les traiter comme des régressions.
+
+## 2026-11-06 — Types rangés dans les fichiers de types (`feat/ia/vmou`)
+
+- Décidé : un type utile à plusieurs fichiers va dans le fichier de types de son dossier (`types.ts`, `model/index.ts`…) ; un type interne reste dans son fichier, non exporté, voire sans nom. Règle dans [CONVENTIONS.md](CONVENTIONS.md).
+- Fait : `src/app/module/types.ts` (`ModulesMap`) ; `src/modules/myapps/model/index.ts` (`Translate`, `AppConfig`, `MyAppsFilter`) ; `src/modules/myapps/hooks/types.ts` (`MyAppsDispatch`, `EntAppDisplay`). Restés locaux : `LoadedModules`, `ModuleWithRights`, `LabelSourceData`, `FilterAppsContext` ; dépendances de `createMyAppsSessionHooks` sans nom.
+- Vérifié : tsc 768, eslint propre, `yarn test` 418/418.
+- Ensuite : `ModulesMap` → `AllModulesMap` (comme `AllModulesArray`) ; l'ancien type objet `AllModulesMap` → `AllModulesByName`.
+- Puis : la Map devient un objet typé `AllModulesByName` (`useModulesByName()`, ex-`useModulesMap()` ; `getModuleByName` pour un nom quelconque) ; le type `AllModulesMap` est supprimé.
+- Enfin : `AllModulesByName` → `AllModulesRecord`, `useModulesByName` → `useModulesRecord`. Le tableau des modules du contexte est en lecture seule (`Readonly<AllModulesArray>`, figé), comme `useModules()`.
+
+## 2026-11-06 — Modules par nom en O(1) (`feat/ia/vmou`)
+
+- Décidé : un module se lit par son nom dans une Map, pas par `modules.find(…)`. Règle dans [CONVENTIONS.md](CONVENTIONS.md).
+- Fait : `ModuleContext` (`src/app/module/loader.tsx`) contient `{ modules, byName }`, construits une fois ; `useModulesMap()`, `useModule(name)` ; utilisés par `useModuleAppName` (`myapps`) et `src/app/navigation-new/open-module.ts`.
+- Vérifié : tsc 768, eslint propre, `yarn test` 418/418. **Pas testé dans l'app.**
+- Prochaine étape : phase 4 de `myapps` (écran).
+
+## 2026-11-06 — `myapps` : `useTabLabel` supprimé (`feat/ia/vmou`)
+
+- Décidé : `useTabLabel` redondant avec `useModuleAppDisplay` (même libellé, écrit avant lui) : supprimé.
+- Fait : `TabLabel` (`src/app/navigation-new/tabs.tsx`) lit `useModuleAppDisplay(module.name).label`.
+- Vérifié : tsc 768, eslint propre, `yarn test` 418/418. **Pas testé dans l'app.**
+- Prochaine étape : phase 4 de `myapps` (écran).
+
+## 2026-11-06 — Couleurs de la palette typées (`feat/ia/vmou`)
+
+- Décidé : un nom de couleur de la palette est typé `ThemeColorName` (`keyof palette.complementary` + `primary` / `secondary`), pas `string`. Règle dans [CONVENTIONS.md](CONVENTIONS.md).
+- Fait : `src/app/theme.ts` (`ThemeColorName`, `isThemeColorName`, `getThemeColorShades`) ; `myapps` (`EntApp.color`, `getAppColor` qui écarte une couleur inconnue, `getAppShades`) ; surcharges de `src/modules/notifications/hooks.ts`.
+- Vérifié : tsc 768 (aucune nouvelle), eslint propre, `yarn test` 418/418. **Pas testé dans l'app.**
+- Prochaine étape : phase 4 de `myapps` (écran).
+
+## 2026-11-06 — `myapps` : relecture de la phase 3 (`feat/ia/vmou`)
+
+- Décidé : `useEntAppDisplay(entAppName)` / `useModuleAppDisplay(moduleName)` → `{ colors: IShades, icon, label }`, couleurs **primaires** par défaut, au lieu de `useAppTheme` / `useAppBadge` ; un badge est un objet construit par l'appelant ; `useNotificationEntApp` (+ `useNotificationEntAppDisplay`) dans le module `notifications` ; `selectAggregatedApps` gardé seulement pour l'ancien code de `framework/modules/myapps` jusqu'à la phase 7.
+- Fait : `src/modules/myapps/hooks/display.ts`, `src/modules/notifications/hooks.ts` ; consommateurs migrés (`module-image`, `blog`, `homework`, `news`, `communities` ×3, `timeline/notification-top-info`, `main-navigation`) ; façades `use-app-theme.ts`, `use-app-badge.ts` supprimées.
+- Vérifié : tsc 768 (aucune nouvelle), eslint propre sur le nouveau code, `yarn test` 417/417. **Pas testé dans l'app.**
+- En suspens : rien n'est commité depuis la phase 0.
+- Prochaine étape : phase 4 (écran).
+
+## 2026-11-06 — `myapps` phase 3 : API publique (`feat/ia/vmou`)
+
+- Fait : hooks `src/modules/myapps/hooks/` (`useEntApps`, `useEntApp`, `useAppModules`, `useModuleApp`, `useTabLabel`, `useFavorites`, `useShowAllApps`, `useFilteredApps`, `useAppTheme`, `useAppBadge`) ; règles `getModuleLabel`, `getAppModules` ; libellés des onglets dans `src/app/navigation-new/tabs.tsx` ; façades `@deprecated` de `framework/modules/myapps` (hooks et sélecteurs) réécrites sur le nouveau state ; `media/hooks/resource-display.ts` lit `useEntApp`. Détail : §9 de [myapps.md](myapps.md).
+- Gardé tel quel : thème par défaut = les gris de l'ancien module (pas des nuances, `ToDo(myapps-migration)`) ; recherche par nom de module limitée aux modules chargés (les modules non migrés gardent le thème par défaut, comme avant).
+- Vérifié : tsc sans nouvelle erreur (769), eslint propre, `yarn test` 417/417. **Pas testé dans l'app.**
+- En suspens : rien n'est commité depuis la phase 0.
+- Prochaine étape : phase 4 (écran).
+
 ## 2026-11-06 — `myapps` phase 2 : chargement (`feat/ia/vmou`)
 
 - Fait : `src/modules/myapps/session.ts` (`createMyAppsSessionHooks`) : `sessionSetup` charge les apps (bloquant, écrit au `commit`), `onSessionStart` les préférences (échec → `status: 'error'`, rien d'écrit après la fin de la session). Branché dans `index.ts` (`getStore().dispatch`, `I18n.get`). `ToDo` retiré de `src/modules/auth/flows/start-session.ts`. Règle `session.ts` ajoutée à [CONVENTIONS.md](CONVENTIONS.md) (choix de Claude, à valider).

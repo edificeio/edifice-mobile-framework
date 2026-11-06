@@ -5,13 +5,23 @@ import React from 'react';
 
 import { CommonActions, TabActions, useNavigation } from '@react-navigation/native';
 
-import { AllModulesArray, AllModulesWithEntryNames, useUserAvailableModules } from '~/app/module';
+import { AllModulesWithEntryNames, getModuleByName, isModuleAvailableForUser, useModulesRecord } from '~/app/module';
+import { useSession } from '~/modules/auth/store/accounts';
 
 import { getTabScreenName } from './tabs';
 
-/** The module of that name, if the session can use it and it has an `entry`. */
-const findOpenableModule = (modules: AllModulesArray, name: string) =>
-  modules.find(module => module.name === name && module.entry !== undefined);
+/** Gives the module of a name (in O(1)), if it has an `entry` and the user can use it (`isModuleAvailableForUser`). */
+const useFindOpenableModule = () => {
+  const record = useModulesRecord();
+  const session = useSession();
+  return React.useCallback(
+    (name: string) => {
+      const module = getModuleByName(record, name);
+      return module?.entry !== undefined && session !== undefined && isModuleAvailableForUser(module, session) ? module : undefined;
+    },
+    [record, session],
+  );
+};
 
 /**
  * Tells whether a module can be opened with `useOpenModule`: it has an `entry` and the session can use it (`isModuleAvailableForUser`).
@@ -19,10 +29,10 @@ const findOpenableModule = (modules: AllModulesArray, name: string) =>
  * @returns `canOpenModule(name)`
  */
 export const useCanOpenModule = () => {
-  const modules = useUserAvailableModules();
+  const findOpenableModule = useFindOpenableModule();
   return React.useCallback(
-    (name: string): name is AllModulesWithEntryNames => findOpenableModule(modules, name) !== undefined,
-    [modules],
+    (name: string): name is AllModulesWithEntryNames => findOpenableModule(name) !== undefined,
+    [findOpenableModule],
   );
 };
 
@@ -35,16 +45,16 @@ export const useCanOpenModule = () => {
  */
 export const useOpenModule = () => {
   const navigation = useNavigation();
-  const modules = useUserAvailableModules();
+  const findOpenableModule = useFindOpenableModule();
   return React.useCallback(
     (name: AllModulesWithEntryNames): boolean => {
-      const module = findOpenableModule(modules, name);
+      const module = findOpenableModule(name);
       if (module?.entry === undefined) return false;
       navigation.dispatch(
         module.tab !== undefined ? TabActions.jumpTo(getTabScreenName(module.name)) : CommonActions.navigate(module.entry),
       );
       return true;
     },
-    [modules, navigation],
+    [findOpenableModule, navigation],
   );
 };

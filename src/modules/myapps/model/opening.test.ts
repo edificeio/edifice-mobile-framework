@@ -1,6 +1,6 @@
 import { AppModule } from '~/modules/myapps/model';
 
-import { getAppOpeningStrategy, getConnectorUrl, isConnector } from './opening';
+import { getAppModules, getAppOpeningStrategy, getConnectorUrl, isConnector } from './opening';
 
 describe('isConnector', () => {
   const webApp = { address: '/blog', prefix: '/blog', target: '' };
@@ -51,5 +51,19 @@ describe('getAppOpeningStrategy', () => {
 
   it('opens a connector without module', () => {
     expect(getAppOpeningStrategy(app, undefined)).toEqual({ kind: 'connector', url: '/auth/redirect?url=%2Fblog' });
+  });
+});
+
+describe('getAppModules', () => {
+  it('gives the module of each app, by `matchEntcoreApp`', () => {
+    const modules = getAppModules([
+      { entry: 'blog/home', matchEntcoreApp: 'Blog', name: 'blog' },
+      { matchEntcoreApp: 'Wiki', name: 'wiki' },
+      { name: 'core' },
+    ]);
+    expect([...modules]).toEqual([
+      ['Blog', { entry: 'blog/home', name: 'blog' }],
+      ['Wiki', { entry: undefined, name: 'wiki' }],
+    ]);
   });
 });

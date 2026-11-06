@@ -1,6 +1,8 @@
 /**
  * How an app is shown: its label, its icon, its color, its help.
  */
+import { isThemeColorName, type ThemeColorName } from '~/app/theme';
+import type { EntApp, Translate } from '~/modules/myapps/model';
 import { normalizeString } from '~/modules/myapps/util';
 
 // # Label
@@ -11,11 +13,8 @@ import { normalizeString } from '~/modules/myapps/util';
 // The label is computed when the apps are received, in the language of that moment (see `docs/migrations/later.md`, language).
 // ToDo(myapps-migration): the label translated by the server (`appName`) could become the first source (`docs/migrations/later.md`).
 
-/** Translates a key like `I18n.get`: gives the key itself when it has no translation. */
-export type Translate = (key: string) => string;
-
 /** What the label is computed from. */
-export interface LabelSourceData {
+interface LabelSourceData {
   name: string;
   /** « actualites »: a key, not a label. */
   displayName?: string | null;
@@ -73,23 +72,24 @@ export const getAppIcon = (app: { name: string; icon?: string | null }): string 
 
 // # Color
 //
-// A key of `theme.palette.complementary` (« orange »). Rule inherited from the old module (`aggregateApps`). One case per branch,
+// A color of the palette (`ThemeColorName`, « orange »). Rule inherited from the old module (`aggregateApps`). One case per branch,
 // in order:
 // 1. set by the name of the app, whatever the server sends (`COLOR_OVERRIDES`);
-// 2. the color of its config: its own, or that of `library-info` for a library (see `getAppConfig`, `classification.ts`);
-// 3. none: the default theme applies when the app is shown.
+// 2. the color of its config, if the palette has it: its own, or that of `library-info` for a library (see `getAppConfig`,
+//    `classification.ts`);
+// 3. none (no color, or one the palette doesn't have): the default colors apply when the app is shown.
 
-const COLOR_OVERRIDES: Record<string, string> = {
+const COLOR_OVERRIDES: Record<string, ThemeColorName> = {
   Directory: 'green',
 };
 
-/** @param configColor the color of the config of the app (see `getAppConfig`). */
-export const getAppColor = (appName: string, configColor: string | undefined): string | undefined => {
+/** @param configColor the color of the config of the app, as the server names it (see `getAppConfig`). */
+export const getAppColor = (appName: string, configColor: string | undefined): ThemeColorName | undefined => {
   // 1. Set by the name of the app
   const override = COLOR_OVERRIDES[appName];
   if (override !== undefined) return override;
-  // 2. Color of its config
-  if (configColor) return configColor;
+  // 2. Color of its config, if the palette has it
+  if (isThemeColorName(configColor)) return configColor;
   // 3. None
   return undefined;
 };
@@ -105,3 +105,29 @@ export const hasHelpUrl = (helpUrls: Record<string, string>): boolean => Object.
 /** URL of the help in the language, else in its base language (`fr-FR` → `fr`), else in French. */
 export const getHelpUrl = (helpUrls: Record<string, string>, language: string): string | undefined =>
   helpUrls[language] || helpUrls[language.split('-')[0]] || helpUrls[HELP_FALLBACK_LANGUAGE] || undefined;
+
+// # Label of a module (tabs)
+//
+// Rule inherited from the old module (`getTabModuleDisplayName`): the label of the app of the module, else the translation
+// `myapps-app-<…>` of its app name, of its own name, then of its aliases; else its name.
+
+/** Other names of a module in the translations (`myapps` was the app `Portal`). */
+const MODULE_LABEL_ALIASES: Record<string, string[]> = {
+  myapps: ['portal'],
+};
+
+/** @param app the app of the module (`matchEntcoreApp`), if the user has it. */
+export const getModuleLabel = (
+  module: { name: string; matchEntcoreApp?: string },
+  app: Pick<EntApp, 'label'> | undefined,
+  translate: Translate,
+): string => {
+  if (app) return app.label;
+  const values = [module.matchEntcoreApp, module.name, ...(MODULE_LABEL_ALIASES[module.name] ?? [])];
+  return (
+    values.reduce<string | undefined>(
+      (label, value) => label || (value ? translateKey(translate, `myapps-app-${value}`) : undefined),
+      undefined,
+    ) || module.name
+  );
+};

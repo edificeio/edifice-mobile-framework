@@ -3,7 +3,6 @@ import { StyleSheet, View } from 'react-native';
 
 import RNSvg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
-import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { Svg } from '~/framework/components/picture';
@@ -12,8 +11,9 @@ import { COMMUNITY_DEFAULT_THUMBNAIL_IMAGE_SIZE } from '~/framework/modules/comm
 import CommunityMembersPill from '~/framework/modules/communities/components/community-members-pill/';
 import { rolesI18n } from '~/framework/modules/communities/model';
 import { Image, injectImageSource } from '~/framework/modules/media';
-import { useAppTheme } from '~/framework/modules/myapps/hooks';
 import { sessionImageSource } from '~/framework/util/transport';
+import { useModuleAppDisplay } from '~/modules/myapps/hooks';
+import { I18n } from '~/util/i18n';
 
 import { styles } from './styles';
 import { CommunityCardLargeProps } from './types';
@@ -27,7 +27,7 @@ export const CommunityCardLarge = ({
   senderName,
   title,
 }: Readonly<CommunityCardLargeProps>) => {
-  const appTheme = useAppTheme('communities');
+  const appTheme = useModuleAppDisplay('communities');
   const imageSource = React.useMemo(
     () => (image ? sessionImageSource(injectImageSource(image, COMMUNITY_DEFAULT_THUMBNAIL_IMAGE_SIZE)) : undefined),
     [image],

@@ -7,6 +7,7 @@
  * Three independent data, never mixed: the apps, the preferences (favorites) and the modules available for the user. They are
  * combined when read (hooks, `filterApps`).
  */
+import type { ThemeColorName } from '~/app/theme';
 
 /** Categories of apps that the app knows. */
 export const APP_CATEGORIES = ['communication', 'pedagogy', 'organisation'] as const;
@@ -25,8 +26,8 @@ export interface EntApp {
   label: string;
   /** Icon (see `display.ts`). */
   icon: string;
-  /** Key of `theme.palette.complementary` (see `display.ts`). None: the default theme applies. */
-  color?: string;
+  /** A color of the palette (see `display.ts`). None: the default colors apply. */
+  color?: ThemeColorName;
   category: AppCategory;
   /** See `classification.ts`. */
   isLibrary: boolean;
@@ -65,3 +66,25 @@ export interface AppModule {
  */
 export type AppOpeningStrategy =
   { kind: 'module'; moduleName: string } | { kind: 'web'; url: string } | { kind: 'connector'; url: string };
+
+// # Rules (types of their parameters)
+
+/** Translates a key like `I18n.get`: gives the key itself when it has no translation. */
+export type Translate = (key: string) => string;
+
+/** What an app takes from its config: its own, or that of `library-info` for a library. */
+export interface AppConfig {
+  category?: string;
+  /** As the server names it: checked by `getAppColor`. */
+  color?: string;
+  helpUrls: Record<string, string>;
+}
+
+/** `other-services` lists the `isOtherService` apps: not the same as `category: 'other'`. */
+export type MyAppsFilter =
+  | { type: 'all' }
+  | { type: 'favorites' }
+  | { type: 'category'; value: KnownAppCategory }
+  | { type: 'other-services' }
+  | { type: 'libraries' }
+  | { type: 'search'; value: string };

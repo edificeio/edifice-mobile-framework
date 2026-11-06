@@ -3,8 +3,7 @@
  * Every call is signed with the account given (`accountFetch`): the session, or the account being signed in (`sessionSetup`).
  */
 import { accountFetch } from '~/framework/util/transport';
-import type { AppsPreferences, EntApp } from '~/modules/myapps/model';
-import type { Translate } from '~/modules/myapps/model/display';
+import type { AppsPreferences, EntApp, Translate } from '~/modules/myapps/model';
 
 import { fromPreferences, toEntApps, toPreferences } from './adapter';
 import type { API } from './api';

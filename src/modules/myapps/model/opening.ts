@@ -3,7 +3,7 @@
  *
  * Two parts:
  * - `isConnector`: a fact of the server, computed when the app is received (rule inherited from `checkIfIsConnector`);
- * - `getAppOpeningStrategy`: it depends on the modules available for the user, so it is computed when read.
+ * - `getAppOpeningStrategy`: it depends on the modules available for the user, so it is computed when read (see `getAppModules`).
  */
 import { AppModule, AppOpeningStrategy, EntApp } from '~/modules/myapps/model';
 
@@ -31,3 +31,14 @@ export const getAppOpeningStrategy = (
   if (module !== undefined && !app.isConnector) return { kind: 'web', url: app.address };
   return { kind: 'connector', url: getConnectorUrl(app.address) };
 };
+
+/**
+ * The module of each app, by the name of the app: a module is the one of an app when its `matchEntcoreApp` is the name of the app.
+ * @param modules the modules available for the user.
+ */
+export const getAppModules = (
+  modules: readonly { name: string; entry?: string; matchEntcoreApp?: string }[],
+): ReadonlyMap<string, AppModule> =>
+  new Map(
+    modules.flatMap(({ entry, matchEntcoreApp, name }) => (matchEntcoreApp ? [[matchEntcoreApp, { entry, name }] as const] : [])),
+  );

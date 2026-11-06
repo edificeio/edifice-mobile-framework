@@ -19,6 +19,7 @@ import { Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
 import Feedback from '~/framework/util/feedback/feedback';
 import { useSession } from '~/modules/auth/store/accounts';
+import { useModuleAppDisplay } from '~/modules/myapps/hooks';
 
 import { useConfirmChangeTab } from './confirm-remove';
 import { tabsOptions } from './options';
@@ -32,14 +33,15 @@ type TabScreenName<Name extends string> = `$tab/${Name}`;
  */
 export const getTabScreenName = <Name extends AnyTabModule['name']>(name: Name): TabScreenName<Name> => `$tab/${name}`;
 
+/** Label of a tab: the name of the app of the module (see `useModuleAppDisplay` of `myapps`). */
 function TabLabel({
   color,
-  testId,
-}: AnyTabModule['tab'] & Parameters<Extract<BottomTabNavigationOptions['tabBarLabel'], Function>>[0]) {
-  // @todo get names from myApps innstead of write testId !
+  module,
+}: { module: AnyTabModule } & Parameters<Extract<BottomTabNavigationOptions['tabBarLabel'], Function>>[0]) {
+  const { label } = useModuleAppDisplay(module.name);
   return (
     <CaptionText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
-      {testId}
+      {label}
     </CaptionText>
   );
 }
@@ -80,7 +82,7 @@ const createTabRoute = (screens: AllModulesStaticScreens, module: AnyTabModule) 
         width: tabBarIconSize,
       },
       tabBarInactiveTintColor: theme.ui.text.light!.toString(),
-      tabBarLabel: props => <TabLabel {...props} {...tabConfig} />,
+      tabBarLabel: props => <TabLabel {...props} module={module} />,
     },
     screen: createTabStackNavigation(screens, tabConfig.route),
   });

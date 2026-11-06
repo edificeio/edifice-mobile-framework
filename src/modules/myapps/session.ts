@@ -6,21 +6,19 @@
  *   the screen (`error` status), which can load them again (`refreshMyApps`).
  */
 import type { ConfigForSession } from '~/app/module/types';
-import type { Translate } from '~/modules/myapps/model/display';
+import type { Translate } from '~/modules/myapps/model';
 import { myAppsService } from '~/modules/myapps/service';
 import { MyAppsAction, myAppsActions } from '~/modules/myapps/store';
-
-export interface MyAppsSessionDependencies {
-  /** Dispatches to the store of the app (it doesn't exist yet when the module is declared). */
-  dispatch: (action: MyAppsAction) => void;
-  /** Translates the labels of the apps (`I18n.get`). */
-  translate: Translate;
-}
 
 export const createMyAppsSessionHooks = ({
   dispatch,
   translate,
-}: MyAppsSessionDependencies): Required<Pick<ConfigForSession, 'onSessionStart' | 'sessionSetup'>> => ({
+}: {
+  /** Dispatches to the store of the app (it doesn't exist yet when the module is declared). */
+  dispatch: (action: MyAppsAction) => void;
+  /** Translates the labels of the apps (`I18n.get`). */
+  translate: Translate;
+}): Required<Pick<ConfigForSession, 'onSessionStart' | 'sessionSetup'>> => ({
   onSessionStart: async (session, { signal }) => {
     try {
       const preferences = await myAppsService.preferences.get(session, { signal });

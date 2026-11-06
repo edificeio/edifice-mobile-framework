@@ -1,6 +1,6 @@
 # Migration : `myapps`
 
-> Statut : **en cours** (spec v2 validée le 2026-11-04 ; phases 0, 1, 1 bis et 2 faites) — mise à jour le 2026-11-06
+> Statut : **en cours** (spec v2 validée le 2026-11-04 ; phases 0 à 3 faites) — mise à jour le 2026-11-06
 
 Les règles communes à toute la migration sont dans [CONVENTIONS.md](CONVENTIONS.md) et ne sont pas répétées ici.
 
@@ -35,7 +35,7 @@ Les règles communes à toute la migration sont dans [CONVENTIONS.md](CONVENTION
 **Hors périmètre**
 
 - Intents (`src/app/intents.ts`) : reportés (voir [later.md](later.md)).
-- `useNotificationBadge` : dépend des définitions de notifications de `timeline` (redux). Reste en façade jusqu'à la migration de `timeline`.
+- `useNotificationBadge` : dépend des définitions de notifications de `timeline` (redux). Remplacé le 2026-11-06 par `useNotificationEntApp` / `useNotificationEntAppDisplay` du module `notifications` (§5.5), qui lisent encore ces définitions.
 - Les widgets `MYAPPS_WIDGET` (`widgets/*`) : malgré leur nom, ils sont affichés par `timeline`.
 
 ## 2. Existant
@@ -67,21 +67,21 @@ Les règles communes à toute la migration sont dans [CONVENTIONS.md](CONVENTION
 
 ### 2.3 Consommateurs externes
 
-| Fichier                                                                                                               | Utilise                                           | Remplacement                           |
-| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | -------------------------------------- |
-| `src/framework/components/picture/module-image/component.tsx`                                                         | `useAppTheme(appName)`                            | façade → nouveau hook                  |
-| `src/framework/modules/blog/screens/BlogSelectScreen.tsx`                                                             | `useAppTheme('blog')`                             | idem                                   |
-| `src/framework/modules/homework/components/HomeworkSelectScreen.tsx`                                                  | `useAppTheme('homework')`                         | idem                                   |
-| `src/framework/modules/news/components/thumbnail-thread/component.tsx`                                                | `useAppTheme(moduleConfig.name)`                  | idem                                   |
-| `src/framework/modules/communities/components/community-card-large/component.tsx`, `…/community-navbar/component.tsx` | `useAppTheme('communities')`                      | idem                                   |
-| `src/framework/modules/communities/components/community-card-small/component.tsx`                                     | `selectAggregatedApps(state).Communities`         | façade                                 |
-| `src/framework/modules/timeline/components/notification-top-info.tsx`                                                 | `useNotificationBadge`                            | façade (hors périmètre)                |
-| `src/modules/media/hooks/resource-display.ts`                                                                         | `selectAggregatedApps` (par nom d'app ENT)        | `useEntApp(name)`                      |
-| `src/app/navigation/main-navigation.tsx` (ancienne nav)                                                               | `getTabModuleDisplayName`, `selectAggregatedApps` | rien (à supprimer avec l'ancienne nav) |
-| `src/framework/navigation/modals/navigator.tsx`                                                                       | `ManageFavoritesModalScreen`                      | modale `myapps/favorites`              |
-| `src/app/navigation-new/tabs.tsx`                                                                                     | — (`@todo get names / colors from myApps`)        | `useTabLabel`                          |
+| Fichier                                                                                                               | Utilise                                           | Remplacement                                                                                                                   |
+| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `src/framework/components/picture/module-image/component.tsx`                                                         | `useAppTheme(appName)`                            | `EntAppImage` (`useEntAppDisplay`) + `ModuleImage` par-dessus (prop `moduleName: AllModulesNames`) (fait ; appelants : `wiki`) |
+| `src/framework/modules/blog/screens/BlogSelectScreen.tsx`                                                             | `useAppTheme('blog')`                             | `useModuleAppDisplay('blog')` (fait)                                                                                           |
+| `src/framework/modules/homework/components/HomeworkSelectScreen.tsx`                                                  | `useAppTheme('homework')`                         | `useModuleAppDisplay('homework')` (fait)                                                                                       |
+| `src/framework/modules/news/components/thumbnail-thread/component.tsx`                                                | `useAppTheme(moduleConfig.name)`                  | `useModuleAppDisplay(moduleConfig.name)` (fait)                                                                                |
+| `src/framework/modules/communities/components/community-card-large/component.tsx`, `…/community-navbar/component.tsx` | `useAppTheme('communities')`                      | `useModuleAppDisplay('communities')` (fait)                                                                                    |
+| `src/framework/modules/communities/components/community-card-small/component.tsx`                                     | `selectAggregatedApps(state).Communities`         | `useModuleAppDisplay('communities')` (fait ; on est dans le module `communities`)                                              |
+| `src/framework/modules/timeline/components/notification-top-info.tsx`                                                 | `useNotificationBadge`                            | `useNotificationEntAppDisplay` de `notifications` (fait)                                                                       |
+| `src/modules/media/hooks/resource-display.ts`                                                                         | `selectAggregatedApps` (par nom d'app ENT)        | `useEntApp(name)` (fait)                                                                                                       |
+| `src/app/navigation/main-navigation.tsx` (ancienne nav)                                                               | `getTabModuleDisplayName`, `selectAggregatedApps` | `useEntApps` + `getModuleLabel` (fait ; à supprimer avec l'ancienne nav)                                                       |
+| `src/framework/navigation/modals/navigator.tsx`                                                                       | `ManageFavoritesModalScreen`                      | modale `myapps/favorites`                                                                                                      |
+| `src/app/navigation-new/tabs.tsx`                                                                                     | — (`@todo get names / colors from myApps`)        | `useModuleAppDisplay(module.name).label` (fait)                                                                                |
 
-> ⚠️ `buildAppLookupMap` lit `AllModules()`, qui renvoie `[]` : **`useAppTheme` / `useAppBadge` renvoient toujours le thème par défaut aujourd'hui**.
+> ⚠️ Avant la phase 3, `buildAppLookupMap` lisait `AllModules()`, qui renvoie `[]` : **`useAppTheme` / `useAppBadge` renvoyaient toujours le thème par défaut**.
 
 ## 3. Comportements à conserver
 
@@ -204,7 +204,7 @@ src/modules/myapps/
 │   ├── action-creators.ts      Types d'actions Redux + action creators (terminologie Redux)
 │   └── selectors.ts
 ├── storage.ts                  Storage.account `myapps` (clés inchangées) + format de l'onboarding stocké
-├── hooks/                      API publique (§5.5)
+├── hooks/                      API publique (§5.5) : apps.ts (apps, modules, libellés d'onglets), display.ts (affichage d'une app), list.ts (favoris, filtres)
 ├── screens/
 │   ├── home/                   MyAppsHomeScreen (defineScreen)
 │   ├── menu.tsx                formSheet (ex-sheet `home_menu`)
@@ -246,7 +246,7 @@ interface EntApp {
   name: string; // identifiant ENT (« Actualites ») : clé de `matchEntcoreApp` et des favoris
   label: string; // model/display.ts
   icon: string; // model/display.ts
-  color?: string; // model/display.ts ; absente → thème par défaut à l'affichage
+  color?: ThemeColorName; // model/display.ts ; couleur de la palette (`~/app/theme`) ; absente → couleurs par défaut à l'affichage
   category: AppCategory; // model/classification.ts
   isLibrary: boolean; // model/classification.ts
   helpUrls: Record<string, string>; // langue → URL ; `{}` sans aide
@@ -323,7 +323,7 @@ Le service reçoit `translate` en paramètre (l'appelant passe `I18n.get`) : il 
   Plus tard, `appName` du serveur deviendra la source n° 0 ([later.md](later.md)).
 
 - **Icône** (`display.ts`), trois étapes nommées : surcharge par nom d'app (`Directory` → `userbook`) ; normalisation de l'icône serveur (sans `-large`, minuscules, sans accents) ; renommage (`viescolaire` → `parametrage`).
-- **Couleur** (`display.ts`), un cas par branche : surcharge par nom d'app (`Directory` → `green`) ; bibliothèque → couleur de `library-info` ; couleur de l'app ; aucune.
+- **Couleur** (`display.ts`), un cas par branche : surcharge par nom d'app (`Directory` → `green`) ; couleur de la config (la sienne, ou celle de `library-info` pour une bibliothèque), si la palette l'a (`isThemeColorName`) ; aucune (pas de couleur, ou une que la palette n'a pas) → couleurs par défaut à l'affichage. Typée `ThemeColorName` (`~/app/theme`) : le modèle connaît les noms des couleurs de la palette, pour l'autocomplétion.
 
 **Favoris** : `favorites` partout (modèle, store, règles, hooks) ; `bookmarks` n'existe que dans `API.*` et l'adapter. Règles : `withFavoriteToggled(preferences, appName)`, `withFavorites(preferences, favorites)` (§3.4).
 
@@ -356,18 +356,27 @@ Dans `session.ts` : `createMyAppsSessionHooks({ dispatch, translate })` donne `s
 
 Les hooks combinent les trois données de §5.3 (apps du store, préférences du store, modules par `useUserAvailableModules()`). Plus de `buildAppLookupMap` ni d'`AllModules()`.
 
-| Hook                                      | Rôle                                                                                                | Remplace                                               |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `useEntApps()`                            | Toutes les apps (`EntApp[]`), statut, `refresh`                                                     | `selectAggregatedApps`                                 |
-| `useEntApp(entAppName)`                   | Une app par son nom ENT (`'Blog'`, `'Espace documentaire'`…), `display` ou non                      | `aggregatedApps[name]` (`media`, `communities`)        |
-| `useAppModules()`                         | Module (`AppModule`) de chaque app, par `matchEntcoreApp`, depuis `useUserAvailableModules()`       | `isMobile`, `routeName`                                |
-| `useModuleApp(moduleName)`                | L'app d'un module : `useModules()` → `matchEntcoreApp` → `useEntApp`                                | la partie « par nom de module » de `buildAppLookupMap` |
-| `useFavorites()`                          | Favoris (`Set`), statut, `toggle(appName)`, `save(favorites)`                                       | `isFavorite` dans l'agrégat                            |
-| `useAppTheme(name)` / `useAppBadge(name)` | Couleurs + icône (thème par défaut sinon), par nom ENT **ou** nom de module                         | anciens hooks du même nom                              |
-| `useTabLabel(module)`                     | Nom d'un onglet : app du module, sinon i18n `myapps-app-*`, alias `myapps` → `portal`               | `getTabModuleDisplayName`                              |
-| `useFilteredApps(filter)`                 | Liste de l'écran : `filterApps` avec apps, favoris, modules et l'interrupteur (`useStorageBoolean`) | idem                                                   |
+| Hook                              | Rôle                                                                                                                                                                                              | Remplace                                               |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `useEntApps()`                    | Toutes les apps (`EntApp[]`), statut, `refresh`                                                                                                                                                   | `selectAggregatedApps`                                 |
+| `useEntApp(entAppName)`           | Une app par son nom ENT (`'Blog'`, `'Espace documentaire'`…), `display` ou non                                                                                                                    | `aggregatedApps[name]` (`media`, `communities`)        |
+| `useAppModules()`                 | Module (`AppModule`) de chaque app, par `matchEntcoreApp`, depuis `useUserAvailableModules()`                                                                                                     | `isMobile`, `routeName`                                |
+| `useModuleApp(moduleName)`        | L'app d'un module : `useModules()` → `matchEntcoreApp` → `useEntApp`                                                                                                                              | la partie « par nom de module » de `buildAppLookupMap` |
+| `useFavorites()`                  | Favoris (`Set`), statut, `toggle(appName)`, `save(favorites)`                                                                                                                                     | `isFavorite` dans l'agrégat                            |
+| `useEntAppDisplay(entAppName)`    | Affichage d'une app par son nom ENT : `{ colors: IShades, icon, label }`, valeurs par défaut sinon                                                                                                | `useAppTheme`, `useAppBadge`, `aggregatedApps[name]`   |
+| `useModuleAppDisplay(moduleName)` | Idem par le nom d'un module (`matchEntcoreApp`) ; libellé du module si l'app est inconnue (`getModuleLabel` : i18n `myapps-app-*`, alias `myapps` → `portal`). Donne aussi le libellé des onglets | `useAppTheme(moduleName)`, `getTabModuleDisplayName`   |
+| `useFilteredApps(filter)`         | Liste de l'écran : `filterApps` avec apps, favoris, modules et l'interrupteur (`useStorageBoolean`)                                                                                               | idem                                                   |
+| `useShowAllApps()`                | L'interrupteur « afficher toutes les applis » (`true` sans valeur stockée)                                                                                                                        | `readShowAllApps` / `writeShowAllApps` + `useState`    |
 
 **`filterApps(apps, filter, { favorites, getModule, showAllApps })`** (`model/classification.ts`) : ne garde que les apps `display`, applique le filtre (§3.2), place les « autres services » (`isOtherService`), trie par `label`.
+
+**Affichage d'une app** (`hooks/display.ts`, relecture du 2026-11-06) : `EntAppDisplay = { colors: IShades, icon, label }`, prêt à l'emploi. Par défaut : couleurs **primaires** (`DEFAULT_APP_COLORS`), icône `ui-infoCircle` (`DEFAULT_APP_ICON`), libellé = nom donné (ENT) ou libellé du module (`getModuleLabel`). Fonctions pures : `getEntAppDisplay(app, fallbackLabel)`, `getAppShades(color)` (une couleur sans toutes ses nuances, `nabook-color`, n'en est pas une). Plus de `useAppTheme` / `useAppBadge` : un badge est un objet `{ icon, color: colors.regular }` construit par l'appelant (ex. `ContentCardIcon` de `timeline`), pas un hook.
+
+**Nom d'app ENT ou module ?** On passe par l'app ENT (`useEntAppDisplay`, `EntAppImage`) quand le nom vient du serveur (une ressource, une notification…) ; par le module (`useModuleAppDisplay`, `ModuleImage`) quand le module est connu du code, passé directement (son propre module, un module typé `AllModulesNames`). Les composants d'image (`src/framework/components/picture/`) : `EntAppImage` (image d'une ressource ; à défaut, couleurs et icône de l'app) et `ModuleImage`, qui donne à `EntAppImage` l'app de son module (`useModuleAppName`).
+
+**App d'une notification** (module `notifications`, `src/modules/notifications/hooks.ts`) : `useNotificationEntApp(type, eventType)` (l'app de la définition du type, `app-name`) et `useNotificationEntAppDisplay(type, eventType)` (son affichage, avec les surcharges propres à certains types : `ELEA.EXTERNAL_NOTIFICATION`, `TIMELINE.NOTIFY-REPORT`). Les définitions sont encore lues dans le redux de l'ancien `timeline` (`ToDo(timeline-migration)`) : `notifications` centralise ce qui touche aux notifications, pour l'extraire de `timeline`.
+
+Recherche par nom de module : seulement parmi les modules chargés (`useModules()`). Tant qu'un module n'est pas migré, `useModuleAppDisplay('<son nom>')` donne l'affichage par défaut, comme avant (l'ancien registre `AllModules()` était vide) ; par nom ENT (`useEntAppDisplay('Communities')`), l'app est trouvée.
 
 La recherche par **scope** de `buildAppLookupMap` (un `entcoreScope` pointe vers l'app) n'est utilisée par aucun appelant connu : non reprise, sauf besoin constaté.
 
@@ -412,7 +421,7 @@ La recherche par **scope** de `buildAppLookupMap` (un `entcoreScope` pointe vers
 
 ### 5.10 Façades `@deprecated`
 
-`src/framework/modules/myapps/hooks` (`useAppTheme`, `useAppBadge`) et `reducer` (`selectAggregatedApps`) restent, réécrits sur le nouveau code : les consommateurs anciens ne changent pas. `useNotificationBadge` garde sa logique (redux `timeline`) mais lit les apps du nouveau state. Le reste du module ancien est supprimé en phase 7.
+Plus de façade pour les autres modules (relecture du 2026-11-06) : ils passent tous aux nouveaux hooks (§2.3). `useAppTheme`, `useAppBadge` et `useNotificationBadge` sont supprimés. Les sélecteurs `selectAppsState`, `selectAggregatedApps`, `selectAppBookmarks` (`framework/modules/myapps/reducer/selectors.ts`) ne servent plus qu'à l'ancien code de `framework/modules/myapps` (écrans, modale des favoris, inatteignables) : ils construisent l'ancien agrégat à partir du nouveau state et disparaissent avec lui en phase 7 (`ToDo(myapps-migration)`).
 
 ## 6. Plan par phases
 
@@ -422,7 +431,7 @@ La recherche par **scope** de `buildAppLookupMap` (un `entcoreScope` pointe vers
 | 1     | Modèle + service + store + storage (**fait**)   | `model/`, `use-cases.ts`, `util.ts`, `service/`, `store/`, `storage.ts` ; `EntModule` ; suppression de l'ancien `store.ts` (zustand) et de l'ancien `service.ts`                                                                                                                                                                                                                     | tests Jest de `model/business.ts`, `use-cases.ts`             |
 | 1 bis | Reprise de la conception des données (**fait**) | Conformer le code à §5.2-§5.7 : `EntApp` hydraté par le service (`service/api.ts`, `adapter.ts`), règles du modèle, store `apps` + `preferences.favorites`, `filterApps` avec trois entrées et filtre `display`, `getAppOpeningStrategy` ; renommer `isModuleAvailable` → `isModuleAvailableForUser`, `useAvailableModules` → `useUserAvailableModules` (code, ARCHITECTURE, STATUS) | tsc, eslint, tests Jest (règles, adapter, store, use-cases)   |
 | 2     | Chargement (**fait**)                           | `sessionSetup` (apps), `onSessionStart` (préférences), `refresh` ; retrait du `ToDo` de `start-session.ts`                                                                                                                                                                                                                                                                           | connexion : state rempli ; API en panne : connexion refusée   |
-| 3     | API publique                                    | hooks §5.5 ; `tabs.tsx` ; façades §5.10 ; `media/resource-display.ts`                                                                                                                                                                                                                                                                                                                | libellés d'onglets ; thème des apps                           |
+| 3     | API publique (**fait**)                         | hooks §5.5 ; `tabs.tsx` ; façades §5.10 ; `media/resource-display.ts`                                                                                                                                                                                                                                                                                                                | libellés d'onglets ; thème des apps                           |
 | 4     | `MyAppsHomeScreen`                              | port de l'écran, `MyAppsList`, `MyAppsCard`, `MyAppsFilters` ; header par options ; `useScrollToTop`                                                                                                                                                                                                                                                                                 | parcours E2E (testIDs §3.5)                                   |
 | 5     | Modales                                         | `myapps/menu`, `myapps/app-actions`, `myapps/favorites` (`useConfirmRemove`), `myapps/onboarding` ; corrections §4 n° 4-7                                                                                                                                                                                                                                                            | règles §3.2-3.4                                               |
 | 6     | Ouvrir une app                                  | §5.6                                                                                                                                                                                                                                                                                                                                                                                 | modules, apps web, connecteurs                                |
@@ -442,7 +451,7 @@ La recherche par **scope** de `buildAppLookupMap` (un `entcoreScope` pointe vers
 - **2026-11-04** — Bottom sheets → `formSheet`, `ModalBox` → `transparentModal` (règle générale, [CONVENTIONS.md](CONVENTIONS.md)).
 - **2026-11-04** — Route d'entrée d'un module : clé de config **`entry?: keyof Screens`, facultative**. `tab.route` vaut `entry` par défaut (et non l'inverse). Un module sans `entry` ne s'ouvre pas comme module.
 - **2026-11-04** — Favoris : une seule politique d'écriture, « après succès » (§4 n° 6).
-- **2026-11-04** — Libellé de l'onglet `myapps` par l'i18n (`myapps-app-portal`), et `useTabLabel` pour tous les onglets (nom de l'app du serveur, sinon i18n). Accepté, **à revoir plus tard** ([later.md](later.md)).
+- **2026-11-04** — Libellé de l'onglet `myapps` par l'i18n (`myapps-app-portal`), et le même libellé pour tous les onglets (nom de l'app du serveur, sinon i18n ; `useModuleAppDisplay` depuis le 2026-11-06). Accepté, **à revoir plus tard** ([later.md](later.md)).
 - **2026-11-04** — Recherche native du header (§4 n° 13) : plus tard ([later.md](later.md)).
 - **2026-11-04** — `useOpenModule` (+ `canOpenModule`) : API publique du framework pour ouvrir un module (§5.6).
 - **2026-11-04** — Détails de `GET /api/me/applications` (bibliothèques, langue d'`appName`, disponibilité sur toutes les plateformes) : plus tard ([later.md](later.md)). En attendant : détection actuelle des bibliothèques, libellés par l'i18n, pas de repli sur les anciennes routes.
@@ -456,6 +465,8 @@ La recherche par **scope** de `buildAppLookupMap` (un `entcoreScope` pointe vers
   - Règles du modèle expliquées en tête : les règles arbitraires ou compliquées (bibliothèques, libellé, icône, couleur) doivent se voir. Regroupées par objectif (décision suivante).
   - `favorites` partout ; `bookmarks` seulement dans `API.*` et l'adapter.
   - Noms : `getAppOpeningStrategy` ; `isModuleAvailable` → `isModuleAvailableForUser` et `useAvailableModules` → `useUserAvailableModules` (le résultat dépend des droits de l'utilisateur).
+- **2026-11-06** — Affichage des apps pour les autres modules : `useEntAppDisplay` / `useModuleAppDisplay` (`{ colors, icon, label }`, couleurs primaires par défaut) au lieu de `useAppTheme` / `useAppBadge` ; un badge est un objet construit par l'appelant, pas un hook ; l'app d'une notification se lit par `useNotificationEntApp` du module `notifications` ; `selectAggregatedApps` n'est plus exposé aux autres modules (gardé pour l'ancien code jusqu'à la phase 7).
+- **2026-11-06** (utilisateur) — `useModuleAppDisplay`, `useModuleApp`, `useModuleAppName` prennent un `AllModulesNames` : on ne peut demander que l'app d'un module qui existe dans l'app. Les appels avec le nom d'un module pas encore migré (`blog`, `homework`, `news`, `communities` ×2, et `wiki` via `ModuleImage`) sont des erreurs de type **voulues**, corrigées au fil des migrations. `ModuleWithRights` prend aussi le nom d'un module de l'app (`Pick<AnyModule, 'name'>`).
 - **2026-11-06** — Langue : pas de mécanisme de changement de langue sans redémarrage pour l'instant (l'app redémarre déjà). Sujet transverse dans [later.md](later.md).
 - **2026-11-06** — Relecture du code de la phase 1 bis :
   - règles du modèle **regroupées par objectif** dans `model/` (`display.ts`, `opening.ts`, `classification.ts`, `favorites.ts`, `onboarding.ts`) : `model/rules/` comptait trop de petits fichiers ;
@@ -510,4 +521,27 @@ Aucune question bloquante. Ce qui est remis à plus tard est dans [later.md](lat
   - `index.ts` : les branche avec `getStore().dispatch` et `I18n.get`.
   - `src/modules/auth/flows/start-session.ts` : `ToDo` « MyApps data » retiré.
   - Vérifié : tsc sans nouvelle erreur (769), eslint propre, `yarn test` 413/413. **Pas testé dans l'app** : à la connexion, le state `myapps` (Reactotron) doit avoir `apps` et `preferences` en `loaded` ; API des apps en panne → connexion refusée.
-  - Prochaine étape : phase 3 (API publique : hooks §5.5, `tabs.tsx`, façades §5.10, `media/resource-display.ts`).
+- 2026-11-06 : **phase 3 faite.**
+  - `hooks/` : `apps.ts` (`useEntApps`, `useEntApp`, `useAppModules`, `useModuleApp`, puis `useTabLabel`, retiré ensuite), `list.ts` (`useFavorites`, `useShowAllApps`, `useFilteredApps`), `theme.ts` (`useAppTheme`, `useAppBadge` + fonctions pures). Export par `hooks/index.ts`.
+  - Modèle : `getModuleLabel` (`display.ts`, règle de `getTabModuleDisplayName`), `getAppModules` (`opening.ts`). 4 tests de plus.
+  - `src/app/navigation-new/tabs.tsx` : `TabLabel` affiche le libellé du module au lieu du `testId` (aujourd'hui `useModuleAppDisplay(module.name).label`).
+  - Façades (§5.10) : `framework/modules/myapps/hooks/use-app-theme.ts` et `use-app-badge.ts` réexportent les nouveaux hooks ; `useNotificationBadge` lit le nouveau state ; `reducer/selectors.ts` construit l'ancien agrégat (le garde de la phase 1 et son `ToDo` sont retirés). `NOTIF_TYPE_BADGE_OVERRIDES` est exporté de l'ancien `adapter.ts`.
+  - `src/modules/media/hooks/resource-display.ts` lit `useEntApp` (son `ToDo(media-migration)` est retiré).
+  - Pas de tests des hooks (Jest tourne sans React Native) : seules les règles pures sont testées.
+  - Vérifié : tsc sans nouvelle erreur (769), eslint propre, `yarn test` 417/417. **Pas testé dans l'app** : libellés des onglets, couleurs des cartes `communities`, des miniatures `news`, des ressources `media`, badges des notifications.
+- 2026-11-06 : **relecture de la phase 3.**
+  - `useAppTheme` / `useAppBadge` remplacés par `useEntAppDisplay(entAppName)` et `useModuleAppDisplay(moduleName)` (`hooks/display.ts`) : `{ colors: IShades, icon, label }`, couleurs primaires par défaut. `useAppBadge` supprimé : un badge est construit par l'appelant.
+  - `useNotificationBadge` remplacé par `useNotificationEntApp` / `useNotificationEntAppDisplay` dans `src/modules/notifications/hooks.ts` (surcharges ELEA / REPORT avec eux).
+  - Consommateurs passés aux nouveaux hooks : `module-image`, `blog`, `homework`, `news`, `communities` (3 composants), `timeline/notification-top-info`, `main-navigation` (ancienne nav). Façades `use-app-theme.ts` / `use-app-badge.ts` supprimées ; `selectAggregatedApps` réservé à l'ancien code interne (phase 7).
+  - Vérifié : tsc 768 (une erreur préexistante en moins, `community-navbar`), eslint propre sur le nouveau code (erreurs préexistantes dans `main-navigation.tsx` et `notification-top-info.tsx`), `yarn test` 417/417. **Pas testé dans l'app.**
+- 2026-11-06 : **couleurs typées.** Un nom de couleur de la palette est typé `ThemeColorName` (`~/app/theme` : couleurs complémentaires, `primary`, `secondary`) au lieu de `string` : `EntApp.color`, `getAppColor`, `getAppShades`, surcharges des notifications. `isThemeColorName` vérifie le nom reçu du serveur (une couleur inconnue devient « aucune ») ; `getThemeColorShades` donne ses nuances. Règle générale dans [CONVENTIONS.md](CONVENTIONS.md). tsc 768, eslint propre, `yarn test` 418/418.
+- 2026-11-06 : `useTabLabel` supprimé, redondant avec `useModuleAppDisplay` (même libellé) : `TabLabel` (`tabs.tsx`) lit `useModuleAppDisplay(module.name).label`. tsc 768, eslint propre, `yarn test` 418/418.
+- 2026-11-06 : **accès aux modules par nom en O(1).** Le contexte de `ModuleLoader` (`src/app/module/loader.tsx`) garde aussi une Map par nom, construite une fois ; hooks `useModulesMap()` et `useModule(name)` (typé pour un nom du code, `AnyModule | undefined` pour un nom quelconque). `useModuleAppName` (`myapps`) et `useOpenModule` / `useCanOpenModule` (`open-module.ts`, avec `isModuleAvailableForUser` sur la session) ne font plus de `find`. tsc 768, eslint propre, `yarn test` 418/418.
+- 2026-11-06 : **types rangés.** Les types utiles à plusieurs fichiers vont dans le fichier de types de leur dossier : `ModulesMap` (`src/app/module/types.ts`, type de retour de `useModulesMap`), `Translate`, `AppConfig`, `MyAppsFilter` (`model/index.ts`), `MyAppsDispatch`, `EntAppDisplay` (`hooks/types.ts`). Les types internes restent dans leur fichier, non exportés : `LoadedModules` (`loader.tsx`), `ModuleWithRights` (`rights.ts`), `LabelSourceData` (`display.ts`), `FilterAppsContext` (`classification.ts`) ; les dépendances de `createMyAppsSessionHooks` sont typées dans la signature, sans nom. Règle dans [CONVENTIONS.md](CONVENTIONS.md). tsc 768, eslint propre, `yarn test` 418/418.
+- 2026-11-06 : `ModulesMap` renommé `AllModulesMap` (comme `AllModulesArray`) ; l'ancien type objet `AllModulesMap` (`{ [nom]: type du module }`, niveau des types) devient `AllModulesByName`. tsc 768, `yarn test` 418/418.
+- 2026-11-06 : la Map des modules est remplacée par un **objet typé `AllModulesByName`** : `useModulesByName()` (ex-`useModulesMap()`) donne chaque module avec son type exact (`.myapps`) ; `getModuleByName(byName, name)` pour un nom quelconque (clés propres seulement, pas « toString »). Le type `AllModulesMap` est supprimé. tsc 768, `yarn test` 418/418.
+- 2026-11-06 : `AllModulesByName` → **`AllModulesRecord`**, `useModulesByName` → **`useModulesRecord`** (champ du contexte : `record`). `getModuleByName` garde son nom (il prend un nom). tsc 768, `yarn test` 418/418.
+- 2026-11-06 : **noms de modules typés** (décision de l'utilisateur). `useModuleAppDisplay`, `useModuleApp` et `useModuleAppName` n'acceptent qu'un `AllModulesNames` ; `ModuleWithRights` prend `Pick<AnyModule, 'name'>`. tsc passe de 768 à 775 erreurs, **voulues** : un module non migré passé à `useModuleAppDisplay` (`BlogSelectScreen`, `HomeworkSelectScreen`, `news/thumbnail-thread`, `community-card-large`, `community-navbar`) ou à `ModuleImage` (`wiki` : `image-input`, `resource-thumbnail`), corrigé au fil des migrations. `ModuleImage` prend une prop `moduleName: AllModulesNames` (ex-`appName: string`). Ce ne sont pas des régressions. Les tests de `src/app/module/rights.test.ts` gardent des noms fictifs : le type de `isModuleAvailableForUser` y est surchargé pour accepter n'importe quel nom (les modules de test `amodule`… disparaîtront avec la migration).
+- 2026-11-06 : **`EntAppImage` et `ModuleImage`.** `src/framework/components/picture/ent-app-image` (nouveau, ex-corps de `ModuleImage`) affiche une image avec, à défaut, les couleurs et l'icône d'une app ENT (`useEntAppDisplay(entAppName)`) ; `module-image` n'est plus qu'un `EntAppImage` avec l'app de son module (`useModuleAppName`, exporté par `hooks/index.ts`). Les 2 erreurs préexistantes du rendu de remplacement suivent le code dans `ent-app-image`. tsc 775, `yarn test` 418/418.
+- 2026-11-06 : `EntApp.icon` et les icônes d'affichage restent des `string` : le serveur peut donner le nom d'un `Svg` de l'app, mais aussi le chemin d'une image du workspace ou une URL (ancien `resolveAppIcon`, à porter avec `MyAppsCard` en phase 4). Un essai de typage en `SvgIconName` a été annulé. `community-card-small` utilise `useModuleAppDisplay('communities')` (on est dans ce module) : erreur de type voulue de plus. tsc 776 : 8 appels avec un module non migré (`blog`, `homework`, `news`, `communities` ×3, `wiki` ×2).
+  - Prochaine étape : phase 4 (port de `MyAppsHomeScreen`).

@@ -1,4 +1,6 @@
-import { getAppColor, getAppIcon, getAppLabel, getHelpUrl, hasHelpUrl, normalizeIconName, Translate } from './display';
+import type { Translate } from '~/modules/myapps/model';
+
+import { getAppColor, getAppIcon, getAppLabel, getHelpUrl, getModuleLabel, hasHelpUrl, normalizeIconName } from './display';
 
 const translations: Record<string, string> = {
   'myapps-app-blog': 'Blog',
@@ -59,9 +61,15 @@ describe('getAppColor', () => {
     expect(getAppColor('Blog', 'orange')).toBe('orange');
   });
 
-  it('3. is none without color', () => {
+  it('3. is none without color, or with one the palette does not have', () => {
     expect(getAppColor('Blog', undefined)).toBeUndefined();
     expect(getAppColor('Blog', '')).toBeUndefined();
+    expect(getAppColor('Blog', 'not-a-color')).toBeUndefined();
+    expect(getAppColor('Blog', 'toString')).toBeUndefined();
+  });
+
+  it('2. may be the primary or the secondary color', () => {
+    expect(getAppColor('Blog', 'primary')).toBe('primary');
   });
 });
 
@@ -80,5 +88,24 @@ describe('help', () => {
     expect(getHelpUrl(helpUrls, 'es')).toBe('https://fr');
     expect(getHelpUrl({ es: 'https://es' }, 'de')).toBeUndefined();
     expect(getHelpUrl({}, 'fr')).toBeUndefined();
+  });
+});
+
+describe('getModuleLabel', () => {
+  const moduleTranslate: Translate = key => ({ 'myapps-app-Blog': 'Blog (i18n)', 'myapps-app-portal': 'Mes applis' })[key] ?? key;
+
+  it('is the label of the app of the module', () => {
+    expect(getModuleLabel({ matchEntcoreApp: 'Blog', name: 'blog' }, { label: 'Blog (server)' }, moduleTranslate)).toBe(
+      'Blog (server)',
+    );
+  });
+
+  it('else the translation of the app name, then of the module name and its aliases', () => {
+    expect(getModuleLabel({ matchEntcoreApp: 'Blog', name: 'blog' }, undefined, moduleTranslate)).toBe('Blog (i18n)');
+    expect(getModuleLabel({ name: 'myapps' }, undefined, moduleTranslate)).toBe('Mes applis');
+  });
+
+  it('else the module name', () => {
+    expect(getModuleLabel({ name: 'other' }, undefined, moduleTranslate)).toBe('other');
   });
 });

@@ -3,13 +3,13 @@
  */
 import type { AuthActiveAccount } from '~/modules/auth/model';
 
-import type { ConfigForRights } from './types';
+import type { AnyModule, ConfigForRights } from './types';
 
 /**
  * What `isModuleAvailableForUser` reads of a module: its rights, if it has any. A `CoreModule` has none, an `EntModule` may have some.
  * (`name` is only there so that any module can be given, a `CoreModule` too: it shares no property with the rights.)
  */
-export type ModuleWithRights = { name: string } & ConfigForRights;
+type ModuleWithRights = Pick<AnyModule, 'name'> & ConfigForRights;
 
 /**
  * Whether the user can use the module, by the rights of the session. Every condition the module declares must be met:

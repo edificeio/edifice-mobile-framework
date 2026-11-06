@@ -1,4 +1,4 @@
-import type { Translate } from '~/modules/myapps/model/display';
+import type { Translate } from '~/modules/myapps/model';
 
 import { fromPreferences, toEntApps, toPreferences } from './adapter';
 import type { API } from './api';

@@ -1,9 +1,9 @@
 /**
  * From the API format to the model, and back for what is saved. The rules applied are those of `model/`.
  */
-import { AppsPreferences, EMPTY_PREFERENCES, EntApp } from '~/modules/myapps/model';
-import { AppConfig, getAppCategory, getAppConfig, isLibrary, LIBRARY_CONFIG_APP_NAME } from '~/modules/myapps/model/classification';
-import { getAppColor, getAppIcon, getAppLabel, Translate } from '~/modules/myapps/model/display';
+import { AppConfig, AppsPreferences, EMPTY_PREFERENCES, EntApp, Translate } from '~/modules/myapps/model';
+import { getAppCategory, getAppConfig, isLibrary, LIBRARY_CONFIG_APP_NAME } from '~/modules/myapps/model/classification';
+import { getAppColor, getAppIcon, getAppLabel } from '~/modules/myapps/model/display';
 import { isConnector } from '~/modules/myapps/model/opening';
 
 import type { API } from './api';

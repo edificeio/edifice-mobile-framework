@@ -1,6 +1,6 @@
-import { AppModule, EntApp } from '~/modules/myapps/model';
+import { AppConfig, AppModule, EntApp, MyAppsFilter } from '~/modules/myapps/model';
 
-import { AppConfig, filterApps, getAppCategory, getAppConfig, isLibrary, isOtherService, MyAppsFilter } from './classification';
+import { filterApps, getAppCategory, getAppConfig, isLibrary, isOtherService } from './classification';
 
 describe('getAppCategory', () => {
   it.each(['communication', 'pedagogy', 'organisation'])('keeps %s', category => {
