@@ -8,7 +8,7 @@ import { DayPickerProps } from './types';
 
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
-import { deviceFontScale, genericHitSlop } from '~/framework/components/constants';
+import { CHEVRON_HIT_SLOP, deviceFontScale } from '~/framework/components/constants';
 import DayCell from '~/framework/components/pickers/day/day-cell';
 import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import {
@@ -82,7 +82,7 @@ const DayPicker = ({ initialSelectedDate = defaultSelectedDate, maximumWeeks = 8
           color={isPastDisabled ? theme.palette.grey.grey : theme.palette.grey.black}
           disabled={isPastDisabled}
           action={onSetPreviousWeek}
-          hitSlop={genericHitSlop}
+          hitSlop={CHEVRON_HIT_SLOP}
         />
         <SmallText style={styles.week}>{displayWeekRange(startDate)}</SmallText>
         <IconButton
@@ -90,7 +90,7 @@ const DayPicker = ({ initialSelectedDate = defaultSelectedDate, maximumWeeks = 8
           color={isFutureDisabled ? theme.palette.grey.grey : theme.palette.grey.black}
           disabled={isFutureDisabled}
           action={onSetNextWeek}
-          hitSlop={genericHitSlop}
+          hitSlop={CHEVRON_HIT_SLOP}
         />
       </View>
       <View style={styles.daysContainer}>

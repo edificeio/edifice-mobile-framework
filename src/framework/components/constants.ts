@@ -265,3 +265,11 @@ export const genericHitSlop: Insets = {
   right: UI_SIZES.spacing.minor,
   top: UI_SIZES.spacing.minor,
 };
+
+// the chevrons are small icons: the generic slop leaves them below the 44pt a touch target should reach.
+export const CHEVRON_HIT_SLOP: Insets = {
+  bottom: UI_SIZES.spacing.medium,
+  left: UI_SIZES.spacing.medium,
+  right: UI_SIZES.spacing.medium,
+  top: UI_SIZES.spacing.medium,
+};
