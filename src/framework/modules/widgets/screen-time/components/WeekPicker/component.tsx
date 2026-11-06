@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Insets, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Moment } from 'moment';
 
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
-import { UI_SIZES } from '~/framework/components/constants';
+import { CHEVRON_HIT_SLOP } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
 import { addTime, displayWeekRange, subtractTime, today } from '~/framework/util/date';
 
@@ -13,13 +13,6 @@ import styles from './styles';
 import { WeekPickerProps } from './types';
 
 const DISABLED_ICON_COLOR = theme.palette.grey.stone;
-
-const CHEVRON_HIT_SLOP: Insets = {
-  bottom: UI_SIZES.spacing.medium,
-  left: UI_SIZES.spacing.medium,
-  right: UI_SIZES.spacing.medium,
-  top: UI_SIZES.spacing.medium,
-};
 
 const WeekPicker = ({
   disabled = false,
