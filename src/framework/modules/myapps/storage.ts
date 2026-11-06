@@ -1,48 +1,26 @@
-import { Storage } from '~/framework/util/storage';
+/**
+ * @deprecated Moved to `~/modules/myapps/storage`: in the screens, use `useStorageBoolean(storage, 'show-all-apps')` and
+ * `useStorageJSON(storage, 'onboarding')`. These functions remain for the former screens.
+ */
+import { OnboardingData, storage } from '~/modules/myapps/storage';
 
-export interface MyAppsOnboardingData {
-  seen: boolean;
-  version: string;
-}
+/** @deprecated */
+export type MyAppsOnboardingData = OnboardingData;
 
-type MyAppsPreferencesData = {
-  'show-all-apps': boolean;
-  'onboarding'?: MyAppsOnboardingData;
-};
+/** @deprecated */
+export const readShowAllApps = (): boolean => storage.getBoolean('show-all-apps') ?? true;
 
-const oldStorageKey = 'infoBubbleAck-myAppsScreen.redirect';
-
-const myAppsStorage = Storage.account<MyAppsPreferencesData>({
-  migrations: [
-    {
-      id: 'remove-info-bubble-v1',
-      run: () => {
-        Storage.global.remove(oldStorageKey);
-      },
-    },
-  ],
-  namespace: 'myapps',
-});
-
-export const readShowAllApps = (): boolean => {
-  // `true` while nothing is stored, as it always was: `getBoolean` used to read a missing boolean as `true`, whatever the default here
-  // said (see `StorageHandler.getBoolean`). Kept so the app behaves the same for the users who never changed it.
-  return myAppsStorage.getBoolean('show-all-apps') ?? true;
-};
-
+/** @deprecated */
 export const writeShowAllApps = (value: boolean) => {
-  myAppsStorage.set('show-all-apps', value);
+  storage.set('show-all-apps', value);
 };
 
-export const readMyAppsOnboardingSeen = (): MyAppsOnboardingData | undefined => {
-  return myAppsStorage.getJSON('onboarding');
-};
+/** @deprecated */
+export const readMyAppsOnboardingSeen = (): MyAppsOnboardingData | undefined => storage.getJSON('onboarding');
 
+/** @deprecated */
 export const writeMyAppsOnboardingSeen = (version: string) => {
-  myAppsStorage.setJSON('onboarding', {
-    seen: true,
-    version,
-  });
+  storage.setJSON('onboarding', { seen: true, version });
 };
 
-export const storage = myAppsStorage;
+export { storage };

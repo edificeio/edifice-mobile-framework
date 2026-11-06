@@ -31,9 +31,27 @@ Règles valables **pour toute la durée de la migration**, pour tous les modules
 - « **requirements** », jamais « prérequis » (étape d'auth : CGU, mot de passe, MFA…). Pour « étape à faire avant », écrire « préalable ».
 - Noms de dossiers, modules et routes en kebab-case.
 
+## Structure d'un module
+
+Exemple : `src/modules/myapps` (décidé le 2026-11-06 ; voir §5.2 et §5.3 de [myapps.md](myapps.md)).
+
+- `model/` : le **domaine**, agnostique du contexte (ni API, ni store, ni storage, ni modules de l'app).
+  - `index.ts` : les types.
+  - Les **règles** métier : fonctions pures ; ce qu'elles doivent savoir de l'app (traductions, modules) leur est passé en paramètre. Dans `business.ts` si elles sont peu nombreuses, sinon **regroupées par objectif** (`display.ts`, `opening.ts`, `classification.ts`…), pas un fichier par petite règle. Une liste filtrée ou triée par des règles pures (ex. `filterApps`) est une règle.
+  - Une règle arbitraire ou compliquée (héritée, cas particuliers en dur, algorithme en plusieurs étapes) doit **se voir** : son propre fichier ou sa propre fonction, un en-tête qui dit d'où elle vient, des étapes ou des cas nommés plutôt qu'une expression enchaînée.
+- `actions.ts` : les **actions de l'utilisateur** (charger, enregistrer, ouvrir…), qui orchestrent session, service et store (thunks Redux, ou fonctions pour zustand).
+- `util.ts` : utilitaires qui ne sont pas des règles (chaînes, `testID`…).
+- `service/` : appels à l'API.
+  - Les types de l'API sont dans un `namespace API` (`service/api.ts`, ex. `API.EntAppResponse`) et **ne sortent pas de `service/`**.
+  - `adapter.ts` traduit le format de l'API vers le modèle (et inversement pour les écritures). Le service **renvoie des types du modèle**, hydratés.
+- `store/` : la **plomberie** du gestionnaire d'état (type du state, reducer ou store zustand, action creators Redux dans `action-creators.ts`, sélecteurs), sans les actions de l'utilisateur. Le type du state n'est pas dans le modèle.
+- `storage.ts` : le storage et le format de ce qu'il garde.
+- Chaque fichier de logique pure a son test à côté (`*.test.ts`).
+
 ## Données et état
 
-- Garder le **gestionnaire d'état du module** sauf décision contraire (`myapps` reste en Redux). Redux d'un module nouveau : `redux: { reducer }` dans sa config, reducer créé avec `createSessionReducer` (`~/framework/util/redux/reducerFactory`) pour être vidé à la fin de session.
+- Garder le **gestionnaire d'état du module** sauf décision contraire (`myapps` reste en Redux). Redux d'un module nouveau : `redux: { reducer }` dans sa config, reducer créé avec `createSessionReducer` (`~/framework/util/redux/reducerFactory`) pour être vidé à la fin de session. Le reducer accepte **toute action** (`createSessionReducer<State>(…)`, sans union d'actions) : Redux 5 type sinon le state global à `never` ; chaque handler retrouve son action avec `Extract<…, { type }>` (exemple : `src/modules/myapps/store/index.ts`).
+- **Ce qui va dans le state** : les données du modèle hydratées par le service, une copie par donnée. Les données qui changent indépendamment restent séparées (ex. les apps et les favoris de `myapps`). Ce qui dépend du code de l'app ou des droits (modules disponibles…) n'est **pas** stocké : un hook le lit et le combine à la lecture. Jamais d'objet non sérialisable (instance de module, fonction) dans Redux.
 - **Chargement** par les hooks de session du module (`src/app/module/types.ts`) : `sessionSetup` pour ce que l'app ne peut pas afficher sans (bloquant, ne rien écrire avant le `commit`), `onSessionStart` pour le reste. Plus de `callAtLogin`.
 - **Stockage** : `Storage.account` / `Storage.device` (`~/framework/util/storage`), déclarés dans `storages` de la config ; dans les écrans, les hooks `useStorageBoolean` / `useStorageJSON`… plutôt que lecture + `useState`. **Clés et namespaces inchangés**, ids de migration conservés.
 

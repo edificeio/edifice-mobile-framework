@@ -8,7 +8,7 @@ import {
   AllModulesStaticModals,
   AllModulesStaticScreens,
   CoreModule,
-  isModuleAvailable,
+  isModuleAvailableForUser,
   useModules,
   useModulesOfType,
 } from '.';
@@ -92,14 +92,13 @@ export const useModuleReducers = (): AllModulesReducers => {
 };
 
 /**
- * The modules the session can use (see `isModuleAvailable`). None without a session.
- * @returns
+ * The modules the user can use, by the rights of the session (see `isModuleAvailableForUser`). None without a session.
  */
-export const useAvailableModules = (): AllModulesArray => {
+export const useUserAvailableModules = (): AllModulesArray => {
   const modules = useModules();
   const session = useSession();
   return React.useMemo(
-    () => (session === undefined ? [] : (modules.filter(module => isModuleAvailable(module, session)) as AllModulesArray)),
+    () => (session === undefined ? [] : (modules.filter(module => isModuleAvailableForUser(module, session)) as AllModulesArray)),
     [modules, session],
   );
 };

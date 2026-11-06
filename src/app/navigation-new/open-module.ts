@@ -5,7 +5,7 @@ import React from 'react';
 
 import { CommonActions, TabActions, useNavigation } from '@react-navigation/native';
 
-import { AllModulesArray, AllModulesWithEntryNames, useAvailableModules } from '~/app/module';
+import { AllModulesArray, AllModulesWithEntryNames, useUserAvailableModules } from '~/app/module';
 
 import { getTabScreenName } from './tabs';
 
@@ -14,12 +14,12 @@ const findOpenableModule = (modules: AllModulesArray, name: string) =>
   modules.find(module => module.name === name && module.entry !== undefined);
 
 /**
- * Tells whether a module can be opened with `useOpenModule`: it has an `entry` and the session can use it (`isModuleAvailable`).
+ * Tells whether a module can be opened with `useOpenModule`: it has an `entry` and the session can use it (`isModuleAvailableForUser`).
  * It narrows the name, so that it can then be given to `openModule`.
  * @returns `canOpenModule(name)`
  */
 export const useCanOpenModule = () => {
-  const modules = useAvailableModules();
+  const modules = useUserAvailableModules();
   return React.useCallback(
     (name: string): name is AllModulesWithEntryNames => findOpenableModule(modules, name) !== undefined,
     [modules],
@@ -35,7 +35,7 @@ export const useCanOpenModule = () => {
  */
 export const useOpenModule = () => {
   const navigation = useNavigation();
-  const modules = useAvailableModules();
+  const modules = useUserAvailableModules();
   return React.useCallback(
     (name: AllModulesWithEntryNames): boolean => {
       const module = findOpenableModule(modules, name);

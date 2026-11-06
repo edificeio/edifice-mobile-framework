@@ -53,7 +53,7 @@ Les modules du nouveau système sont de deux types (`src/app/module/types.ts`) :
 - `CoreModule` : module technique (auth, media, notifications, …), disponible sans droits ENT.
 - `EntModule` : module lié à une app ENT. Sa seule particularité est d'être **soumis aux droits d'accès** (`matchEntcoreApp`, `matchEntcoreWidget`, `hasRight`).
 
-**Droits** : `isModuleAvailable(module, session)` (`src/app/module/rights.ts`) dit si la session peut utiliser un module. Chaque condition **déclarée** doit être remplie : `matchEntcoreApp` dans `session.rights.apps`, `matchEntcoreWidget` dans `session.rights.widgets`, `hasRight(session)` vrai. Un module qui n'en déclare aucune (tout `CoreModule`) est toujours disponible. Dans un composant : `useAvailableModules()`. Les onglets des modules indisponibles sont masqués.
+**Droits** : `isModuleAvailableForUser(module, session)` (`src/app/module/rights.ts`) dit si l'utilisateur peut utiliser un module, d'après les droits de la session. Chaque condition **déclarée** doit être remplie : `matchEntcoreApp` dans `session.rights.apps`, `matchEntcoreWidget` dans `session.rights.widgets`, `hasRight(session)` vrai. Un module qui n'en déclare aucune (tout `CoreModule`) est toujours disponible. Dans un composant : `useUserAvailableModules()`. Les onglets des modules indisponibles sont masqués.
 
 Un onglet (`tab`) n'est pas propre à `EntModule` : un `CoreModule` peut aussi en déclarer un (`ModuleConfig.tab`).
 
@@ -120,6 +120,7 @@ export default new CoreModule({
 - Les noms de route doivent être préfixés par le nom du module (`<module>` ou `<module>/<suffixe>`), sinon le type résout en `never`.
 - Un préfixe `$` (ex. `auth/$load-account`) signale un écran qui héberge un conteneur de navigation indépendant et délègue sa télémétrie.
 - Les modules peuvent se brancher sur le cycle de session (`sessionSetup`, `onSessionStart`, `onSessionRelease`). Voir les commentaires de `src/app/module/types.ts`.
+- Structure attendue d'un module : `model/` (domaine agnostique, règles par objectif), `actions.ts` (actions de l'utilisateur), `util.ts`, `service/`, `store/`, `storage.ts`. Voir « Structure d'un module » dans `docs/migrations/CONVENTIONS.md` (exemple : `src/modules/myapps`).
 - Dossiers observés dans `modules/auth` (le plus complet) : `screens/`, `navigation/`, `components/`, `hooks/`, `service/`, `model/`, `store/`, `storage.ts`, `tracking.ts`, tests `*.test.ts` à côté du code.
 
 ## 3. Navigation

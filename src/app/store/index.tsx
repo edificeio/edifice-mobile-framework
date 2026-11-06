@@ -27,7 +27,8 @@ export type IGlobalState = any;
  */
 export type AppDispatch = ThunkDispatch<AllModulesState, unknown, AllModulesActions>;
 
-export default function configureStore(reducers: AllModulesReducers, preloadedState?: AllModulesState) {
+// No preloaded state: redux types it from reducers that accept any action, while those of the modules only accept their own.
+export default function configureStore(reducers: AllModulesReducers) {
   const middlewares = [thunk];
   const middlewareEnhancer = applyMiddleware(...middlewares);
 
@@ -35,7 +36,7 @@ export default function configureStore(reducers: AllModulesReducers, preloadedSt
   const composedEnhancers: StoreEnhancer = compose(...enhancers);
 
   const rootReducer = combineReducers(reducers);
-  const store: Store<AllModulesState, AllModulesActions, unknown> = createStore(rootReducer, preloadedState, composedEnhancers);
+  const store: Store<AllModulesState, AllModulesActions, unknown> = createStore(rootReducer, composedEnhancers);
   return store;
 }
 

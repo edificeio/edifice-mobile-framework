@@ -13,7 +13,7 @@ import {
   createBottomTabScreen,
 } from '@react-navigation/bottom-tabs';
 
-import { AllModulesStaticScreens, AnyTabModule, isModuleAvailable, useModuleScreens, useTabModules } from '~/app/module';
+import { AllModulesStaticScreens, AnyTabModule, isModuleAvailableForUser, useModuleScreens, useTabModules } from '~/app/module';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
@@ -57,13 +57,13 @@ function TabIcon({
 }
 
 /**
- * Whether the tab of the module is shown: only if the session can use the module (see `isModuleAvailable`).
+ * Whether the tab of the module is shown: only if the session can use the module (see `isModuleAvailableForUser`).
  * The tabs are only rendered with a session. Without one (while they are leaving, after a sign-out), they are all kept: hiding them
  * all would leave the tab navigator without any screen, which throws.
  */
 const useIsTabAvailable = (module: AnyTabModule) => {
   const session = useSession();
-  return session === undefined || isModuleAvailable(module, session);
+  return session === undefined || isModuleAvailableForUser(module, session);
 };
 
 const createTabRoute = (screens: AllModulesStaticScreens, module: AnyTabModule) => {
