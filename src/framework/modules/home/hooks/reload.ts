@@ -4,10 +4,15 @@ import { useNavigation } from '@react-navigation/native';
 
 interface HomeReloadValue {
   key: number;
+  isTriggeredByPullToRefresh: boolean;
   bump: () => void;
 }
 
-const HomeReloadContext = React.createContext<HomeReloadValue>({ bump: () => {}, key: 0 });
+export interface HomeReloadOptions {
+  isTriggeredByPullToRefresh: boolean;
+}
+
+const HomeReloadContext = React.createContext<HomeReloadValue>({ bump: () => {}, isTriggeredByPullToRefresh: false, key: 0 });
 
 export const HomeReloadProvider = HomeReloadContext.Provider;
 
@@ -16,13 +21,18 @@ export const HomeReloadProvider = HomeReloadContext.Provider;
  * the home and coming back leaves the tab focused all along, where switching tab focuses it again.
  * Swiping between the two tabs of the home changes nothing either.
  *
- * `bump` lets a tab ask for the same reload, which is what the pull gesture does.
+ * `bump` lets a tab ask for the same reload, which is what the pull gesture does. Then each load
+ * receives `isTriggeredByPullToRefresh: true`, and `false` when the home is opened again.
  */
 export function useHomeReloadValue(): HomeReloadValue {
   const navigation = useNavigation();
-  const [key, setKey] = React.useState<number>(0);
+  const [reload, setReload] = React.useState<Omit<HomeReloadValue, 'bump'>>({ isTriggeredByPullToRefresh: false, key: 0 });
 
-  const bump = React.useCallback(() => setKey(value => value + 1), []);
+  const bump = React.useCallback(() => setReload(value => ({ isTriggeredByPullToRefresh: true, key: value.key + 1 })), []);
+  const reloadOnFocus = React.useCallback(
+    () => setReload(value => ({ isTriggeredByPullToRefresh: false, key: value.key + 1 })),
+    [],
+  );
 
   React.useEffect(() => {
     const parent = navigation.getParent();
@@ -32,16 +42,16 @@ export function useHomeReloadValue(): HomeReloadValue {
       blurred = true;
     });
     const unsubscribeFocus = parent.addListener('focus', () => {
-      if (blurred) bump();
+      if (blurred) reloadOnFocus();
       blurred = false;
     });
     return () => {
       unsubscribeBlur();
       unsubscribeFocus();
     };
-  }, [bump, navigation]);
+  }, [navigation, reloadOnFocus]);
 
-  return React.useMemo(() => ({ bump, key }), [bump, key]);
+  return React.useMemo(() => ({ bump, ...reload }), [bump, reload]);
 }
 
 // asks every section to reload, without waiting for any of them.
@@ -55,20 +65,23 @@ export function useHomeReloadKeyBump() {
  * Returns whether the load is running, for the caller to show its placeholders. A load outrun by
  * the next one is ignored.
  */
-export function useHomeReload(load: () => Promise<unknown>) {
-  const { key } = React.useContext(HomeReloadContext);
+export function useHomeReload(load: (options: HomeReloadOptions) => Promise<unknown>) {
+  const { isTriggeredByPullToRefresh, key } = React.useContext(HomeReloadContext);
   const [reloading, setReloading] = React.useState<boolean>(true);
+  const loadedKey = React.useRef<number>(key);
 
   React.useEffect(() => {
+    const isLoadStartedByPullToRefresh = isTriggeredByPullToRefresh && loadedKey.current !== key;
+    loadedKey.current = key;
     let outdated = false;
     setReloading(true);
-    load().finally(() => {
+    load({ isTriggeredByPullToRefresh: isLoadStartedByPullToRefresh }).finally(() => {
       if (!outdated) setReloading(false);
     });
     return () => {
       outdated = true;
     };
-  }, [key, load]);
+  }, [isTriggeredByPullToRefresh, key, load]);
 
   return reloading;
 }
