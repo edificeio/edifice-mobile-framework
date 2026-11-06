@@ -1,7 +1,8 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleFontSize, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
+import { TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
   allergens: {
@@ -20,23 +21,25 @@ export default StyleSheet.create({
   },
   item: {
     alignItems: 'center',
+    flex: 1,
     flexDirection: 'row',
-    marginBottom: UI_SIZES.spacing.tiny,
-    width: '48%',
   },
-  items: {
+  row: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    gap: UI_SIZES.spacing.small,
+  },
+  rows: {
+    gap: UI_SIZES.spacing.tiny,
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   text: {
+    ...TextSizeStyle.Small,
     color: theme.palette.grey.black,
     flex: 1,
-    fontSize: getScaleFontSize(12),
   },
   title: {
+    ...TextSizeStyle.Normal,
     color: theme.palette.grey.black,
-    fontSize: getScaleFontSize(14),
     marginBottom: UI_SIZES.spacing.tiny,
   },
 });

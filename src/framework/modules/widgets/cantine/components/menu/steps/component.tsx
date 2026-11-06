@@ -2,15 +2,12 @@ import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { Stepper, StepperProps, StepperSection } from '~/framework/components/stepper';
+import { Stepper, StepperSection } from '~/framework/components/stepper';
 import { MenuItemRow } from '~/framework/modules/widgets/cantine/components/menu/item-row';
 import { MenuItem } from '~/framework/modules/widgets/cantine/model';
 import { MENU_CATEGORIES } from '~/framework/modules/widgets/cantine/model/categories';
 
-export type MenuStepsProps = Omit<StepperProps<MenuItem>, 'keyExtractor' | 'renderItem' | 'sections'> & {
-  menuItems: MenuItem[];
-  showAllergens?: boolean;
-};
+import type { MenuStepsProps } from './types';
 
 const menuItemKey = (item: MenuItem) => String(item.id);
 

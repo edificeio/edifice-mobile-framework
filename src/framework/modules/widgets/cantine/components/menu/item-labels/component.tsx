@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import { UI_SIZES } from '~/framework/components/constants';
-import { MenuItem } from '~/framework/modules/widgets/cantine/model';
 import { Image } from '~/framework/util/media-deprecated';
 
-export interface MenuItemLabelsProps {
-  item: MenuItem;
-}
+import styles from './styles';
+import type { MenuItemLabel, MenuItemLabelsProps } from './types';
 
-export const MENU_ITEM_LABELS: { isShown: (item: MenuItem) => boolean; key: string; legendI18n: string; source: number }[] = [
+export const MENU_ITEM_LABELS: MenuItemLabel[] = [
   {
     isShown: item => item.bio,
     key: 'bio',
@@ -47,14 +44,3 @@ export function MenuItemLabels({ item }: Readonly<MenuItemLabelsProps>) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  label: {
-    height: UI_SIZES.elements.icon.xsmall,
-    width: UI_SIZES.elements.icon.xsmall,
-  },
-  labels: {
-    flexDirection: 'row',
-    gap: UI_SIZES.spacing.tiny,
-  },
-});

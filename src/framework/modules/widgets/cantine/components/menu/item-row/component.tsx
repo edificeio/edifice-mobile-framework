@@ -1,17 +1,12 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { BodyText, SmallItalicText, TextSizeStyle } from '~/framework/components/text';
+import { BodyText, SmallItalicText } from '~/framework/components/text';
 import { MenuItemLabels } from '~/framework/modules/widgets/cantine/components/menu/item-labels';
-import { MenuItem } from '~/framework/modules/widgets/cantine/model';
 import { formatAllergens, hasAllergens } from '~/framework/modules/widgets/cantine/model/allergens';
 
-export interface MenuItemRowProps {
-  item: MenuItem;
-  showAllergens?: boolean;
-}
+import styles from './styles';
+import type { MenuItemRowProps } from './types';
 
 export function MenuItemRow({ item, showAllergens }: Readonly<MenuItemRowProps>) {
   // prefer the name written by the school, else the generic dish name.
@@ -30,21 +25,3 @@ export function MenuItemRow({ item, showAllergens }: Readonly<MenuItemRowProps>)
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  allergens: {
-    color: theme.palette.cantine.allergens,
-  },
-  details: {
-    flex: 1,
-  },
-  labels: {
-    justifyContent: 'center',
-    minHeight: TextSizeStyle.Medium.lineHeight,
-  },
-  row: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    gap: UI_SIZES.spacing.small,
-  },
-});
