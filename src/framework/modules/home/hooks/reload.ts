@@ -75,9 +75,12 @@ export function useHomeReload(load: (options: HomeReloadOptions) => Promise<unkn
     loadedKey.current = key;
     let outdated = false;
     setReloading(true);
-    load({ isTriggeredByPullToRefresh: isLoadStartedByPullToRefresh }).finally(() => {
-      if (!outdated) setReloading(false);
-    });
+    // each section shows its own error, the reload only waits for the load to end.
+    load({ isTriggeredByPullToRefresh: isLoadStartedByPullToRefresh })
+      .finally(() => {
+        if (!outdated) setReloading(false);
+      })
+      .catch(() => undefined);
     return () => {
       outdated = true;
     };
