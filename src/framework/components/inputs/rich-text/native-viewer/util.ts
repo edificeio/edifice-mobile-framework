@@ -19,6 +19,9 @@ import { ImageSize, RichContentAttachment, RichContentImage, RichContentSegment,
 const TAG_REGEX = /<(\/?)([a-zA-Z][a-zA-Z0-9-]*)((?:[^>"']|"[^"]*"|'[^']*')*)>/g;
 const LINK_TAG_REGEX = /<a\b((?:[^>"']|"[^"]*"|'[^']*')*)>([\s\S]*?)<\/a>/gi;
 const STRIP_TAGS_REGEX = /<[^>]*>/g;
+const MARK_OPENING_TAG_REGEX = /<mark\b((?:[^>"']|"[^"]*"|'[^']*')*)>/gi;
+const MARK_CLOSING_TAG_REGEX = /<\/mark\s*>/gi;
+const BACKGROUND_COLOR_REGEX = /background-color\s*:\s*([^;]+)/i;
 // Left in place of an extracted `<img>`, to tell paragraphs emptied by the extraction from real empty lines
 const IMAGE_MARKER = '<!--rich-img-->';
 const IMAGE_MARKER_REGEX = new RegExp(IMAGE_MARKER, 'g');
@@ -134,13 +137,26 @@ const buildMediaSegment = (
   }
 };
 
+/**
+ * Tiptap highlights are `<mark>` tags, unknown to `EnrichedText` (the tag is dropped, the color lost).
+ * They are converted to `<span style="background-color: …">`, which `EnrichedText` renders as a custom style.
+ */
+const convertHighlights = (html: string): string =>
+  html
+    .replace(MARK_OPENING_TAG_REGEX, (_, rawAttributes: string) => {
+      const attributes = getAttributes(rawAttributes);
+      const color = attributes.style?.match(BACKGROUND_COLOR_REGEX)?.[1].trim() ?? attributes['data-color'];
+      return color ? `<span style="background-color: ${color}">` : '<span>';
+    })
+    .replace(MARK_CLOSING_TAG_REGEX, '</span>');
+
 const pushHtmlSegment = (segments: RichContentSegment[], rawHtml: string) => {
   // A `<p>` that only contained images would be rendered as an empty line by EnrichedText: remove it.
   // Other empty paragraphs are kept: they are the empty lines typed by the user.
   const html = rawHtml.replace(IMAGE_ONLY_PARAGRAPH_REGEX, '').replace(IMAGE_MARKER_REGEX, '');
   // Skip segments that only contain empty markup (ex: left between two media blocks)
   const hasText = html.replace(STRIP_TAGS_REGEX, '').replace(/&nbsp;|\s|\u200B/g, '').length > 0;
-  if (hasText) segments.push({ html, type: RichContentSegmentType.HTML });
+  if (hasText) segments.push({ html: convertHighlights(html), type: RichContentSegmentType.HTML });
 };
 
 // Images rendered outside of `EnrichedText`: its native loaders cannot authenticate requests (no header, no cookie)
