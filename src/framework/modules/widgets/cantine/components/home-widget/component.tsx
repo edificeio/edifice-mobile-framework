@@ -7,7 +7,7 @@ import { I18n } from '~/app/i18n';
 import { SecondaryButton } from '~/framework/components/buttons/secondary';
 import { BodyText } from '~/framework/components/text';
 import { withSession } from '~/framework/modules/auth/util';
-import { useHomeReload } from '~/framework/modules/home/hooks';
+import { HomeReloadOptions, useHomeReload } from '~/framework/modules/home/hooks';
 import { MenuSteps, MenuStepsPlaceholder } from '~/framework/modules/widgets/cantine/components/menu';
 import { useCantineMenu } from '~/framework/modules/widgets/cantine/hooks/menu';
 import { useCantineStructure } from '~/framework/modules/widgets/cantine/hooks/structure';
@@ -26,8 +26,11 @@ const CantineWidget = withSession(({ session }) => {
   const { structure } = useCantineStructure(session.user.structures);
   const { isError, isLoading, loadMenu, lunchItems } = useCantineMenu(structure?.UAI);
 
-  const forceReload = React.useCallback(() => loadMenu(true), [loadMenu]);
-  useHomeReload(forceReload);
+  const reloadMenu = React.useCallback(
+    ({ isTriggeredByPullToRefresh }: HomeReloadOptions) => loadMenu(isTriggeredByPullToRefresh),
+    [loadMenu],
+  );
+  useHomeReload(reloadMenu);
 
   const onOpenCard = React.useCallback(() => navigation.navigate(cantineRouteNames.home), [navigation]);
 
