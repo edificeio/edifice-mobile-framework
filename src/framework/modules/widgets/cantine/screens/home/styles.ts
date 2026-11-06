@@ -4,41 +4,38 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  // keeps the header under the nav bar while it moves up.
   container: {
     flex: 1,
-  },
-  contentContainer: {
-    padding: UI_SIZES.spacing.medium,
+    overflow: 'hidden',
   },
   contentHeader: {
     zIndex: 10,
   },
+  dayPicker: {
+    paddingHorizontal: 0,
+  },
   dropdownContainer: {
     marginBottom: UI_SIZES.spacing.small,
   },
-  mealSwitcher: {
-    borderColor: theme.palette.primary.pale,
-    borderRadius: UI_SIZES.radius.input,
-    borderWidth: UI_SIZES.border.thin,
-    flexDirection: 'row',
+  header: {
+    backgroundColor: theme.ui.background.card,
+    borderBottomColor: theme.ui.border.listItem,
+    borderBottomWidth: UI_SIZES.border.thin,
+    left: 0,
+    paddingHorizontal: UI_SIZES.spacing.big,
+    paddingTop: UI_SIZES.spacing.medium,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    zIndex: 10,
+  },
+  mealSegments: {
     marginBottom: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.tiny,
   },
-  mealSwitcherItem: {
-    alignItems: 'center',
-    borderRadius: UI_SIZES.radius.medium,
-    flex: 1,
-    paddingHorizontal: UI_SIZES.spacing.small,
-    paddingVertical: UI_SIZES.spacing.minor,
-  },
-  mealSwitcherItemActive: {
-    backgroundColor: theme.palette.primary.pale,
-  },
-  mealSwitcherItemInactive: {
-    backgroundColor: theme.palette.grey.white,
-  },
-  mealSwitcherText: {
-    textAlign: 'center',
+  menuContent: {
+    paddingBottom: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.big,
   },
   menuWrapper: {
     flex: 1,

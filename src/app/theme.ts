@@ -97,6 +97,17 @@ export interface ITheme {
   palette: {
     primary: IShades;
     secondary: IShades;
+    // same in every app
+    cantine: {
+      allergens: ColorValue;
+      categories: {
+        accompagnement: ColorValue;
+        dessert: ColorValue;
+        entree: ColorValue;
+        laitage: ColorValue;
+        plat: ColorValue;
+      };
+    };
     complementary: {
       'red': IShades;
       'orange': IShades;
@@ -439,6 +450,16 @@ export const defaultTheme: ThemeInitializer = {
   level: THEME_LEVEL.SECOND_DEGREE,
 
   palette: {
+    cantine: {
+      allergens: '#E5A800',
+      categories: {
+        accompagnement: '#738EFC',
+        dessert: '#FFD357',
+        entree: '#64DB9E',
+        laitage: '#FDBFFF',
+        plat: '#FF8261',
+      },
+    },
     complementary: {
       'blue': {
         dark: '#1B84AC',
