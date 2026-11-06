@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import threadStyles from '~/framework/modules/comments/components/comments-thread-internal/styles.ts';
+import threadStyles from '~/framework/modules/comments/components/comments-thread-internal/styles';
 
 import styles, { LOADER_FORM_AVATAR_SIZE, LOADER_ITEM_AVATAR_SIZE } from './styles';
 
@@ -28,19 +28,17 @@ export const CommentsThreadItemLoader = () => (
   </Placeholder>
 );
 
-/** `hasSendButton` mirrors the non-rich form layout. */
-export const CommentsThreadAddFormLoaderContent = ({ hasSendButton = false }: { hasSendButton?: boolean }) => (
+export const CommentsThreadAddFormLoaderContent = () => (
   <Placeholder Animation={Fade}>
     <View style={styles.loaderFormRow}>
       <PlaceholderMedia isRound size={LOADER_FORM_AVATAR_SIZE} />
       <PlaceholderMedia style={styles.loaderFormInput} />
-      {hasSendButton && <PlaceholderMedia isRound size={LOADER_FORM_AVATAR_SIZE} />}
     </View>
   </Placeholder>
 );
 
-export const CommentsThreadAddFormLoader = ({ hasSendButton }: { hasSendButton?: boolean }) => (
+export const CommentsThreadAddFormLoader = () => (
   <View style={threadStyles.stickyCommentWrapper}>
-    <CommentsThreadAddFormLoaderContent hasSendButton={hasSendButton} />
+    <CommentsThreadAddFormLoaderContent />
   </View>
 );

@@ -1,4 +1,1 @@
-import DiscussionHeaderLoader from './component';
-
-export { DiscussionHeaderLoader };
-export default DiscussionHeaderLoader;
+export { default, default as DiscussionHeaderLoader } from './component';
