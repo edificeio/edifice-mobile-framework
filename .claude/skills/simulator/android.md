@@ -68,7 +68,7 @@ adb -s <serial> shell am force-stop <appid>
 adb -s <serial> shell am start -n <appid>/com.ode.appe.MainActivity
 ```
 
-- `<appid>` = clé `"appid"` de `override.json` (override `dev/default`). L'activité est `com.ode.appe.MainActivity` (`adb shell cmd package resolve-activity --brief <appid>` pour vérifier).
+- `<appid>` = clé `"appid"` de `override.json` (dépend de l'override actif). L'activité est `com.ode.appe.MainActivity` (`adb shell cmd package resolve-activity --brief <appid>` pour vérifier).
 - Surveille un crash pendant ~60 s : `adb -s <serial> logcat -d 'AndroidRuntime:E' '*:S' | grep FATAL`. En cas de crash, rapporte l'exception (lignes qui ne commencent pas par `at `).
 
 ## Capture d'écran

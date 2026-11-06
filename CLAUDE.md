@@ -37,7 +37,7 @@ Application mobile **iOS & Android (smartphone uniquement)** : client d'un **Esp
 
 ## 3. Overrides (marque blanche)
 
-**Un override doit être actif pour lancer l'app.** On travaille **uniquement avec l'override `dev/default`** : ne te préoccupe pas des autres. L'override actif est décrit dans `override.json` (à la racine).
+**Un override doit être actif pour lancer l'app.** On travaille **par défaut avec l'override `dev/default`**, si un autre override est déjà actif, conserve-le. L'override actif est décrit dans `override.json` (à la racine).
 
 ```bash
 node cli/override.js -v --no-i dev/default   # appliquer dev/default (non interactif)

@@ -29,7 +29,7 @@ Les étapes ci-dessous sont communes ; chaque étape marquée **[OS]** renvoie �
 ## 1. Cadre
 
 - Le build et le lancement s'inscrivent dans le process commun du skill `build-app` (prérequis, `yarn clean`, override, garde-fous, compte rendu).
-- L'app tourne **toujours avec l'override `dev/default`** : vérifie `grep '"override"' override.json`. S'il n'est pas actif, ne lance rien et renvoie vers l'étape « Override » du skill `build-app`.
+- L'app tourne avec **l'override passé en paramètre au skill `build-app`** (étape « Override », `dev/default` par défaut) : vérifie `grep '"override"' override.json`. Si aucun override n'est actif, ou si ce n'est pas celui attendu, ne lance rien et renvoie vers l'étape « Override » du skill `build-app`. Invoqué seul (sans `build-app`) et sans choix exprimé dans la conversation : annonce l'override actif et demande-lui de confirmer avant de lancer.
 - Logs et captures vont dans le **scratchpad** (`<scratchpad>` ci-dessous).
 - Ne modifie rien dans `ios/` ou `android/` sans accord explicite du développeur.
 
