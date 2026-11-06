@@ -23,10 +23,6 @@ export default StyleSheet.create({
     borderRadius: UI_SIZES.radius.card,
     height: TextSizeStyle.Medium.lineHeight * PixelRatio.getFontScale(),
   },
-  listFooterLoader: {
-    alignItems: 'center',
-    paddingVertical: UI_SIZES.spacing.medium,
-  },
   loaderContent: { flex: 1, overflow: 'hidden' },
   loaderRoot: { backgroundColor: theme.ui.background.card, bottom: 0, left: 0, position: 'absolute', right: 0, top: 0, zIndex: 2 },
   root: { flex: 1 },

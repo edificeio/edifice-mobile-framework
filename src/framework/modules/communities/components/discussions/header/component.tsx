@@ -138,9 +138,9 @@ const DiscussionHeader = ({
   );
 
   return (
-    <View pointerEvents="none" style={styles.overlay}>
+    <View pointerEvents="box-none" style={styles.overlay}>
       <Animated.View style={[typeStyles.band, bandStyle]} />
-      <View onLayout={onHeaderContentLayout} style={styles.headerContent}>
+      <View onLayout={onHeaderContentLayout} pointerEvents="none" style={styles.headerContent}>
         <DiscussionStatusTab status={status} type={safeType} />
         <View onLayout={onCollapsibleAreaLayout} style={status ? COLLAPSIBLE_AREA_WITH_STATUS_STYLE : styles.collapsibleArea}>
           <Animated.View

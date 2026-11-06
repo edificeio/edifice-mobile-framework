@@ -92,7 +92,7 @@ interface CommonPaginatedListProps<TItem, TCustomPlaceholderItem = never> {
 
   placeholderData?: (typeof LOADING_ITEM_DATA | TCustomPlaceholderItem)[];
   initialLoadingState?: ContentLoaderProps['initialLoadingState'];
-  refreshControlProps?: ContentLoaderProps['refreshControlProps'];
+  refreshControlProps?: NonNullable<ContentLoaderProps['refreshControlProps']>;
   onViewableItemsChanged?: (callback: { changed: ViewToken[]; viewableItems: ViewToken[] }) => void;
 }
 
@@ -359,6 +359,8 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
         data={placeholderData}
         scrollEnabled={false}
         {...flashListProps}
+        initialScrollIndex={undefined}
+        initialScrollIndexParams={undefined}
       />
     ),
     [flashListProps, keyExtractor, placeholderData, renderPlaceholderItem],

@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { GhostButton, TerciaryButton } from '~/framework/components/button';
-import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
+import RichEditorNativeViewer from '~/framework/components/inputs/rich-text/native-viewer';
 import { CaptionItalicText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { AccountTypeText } from '~/framework/modules/auth/components/account-type-text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
@@ -16,6 +16,9 @@ import { CommentsThreadContext } from './context';
 import { CommentsThreadEditForm } from './form';
 import styles from './styles';
 import { CommentsThreadInternalProps, CommentsThreadInternals } from './types';
+
+const COMMENT_ITEM_STYLE = [styles.itemCommon, styles.itemComment];
+const COMMENT_ITEM_NO_TOP_BORDER_STYLE = [...COMMENT_ITEM_STYLE, styles.itemCommentNoTopBorder];
 
 export namespace CommentsThread {
   export const CommentItem = ({
@@ -35,10 +38,7 @@ export namespace CommentsThread {
     onPressDelete?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
   }) => {
     const { item } = info;
-    const itemStyle = React.useMemo(
-      () => [styles.itemCommon, styles.itemComment, hideTopBorder && styles.itemCommentNoTopBorder],
-      [hideTopBorder],
-    );
+    const itemStyle = hideTopBorder ? COMMENT_ITEM_NO_TOP_BORDER_STYLE : COMMENT_ITEM_STYLE;
     const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeComment], []);
     const itemTreeDecoStyle = React.useMemo(() => [styles.itemTreeDecoStraight, styles.itemTreeDecoStraightComment], []);
 
@@ -67,10 +67,7 @@ export namespace CommentsThread {
     hideTopBorder,
     ...info
   }: ListRenderItemInfo<CommentsThreadInternals.CommentDeletedItem> & { contentPlaceholder?: string; hideTopBorder?: boolean }) => {
-    const itemStyle = React.useMemo(
-      () => [styles.itemCommon, styles.itemComment, hideTopBorder && styles.itemCommentNoTopBorder],
-      [hideTopBorder],
-    );
+    const itemStyle = hideTopBorder ? COMMENT_ITEM_NO_TOP_BORDER_STYLE : COMMENT_ITEM_STYLE;
     const contentStyle = React.useMemo(
       () => [styles.itemCommentContentWrapper, info.item.nbReplies > 0 && styles.itemCommentContentWrapperDeletedComment],
       [info.item.nbReplies],
@@ -212,7 +209,7 @@ export namespace CommentsThread {
         <View>
           {item.isRichContent ? (
             <View style={styles.itemContentText}>
-              <RichEditorViewer content={item.content} backgroundColor="transparent" />
+              <RichEditorNativeViewer content={item.content} />
             </View>
           ) : (
             <SmallText style={styles.itemContentText}>{item.content}</SmallText>

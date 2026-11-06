@@ -1,4 +1,1 @@
-import UnreadMessagesSeparator from './component';
-
-export { UnreadMessagesSeparator };
-export default UnreadMessagesSeparator;
+export { default } from './component';
