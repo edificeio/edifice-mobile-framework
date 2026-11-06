@@ -10,3 +10,6 @@ export const WIDGET_USER_SELECTOR_PLACEHOLDER_NAME_WIDTH = getScaleWidth(48);
 export const WIDGET_USER_SELECTOR_PLACEHOLDER_INITIAL_WIDTH = getScaleWidth(16);
 export const WIDGET_USER_SELECTOR_ACTION_WIDTH = getScaleWidth(40);
 export const WIDGET_USER_SELECTOR_ACTION_SIZE = getScaleWidth(32);
+
+export const CANTINE_WIDGET_MENU_MAX_HEIGHT = getScaleWidth(380);
+export const CANTINE_WIDGET_FADE_HEIGHT = getScaleWidth(64);
