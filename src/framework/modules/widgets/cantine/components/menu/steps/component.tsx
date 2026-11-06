@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import { Stepper, StepperProps, StepperSection } from '~/framework/components/stepper';
 import { MenuItemRow } from '~/framework/modules/widgets/cantine/components/menu/item-row';
 import { MenuItem } from '~/framework/modules/widgets/cantine/model';
@@ -19,7 +20,15 @@ export function MenuSteps({ menuItems, showAllergens, ...stepperProps }: Readonl
       MENU_CATEGORIES.flatMap<StepperSection<MenuItem>>(category => {
         const items = menuItems.filter(item => item.type === category.type);
         return items.length
-          ? [{ color: category.color, data: items, icon: category.icon, key: category.type, title: I18n.get(category.titleI18n) }]
+          ? [
+              {
+                color: theme.color.cantine.categories[category.type],
+                data: items,
+                icon: category.icon,
+                key: category.type,
+                title: I18n.get(category.titleI18n),
+              },
+            ]
           : [];
       }),
     [menuItems],
