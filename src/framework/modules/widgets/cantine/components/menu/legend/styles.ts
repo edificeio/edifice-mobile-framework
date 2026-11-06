@@ -5,7 +5,7 @@ import { getScaleFontSize, UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   allergens: {
-    color: theme.color.cantine.allergens,
+    color: theme.palette.cantine.allergens,
   },
   container: {
     backgroundColor: theme.palette.grey.white,

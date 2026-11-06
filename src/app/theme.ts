@@ -198,7 +198,6 @@ export interface ITheme {
   };
   // Semantic usage of the color palette
   color: {
-    cantine: ITheme['palette']['cantine'];
     mails: {
       unread: ColorValue;
       selected: ColorValue;
@@ -375,10 +374,6 @@ export const defaultTheme: ThemeInitializer = {
     };
 
     (this as Partial<ITheme>).color = {
-      cantine: {
-        allergens: this.palette.cantine.allergens,
-        categories: this.palette.cantine.categories,
-      },
       homework: {
         days: {
           friday: {

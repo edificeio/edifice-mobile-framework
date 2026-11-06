@@ -22,7 +22,7 @@ export function MenuSteps({ menuItems, showAllergens, ...stepperProps }: Readonl
         return items.length
           ? [
               {
-                color: theme.color.cantine.categories[category.type],
+                color: theme.palette.cantine.categories[category.type],
                 data: items,
                 icon: category.icon,
                 key: category.type,

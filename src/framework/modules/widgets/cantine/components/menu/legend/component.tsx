@@ -26,7 +26,7 @@ export function MenuLegend() {
           <View style={styles.icon}>
             <Svg
               name="ui-alert-triangle"
-              fill={theme.color.cantine.allergens}
+              fill={theme.palette.cantine.allergens}
               height={UI_SIZES.elements.icon.xsmall}
               width={UI_SIZES.elements.icon.xsmall}
             />

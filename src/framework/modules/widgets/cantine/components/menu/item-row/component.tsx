@@ -33,7 +33,7 @@ export function MenuItemRow({ item, showAllergens }: Readonly<MenuItemRowProps>)
 
 const styles = StyleSheet.create({
   allergens: {
-    color: theme.color.cantine.allergens,
+    color: theme.palette.cantine.allergens,
   },
   details: {
     flex: 1,
