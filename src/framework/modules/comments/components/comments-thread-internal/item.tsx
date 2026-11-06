@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { GhostButton, TerciaryButton } from '~/framework/components/button';
-import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
+import RichEditorNativeViewer from '~/framework/components/inputs/rich-text/native-viewer';
 import { CaptionItalicText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { AccountTypeText } from '~/framework/modules/auth/components/account-type-text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
@@ -203,7 +203,7 @@ export namespace CommentsThread {
         <View>
           {item.isRichContent ? (
             <View style={styles.itemContentText}>
-              <RichEditorViewer content={item.content} backgroundColor="transparent" />
+              <RichEditorNativeViewer content={item.content} />
             </View>
           ) : (
             <SmallText style={styles.itemContentText}>{item.content}</SmallText>
