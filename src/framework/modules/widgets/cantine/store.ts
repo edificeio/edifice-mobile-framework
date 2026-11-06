@@ -11,7 +11,7 @@ const MAX_CACHED_MENUS = 50;
  * a day is empty if it has no lunch items, even if dinner is available.
  * empty days and errors are not cached, so they are fetched again on the next visit.
  */
-export const hasLunchItems = (dayMenu?: CantineData) => (dayMenu?.menu?.length ?? 0) > 0;
+const hasLunchItems = (dayMenu?: CantineData) => (dayMenu?.menu?.length ?? 0) > 0;
 
 export const cantineMenuKey = (structureUai: string, day: string) => `${structureUai}|${day}`;
 

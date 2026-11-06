@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch } from '~/app/store';
 import { MenuItem } from '~/framework/modules/widgets/cantine/model';
-import { CantineMenuEntry, cantineMenuKey, cantineSelectors, hasLunchItems } from '~/framework/modules/widgets/cantine/store';
+import { CantineMenuEntry, cantineMenuKey, cantineSelectors } from '~/framework/modules/widgets/cantine/store';
 import { loadCantineMenuAction } from '~/framework/modules/widgets/cantine/thunks';
 
 interface CantineMenuDisplay {
@@ -19,7 +19,7 @@ const MENU_LOADING: CantineMenuDisplay = { isError: false, isLoading: true, lunc
 
 const getMenuToDisplay = (menuEntry?: CantineMenuEntry): CantineMenuDisplay => {
   const cachedMenu = menuEntry?.cachedMenu?.dayMenu;
-  if (cachedMenu && hasLunchItems(cachedMenu)) {
+  if (cachedMenu) {
     return {
       dinnerItems: cachedMenu.dinnerAvailable ? cachedMenu.dinnerMenu : undefined,
       isError: false,
