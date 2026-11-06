@@ -12,6 +12,12 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-07 — Contrainte pour `timeline` : notifications à part (`feat/ia/vmou`)
+
+- Décidé : les notifications sortent de `timeline` dans le module `notifications`, consommé par `timeline` et par le futur module `home` (développé par ailleurs), qui ont tous deux un fil de notifications.
+- Fait : fiche [timeline.md](timeline.md) (contrainte, §5.1) ; question d'architecture n° 1 de [STATUS.md](STATUS.md) complétée.
+- Prochaine étape : phase 4 de `myapps`.
+
 ## 2026-11-06 — Icônes typées, puis annulé (`feat/ia/vmou`)
 
 - Décidé : une icône `Svg` est typée `SvgIconName`. Règle dans [CONVENTIONS.md](CONVENTIONS.md).
