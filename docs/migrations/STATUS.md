@@ -10,15 +10,15 @@
 
 ## Modules nouveaux (`src/modules/`)
 
-| Module          | Statut   | Résumé                                                                                                                                                                                                                                                     | Fiche                  |
-| --------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| `auth`          | fait     | Redux → zustand, flows, cycle de session. Façades `@deprecated` dans `framework/modules/auth` (274 imports externes).                                                                                                                                      | [auth.md](auth.md)     |
-| `media`         | fait     | Carrousel, PDF, téléchargement, composants signés. Façades `@deprecated` dans `framework/modules/media`.                                                                                                                                                   | [media.md](media.md)   |
-| `audience`      | en cours | Seulement ce qui était dans `auth` : chargement des types de réactions à `onSessionStart` (store `src/modules/audience/store.ts`). Le reste est encore dans `framework/modules/audience` (voir modules anciens).                                           | —                      |
-| `editor`        | en cours | Rafraîchit le `oneSessionId` à `onSessionStart`. Pas d'écran.                                                                                                                                                                                              | —                      |
-| `notifications` | en cours | Enregistre / désenregistre le push (FCM) par session. **Pas d'ouverture de notification** (reportée, voir plus bas).                                                                                                                                       | —                      |
-| `myapps`        | en cours | Phases 0 et 1 faites : droits / `entry` / `useOpenModule`, puis `EntModule` avec modèle, service, reducer Redux, storage. Conception des données revue et appliquée le 2026-11-06 (phase 1 bis). Rien ne charge encore les données (phase 2) ; écran vide. | [myapps.md](myapps.md) |
-| `user`          | en cours | Seulement l'accueil (comptes + déconnexion). Le reste est dans `framework/modules/user`.                                                                                                                                                                   | —                      |
+| Module          | Statut   | Résumé                                                                                                                                                                                                                                                                                                      | Fiche                  |
+| --------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `auth`          | fait     | Redux → zustand, flows, cycle de session. Façades `@deprecated` dans `framework/modules/auth` (274 imports externes).                                                                                                                                                                                       | [auth.md](auth.md)     |
+| `media`         | fait     | Carrousel, PDF, téléchargement, composants signés. Façades `@deprecated` dans `framework/modules/media`.                                                                                                                                                                                                    | [media.md](media.md)   |
+| `audience`      | en cours | Seulement ce qui était dans `auth` : chargement des types de réactions à `onSessionStart` (store `src/modules/audience/store.ts`). Le reste est encore dans `framework/modules/audience` (voir modules anciens).                                                                                            | —                      |
+| `editor`        | en cours | Rafraîchit le `oneSessionId` à `onSessionStart`. Pas d'écran.                                                                                                                                                                                                                                               | —                      |
+| `notifications` | en cours | Enregistre / désenregistre le push (FCM) par session. **Pas d'ouverture de notification** (reportée, voir plus bas).                                                                                                                                                                                        | —                      |
+| `myapps`        | en cours | Phases 0 et 1 faites : droits / `entry` / `useOpenModule`, puis `EntModule` avec modèle, service, reducer Redux, storage. Conception des données revue et appliquée le 2026-11-06 (phase 1 bis). Phase 2 : apps chargées avant la session (bloquant), préférences à son début. Écran encore vide (phase 4). | [myapps.md](myapps.md) |
+| `user`          | en cours | Seulement l'accueil (comptes + déconnexion). Le reste est dans `framework/modules/user`.                                                                                                                                                                                                                    | —                      |
 
 ## Modules anciens (`src/framework/modules/`)
 
@@ -67,9 +67,9 @@ Tranchées le 2026-11-04 : `isModuleAvailable` en phase 0 de `myapps` ; ordre de
 
 ### `myapps`
 
-Aucune question bloquante. Phases 0, 1 et 1 bis faites ; phase 2 à démarrer. Les détails de `GET /api/me/applications` sont dans [later.md](later.md).
+Aucune question bloquante. Phases 0 à 2 faites ; phase 3 à démarrer. Les détails de `GET /api/me/applications` sont dans [later.md](later.md).
 
 ## Prochaines étapes
 
-1. `myapps` : phase 2 (chargement : `sessionSetup` des apps, `onSessionStart` des préférences).
+1. `myapps` : phase 3 (API publique : hooks, libellés d'onglets, façades `@deprecated`).
 2. Trancher la question 1 (notifications) avant `timeline`.

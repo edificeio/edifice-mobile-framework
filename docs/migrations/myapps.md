@@ -1,6 +1,6 @@
 # Migration : `myapps`
 
-> Statut : **en cours** (spec v2 validée le 2026-11-04 ; phases 0, 1 et 1 bis faites) — mise à jour le 2026-11-06
+> Statut : **en cours** (spec v2 validée le 2026-11-04 ; phases 0, 1, 1 bis et 2 faites) — mise à jour le 2026-11-06
 
 Les règles communes à toute la migration sont dans [CONVENTIONS.md](CONVENTIONS.md) et ne sont pas répétées ici.
 
@@ -63,6 +63,7 @@ Les règles communes à toute la migration sont dans [CONVENTIONS.md](CONVENTION
 - Avant la phase 0 : `CoreModule` avec un écran vide, un store zustand vide et une copie cassée de l'ancien service.
 - Après la phase 1 : `EntModule` (§5.1, sans `sessionSetup` / `onSessionStart`, phase 2), `model/`, `use-cases.ts`, `util.ts`, `service/`, `store/`, `storage.ts`. `screens/home.tsx` est toujours une vue vide.
 - Après la phase 1 bis (2026-11-06) : le code suit la conception des données du 2026-11-06 (§5.2 à §5.7) : `model/` (types + règles par objectif), `actions.ts`, `service/` (hydratation), `store/`. Détail en §9.
+- Après la phase 2 (2026-11-06) : les apps se chargent avant la session et les préférences à son début (`session.ts`, §5.4). L'écran est toujours une vue vide (phase 4) ; le state est visible dans Reactotron.
 
 ### 2.3 Consommateurs externes
 
@@ -191,6 +192,7 @@ src/modules/myapps/
 │   └── onboarding.ts           ONBOARDING_VERSION, isOnboardingSeen, shouldShowOnboarding
 │                               (chaque fichier de règles a son test à côté)
 ├── actions.ts (+ test)         Actions de l'utilisateur : refreshMyApps, toggleFavorite, saveFavorites (plus tard : ouvrir une app)
+├── session.ts (+ test)         Hooks de session : sessionSetup (apps), onSessionStart (préférences), §5.4
 ├── util.ts (+ test)            normalizeString, toKebabCase, getAppTestID
 ├── service/
 │   ├── index.ts                `apps` (GET /api/me/applications → EntApp[]), `preferences` (GET / PUT /userbook/preference/apps)
@@ -342,9 +344,12 @@ Renommages par rapport à l'ancien code (« naming douteux » ; les champs du se
 
 ### 5.4 Chargement (hooks de session)
 
+Dans `session.ts` : `createMyAppsSessionHooks({ dispatch, translate })` donne `sessionSetup` et `onSessionStart` ; `index.ts` les branche avec `getStore().dispatch` et `I18n.get` (le store n'existe pas encore quand le module est déclaré). Ainsi testables sans l'app.
+
 - **Apps** — `sessionSetup(session, { signal })` : `myAppsService.apps(session, { signal, translate: I18n.get })`, renvoie `{ commit }` qui dispatch les `EntApp[]` (`getStore().dispatch`, comme `dispatchToLegacyStore`). **Bloquant, comme l'ancien** : si l'appel échoue, la connexion échoue (`SessionSetupError`). Raison : les libellés d'onglets et la liste en dépendent dès l'affichage.
-- **Préférences (favoris)** — `onSessionStart(session, { signal })` : non bloquant ; ne servent qu'à `myapps`. En cas d'échec : `status: 'error'`, l'écran le signale au tirer-pour-rafraîchir.
-- **Rafraîchir** (tirer-pour-rafraîchir, « réessayer ») : les deux lectures, avec le transport de session.
+- **Préférences (favoris)** — `onSessionStart(session, { signal })` : non bloquant ; ne servent qu'à `myapps`. En cas d'échec : `status: 'error'`, l'écran le signale au tirer-pour-rafraîchir. Rien n'est écrit si la session s'est terminée entre-temps (`signal`).
+- **Rafraîchir** (tirer-pour-rafraîchir, « réessayer ») : `refreshMyApps({ translate })` (`actions.ts`), les deux lectures, avec la session.
+- Ordre à la connexion (`setActiveAccount`) : `sessionSetup` → fin de la session précédente (stores vidés) → compte enregistré → `commit` → `onSessionStart`. La restauration d'un compte au lancement passe par le même chemin. Un renouvellement du même compte (sans requirement) relance `sessionSetup` et son `commit`, mais pas `onSessionStart`.
 - Fin de session : `createSessionReducer` remet le state à zéro (`resetSessionStores` dispatch l'action de fin de session).
 
 ### 5.5 Flux de données et API publique (`hooks/`)
@@ -416,7 +421,7 @@ La recherche par **scope** de `buildAppLookupMap` (un `entcoreScope` pointe vers
 | 0     | Préalables (**fait**)                           | `isModuleAvailable` dans `src/app/module/` (+ filtrage des onglets) ; clé `entry` sur `ModuleConfig`, `tab.route` qui en hérite ; `useOpenModule` / `canOpenModule` (§5.6)                                                                                                                                                                                                           | tsc, tests unitaires de la disponibilité                      |
 | 1     | Modèle + service + store + storage (**fait**)   | `model/`, `use-cases.ts`, `util.ts`, `service/`, `store/`, `storage.ts` ; `EntModule` ; suppression de l'ancien `store.ts` (zustand) et de l'ancien `service.ts`                                                                                                                                                                                                                     | tests Jest de `model/business.ts`, `use-cases.ts`             |
 | 1 bis | Reprise de la conception des données (**fait**) | Conformer le code à §5.2-§5.7 : `EntApp` hydraté par le service (`service/api.ts`, `adapter.ts`), règles du modèle, store `apps` + `preferences.favorites`, `filterApps` avec trois entrées et filtre `display`, `getAppOpeningStrategy` ; renommer `isModuleAvailable` → `isModuleAvailableForUser`, `useAvailableModules` → `useUserAvailableModules` (code, ARCHITECTURE, STATUS) | tsc, eslint, tests Jest (règles, adapter, store, use-cases)   |
-| 2     | Chargement                                      | `sessionSetup` (apps), `onSessionStart` (préférences), `refresh` ; retrait du `ToDo` de `start-session.ts`                                                                                                                                                                                                                                                                           | connexion : state rempli ; API en panne : connexion refusée   |
+| 2     | Chargement (**fait**)                           | `sessionSetup` (apps), `onSessionStart` (préférences), `refresh` ; retrait du `ToDo` de `start-session.ts`                                                                                                                                                                                                                                                                           | connexion : state rempli ; API en panne : connexion refusée   |
 | 3     | API publique                                    | hooks §5.5 ; `tabs.tsx` ; façades §5.10 ; `media/resource-display.ts`                                                                                                                                                                                                                                                                                                                | libellés d'onglets ; thème des apps                           |
 | 4     | `MyAppsHomeScreen`                              | port de l'écran, `MyAppsList`, `MyAppsCard`, `MyAppsFilters` ; header par options ; `useScrollToTop`                                                                                                                                                                                                                                                                                 | parcours E2E (testIDs §3.5)                                   |
 | 5     | Modales                                         | `myapps/menu`, `myapps/app-actions`, `myapps/favorites` (`useConfirmRemove`), `myapps/onboarding` ; corrections §4 n° 4-7                                                                                                                                                                                                                                                            | règles §3.2-3.4                                               |
@@ -500,4 +505,9 @@ Aucune question bloquante. Ce qui est remis à plus tard est dans [later.md](lat
     - `configureStore` (`src/app/store/index.tsx`) n'a plus de paramètre `preloadedState` (jamais passé, et mal typé pour la même raison) ;
     - le reducer étant enregistré sous `myapps`, les anciens sélecteurs (`framework/modules/myapps/reducer/selectors.ts`) lisent le nouveau state : ils renvoient l'agrégat vide, comme avant (`ToDo(myapps-migration)`, façades en phase 3). Sans ça, `media/hooks/resource-display.ts` planterait.
   - Vérifié : tsc sans nouvelle erreur (769), eslint propre (hors `src/app/module/loader.tsx`, erreur prettier préexistante), `yarn test` 408/408. **Pas testé dans l'app.** Rien n'est commité depuis la phase 0.
-  - Prochaine étape : phase 2 (chargement par les hooks de session : `sessionSetup` avec `myAppsService.apps(session, { signal, translate: I18n.get })`).
+- 2026-11-06 : **phase 2 faite.**
+  - `session.ts` : `createMyAppsSessionHooks({ dispatch, translate })` → `sessionSetup` (apps, bloquant : un échec fait échouer la connexion ; écrit au `commit`) et `onSessionStart` (préférences ; échec → `status: 'error'` ; rien d'écrit après la fin de la session). 5 tests.
+  - `index.ts` : les branche avec `getStore().dispatch` et `I18n.get`.
+  - `src/modules/auth/flows/start-session.ts` : `ToDo` « MyApps data » retiré.
+  - Vérifié : tsc sans nouvelle erreur (769), eslint propre, `yarn test` 413/413. **Pas testé dans l'app** : à la connexion, le state `myapps` (Reactotron) doit avoir `apps` et `preferences` en `loaded` ; API des apps en panne → connexion refusée.
+  - Prochaine étape : phase 3 (API publique : hooks §5.5, `tabs.tsx`, façades §5.10, `media/resource-display.ts`).

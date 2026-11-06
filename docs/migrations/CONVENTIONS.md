@@ -45,6 +45,7 @@ Exemple : `src/modules/myapps` (décidé le 2026-11-06 ; voir §5.2 et §5.3 de 
   - Les types de l'API sont dans un `namespace API` (`service/api.ts`, ex. `API.EntAppResponse`) et **ne sortent pas de `service/`**.
   - `adapter.ts` traduit le format de l'API vers le modèle (et inversement pour les écritures). Le service **renvoie des types du modèle**, hydratés.
 - `store/` : la **plomberie** du gestionnaire d'état (type du state, reducer ou store zustand, action creators Redux dans `action-creators.ts`, sélecteurs), sans les actions de l'utilisateur. Le type du state n'est pas dans le modèle.
+- `session.ts` : les hooks de session du module (`sessionSetup`, `onSessionStart`…), créés par une fonction qui reçoit ses dépendances (dispatch, traduction) pour être testables ; `index.ts` les branche.
 - `storage.ts` : le storage et le format de ce qu'il garde.
 - Chaque fichier de logique pure a son test à côté (`*.test.ts`).
 
