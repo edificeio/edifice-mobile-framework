@@ -1,10 +1,12 @@
 import * as React from 'react';
 
+import { Temporal } from '@js-temporal/polyfill';
 import moment from 'moment';
 
 import { AccountType, AuthActiveAccount, getFlattenedChildren } from '~/framework/modules/auth/model';
 import { ScreenTimeDayResponse, ScreenTimeWeekResponse } from '~/framework/modules/widgets/screen-time/model';
 import { screenTimeService } from '~/framework/modules/widgets/screen-time/service';
+import { momentToPlainDate } from '~/framework/util/date';
 
 interface ScreenTimeSummary {
   today?: ScreenTimeDayResponse;
@@ -39,8 +41,8 @@ export function useScreenTimeSummary(userId?: string) {
     setSummary({ error: false, loading: true });
     try {
       const [today, yesterday] = await Promise.all([
-        screenTimeService.day(userId, moment()),
-        screenTimeService.day(userId, moment().subtract(1, 'day')),
+        screenTimeService.day(userId, Temporal.Now.plainDateISO()),
+        screenTimeService.day(userId, Temporal.Now.plainDateISO().subtract({ days: 1 })),
       ]);
       if (pending.current) setSummary({ error: false, loading: false, today, yesterday });
     } catch {
@@ -58,14 +60,13 @@ export function useScreenTimeSummary(userId?: string) {
   return { ...summary, load };
 }
 
-/** The hours of a day, as the back end gives them. */
 export function useScreenTimeDay(userId: string, date: moment.Moment) {
   const [day, setDay] = React.useState<ScreenTimeDayResponse>();
 
   React.useEffect(() => {
     let cancelled = false;
     screenTimeService
-      .day(userId, date)
+      .day(userId, momentToPlainDate(date))
       .then(response => {
         if (!cancelled) setDay(response);
       })
@@ -78,14 +79,14 @@ export function useScreenTimeDay(userId: string, date: moment.Moment) {
   return day;
 }
 
-/** The days of a week, as the back end gives them. */
 export function useScreenTimeWeek(userId: string, weekStart: moment.Moment) {
   const [week, setWeek] = React.useState<ScreenTimeWeekResponse>();
 
   React.useEffect(() => {
     let cancelled = false;
     screenTimeService
-      .week(userId, weekStart)
+      // the first day of the week follows the locale, like the week picker.
+      .week(userId, momentToPlainDate(weekStart.clone().startOf('week')))
       .then(response => {
         if (!cancelled) setWeek(response);
       })
