@@ -1,44 +1,36 @@
 /**
- * How an app opens.
- *
- * Two parts:
- * - `isConnector`: a fact of the server, computed when the app is received (rule inherited from `checkIfIsConnector`);
- * - `getAppOpeningStrategy`: it depends on the modules available for the user, so it is computed when read (see `getAppModules`).
+ * How an app opens: by its module, if one of the app matches it and can be opened (`useCanOpenModule`); else its address, in the
+ * browser (see `getAppUrl`).
  */
-import { AppModule, AppOpeningStrategy, EntApp } from '~/modules/myapps/model';
+import type { AllModulesNames } from '~/app/module';
 
-/**
- * Whether the address of an app can only be opened through `/auth/redirect`: it opens in a new window (`_blank`), or it is absolute
- * (`http(s)://`), or it has a route of a web app (`#/`), or the app has no prefix.
- */
-export const isConnector = (app: { address: string; prefix?: string | null; target?: string | null }): boolean =>
-  app.target === '_blank' || /^https?:\/\//.test(app.address) || app.address.includes('#/') || !app.prefix;
-
-/** Address that opens a connector, signed in, through `/auth/redirect`. */
-export const getConnectorUrl = (address: string): string => `/auth/redirect?url=${encodeURIComponent(address.trim())}`;
-
-/**
- * @param module the module of the app, if one is available for the user.
- * - a module with an `entry` opens the app;
- * - a module without `entry`: the address of the app, as a web app, unless it is a connector;
- * - no module: the address of the app, as a connector.
- */
-export const getAppOpeningStrategy = (
-  app: Pick<EntApp, 'address' | 'isConnector'>,
-  module: AppModule | undefined,
-): AppOpeningStrategy => {
-  if (module?.entry !== undefined) return { kind: 'module', moduleName: module.name };
-  if (module !== undefined && !app.isConnector) return { kind: 'web', url: app.address };
-  return { kind: 'connector', url: getConnectorUrl(app.address) };
+/** Whether the address is on the platform: without domain (`/actualites`), or of the same origin as the platform. */
+const isPlatformAddress = (address: string, platformUrl: string): boolean => {
+  if (address.startsWith('/')) return true;
+  try {
+    return new URL(address).origin === new URL(platformUrl).origin;
+  } catch {
+    return false;
+  }
 };
 
 /**
- * The module of each app, by the name of the app: a module is the one of an app when its `matchEntcoreApp` is the name of the app.
+ * Address that opens an app in the browser, signed in:
+ * - an address of the platform: as it is (`openUrl` makes it absolute and signs it);
+ * - another one (a connector): through `/auth/redirect`, which signs in the user on the target.
+ * @param platformUrl the url of the platform of the session.
+ */
+export const getAppUrl = (address: string, platformUrl: string): string => {
+  const trimmed = address.trim();
+  return isPlatformAddress(trimmed, platformUrl) ? trimmed : `/auth/redirect?url=${encodeURIComponent(trimmed)}`;
+};
+
+/**
+ * The module of each app (its name), by the name of the app: a module is the one of an app when its `matchEntcoreApp` is the name
+ * of the app.
  * @param modules the modules available for the user.
  */
 export const getAppModules = (
-  modules: readonly { name: string; entry?: string; matchEntcoreApp?: string }[],
-): ReadonlyMap<string, AppModule> =>
-  new Map(
-    modules.flatMap(({ entry, matchEntcoreApp, name }) => (matchEntcoreApp ? [[matchEntcoreApp, { entry, name }] as const] : [])),
-  );
+  modules: readonly { name: AllModulesNames; matchEntcoreApp?: string }[],
+): ReadonlyMap<string, AllModulesNames> =>
+  new Map(modules.flatMap(({ matchEntcoreApp, name }) => (matchEntcoreApp ? [[matchEntcoreApp, name] as const] : [])));

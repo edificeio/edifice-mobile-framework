@@ -35,37 +35,19 @@ export interface EntApp {
   helpUrls: Record<string, string>;
   /** Listed in « Mes applis ». The others are kept: other modules need them (theme, labels). */
   display: boolean;
-  /** « /actualites », or an absolute URL. */
+  /** « /actualites », or an absolute URL. Opened through `/auth/redirect` when the app has no module (see `opening.ts`). */
   address: string;
-  /** Its address can only be opened through `/auth/redirect`, whatever the modules of the app (see `opening.ts`). */
-  isConnector: boolean;
 }
 
 /** Preferences of the user about the apps. */
 export interface AppsPreferences {
-  /** Given back as it is when the preferences are saved. When not empty, it restricts the favorites (see `favorites.ts`). */
+  /** Given back as it is when the preferences are saved: the app doesn't use it. */
   applications: string[];
   /** Names of the favorite apps. */
   favorites: string[];
 }
 
 export const EMPTY_PREFERENCES: AppsPreferences = { applications: [], favorites: [] };
-
-/** What « Mes applis » knows of the module of an app: plain data, not the module itself. */
-export interface AppModule {
-  name: string;
-  /** Its entry route: without one, the module can't be opened (see `useOpenModule`). */
-  entry?: string;
-}
-
-/**
- * How an app opens. It depends on the modules available for the user: computed when read, never kept (see `opening.ts`).
- * - `module`: a module of the app, opened with `useOpenModule`;
- * - `web`: its address, in the browser;
- * - `connector`: its address through `/auth/redirect`, in the browser.
- */
-export type AppOpeningStrategy =
-  { kind: 'module'; moduleName: string } | { kind: 'web'; url: string } | { kind: 'connector'; url: string };
 
 // # Rules (types of their parameters)
 
@@ -88,3 +70,13 @@ export type MyAppsFilter =
   | { type: 'other-services' }
   | { type: 'libraries' }
   | { type: 'search'; value: string };
+
+/** An app in the list of « Mes applis », with what the filters and the cards need to know of it (see `toListedApps`). */
+export interface ListedApp {
+  app: EntApp;
+  isFavorite: boolean;
+  /** Shown apart, at the bottom of the lists (see `isOtherService`). */
+  isOtherService: boolean;
+  /** A module of the app matches it, for the user: the app opens in the app, else in the browser (see `opening.ts`). */
+  hasModule: boolean;
+}

@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { AllModulesNames, useModule, useUserAvailableModules } from '~/app/module';
 import { refreshMyApps } from '~/modules/myapps/actions';
-import type { AppModule, EntApp } from '~/modules/myapps/model';
+import type { EntApp } from '~/modules/myapps/model';
 import { getAppModules } from '~/modules/myapps/model/opening';
 import { selectApps } from '~/modules/myapps/store';
 import { I18n } from '~/util/i18n';
@@ -18,15 +18,13 @@ import type { MyAppsDispatch } from './types';
 /** Translates like `I18n.get`, for the rules (`Translate`). */
 export const translate = (key: string) => I18n.get(key);
 
-/** Any module: only an `EntModule` may have an app (`matchEntcoreApp`). */
+/** Any module of the app: only an `EntModule` may have an app (`matchEntcoreApp`). */
 interface ModuleLike {
-  name: string;
-  entry?: unknown;
+  name: AllModulesNames;
 }
 
 /** What the rules need to know of a module. */
 const toModuleData = (module: ModuleLike) => ({
-  entry: typeof module.entry === 'string' ? module.entry : undefined,
   matchEntcoreApp: 'matchEntcoreApp' in module && typeof module.matchEntcoreApp === 'string' ? module.matchEntcoreApp : undefined,
   name: module.name,
 });
@@ -45,8 +43,8 @@ export const useEntApp = (entAppName: string | undefined): EntApp | undefined =>
   return React.useMemo(() => apps.find(app => app.name === entAppName), [apps, entAppName]);
 };
 
-/** The module of each app (by the name of the app), among the modules available for the user. */
-export const useAppModules = (): ReadonlyMap<string, AppModule> => {
+/** The module (its name) of each app, by the name of the app, among the modules available for the user. */
+export const useAppModules = (): ReadonlyMap<string, AllModulesNames> => {
   const modules = useUserAvailableModules();
   return React.useMemo(() => getAppModules(modules.map(toModuleData)), [modules]);
 };

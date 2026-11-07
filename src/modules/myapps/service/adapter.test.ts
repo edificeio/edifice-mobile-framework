@@ -29,7 +29,6 @@ describe('toEntApps', () => {
       display: true,
       helpUrls: { fr: 'https://help' },
       icon: 'actualites',
-      isConnector: false,
       isLibrary: false,
       label: 'Actualités',
       name: 'Actualites',
@@ -46,11 +45,6 @@ describe('toEntApps', () => {
       ['Hidden', false],
       ['Blog', true],
     ]);
-  });
-
-  it('knows the connectors', () => {
-    const [app] = toEntApps([createResponse({ address: 'https://example.com', name: 'Ext', prefix: '' })], translate);
-    expect(app.isConnector).toBe(true);
   });
 
   it('applies the overrides of Directory', () => {

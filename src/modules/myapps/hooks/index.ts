@@ -10,5 +10,5 @@ export {
   useEntAppDisplay,
   useModuleAppDisplay,
 } from './display';
-export { useFavorites, useFilteredApps, useShowAllApps } from './list';
+export { useFavorites, useFilteredApps, useHasAppsToList, useShowAllApps } from './list';
 export type { EntAppDisplay } from './types';

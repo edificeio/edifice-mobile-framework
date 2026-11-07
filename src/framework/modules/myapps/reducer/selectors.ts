@@ -17,7 +17,7 @@ const toLegacyApp = (app: EntApp, favorites: ReadonlySet<string>): AppsInfoAggre
   displayName: app.label,
   help: app.helpUrls,
   icon: app.icon,
-  isConnector: app.isConnector,
+  isConnector: false,
   isExternal: false,
   isFavorite: favorites.has(app.name),
   isLibrary: app.isLibrary,

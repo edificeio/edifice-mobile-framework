@@ -49,6 +49,7 @@ export const getAppLabel = (app: LabelSourceData, translate: Translate): string 
 //
 // Rule inherited from the old module (`aggregateApps`, `normalizeIconName`): the server names its icons its own way
 // (« actualites-large »), and some apps have their icon under another name in the app. Three steps, in order.
+// The server may also give the path or the URL of an image: it is kept as it is (steps 2 and 3 only apply to a name of icon).
 
 /** Step 1: icons set by the name of the app, whatever the server sends. */
 const ICON_OVERRIDES: Record<string, string> = {
@@ -63,10 +64,16 @@ const ICON_RENAMES: Record<string, string> = {
 /** Step 2: icon of the server without its `-large` suffix (the app has one icon for both sizes), in lower case, without accents. */
 export const normalizeIconName = (icon: string): string => normalizeString(icon.replace(/-large$/, ''));
 
+/** The icon is a name of icon (« blog »), not the path or the URL of an image (`/workspace/…`, `https://…/icon.png`). */
+export const isIconName = (icon: string): boolean => !icon.includes('/') && !icon.includes('.');
+
 export const getAppIcon = (app: { name: string; icon?: string | null }): string => {
   const override = ICON_OVERRIDES[app.name];
   if (override !== undefined) return override;
-  const normalized = normalizeIconName(app.icon ?? '');
+  const icon = app.icon ?? '';
+  // A path or a URL may be case-sensitive: not normalized
+  if (!isIconName(icon)) return icon;
+  const normalized = normalizeIconName(icon);
   return ICON_RENAMES[normalized] ?? normalized;
 };
 

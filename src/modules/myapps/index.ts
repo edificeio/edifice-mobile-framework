@@ -2,7 +2,7 @@ import { EntModule } from '~/app/module';
 import { getStore } from '~/app/store';
 import { I18n } from '~/util/i18n';
 
-import MyAppsHomeScreen from './screens/home';
+import myAppsHomeScreen from './screens/home';
 import { createMyAppsSessionHooks } from './session';
 import { storage } from './storage';
 import reducer from './store';
@@ -22,7 +22,7 @@ export default new EntModule({
   onSessionStart,
   redux: { reducer },
   screens: {
-    'myapps/home': { screen: MyAppsHomeScreen },
+    'myapps/home': myAppsHomeScreen,
   },
   sessionSetup,
   storages: [storage],

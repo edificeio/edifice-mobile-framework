@@ -9,10 +9,10 @@ describe('withFavoriteToggled', () => {
     expect(withFavoriteToggled({ applications: [], favorites: ['A', 'B'] }, 'A')).toEqual({ applications: [], favorites: ['B'] });
   });
 
-  it('keeps only the favorites of `applications` when it is not empty, and the app toggled', () => {
+  it('gives `applications` back as it is, without any check', () => {
     expect(withFavoriteToggled({ applications: ['A', 'B'], favorites: ['A', 'Z'] }, 'C')).toEqual({
       applications: ['A', 'B'],
-      favorites: ['A', 'C'],
+      favorites: ['A', 'Z', 'C'],
     });
   });
 

@@ -12,6 +12,29 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-07 — `myapps` : suites de la revue du modèle (`feat/ia/vmou`)
+
+- Décidé (utilisateur) : ouverture = module ouvrable sinon `/auth/redirect` (plus de distinction `web` / `connector`) ; `applications` transmis sans vérification ; modules typés `AllModulesNames` ; `EntApp.icon` et `User-Agent` gardés tels quels (on évite de transformer les données du serveur) ; `EMPTY_PREFERENCES` et palette du thème : pas de problème ; état « en cours » : hors périmètre.
+- Fait : `ListedApp.hasModule` ; `toListedApps` + `filterApps` / `hasAppsToList` ; suppression de `AppOpeningStrategy`, `getAppOpeningStrategy`, `EntApp.isConnector`, `AppModule`. Détail : §8 et §9 de [myapps.md](myapps.md).
+- Vérifié : tsc 776, eslint propre, `yarn test` 411/411. **Pas testé dans l'app.**
+- Ensuite (utilisateur) : plus de signature manuelle de l'icône du workspace (`Image` signe) ; `getAppUrl` : pas de `/auth/redirect` pour une adresse de la plateforme.
+- Prochaine étape : phase 5 (modales).
+
+## 2026-11-07 — `myapps` : relecture de la phase 4 (`feat/ia/vmou`)
+
+- Décidé : hooks d'un composant dans `hooks.ts` ; favoris dans l'ordre des préférences ; `ListedApp.opening` au lieu de `module` ; tablette hors sujet (`CLAUDE.md` créé).
+- Fait : corrections de la revue (icônes en URL, séparateur FlashList 2, query des images, pictogramme web, accessibilité, clavier, mémoïsation, code mort). Détail : §9 de [myapps.md](myapps.md). Revue du modèle : 8 points fragiles en §8, à discuter.
+- Vérifié : tsc 776, eslint propre, `yarn test` 423/423. **Pas testé dans l'app.**
+- Prochaine étape : discuter les points du modèle (§8), puis phase 5.
+
+## 2026-11-07 — `myapps` phase 4 : `MyAppsHomeScreen` (`feat/ia/vmou`)
+
+- Fait : `src/modules/myapps/screens/home/` (écran + boutons du header en composants, options statiques) ; `components/` (`MyAppsList`, `MyAppsCard`, `MyAppsFilters`, `MyAppsFilterCell`, portés tels quels, anciens `testID` conservés) ; `filterApps` renvoie des `ListedApp` ; `hasAppsToList` / `useHasAppsToList`. Détail : §9 de [myapps.md](myapps.md).
+- Choix d'implémentation : `useScrollToTop` ; recherche fermée à la perte de focus ; focus de la recherche sans délai (à vérifier).
+- En suspens (`ToDo(myapps-migration)`) : appui sur une app (phase 6), appui long et boutons du header (phase 5).
+- Vérifié : tsc 776 (aucune nouvelle), eslint propre, `yarn test` 422/422. **Pas testé dans l'app.**
+- Prochaine étape : phase 5 (modales).
+
 ## 2026-11-07 — Contrainte pour `timeline` : notifications à part (`feat/ia/vmou`)
 
 - Décidé : les notifications sortent de `timeline` dans le module `notifications`, consommé par `timeline` et par le futur module `home` (développé par ailleurs), qui ont tous deux un fil de notifications.

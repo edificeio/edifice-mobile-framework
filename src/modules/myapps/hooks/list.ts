@@ -7,8 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { useStorageBoolean } from '~/framework/util/storage/hooks';
 import { saveFavorites, toggleFavorite } from '~/modules/myapps/actions';
-import type { EntApp, MyAppsFilter } from '~/modules/myapps/model';
-import { filterApps } from '~/modules/myapps/model/classification';
+import type { ListedApp, MyAppsFilter } from '~/modules/myapps/model';
+import { filterApps, hasAppsToList, toListedApps } from '~/modules/myapps/model/classification';
 import { storage } from '~/modules/myapps/storage';
 import { selectApps, selectPreferences } from '~/modules/myapps/store';
 
@@ -33,14 +33,28 @@ export const useShowAllApps = () => {
   return [value ?? true, setValue] as const;
 };
 
-/** The apps of a filter of the list, in the order to show them (see `filterApps`). */
-export const useFilteredApps = (filter: MyAppsFilter): EntApp[] => {
+/** The apps of the list (`display`, sorted), with their favorites and modules (see `toListedApps`). */
+const useListedApps = (): ListedApp[] => {
   const { data: apps } = useSelector(selectApps);
-  const { favorites } = useFavorites();
+  const { favorites } = useSelector(selectPreferences).data;
   const modules = useAppModules();
-  const [showAllApps] = useShowAllApps();
   return React.useMemo(
-    () => filterApps(apps, filter, { favorites, getModule: appName => modules.get(appName), showAllApps }),
-    [apps, favorites, filter, modules, showAllApps],
+    () => toListedApps(apps, { favorites, hasModule: appName => modules.has(appName) }),
+    [apps, favorites, modules],
   );
+};
+
+/** The apps of a filter of the list, in the order to show them (see `filterApps`). */
+export const useFilteredApps = (filter: MyAppsFilter): ListedApp[] => {
+  const items = useListedApps();
+  const { favorites } = useSelector(selectPreferences).data;
+  const [showAllApps] = useShowAllApps();
+  return React.useMemo(() => filterApps(items, filter, { favorites, showAllApps }), [favorites, filter, items, showAllApps]);
+};
+
+/** Whether « Mes applis » has apps to show at all (see `hasAppsToList`). */
+export const useHasAppsToList = (): boolean => {
+  const items = useListedApps();
+  const [showAllApps] = useShowAllApps();
+  return React.useMemo(() => hasAppsToList(items, showAllApps), [items, showAllApps]);
 };

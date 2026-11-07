@@ -1,69 +1,42 @@
-import { AppModule } from '~/modules/myapps/model';
+import type { AllModulesNames } from '~/app/module';
 
-import { getAppModules, getAppOpeningStrategy, getConnectorUrl, isConnector } from './opening';
+import { getAppModules, getAppUrl } from './opening';
 
-describe('isConnector', () => {
-  const webApp = { address: '/blog', prefix: '/blog', target: '' };
+describe('getAppUrl', () => {
+  const platformUrl = 'https://ent.example.com';
 
-  it('is not a connector for a page of the ENT', () => {
-    expect(isConnector(webApp)).toBe(false);
+  it('keeps an address of the platform as it is', () => {
+    expect(getAppUrl('/actualites', platformUrl)).toBe('/actualites');
+    expect(getAppUrl(' https://ent.example.com/blog#/list ', platformUrl)).toBe('https://ent.example.com/blog#/list');
   });
 
-  it.each([
-    ['opens in a new window', { target: '_blank' }],
-    ['has an absolute address', { address: 'https://example.com/blog' }],
-    ['has an absolute http address', { address: 'http://example.com/blog' }],
-    ['has a route of a web app', { address: '/blog#/list' }],
-    ['has no prefix', { prefix: '' }],
-    ['has a null prefix', { prefix: null }],
-  ])('is a connector when it %s', (_, overrides) => {
-    expect(isConnector({ ...webApp, ...overrides })).toBe(true);
-  });
-});
-
-describe('getConnectorUrl', () => {
-  it('goes through /auth/redirect, without the spaces around the address', () => {
-    expect(getConnectorUrl(' https://example.com/a?b=c ')).toBe('/auth/redirect?url=https%3A%2F%2Fexample.com%2Fa%3Fb%3Dc');
-  });
-});
-
-describe('getAppOpeningStrategy', () => {
-  const app = { address: '/blog', isConnector: false };
-  const connector = { address: 'https://example.com', isConnector: true };
-  const withEntry: AppModule = { entry: 'blog/home', name: 'blog' };
-  const withoutEntry: AppModule = { name: 'blog' };
-
-  it('opens the module when it has an entry, whatever the address', () => {
-    expect(getAppOpeningStrategy(app, withEntry)).toEqual({ kind: 'module', moduleName: 'blog' });
-    expect(getAppOpeningStrategy(connector, withEntry)).toEqual({ kind: 'module', moduleName: 'blog' });
+  it('goes through /auth/redirect for another domain', () => {
+    expect(getAppUrl(' https://example.com/a?b=c ', platformUrl)).toBe('/auth/redirect?url=https%3A%2F%2Fexample.com%2Fa%3Fb%3Dc');
+    expect(getAppUrl('https://sub.ent.example.com/x', platformUrl)).toBe(
+      '/auth/redirect?url=https%3A%2F%2Fsub.ent.example.com%2Fx',
+    );
   });
 
-  it('opens the address as a web app for a module without entry', () => {
-    expect(getAppOpeningStrategy(app, withoutEntry)).toEqual({ kind: 'web', url: '/blog' });
-  });
-
-  it('opens a connector for a module without entry and a connector address', () => {
-    expect(getAppOpeningStrategy(connector, withoutEntry)).toEqual({
-      kind: 'connector',
-      url: '/auth/redirect?url=https%3A%2F%2Fexample.com',
-    });
-  });
-
-  it('opens a connector without module', () => {
-    expect(getAppOpeningStrategy(app, undefined)).toEqual({ kind: 'connector', url: '/auth/redirect?url=%2Fblog' });
+  it('goes through /auth/redirect for an address it cannot read', () => {
+    expect(getAppUrl('not an url', platformUrl)).toBe('/auth/redirect?url=not%20an%20url');
   });
 });
 
 describe('getAppModules', () => {
+  // Fictitious modules: the names of the modules of the app come and go with the migration
+  const getModules = getAppModules as (
+    modules: readonly { name: string; matchEntcoreApp?: string }[],
+  ) => ReadonlyMap<string, AllModulesNames | string>;
+
   it('gives the module of each app, by `matchEntcoreApp`', () => {
-    const modules = getAppModules([
-      { entry: 'blog/home', matchEntcoreApp: 'Blog', name: 'blog' },
+    const modules = getModules([
+      { matchEntcoreApp: 'Blog', name: 'blog' },
       { matchEntcoreApp: 'Wiki', name: 'wiki' },
       { name: 'core' },
     ]);
     expect([...modules]).toEqual([
-      ['Blog', { entry: 'blog/home', name: 'blog' }],
-      ['Wiki', { entry: undefined, name: 'wiki' }],
+      ['Blog', 'blog'],
+      ['Wiki', 'wiki'],
     ]);
   });
 });

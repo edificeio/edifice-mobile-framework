@@ -1,6 +1,6 @@
 # Migration : `myapps`
 
-> Statut : **en cours** (spec v2 validée le 2026-11-04 ; phases 0 à 3 faites) — mise à jour le 2026-11-06
+> Statut : **en cours** (spec v2 validée le 2026-11-04 ; phases 0 à 4 faites) — mise à jour le 2026-11-06
 
 Les règles communes à toute la migration sont dans [CONVENTIONS.md](CONVENTIONS.md) et ne sont pas répétées ici.
 
@@ -64,6 +64,7 @@ Les règles communes à toute la migration sont dans [CONVENTIONS.md](CONVENTION
 - Après la phase 1 : `EntModule` (§5.1, sans `sessionSetup` / `onSessionStart`, phase 2), `model/`, `use-cases.ts`, `util.ts`, `service/`, `store/`, `storage.ts`. `screens/home.tsx` est toujours une vue vide.
 - Après la phase 1 bis (2026-11-06) : le code suit la conception des données du 2026-11-06 (§5.2 à §5.7) : `model/` (types + règles par objectif), `actions.ts`, `service/` (hydratation), `store/`. Détail en §9.
 - Après la phase 2 (2026-11-06) : les apps se chargent avant la session et les préférences à son début (`session.ts`, §5.4). L'écran est toujours une vue vide (phase 4) ; le state est visible dans Reactotron.
+- Après la phase 4 (2026-11-07) : `MyAppsHomeScreen` porté (`screens/home/`), avec `MyAppsList`, `MyAppsCard`, `MyAppsFilters`, `MyAppsFilterCell` (`components/`). Appui sur une app, appui long et boutons du header ne font encore rien (phases 5 et 6).
 
 ### 2.3 Consommateurs externes
 
@@ -104,7 +105,7 @@ Les noms ci-dessous sont ceux du code actuel ; leur renommage est proposé en §
 
 ### 3.2 `MyAppsHomeScreen`
 
-- [ ] Filtres : Toutes · Favoris · Communication · Pédagogie · Organisation · Autres services (+ recherche).
+- [ ] Filtres : Toutes · Favoris · Communication · Pédagogie · Organisation · Autres services (+ recherche). Les listes sont triées par libellé, **sauf les favoris, dans l'ordre des préférences** (l'ordre choisi par l'utilisateur, renvoyé par le serveur).
 - [ ] Interrupteur « afficher toutes les applis » (persisté par compte, `true` par défaut) : désactivé → seulement les modules (et les favoris en recherche) ; les apps « en bas » s'ajoutent pour Toutes, Autres services et la recherche (`useFilteredApps`). Le filtre Favoris ignore l'interrupteur.
 - [ ] Filtre Toutes : liste groupée avec séparateur « autres services ».
 - [ ] Appui sur une app : module → navigation vers sa route ; sinon `openUrl`, via `/auth/redirect?url=…` pour un connecteur.
@@ -118,7 +119,7 @@ Les noms ci-dessous sont ceux du code actuel ; leur renommage est proposé en §
 
 ### 3.4 Favoris (règle d'écriture)
 
-- [ ] `PUT` de `{ applications, bookmarks }` ; `applications` est renvoyé tel quel. Si `applications` n'est pas vide, une bascule ne garde que les favoris présents dans `applications` (+ l'app basculée).
+- [ ] `PUT` de `{ applications, bookmarks }` ; `applications` est renvoyé tel quel. (L'ancien code ne gardait, à une bascule, que les favoris présents dans `applications` quand elle n'était pas vide : **abandonné le 2026-11-07**, `applications` est transmis sans vérification.)
 
 ### 3.5 Stockage, tests E2E, i18n
 
@@ -184,9 +185,9 @@ Structure de module de [CONVENTIONS.md](CONVENTIONS.md) (« Structure d'un modul
 src/modules/myapps/
 ├── index.ts                    EntModule (§5.1)
 ├── model/                      Domaine : ne sait rien de l'API, du store, du storage ni des modules de l'app
-│   ├── index.ts                Types (§5.3) : EntApp, AppsPreferences, AppCategory, AppModule, AppOpeningStrategy
+│   ├── index.ts                Types (§5.3) : EntApp, AppsPreferences, AppCategory, ListedApp, MyAppsFilter…
 │   ├── display.ts              Affichage : libellé (sources ordonnées), icône (3 étapes), couleur (3 cas), aide
-│   ├── opening.ts              Ouverture : isConnector (fait serveur), getAppOpeningStrategy
+│   ├── opening.ts              Ouverture : getAppUrl, getAppModules
 │   ├── classification.ts       Ségrégation : catégorie, bibliothèques (`library-info`), isOtherService, filterApps + MyAppsFilter
 │   ├── favorites.ts            withFavoriteToggled, withFavorites
 │   └── onboarding.ts           ONBOARDING_VERSION, isOnboardingSeen, shouldShowOnboarding
@@ -251,27 +252,24 @@ interface EntApp {
   isLibrary: boolean; // model/classification.ts
   helpUrls: Record<string, string>; // langue → URL ; `{}` sans aide
   display: boolean; // listée dans « Mes applis » (nom du serveur, connu des développeurs)
-  address: string; // « /actualites » ou URL absolue
-  isConnector: boolean; // fait serveur : l'adresse ne peut s'ouvrir que par /auth/redirect (model/opening.ts)
+  address: string; // « /actualites » ou URL absolue ; ouverte par /auth/redirect quand l'app n'a pas de module
 }
 
 interface AppsPreferences {
-  applications: string[]; // renvoyé tel quel au serveur ; restreint les favoris (§3.4)
+  applications: string[]; // renvoyé tel quel au serveur, sans vérification : l'app ne s'en sert pas
   favorites: string[]; // `bookmarks` côté API
 }
 
-/** Ce que myapps sait d'un module de l'app (donnée simple, construite par hook depuis `useUserAvailableModules`). */
-interface AppModule {
-  name: string;
-  entry?: string;
+/** Une app de la liste de « Mes applis » (`toListedApps`), avec ce qu'en savent les filtres et les cartes. */
+interface ListedApp {
+  app: EntApp;
+  isFavorite: boolean;
+  isOtherService: boolean;
+  hasModule: boolean; // un module de l'app lui correspond, pour l'utilisateur
 }
-
-/** Comment ouvrir une app. Calculée à la lecture (dépend des modules). */
-type AppOpeningStrategy =
-  | { kind: 'module'; moduleName: string } // module disponible avec une `entry`
-  | { kind: 'web'; url: string } // module disponible sans `entry` : son adresse
-  | { kind: 'connector'; url: string }; // pas de module, ou `isConnector` : via /auth/redirect
 ```
+
+Le module d'une app se lit par `useAppModules()` : nom de l'app → nom du module, typé `AllModulesNames`.
 
 **Réponse de l'API** (`service/api.ts`, `namespace API`, ne sort pas de `service/`). Exemple fourni le 2026-11-04 : un tableau qui réunit les champs de `/applications-list` et de `/myApps/config`, plus `appName`.
 
@@ -306,7 +304,6 @@ namespace API {
 2. Pour chaque autre entrée, **sans filtrer sur `display`** (les apps masquées servent aux autres modules : thème, libellé d'onglet, `media`) :
    - bibliothèque (`library.ts`) : si oui, catégorie, couleur et aide viennent de `library-info` ;
    - `label` (`label.ts`), `icon` (`icon.ts`), `color` (`color.ts`), `category` (`category.ts`) ;
-   - `isConnector` (`opening.ts`) : `target === '_blank'`, ou adresse absolue `http(s)://`, ou adresse contenant `#/`, ou pas de `prefix`.
 3. Pas de tri : l'ordre d'affichage est l'affaire de l'écran (`filterApps`).
 
 Le service reçoit `translate` en paramètre (l'appelant passe `I18n.get`) : il n'importe pas l'i18n.
@@ -336,7 +333,7 @@ Renommages par rapport à l'ancien code (« naming douteux » ; les champs du se
 | `ApplicationsList`, `AppsInfo`, `AppsInfoAggregated`, `AppsInfoWithCategory`, `ApplicationsConfig` | `API.EntAppResponse` (réponse), `EntApp` (app hydratée)                                          | 5 types pour une même chose ; « info » ne dit rien     |
 | `favorites: AppBookmarks { applications, bookmarks }`                                              | `preferences: AppsPreferences { applications, favorites }`                                       | ce sont les préférences ; un seul mot pour les favoris |
 | `isMobile` + `routeName`                                                                           | rien dans l'app : le module se lit par hook (§5.5)                                               | dépend de l'app mobile, pas du serveur                 |
-| `isConnector` (calculé avec `isMobile`)                                                            | `isConnector` (fait serveur seul) + `AppOpeningStrategy`                                         | sépare la donnée de la façon d'ouvrir                  |
+| `isConnector` (calculé avec `isMobile`)                                                            | `ListedApp.hasModule` ; à l'ouverture, module ouvrable sinon `/auth/redirect` (§5.6)             | une seule question : un module ?                       |
 | `appShouldBeAtBottom`                                                                              | `isOtherService(app, module)`                                                                    | dit ce que c'est, pas où l'afficher                    |
 | `displayName` (écrasé), `icon` (écrasé)                                                            | `label`, `icon` (calculés) ; le brut n'est pas gardé                                             | §4 n° 14                                               |
 | `MyAppsFilterCategories` (`toutes`, `pedagogie`, `otherServices`)                                  | catégorie serveur (`communication`, `pedagogy`, `organisation`) \| `other` ; filtre `all` à part | §4 n° 15                                               |
@@ -360,7 +357,7 @@ Les hooks combinent les trois données de §5.3 (apps du store, préférences du
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | `useEntApps()`                    | Toutes les apps (`EntApp[]`), statut, `refresh`                                                                                                                                                   | `selectAggregatedApps`                                 |
 | `useEntApp(entAppName)`           | Une app par son nom ENT (`'Blog'`, `'Espace documentaire'`…), `display` ou non                                                                                                                    | `aggregatedApps[name]` (`media`, `communities`)        |
-| `useAppModules()`                 | Module (`AppModule`) de chaque app, par `matchEntcoreApp`, depuis `useUserAvailableModules()`                                                                                                     | `isMobile`, `routeName`                                |
+| `useAppModules()`                 | Nom du module (`AllModulesNames`) de chaque app, par `matchEntcoreApp`, depuis `useUserAvailableModules()`                                                                                        | `isMobile`, `routeName`                                |
 | `useModuleApp(moduleName)`        | L'app d'un module : `useModules()` → `matchEntcoreApp` → `useEntApp`                                                                                                                              | la partie « par nom de module » de `buildAppLookupMap` |
 | `useFavorites()`                  | Favoris (`Set`), statut, `toggle(appName)`, `save(favorites)`                                                                                                                                     | `isFavorite` dans l'agrégat                            |
 | `useEntAppDisplay(entAppName)`    | Affichage d'une app par son nom ENT : `{ colors: IShades, icon, label }`, valeurs par défaut sinon                                                                                                | `useAppTheme`, `useAppBadge`, `aggregatedApps[name]`   |
@@ -382,13 +379,14 @@ La recherche par **scope** de `buildAppLookupMap` (un `entcoreScope` pointe vers
 
 ### 5.6 Ouvrir une app
 
-`getAppOpeningStrategy(app, module)` (`model/opening.ts`), `module` venant de `useAppModules()` :
+Une seule question à l'ouverture : l'app a-t-elle un module qui peut s'ouvrir ? (simplifié le 2026-11-07)
 
-- module disponible **avec** une `entry` → `{ kind: 'module', moduleName }` : `openModule(moduleName)` ;
-- module disponible **sans** `entry`, et `!app.isConnector` → `{ kind: 'web', url: app.address }` : `openUrl` ;
-- sinon (pas de module, ou `isConnector`) → `{ kind: 'connector', url: '/auth/redirect?url=<address>' }` : `openUrl`.
+- son module (`useAppModules()`) peut s'ouvrir (`canOpenModule(name)` : disponible et doté d'une `entry`) → `openModule(name)` ;
+- sinon → `openUrl(getAppUrl(address, session.platform.url))` : une adresse de la plateforme (sans domaine, ou de même origine) telle quelle, `openUrl` la rend absolue et la signe ; une autre (connecteur) par `/auth/redirect`, qui connecte l'utilisateur sur la cible.
 
-`kind` sert aussi à l'affichage (`MyAppsCard` : pictogramme web ou connecteur). `isOtherService(app, module)` : pas de module et catégorie `other`.
+La carte n'a besoin que de `ListedApp.hasModule` : pictogramme « lien externe » et icône de connecteur (à défaut d'icône) pour une app sans module. `isOtherService(app, hasModule)` : pas de module et catégorie `other`.
+
+Écart volontaire avec l'ancien code : il distinguait une app « web » (module sans route, adresse ouverte telle quelle) d'un connecteur (via `/auth/redirect`, avec une détection sur `target`, l'adresse et `prefix`). Ce cas ne se présente pas avec les modules actuels. Autre écart : l'ancien code passait par `/auth/redirect` pour toute app sans module, même sur la plateforme ; seule une adresse d'un autre domaine y passe maintenant.
 
 **`useOpenModule`** : API publique **du framework** (`src/app/navigation-new/open-module.ts`), réutilisable plus tard par les notifications, les intents et les liens profonds.
 
@@ -432,7 +430,7 @@ Plus de façade pour les autres modules (relecture du 2026-11-06) : ils passent 
 | 1 bis | Reprise de la conception des données (**fait**) | Conformer le code à §5.2-§5.7 : `EntApp` hydraté par le service (`service/api.ts`, `adapter.ts`), règles du modèle, store `apps` + `preferences.favorites`, `filterApps` avec trois entrées et filtre `display`, `getAppOpeningStrategy` ; renommer `isModuleAvailable` → `isModuleAvailableForUser`, `useAvailableModules` → `useUserAvailableModules` (code, ARCHITECTURE, STATUS) | tsc, eslint, tests Jest (règles, adapter, store, use-cases)   |
 | 2     | Chargement (**fait**)                           | `sessionSetup` (apps), `onSessionStart` (préférences), `refresh` ; retrait du `ToDo` de `start-session.ts`                                                                                                                                                                                                                                                                           | connexion : state rempli ; API en panne : connexion refusée   |
 | 3     | API publique (**fait**)                         | hooks §5.5 ; `tabs.tsx` ; façades §5.10 ; `media/resource-display.ts`                                                                                                                                                                                                                                                                                                                | libellés d'onglets ; thème des apps                           |
-| 4     | `MyAppsHomeScreen`                              | port de l'écran, `MyAppsList`, `MyAppsCard`, `MyAppsFilters` ; header par options ; `useScrollToTop`                                                                                                                                                                                                                                                                                 | parcours E2E (testIDs §3.5)                                   |
+| 4     | `MyAppsHomeScreen` (**fait**)                   | port de l'écran, `MyAppsList`, `MyAppsCard`, `MyAppsFilters` ; header par options ; `useScrollToTop`                                                                                                                                                                                                                                                                                 | parcours E2E (testIDs §3.5)                                   |
 | 5     | Modales                                         | `myapps/menu`, `myapps/app-actions`, `myapps/favorites` (`useConfirmRemove`), `myapps/onboarding` ; corrections §4 n° 4-7                                                                                                                                                                                                                                                            | règles §3.2-3.4                                               |
 | 6     | Ouvrir une app                                  | §5.6                                                                                                                                                                                                                                                                                                                                                                                 | modules, apps web, connecteurs                                |
 | 7     | Nettoyage                                       | suppression de `framework/modules/myapps` hors façades, de `ModalsRouteNames.FavoritesManagement`                                                                                                                                                                                                                                                                                    | `grep -rn "framework/modules/myapps" src` = façades seulement |
@@ -467,6 +465,7 @@ Plus de façade pour les autres modules (relecture du 2026-11-06) : ils passent 
   - Noms : `getAppOpeningStrategy` ; `isModuleAvailable` → `isModuleAvailableForUser` et `useAvailableModules` → `useUserAvailableModules` (le résultat dépend des droits de l'utilisateur).
 - **2026-11-06** — Affichage des apps pour les autres modules : `useEntAppDisplay` / `useModuleAppDisplay` (`{ colors, icon, label }`, couleurs primaires par défaut) au lieu de `useAppTheme` / `useAppBadge` ; un badge est un objet construit par l'appelant, pas un hook ; l'app d'une notification se lit par `useNotificationEntApp` du module `notifications` ; `selectAggregatedApps` n'est plus exposé aux autres modules (gardé pour l'ancien code jusqu'à la phase 7).
 - **2026-11-06** (utilisateur) — `useModuleAppDisplay`, `useModuleApp`, `useModuleAppName` prennent un `AllModulesNames` : on ne peut demander que l'app d'un module qui existe dans l'app. Les appels avec le nom d'un module pas encore migré (`blog`, `homework`, `news`, `communities` ×2, et `wiki` via `ModuleImage`) sont des erreurs de type **voulues**, corrigées au fil des migrations. `ModuleWithRights` prend aussi le nom d'un module de l'app (`Pick<AnyModule, 'name'>`).
+- **2026-11-07** — Revue du modèle : ouverture décidée par l'existence d'un module (plus de `web` / `connector`) ; `toListedApps` + filtres ; modules typés `AllModulesNames` ; `applications` transmis tel quel ; `EntApp.icon` et `User-Agent` gardés tels quels (§8).
 - **2026-11-06** — Langue : pas de mécanisme de changement de langue sans redémarrage pour l'instant (l'app redémarre déjà). Sujet transverse dans [later.md](later.md).
 - **2026-11-06** — Relecture du code de la phase 1 bis :
   - règles du modèle **regroupées par objectif** dans `model/` (`display.ts`, `opening.ts`, `classification.ts`, `favorites.ts`, `onboarding.ts`) : `model/rules/` comptait trop de petits fichiers ;
@@ -477,6 +476,17 @@ Plus de façade pour les autres modules (relecture du 2026-11-06) : ils passent 
 ## 8. Questions ouvertes
 
 Aucune question bloquante. Ce qui est remis à plus tard est dans [later.md](later.md).
+
+**Revue du modèle de données (2026-11-07)**, suites données par l'utilisateur :
+
+1. `EntApp.icon` (nom d'un `Svg`, chemin du workspace ou URL) : **gardé tel quel**. On dépend de la propreté des données du serveur et on évite de les transformer. Le `User-Agent` des images distantes reste celui de l'ancien code (raison inconnue).
+2. « Connecteur » à deux sens : **réglé**, la distinction `web` / `connector` est supprimée (§5.6). `EntApp.isConnector` et `AppOpeningStrategy` n'existent plus.
+3. `filterApps` faisait trop : **réglé**, `toListedApps` construit la liste une fois (favoris, modules), `filterApps` et `hasAppsToList` travaillent dessus et partagent la règle de l'interrupteur.
+4. Noms de modules en `string` : **réglé**, `useAppModules()` donne des `AllModulesNames`.
+5. `applications` : **réglé**, transmis tel quel, sans la règle qui restreignait les favoris.
+6. `EMPTY_PREFERENCES` partagé : pas un problème (constante en capitales, jamais modifiée).
+7. Pas d'état « en cours » dans `Loadable` : hors du périmètre de ce chantier.
+8. Le modèle connaît la palette du thème : voulu (le serveur donne le nom d'une couleur de la palette).
 
 ## 9. Avancement
 
@@ -544,4 +554,32 @@ Aucune question bloquante. Ce qui est remis à plus tard est dans [later.md](lat
 - 2026-11-06 : **noms de modules typés** (décision de l'utilisateur). `useModuleAppDisplay`, `useModuleApp` et `useModuleAppName` n'acceptent qu'un `AllModulesNames` ; `ModuleWithRights` prend `Pick<AnyModule, 'name'>`. tsc passe de 768 à 775 erreurs, **voulues** : un module non migré passé à `useModuleAppDisplay` (`BlogSelectScreen`, `HomeworkSelectScreen`, `news/thumbnail-thread`, `community-card-large`, `community-navbar`) ou à `ModuleImage` (`wiki` : `image-input`, `resource-thumbnail`), corrigé au fil des migrations. `ModuleImage` prend une prop `moduleName: AllModulesNames` (ex-`appName: string`). Ce ne sont pas des régressions. Les tests de `src/app/module/rights.test.ts` gardent des noms fictifs : le type de `isModuleAvailableForUser` y est surchargé pour accepter n'importe quel nom (les modules de test `amodule`… disparaîtront avec la migration).
 - 2026-11-06 : **`EntAppImage` et `ModuleImage`.** `src/framework/components/picture/ent-app-image` (nouveau, ex-corps de `ModuleImage`) affiche une image avec, à défaut, les couleurs et l'icône d'une app ENT (`useEntAppDisplay(entAppName)`) ; `module-image` n'est plus qu'un `EntAppImage` avec l'app de son module (`useModuleAppName`, exporté par `hooks/index.ts`). Les 2 erreurs préexistantes du rendu de remplacement suivent le code dans `ent-app-image`. tsc 775, `yarn test` 418/418.
 - 2026-11-06 : `EntApp.icon` et les icônes d'affichage restent des `string` : le serveur peut donner le nom d'un `Svg` de l'app, mais aussi le chemin d'une image du workspace ou une URL (ancien `resolveAppIcon`, à porter avec `MyAppsCard` en phase 4). Un essai de typage en `SvgIconName` a été annulé. `community-card-small` utilise `useModuleAppDisplay('communities')` (on est dans ce module) : erreur de type voulue de plus. tsc 776 : 8 appels avec un module non migré (`blog`, `homework`, `news`, `communities` ×3, `wiki` ×2).
+- 2026-11-07 : **phase 4 faite.**
+  - `screens/home/index.tsx` : `MyAppsHomeScreen` + `defineScreen` (titre `myapp-appname`). Filtre local (`all` par défaut), liste par `useFilteredApps`, écran vide global si `useHasAppsToList()` est faux (avec « réessayer » si les apps ou les préférences sont en erreur), chargement pendant un rafraîchissement sans apps, tirer-pour-rafraîchir (`useEntApps().refresh`). `useScrollToTop` (§4 n° 10). La recherche est fermée quand l'écran perd le focus (une modale s'ouvre…).
+  - `screens/home/header.tsx` : les boutons du header (onboarding, menu) sont des composants qui lisent leurs hooks (`useHasAppsToList`, `useStorageJSON(storage, 'onboarding')` + `isOnboardingSeen`) : options statiques, plus de `setOptions` dans un effet (§4 n° 12). Mêmes `testID`.
+  - `components/` : `MyAppsList`, `MyAppsCard`, `MyAppsFilters`, `MyAppsFilterCell` portés tels quels (styles, animations, recherche animée), adaptés aux nouvelles données : la carte reçoit un `ListedApp` (`isFavorite`, `module` : pictogramme web sans module, icône de connecteur si `getAppOpeningStrategy` donne `connector`) ; les filtres utilisent le nouveau `MyAppsFilter`, avec les **anciens `testID`** (`myapps-filter-pedagogie`, `myapps-filter-other-services`…). `Image` vient de `~/modules/media/components`.
+  - Modèle : `filterApps` renvoie des `ListedApp` (`app`, `isFavorite`, `isOtherService`, `module`) au lieu des apps seules ; règle `hasAppsToList` (écran vide de l'ancien écran) ; hook `useHasAppsToList`. 4 tests de plus.
+  - Recherche : focus sans délai à l'ouverture (§4 n° 7, à vérifier dans l'app : remettre un délai si l'animation se passe mal).
+  - Restent en `ToDo(myapps-migration)` : appui sur une app (phase 6), appui long → `myapps/app-actions`, boutons onboarding / menu, onboarding automatique (phase 5).
+  - Vérifié : tsc 776 (aucune nouvelle), eslint propre, `yarn test` 422/422. **Pas testé dans l'app.**
+  - Prochaine étape : phase 5 (modales).
+- 2026-11-07 : **relecture de la phase 4** (code d'origine écrit par un autre développeur).
+  - Hooks d'un composant dans `hooks.ts` (règle dans [CONVENTIONS.md](CONVENTIONS.md)) ; `useController` → `useFavoriteBadgeAnimation`.
+  - `ListedApp` porte la stratégie d'ouverture (`opening`) au lieu du module : la carte n'a besoin que de savoir comment l'app s'ouvre (pictogramme web si ce n'est pas un module, icône de connecteur), et la phase 6 l'appliquera.
+  - Favoris : dans l'ordre des préférences (`filterApps` reçoit les favoris ordonnés), plus par libellé.
+  - Corrigé : icône en chemin ou URL plus normalisée (`isIconName`, la casse est gardée) ; query des images gardée (miniature, signature) ; `User-Agent` selon la plateforme ; hauteur du séparateur (`layout.size` ignoré par FlashList 2) ; pictogramme web selon la stratégie (un module sans `entry` s'ouvre dans le navigateur) ; accessibilité (cartes `button` + libellé, filtres `tab` + `selected`, loupe `search`) ; clavier fermé quand un filtre ferme la recherche ; un seul changement de filtre à la fermeture de la recherche ; cellule de filtre de taille constante à la sélection ; carte mémoïsée avec des callbacks stables, `ref` passé en prop (React 19) ; code et styles morts retirés ; couleurs et tailles en constantes.
+  - Pas pris en compte : la tablette (l'app ne la gère pas, noté dans `CLAUDE.md`).
+  - Revue du modèle : points fragiles en §8.
+  - Vérifié : tsc 776, eslint propre, `yarn test` 423/423. **Pas testé dans l'app.**
   - Prochaine étape : phase 4 (port de `MyAppsHomeScreen`).
+- 2026-11-07 : **suites de la revue du modèle** (§8).
+  - Ouverture simplifiée : `ListedApp.hasModule` au lieu de `opening` ; `AppOpeningStrategy`, `getAppOpeningStrategy`, `EntApp.isConnector`, `AppModule` supprimés ; à l'ouverture (phase 6), module si `canOpenModule`, sinon `getConnectorUrl`.
+  - `toListedApps(apps, { favorites, hasModule })` construit la liste ; `filterApps(items, filter, { favorites, showAllApps })` et `hasAppsToList(items, showAllApps)` travaillent dessus (règle de l'interrupteur partagée).
+  - `getAppModules` / `useAppModules` : nom de l'app → `AllModulesNames`.
+  - `withFavoriteToggled` : `applications` transmis tel quel, plus de restriction des favoris (§3.4 n'a plus lieu d'être).
+  - `User-Agent` des images distantes remis comme dans l'ancien code.
+  - Vérifié : tsc 776, eslint propre, `yarn test` 411/411 (tests des règles supprimées retirés). **Pas testé dans l'app.**
+- 2026-11-07 : **deux corrections** (utilisateur).
+  - `resolveAppIcon` ne signe plus l'image du workspace (`sessionImageSource` retiré) : `Image` de `~/modules/media/components` signe lui-même toute adresse de la plateforme (`useSignedSource`).
+  - `getConnectorUrl` → `getAppUrl(address, platformUrl)` : pas de `/auth/redirect` pour une adresse de la plateforme (`openUrl` la rend absolue et la signe), seulement pour un autre domaine. 3 tests.
+  - Vérifié : tsc 776, eslint propre, `yarn test` 413/413.

@@ -47,6 +47,7 @@ Exemple : `src/modules/myapps` (décidé le 2026-11-06 ; voir §5.2 et §5.3 de 
 - `store/` : la **plomberie** du gestionnaire d'état (type du state, reducer ou store zustand, action creators Redux dans `action-creators.ts`, sélecteurs), sans les actions de l'utilisateur. Le type du state n'est pas dans le modèle.
 - `session.ts` : les hooks de session du module (`sessionSetup`, `onSessionStart`…), créés par une fonction qui reçoit ses dépendances (dispatch, traduction) pour être testables ; `index.ts` les branche.
 - `storage.ts` : le storage et le format de ce qu'il garde.
+- **Fichiers de hooks** : les hooks d'un composant (ou d'un dossier) sont dans `hooks.ts`, pas dans un fichier par hook nommé `useXxx.ts`. Les regrouper dans un seul fichier est la règle, sauf s'il devient vraiment long.
 - **Types** : un type utile à **plusieurs fichiers** va dans le fichier de types de son dossier : `types.ts` (ex. `src/app/module/types.ts`, `hooks/types.ts`), `model/index.ts` pour le domaine, `store/state.ts` pour le state, `service/api.ts` pour l'API. Un type **interne**, qui ne sert qu'à un fichier, reste dans ce fichier, non exporté, voire sans nom (type écrit directement dans la signature).
 - Chaque fichier de logique pure a son test à côté (`*.test.ts`). Un test qui a besoin de modules fictifs ne prend pas les modules de test de l'app (`amodule`…, voués à disparaître) : il surcharge le type de la fonction testée pour accepter un nom quelconque (exemple : `src/app/module/rights.test.ts`).
 

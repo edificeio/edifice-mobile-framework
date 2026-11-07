@@ -46,6 +46,13 @@ describe('getAppIcon', () => {
     expect(getAppIcon({ icon: null, name: 'Blog' })).toBe('');
   });
 
+  it('keeps a path or a URL as it is', () => {
+    expect(getAppIcon({ icon: '/workspace/document/AbC-large?thumbnail=100x100', name: 'X' })).toBe(
+      '/workspace/document/AbC-large?thumbnail=100x100',
+    );
+    expect(getAppIcon({ icon: 'https://Example.com/Icon.PNG', name: 'X' })).toBe('https://Example.com/Icon.PNG');
+  });
+
   it('3. is renamed for some icons', () => {
     expect(getAppIcon({ icon: 'viescolaire-large', name: 'Vie scolaire' })).toBe('parametrage');
   });

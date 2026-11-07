@@ -1,6 +1,6 @@
-import { AppConfig, AppModule, EntApp, MyAppsFilter } from '~/modules/myapps/model';
+import { AppConfig, EntApp, MyAppsFilter } from '~/modules/myapps/model';
 
-import { filterApps, getAppCategory, getAppConfig, isLibrary, isOtherService } from './classification';
+import { filterApps, getAppCategory, getAppConfig, hasAppsToList, isLibrary, isOtherService, toListedApps } from './classification';
 
 describe('getAppCategory', () => {
   it.each(['communication', 'pedagogy', 'organisation'])('keeps %s', category => {
@@ -43,9 +43,9 @@ describe('getAppConfig', () => {
 
 describe('isOtherService', () => {
   it('is an app without module and without known category', () => {
-    expect(isOtherService({ category: 'other' }, undefined)).toBe(true);
-    expect(isOtherService({ category: 'pedagogy' }, undefined)).toBe(false);
-    expect(isOtherService({ category: 'other' }, { name: 'm' })).toBe(false);
+    expect(isOtherService({ category: 'other' }, false)).toBe(true);
+    expect(isOtherService({ category: 'pedagogy' }, false)).toBe(false);
+    expect(isOtherService({ category: 'other' }, true)).toBe(false);
   });
 });
 
@@ -55,7 +55,6 @@ const app = (name: string, fields: Partial<EntApp> = {}): EntApp => ({
   display: true,
   helpUrls: {},
   icon: name,
-  isConnector: false,
   isLibrary: false,
   label: name,
   name,
@@ -73,10 +72,13 @@ describe('filterApps', () => {
   const hidden = app('G-Hidden', { display: false });
   const apps = [favoriteOtherService, hidden, otherService, library, favoriteWebApp, webApp, moduleApp];
 
-  const modules: Record<string, AppModule> = { [moduleApp.name]: { entry: 'm/home', name: 'm' }, [library.name]: { name: 'lib' } };
-  const favorites = new Set([favoriteWebApp.name, favoriteOtherService.name, hidden.name]);
+  const withModule = new Set([moduleApp.name, library.name]);
+  // In the order of the preferences: not the order of the labels
+  const favorites = [favoriteOtherService.name, hidden.name, favoriteWebApp.name];
   const names = (filter: MyAppsFilter, showAllApps: boolean, list: EntApp[] = apps) =>
-    filterApps(list, filter, { favorites, getModule: name => modules[name], showAllApps }).map(a => a.name);
+    filterApps(toListedApps(list, { favorites, hasModule: name => withModule.has(name) }), filter, { favorites, showAllApps }).map(
+      item => item.app.name,
+    );
 
   it('all: the listed apps sorted by label, other services at the end', () => {
     expect(names({ type: 'all' }, true)).toEqual(['A-Module', 'B-Web', 'C-FavWeb', 'D-Library', 'E-Other', 'F-FavOther']);
@@ -91,9 +93,9 @@ describe('filterApps', () => {
     expect(names({ type: 'search', value: 'hidden' }, true)).toEqual([]);
   });
 
-  it('favorites: all of them, whatever showAllApps', () => {
-    expect(names({ type: 'favorites' }, false)).toEqual(['C-FavWeb', 'F-FavOther']);
-    expect(names({ type: 'favorites' }, true)).toEqual(['C-FavWeb', 'F-FavOther']);
+  it('favorites: all of them, whatever showAllApps, in the order of the preferences', () => {
+    expect(names({ type: 'favorites' }, false)).toEqual(['F-FavOther', 'C-FavWeb']);
+    expect(names({ type: 'favorites' }, true)).toEqual(['F-FavOther', 'C-FavWeb']);
   });
 
   it('category: the apps of the category', () => {
@@ -136,5 +138,41 @@ describe('filterApps', () => {
     it('adds only the matching other services', () => {
       expect(names({ type: 'search', value: 'fav' }, false)).toEqual(['C-FavWeb', 'F-FavOther']);
     });
+  });
+});
+
+describe('toListedApps', () => {
+  it('keeps the listed apps, sorted by label, with what the filters and the cards need', () => {
+    const items = toListedApps([app('B', { category: 'pedagogy' }), app('Hidden', { display: false }), app('A')], {
+      favorites: ['A'],
+      hasModule: name => name === 'B',
+    });
+    expect(items).toEqual([
+      { app: app('A'), hasModule: false, isFavorite: true, isOtherService: true },
+      { app: app('B', { category: 'pedagogy' }), hasModule: true, isFavorite: false, isOtherService: false },
+    ]);
+  });
+});
+
+describe('hasAppsToList', () => {
+  const items = (...names: string[]) =>
+    toListedApps(
+      names.map(name => app(name)),
+      { favorites: [], hasModule: name => name === 'Module' },
+    );
+
+  it('is true with a listed app, when all the apps are shown', () => {
+    expect(hasAppsToList(items('Web'), true)).toBe(true);
+  });
+
+  it('needs an app with a module when only the modules are shown', () => {
+    expect(hasAppsToList(items('Web'), false)).toBe(false);
+    expect(hasAppsToList(items('Web', 'Module'), false)).toBe(true);
+  });
+
+  it('is false without listed apps', () => {
+    expect(hasAppsToList(toListedApps([app('Module', { display: false })], { favorites: [], hasModule: () => true }), true)).toBe(
+      false,
+    );
   });
 });

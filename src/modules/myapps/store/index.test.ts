@@ -9,7 +9,6 @@ const app: EntApp = {
   display: true,
   helpUrls: {},
   icon: 'blog',
-  isConnector: false,
   isLibrary: false,
   label: 'Blog',
   name: 'Blog',

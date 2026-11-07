@@ -4,7 +4,6 @@
 import { AppConfig, AppsPreferences, EMPTY_PREFERENCES, EntApp, Translate } from '~/modules/myapps/model';
 import { getAppCategory, getAppConfig, isLibrary, LIBRARY_CONFIG_APP_NAME } from '~/modules/myapps/model/classification';
 import { getAppColor, getAppIcon, getAppLabel } from '~/modules/myapps/model/display';
-import { isConnector } from '~/modules/myapps/model/opening';
 
 import type { API } from './api';
 
@@ -31,7 +30,6 @@ export const toEntApp = (response: API.EntAppResponse, libraryConfig: AppConfig 
     display: response.display,
     helpUrls: config.helpUrls,
     icon: getAppIcon(response),
-    isConnector: isConnector({ ...response, address }),
     isLibrary: isLibrary({ address, category: response.category }),
     label: getAppLabel(response, translate),
     name: response.name,

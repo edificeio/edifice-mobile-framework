@@ -1,7 +1,7 @@
 /**
  * How the apps are sorted out: categories, libraries, other services, and the filters of the list of « Mes applis ».
  */
-import { APP_CATEGORIES, AppCategory, AppConfig, AppModule, EntApp, MyAppsFilter } from '~/modules/myapps/model';
+import { APP_CATEGORIES, AppCategory, AppConfig, EntApp, ListedApp, MyAppsFilter } from '~/modules/myapps/model';
 import { normalizeString } from '~/modules/myapps/util';
 
 // # Category
@@ -37,34 +37,44 @@ export const getAppConfig = (app: AppConfig & { address: string }, libraryConfig
 
 // # Other services
 
+/** Another service: an app without module and without known category. Shown apart, at the bottom of the lists. */
+export const isOtherService = (app: Pick<EntApp, 'category'>, hasModule: boolean): boolean =>
+  !hasModule && app.category === 'other';
+
+// # List of « Mes applis »
+
 /**
- * Another service: an app without module and without known category. Shown apart, at the bottom of the lists.
- * @param module the module of the app, if one is available for the user (computed when read).
+ * The apps of the list: the ones listed in « Mes applis » (`display`), sorted by label, with what the filters and the cards need.
+ * @param favorites names of the favorite apps.
+ * @param hasModule whether a module of the app matches an app, for the user.
  */
-export const isOtherService = (app: Pick<EntApp, 'category'>, module: AppModule | undefined): boolean =>
-  module === undefined && app.category === 'other';
+export const toListedApps = (
+  apps: EntApp[],
+  { favorites, hasModule }: { favorites: readonly string[]; hasModule: (appName: string) => boolean },
+): ListedApp[] => {
+  const favoriteNames = new Set(favorites);
+  return apps
+    .filter(app => app.display)
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .map(app => {
+      const withModule = hasModule(app.name);
+      return {
+        app,
+        hasModule: withModule,
+        isFavorite: favoriteNames.has(app.name),
+        isOtherService: isOtherService(app, withModule),
+      };
+    });
+};
 
-// # Filters of the list
+/** The switch « show all the apps »: off, only the apps that have a module are shown. */
+const isShownBySwitch = (item: ListedApp, showAllApps: boolean) => showAllApps || item.hasModule;
 
-/** What the list needs besides the apps (see `filterApps`): each one is a data of its own (see `model/index.ts`). */
-interface FilterAppsContext {
-  /** Names of the favorite apps. */
-  favorites: ReadonlySet<string>;
-  /** The module of an app (by its `name`), if one is available for the user. */
-  getModule: (appName: string) => AppModule | undefined;
-  /** The switch « show all the apps »: off, only the modules (see `filterApps`). */
-  showAllApps: boolean;
-}
+/** Whether « Mes applis » has apps to show at all (else: its empty screen, without filters). Rule inherited from the old screen. */
+export const hasAppsToList = (items: ListedApp[], showAllApps: boolean): boolean =>
+  items.some(item => isShownBySwitch(item, showAllApps));
 
-/** An app with what the filters need to know of it. */
-interface ListedApp<App extends EntApp> {
-  app: App;
-  hasModule: boolean;
-  isFavorite: boolean;
-  isOtherService: boolean;
-}
-
-const matchesFilter = ({ app, isFavorite, isOtherService: otherService }: ListedApp<EntApp>, filter: MyAppsFilter): boolean => {
+const matchesFilter = ({ app, isFavorite, isOtherService: otherService }: ListedApp, filter: MyAppsFilter): boolean => {
   switch (filter.type) {
     case 'all':
       return true;
@@ -84,43 +94,33 @@ const matchesFilter = ({ app, isFavorite, isOtherService: otherService }: Listed
 };
 
 /**
- * Apps of a filter, in the order to show them. Rules inherited from `applyFilter` and `useFilteredApps`:
- * - only the apps listed in « Mes applis » (`display`), sorted by label;
- * - favorites: all the favorites, whatever `showAllApps`;
- * - else, the apps that are not other services; only the modules if `showAllApps` is off (and the favorites too, for a search);
+ * Apps of a filter, in the order to show them (from `toListedApps`). Rules inherited from `applyFilter` and `useFilteredApps`:
+ * - favorites: all the favorites, whatever the switch, **in the order of the preferences** (the order the user chose);
+ * - else, the apps that are not other services, as the switch shows them (and the favorites too, for a search);
  * - the other services are added at the end for `all`, `other-services` and a search (only the matching ones, for a search).
+ * @param favorites names of the favorite apps, in the order of the preferences.
  */
-export const filterApps = <App extends EntApp>(apps: App[], filter: MyAppsFilter, context: FilterAppsContext): App[] => {
-  const { favorites, getModule, showAllApps } = context;
-  const listed: ListedApp<App>[] = apps
-    .filter(app => app.display)
-    .sort((a, b) => a.label.localeCompare(b.label))
-    .map(app => {
-      const module = getModule(app.name);
-      return {
-        app,
-        hasModule: module !== undefined,
-        isFavorite: favorites.has(app.name),
-        isOtherService: isOtherService(app, module),
-      };
-    });
-  const matching = listed.filter(item => matchesFilter(item, filter));
-  const otherServices = (items: ListedApp<App>[]) => items.filter(item => item.isOtherService);
+export const filterApps = (
+  items: ListedApp[],
+  filter: MyAppsFilter,
+  { favorites, showAllApps }: { favorites: readonly string[]; showAllApps: boolean },
+): ListedApp[] => {
+  const matching = items.filter(item => matchesFilter(item, filter));
+  if (filter.type === 'favorites') {
+    const ranks = new Map(favorites.map((name, rank) => [name, rank]));
+    return [...matching].sort((a, b) => ranks.get(a.app.name)! - ranks.get(b.app.name)!);
+  }
+  const otherServices = (list: ListedApp[]) => list.filter(item => item.isOtherService);
   const main = matching.filter(
-    item => !item.isOtherService && (showAllApps || item.hasModule || (filter.type === 'search' && item.isFavorite)),
+    item => !item.isOtherService && (isShownBySwitch(item, showAllApps) || (filter.type === 'search' && item.isFavorite)),
   );
-  const result = (() => {
-    switch (filter.type) {
-      case 'favorites':
-        return matching;
-      case 'search':
-        return [...main, ...otherServices(matching)];
-      case 'all':
-      case 'other-services':
-        return [...main, ...otherServices(listed)];
-      default:
-        return main;
-    }
-  })();
-  return result.map(item => item.app);
+  switch (filter.type) {
+    case 'search':
+      return [...main, ...otherServices(matching)];
+    case 'all':
+    case 'other-services':
+      return [...main, ...otherServices(items)];
+    default:
+      return main;
+  }
 };
