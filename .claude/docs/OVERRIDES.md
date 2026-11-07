@@ -7,7 +7,7 @@ Source : documentation interne du framework, **recoupée avec `cli/override.js` 
 
 ## 1. Principe
 
-Un override applique, depuis un dépôt distant ou local, des modifications à l'app en marque blanche pour en faire une application fonctionnelle et publiable (App Store / Play Store). Il peut modifier des paramètres :
+Un override applique, depuis un dépôt distant ou local, des modifications à l'application en marque blanche pour en faire une application fonctionnelle et publiable (App Store / Play Store). Il peut modifier des paramètres :
 
 - **natifs** : icônes, splash screens, bundleId iOS, applicationId Android, configs Firebase… ;
 - **fonctionnels** : plateformes accessibles à la connexion, modules intégrés… ;
