@@ -26,7 +26,7 @@ Implémente le plan validé, lot par lot. Après chaque lot : `yarn ts-all` + `y
 
 1. **Demande au développeur s'il veut lancer le build.** S'il accepte, suis le skill `build-app` : le build doit passer **sans erreur**. S'il refuse, arrête-toi là et passe au compte rendu (test non effectué).
 2. Lance-la sur un simulateur Android (skill `simulator`, argument `android`).
-3. Déroule le scénario de test du plan : naviguer dans l'app, afficher les bons écrans, effectuer les actions, vérifier le résultat attendu.
+3. Déroule le scénario de test du plan : naviguer dans l'application, afficher les bons écrans, effectuer les actions, vérifier le résultat attendu.
 
 ## 5. Test sur simulateur iOS
 

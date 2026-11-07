@@ -1,6 +1,6 @@
 # ARCHITECTURE.md
 
-Architecture du code de l'app, à destination des agents IA.
+Architecture du code de l'application, à destination des agents IA.
 Version pour les équipes **qui n'ont pas encore la migration** vers le nouveau système de modules et de navigation : seul le système historique est décrit.
 Document **intermédiaire** : il sera enrichi (voir « À compléter » en fin de fichier).
 
@@ -8,10 +8,10 @@ Document **intermédiaire** : il sera enrichi (voir « À compléter » en fin d
 
 ```
 /
-├── src/                        Code de l'app
+├── src/                        Code de l'application
 │   ├── app/                    Bootstrap, navigation
 │   │   └── navigation/         Navigation (dynamique)
-│   ├── framework/              Cœur de l'app
+│   ├── framework/              Cœur de l'application
 │   │   ├── components/         UI partagée (button, card, modals, …)
 │   │   ├── hooks/              Hooks communs
 │   │   ├── navigation/         Helpers de navigation (helper.ts, tabModules.tsx)
@@ -69,9 +69,9 @@ export default new NavigableModuleConfig<'monModule', IMonModuleReduxState>({
 
 - Les autres clés sont listées dans `~/framework/util/moduleTool.ts` ; leur valeur par défaut est calculée.
 - Les champs `display*` acceptent une fonction `(matchingApps, matchingWidgets) => valeur` pour dépendre des droits. `displayPicture*` prennent les props du composant `Picture` (sans taille).
-- **Droits** : `matchEntcoreApp` est une string (champ `address` de l'app ENT) ou une fonction `(app, allApps) => boolean`. Par défaut, le module s'affiche si au moins une app ENT correspond ; `hasRight(matchingApps, matchingWidgets)` remplace cette condition.
-- `displayBadges` : la clé en majuscules (`MONMODULE`) **n'est pas déduite du code du repo** : elle correspond à une donnée du backend (le type de badge d'app). En pratique on la fait coïncider avec le nom du module, mais ce n'est pas garanti. Vérifie la valeur côté backend. Ne précise que les valeurs qui changent (icône ou couleur), sans recopier les originales.
-- Pour changer le badge d'une app qui n'existe pas dans l'app mobile, modifier la config du module `timeline`.
+- **Droits** : `matchEntcoreApp` est une string (champ `address` de l'application ENT) ou une fonction `(app, allApps) => boolean`. Par défaut, le module s'affiche si au moins une app ENT correspond ; `hasRight(matchingApps, matchingWidgets)` remplace cette condition.
+- `displayBadges` : la clé en majuscules (`MONMODULE`) **n'est pas déduite du code du dépôt** : elle correspond à une donnée du backend (le type de badge d'app). En pratique on la fait coïncider avec le nom du module, mais ce n'est pas garanti. Vérifie la valeur côté backend. Ne précise que les valeurs qui changent (icône ou couleur), sans recopier les originales.
+- Pour changer le badge d'une app qui n'existe pas dans l'application mobile, modifier la config du module `timeline`.
 
 ## 3. Navigation (`src/app/navigation/`)
 
