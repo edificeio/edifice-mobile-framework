@@ -12,6 +12,12 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-07 — Rozenite : stores dans React Native DevTools (`feat/ia/vmou`)
+
+- Fait : `@rozenite/metro` (Metro enveloppé par `withRozenite`, actif avec `WITH_ROZENITE=true`, script `yarn start:rozenite`), `@rozenite/redux-devtools-plugin` (enhancer en `__DEV__` dans `src/app/store`), `rozenite-zustand-devtools` (stores zustand listés dans `src/app/debug/devtools.ts`, hook dans `App`). Doc : ARCHITECTURE §6 bis.
+- Vérifié : bundle iOS de dev avec Rozenite (2 plugins chargés), tsc 776, `yarn test` 413/413. **Pas testé dans les DevTools.**
+- Ensuite : plugins React Navigation (`navigation-new/index.tsx`), Storage (MMKV de l'app, clés de secrets masquées), File System (`react-native-fs`) et Require Profiler (Metro + hook) ; hooks regroupés dans `useRozeniteDevTools` (`src/app/debug/devtools.ts`). Bundle de dev : 6 plugins chargés. Doc : ARCHITECTURE §6 bis.
+
 ## 2026-11-07 — `myapps` : suites de la revue du modèle (`feat/ia/vmou`)
 
 - Décidé (utilisateur) : ouverture = module ouvrable sinon `/auth/redirect` (plus de distinction `web` / `connector`) ; `applications` transmis sans vérification ; modules typés `AllModulesNames` ; `EntApp.icon` et `User-Agent` gardés tels quels (on évite de transformer les données du serveur) ; `EMPTY_PREFERENCES` et palette du thème : pas de problème ; état « en cours » : hors périmètre.

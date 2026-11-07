@@ -228,6 +228,21 @@ Les reducers s'enregistrent dans une map globale : `Reducers.register(moduleConf
 
 À l'inverse, le nouveau système ajoute : les hooks de session (`sessionSetup`, `onSessionStart`, `onSessionRelease`), la déclaration des `storages` avec migrations, et la télémétrie des écrans.
 
+## 6 bis. Débogage : React Native DevTools + Rozenite
+
+Lancer Metro avec `yarn start:rozenite` (`WITH_ROZENITE=true`), puis ouvrir les DevTools (touche `j`). Rien n'est actif en production. Onglets ajoutés :
+
+| Onglet           | Plugin                                      | Branché dans                                                                                                                        |
+| ---------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Redux            | `@rozenite/redux-devtools-plugin`           | enhancer `rozeniteEnhancer`, `src/app/store/debug.ts` (state, actions, time-travel)                                                 |
+| Zustand          | `rozenite-zustand-devtools` (communautaire) | `src/app/debug/devtools.ts` : les stores listés (ajouter un nouveau store pour le voir)                                             |
+| React Navigation | `@rozenite/react-navigation-plugin`         | `useReactNavigationDevTools`, `src/app/navigation-new/index.tsx`                                                                    |
+| Storage          | `@rozenite/storage-plugin`                  | `src/app/debug/devtools.ts` : le MMKV de l'app (`app`), clés qui ressemblent à des secrets (`token`, `secret`, `password`) masquées |
+| File System      | `@rozenite/file-system-plugin`              | `src/app/debug/devtools.ts`, adapter `react-native-fs`                                                                              |
+| Require Profiler | `@rozenite/require-profiler-plugin`         | `metro.config.js` (`enhanceMetroConfig`) + `src/app/debug/devtools.ts`                                                              |
+
+Les hooks de `src/app/debug/devtools.ts` sont appelés dans `App` (`useRozeniteDevTools`). **Reactotron** (`src/app/reactotron.ts`) reste branché (Redux, MMKV).
+
 ## 7. Autres documents (`docs/`)
 
 Ces fichiers existent mais sont **encore vides** à date. Leur sujet est déduit de leur nom. Si tu as besoin d'une info qui devrait s'y trouver, demande plutôt que d'inventer.

@@ -13,6 +13,7 @@ import DeviceInfo from 'react-native-device-info';
 import { Trackers } from '~/framework/util/tracker';
 import { ComposeProviders } from '~/util/compose-providers';
 
+import { useRozeniteDevTools } from './debug/devtools';
 import { ModuleLoader } from './module/loader';
 import { providers } from './providers';
 import { AppStartupHandler } from './startup';
@@ -25,6 +26,9 @@ const loaderStyles = StyleSheet.create({
 });
 
 export function App() {
+  // Tools of React Native DevTools (Rozenite, development only)
+  useRozeniteDevTools();
+
   /**
    * @deprecated matomo is not used anymore. Plz replace this with anything when we'll switch to another data tracking tool.
    */
