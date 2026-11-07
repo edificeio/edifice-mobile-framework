@@ -55,7 +55,7 @@ Un écran suit le gabarit en 4 fichiers : `index.ts` (API publique), `screen.tsx
 export default new NavigableModuleConfig<'monModule', IMonModuleReduxState>({
   name: 'monModule',                // = nom du dossier
   entcoreScope: ['monmodule'],      // scopes OAuth2 requis par la couche service
-  matchEntcoreApp: '/monmodule',    // correspondance app ENT ⇔ module (droits)
+  matchEntcoreApp: '/monmodule',    // correspondance application ENT ⇔ module (droits)
   storageName: 'monModule',         // préfixe des clés de storage
   displayI18n: 'monModule.tabName', // clé i18n du nom
   displayAs: 'tabModule',           // 'tabModule' (tab bar) ou 'myAppsModule' (menu Mes applis)
@@ -69,9 +69,9 @@ export default new NavigableModuleConfig<'monModule', IMonModuleReduxState>({
 
 - Les autres clés sont listées dans `~/framework/util/moduleTool.ts` ; leur valeur par défaut est calculée.
 - Les champs `display*` acceptent une fonction `(matchingApps, matchingWidgets) => valeur` pour dépendre des droits. `displayPicture*` prennent les props du composant `Picture` (sans taille).
-- **Droits** : `matchEntcoreApp` est une string (champ `address` de l'application ENT) ou une fonction `(app, allApps) => boolean`. Par défaut, le module s'affiche si au moins une app ENT correspond ; `hasRight(matchingApps, matchingWidgets)` remplace cette condition.
+- **Droits** : `matchEntcoreApp` est une string (champ `address` de l'application ENT) ou une fonction `(app, allApps) => boolean`. Par défaut, le module s'affiche si au moins une application ENT correspond ; `hasRight(matchingApps, matchingWidgets)` remplace cette condition.
 - `displayBadges` : la clé en majuscules (`MONMODULE`) **n'est pas déduite du code du dépôt** : elle correspond à une donnée du backend (le type de badge d'app). En pratique on la fait coïncider avec le nom du module, mais ce n'est pas garanti. Vérifie la valeur côté backend. Ne précise que les valeurs qui changent (icône ou couleur), sans recopier les originales.
-- Pour changer le badge d'une app qui n'existe pas dans l'application mobile, modifier la config du module `timeline`.
+- Pour changer le badge d'une application qui n'existe pas dans l'application mobile, modifier la config du module `timeline`.
 
 ## 3. Navigation (`src/app/navigation/`)
 
