@@ -1,0 +1,35 @@
+import { StyleSheet } from 'react-native';
+
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+
+export const styles = StyleSheet.create({
+  content: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.minor,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: UI_SIZES.spacing.large,
+  },
+  separatorContainer: {
+    alignItems: 'center',
+    marginVertical: UI_SIZES.spacing.medium,
+    width: '100%',
+  },
+
+  separatorLine: {
+    backgroundColor: theme.palette.grey.cloudy,
+    height: 1,
+    marginBottom: UI_SIZES.spacing.small,
+    width: '100%',
+  },
+
+  separatorText: {
+    color: theme.palette.grey.black,
+    fontWeight: '600',
+    marginHorizontal: UI_SIZES.spacing.medium,
+  },
+});

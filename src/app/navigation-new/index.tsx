@@ -14,6 +14,7 @@ import {
   type NavigationContainerRefWithCurrent,
   useNavigationContainerRef,
 } from '@react-navigation/native';
+import { useReactNavigationDevTools } from '@rozenite/react-navigation-plugin';
 
 import { useTelemetryDelegatedRoutes } from '~/app/module/hooks';
 import { ToastContainer } from '~/framework/components/toast';
@@ -30,6 +31,7 @@ export * from './screen';
 export * from './types';
 export * from './confirm-remove';
 export { getTabScreenName } from './tabs';
+export { useCanOpenModule, useOpenModule } from './open-module';
 
 export interface AppNavigationProps {
   /** Called once the navigation is ready, after the telemetry. Must be stable (the navigation is not meant to re-render). */
@@ -85,6 +87,8 @@ export const AppNavigation = React.memo(function ({ onReady: _onReady }: AppNavi
   ));
   const Navigation = createStaticNavigation(rootStack);
   const navigationRef = useNavigationContainerRef();
+  // React Navigation tab of React Native DevTools (Rozenite, development only)
+  useReactNavigationDevTools({ ref: navigationRef });
   useResetOnSignIn(navigationRef);
   const ignoredRoutes = useTelemetryDelegatedRoutes();
   const { onReady: onReadyTelemetry, onScreenChange, onUnhandledAction } = useScreenTelemetry({ ignoredRoutes });

@@ -47,8 +47,7 @@ export interface CollectAnnouncementDetails<IdType extends string | number> exte
 }
 
 export type AnnouncementDetails<IdType extends string | number> =
-  | InformationAnnouncementDetails<IdType>
-  | CollectAnnouncementDetails<IdType>;
+  InformationAnnouncementDetails<IdType> | CollectAnnouncementDetails<IdType>;
 
 export const getAnnouncementsDetails = async (
   communityId: number,

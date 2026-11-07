@@ -1,4 +1,6 @@
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+const { withRozenite } = require('@rozenite/metro');
+const { withRozeniteRequireProfiler } = require('@rozenite/require-profiler-plugin/metro');
 
 const defaultConfig = getDefaultConfig(__dirname);
 const { assetExts, sourceExts } = defaultConfig.resolver;
@@ -19,4 +21,9 @@ const config = {
   },
 };
 
-module.exports = mergeConfig(defaultConfig, config);
+// Rozenite: plugins of React Native DevTools (Redux, zustand…). Off by default: `WITH_ROZENITE=true yarn start`
+module.exports = withRozenite(mergeConfig(defaultConfig, config), {
+  enabled: process.env.WITH_ROZENITE === 'true',
+  // Times of the `require` of the modules at startup (Require Profiler)
+  enhanceMetroConfig: metroConfig => withRozeniteRequireProfiler(metroConfig),
+});

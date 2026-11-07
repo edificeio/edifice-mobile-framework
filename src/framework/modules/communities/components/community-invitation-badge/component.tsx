@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { styles } from './styles';
-
-import { I18n } from '~/util/i18n';
 import { SmallBoldText } from '~/framework/components/text';
+import { I18n } from '~/util/i18n';
+
+import { styles } from './styles';
 
 const CommunityInvitationBadge = () => {
   return (

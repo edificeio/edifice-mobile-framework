@@ -9,11 +9,13 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
-import { getTabModuleDisplayName, selectAggregatedApps } from '~/framework/modules/myapps/reducer';
 import { ModuleScreens } from '~/framework/navigation/moduleScreens';
 import { tabModules } from '~/framework/navigation/tabModules';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
+import { useEntApps } from '~/modules/myapps/hooks';
+import { getModuleLabel } from '~/modules/myapps/model/display';
+import { I18n } from '~/util/i18n';
 
 import { defaultTabOptions, tabBarIconSize, TabScreenLayout } from './layout';
 import { createLeafStackNavigator } from './leaf-stack';
@@ -32,19 +34,26 @@ export const MainNavigation = React.memo(function MainNavigation() {
    * leaving the app in a undefined state and tab stack not responding to navigation events.
    *
    * We cannot fix this issue ourselves, thus we enforce MainNaviagtion (and RootNavigation) to be re-rendered only if stringified data is changed.
-   * Since apps rights are determined by `aggregatedApps` AND `session`, we MUST compte a stable value that determines if rights have changed or not.
+   * Since apps rights are determined by the apps of `myapps` AND `session`, we MUST compte a stable value that determines if rights have changed or not.
    * This value is called `rightsMemoValue` and serves a memo dependency for everything in the component.
    */
 
   // ToDo: dependency narrowing over apps and not whole session
 
   const session = useSelector(selectors.session);
-  const aggregatedApps = useSelector(selectAggregatedApps);
+  const { apps } = useEntApps();
+  /** Label of the tab of a module (see `getModuleLabel` of `myapps`). */
+  const getTabLabel = (module: { name: string; matchEntcoreApp?: string }) =>
+    getModuleLabel(
+      module,
+      apps.find(app => app.name === module.matchEntcoreApp),
+      key => I18n.get(key),
+    );
   const availableModules = React.useMemo(() => (session ? EntModule.getAvailableForAccount(session) : []), [session]);
   const availableTabModules = React.useMemo(() => EntModule.filterTabModules(availableModules), [availableModules]);
   const rightsMemoValue = React.useMemo(
-    () => availableModules.map(module => module.name).toString() + Object.keys(aggregatedApps).join(''),
-    [aggregatedApps, availableModules],
+    () => availableModules.map(module => module.name).toString() + apps.map(app => app.name).join(''),
+    [apps, availableModules],
   );
 
   const tabModulesOptions = React.useMemo(
@@ -55,7 +64,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
         tabBarLabel: ({ color }) => (
           // negative marginHorizontal is necessary to prevent text wrapping
           <CaptionText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
-            {getTabModuleDisplayName(m, aggregatedApps)}
+            {getTabLabel(m)}
           </CaptionText>
         ),
       })),
@@ -142,7 +151,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
       tabBarLabel: ({ color }) => (
         // negative marginHorizontal is necessary to prevent text wrapping
         <CaptionText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
-          {getTabModuleDisplayName(m.config, aggregatedApps)}
+          {getTabLabel(m.config)}
         </CaptionText>
       ),
     }));
@@ -197,17 +206,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
 });
 export const MainNavigationOptions: NativeStackNavigationOptions = { headerShown: false };
 
-function TabIcon({
-  color,
-  focused,
-  module,
-  size,
-}: {
-  module: TabModule<string>;
-  focused: boolean;
-  color: string;
-  size: number;
-}) {
+function TabIcon({ color, focused, module, size }: { module: TabModule<string>; focused: boolean; color: string; size: number }) {
   return <Svg width={size} height={size} name={focused ? module.tab.iconActive : module.tab.iconInactive} fill={color} />;
 }
 
