@@ -1,6 +1,6 @@
 ---
 name: simulator
-description: Tester l'app mobile Edifice sur un simulateur iOS (iPhone, via le Xcode ouvert du développeur) ou un émulateur Android (AVD Android Studio, via Gradle/adb) — choix de l'appareil, démarrage du simulateur, Metro, build Debug + lancement de l'app, puis vérification à l'écran (capture + LogBox). Utilisé par le skill build-app pour la partie plateforme, et aux étapes « test sur simulateur Android / iOS » du déroulé de ticket (.claude/docs/TICKET-WORKFLOW.md). Peut être utilisé indépendamment quand le développeur demande de lancer ou relancer l'app sur un simulateur / émulateur, ou de capturer son écran. Pour une demande de build (yarn clean, override…), passer par le skill build-app.
+description: Tester l'application mobile Edifice sur un simulateur iOS (iPhone, via le Xcode ouvert du développeur) ou un émulateur Android (AVD Android Studio, via Gradle/adb) — choix de l'appareil, démarrage du simulateur, Metro, build Debug + lancement de l'application, puis vérification à l'écran (capture + LogBox). Utilisé par le skill build-app pour la partie plateforme, et aux étapes « test sur simulateur Android / iOS » du déroulé de ticket (.claude/docs/TICKET-WORKFLOW.md). Peut être utilisé indépendamment quand le développeur demande de lancer ou relancer l'application sur un simulateur / émulateur, ou de capturer son écran. Pour une demande de build (yarn clean, override…), passer par le skill build-app.
 argument-hint: <ios|android> ["appareil", ex. "iPhone 17 Pro" ou Pixel_8_API_35]
 arguments: [platform, device]
 ---
@@ -29,7 +29,7 @@ Les étapes ci-dessous sont communes ; chaque étape marquée **[OS]** renvoie �
 ## 1. Cadre
 
 - Le build et le lancement s'inscrivent dans le process commun du skill `build-app` (prérequis, `yarn clean`, override, garde-fous, compte rendu).
-- L'app tourne avec **l'override passé en paramètre au skill `build-app`** (étape « Override », `dev/default` par défaut) : vérifie `grep '"override"' override.json`. Si aucun override n'est actif, ou si ce n'est pas celui attendu, ne lance rien et renvoie vers l'étape « Override » du skill `build-app`. Invoqué seul (sans `build-app`) et sans choix exprimé dans la conversation : annonce l'override actif et demande-lui de confirmer avant de lancer.
+- L'application tourne avec **l'override passé en paramètre au skill `build-app`** (étape « Override », `dev/default` par défaut) : vérifie `grep '"override"' override.json`. Si aucun override n'est actif, ou si ce n'est pas celui attendu, ne lance rien et renvoie vers l'étape « Override » du skill `build-app`. Invoqué seul (sans `build-app`) et sans choix exprimé dans la conversation : annonce l'override actif et demande-lui de confirmer avant de lancer.
 - Logs et captures vont dans le **scratchpad** (`<scratchpad>` ci-dessous).
 - Ne modifie rien dans `ios/` ou `android/` sans accord explicite du développeur.
 
@@ -56,7 +56,7 @@ yarn start > <scratchpad>/metro.log 2>&1          # sinon, en arrière-plan
 
 Attends `packager-status:running` avant l'étape suivante. Particularités éventuelles : section « Metro » du fichier de la plateforme.
 
-## 6. Builder et lancer l'app — [OS]
+## 6. Builder et lancer lication — [OS]
 
 Section « Builder et lancer ». Le build est long : lance-le **en arrière-plan**, log dans `<scratchpad>/<plateforme>-build.log`. En cas d'échec, rapporte les premières erreurs, explique la cause probable et **propose** un correctif sans l'appliquer.
 

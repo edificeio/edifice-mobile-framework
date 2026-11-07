@@ -1,9 +1,9 @@
 ---
 name: build-app
-description: Process commun pour builder l'app mobile Edifice (iOS ou Android) en Debug sur un simulateur — préparation (yarn install + yarn clean), plateforme et override passés en paramètres (`/build-app [ios|android] [override]`, override dev/default par défaut, appliqué via CONFIG_TO + yarn override-silent), puis build via le skill simulator (`simulator ios` / `simulator android`). À utiliser UNIQUEMENT quand le développeur demande explicitement de lancer un build (« lance un build », « builde l'app sur iOS »), ou quand il accepte le build proposé à l'étape de test du déroulé de ticket (.claude/docs/TICKET-WORKFLOW.md). Ne jamais le déclencher de ta propre initiative. NE PAS utiliser pour un build de release / store (scripts prepare-*, Fastlane).
+description: Process commun pour builder l'application mobile Edifice (iOS ou Android) en Debug sur un simulateur — préparation (yarn install + yarn clean), plateforme et override passés en paramètres (`/build-app [ios|android] [override]`, override dev/default par défaut, appliqué via CONFIG_TO + yarn override-silent), puis build via le skill simulator (`simulator ios` / `simulator android`). À utiliser UNIQUEMENT quand le développeur demande explicitement de lancer un build (« lance un build », « build l'application sur iOS »), ou quand il accepte le build proposé à l'étape de test du déroulé de ticket (.claude/docs/TICKET-WORKFLOW.md). Ne jamais le déclencher de ta propre initiative. NE PAS utiliser pour un build de release / store (scripts prepare-*, Fastlane).
 ---
 
-# Build de l'app (simulateur)
+# Build de l'application (simulateur)
 
 Ce skill décrit le process **commun aux deux plateformes**. Les commandes de build propres à chaque plateforme sont dans :
 
@@ -76,7 +76,7 @@ grep '"override"' override.json 2>/dev/null   # override actif
 CONFIG_TO=<override> yarn override-silent
 ```
 
-`override-silent` exécute `node cli/override.js -v --no-i $CONFIG_TO` : c'est le shell qui remplace `$CONFIG_TO` par sa valeur. `--no-i` désactive les prompts du CLI : s'il lui manque une info (ex. identifiants du repo git des overrides), la commande échoue au lieu d'attendre une saisie. Dans ce cas, rapporte l'erreur et demande au développeur de lancer la commande lui-même (`! CONFIG_TO=<override> yarn override-silent`).
+`override-silent` exécute `node cli/override.js -v --no-i $CONFIG_TO` : c'est le shell qui remplace `$CONFIG_TO` par sa valeur. `--no-i` désactive les prompts du CLI : s'il lui manque une info (ex. identifiants du dépôt git des overrides), la commande échoue au lieu d'attendre une saisie. Dans ce cas, rapporte l'erreur et demande au développeur de lancer la commande lui-même (`! CONFIG_TO=<override> yarn override-silent`).
 
 Vérifie ensuite que `override.json` contient `"override": "<override>"`.
 
