@@ -40,6 +40,7 @@ interface IEntcoreBlogPostBase {
 
 export interface IEntcoreBlogPost extends IEntcoreBlogPostBase {
   firstPublishDate?: { $date: number };
+  pinned?: boolean;
 }
 
 export type IEntcoreBlogPostList = IEntcoreBlogPost[];

@@ -317,6 +317,7 @@ const imports = {
   'ui-pause': async () => import('ASSETS/icons/uiIcons/pause.svg'),
   'ui-personBook': async () => import('ASSETS/icons/uiIcons/person_book.svg'),
   'ui-phone': async () => import('ASSETS/icons/uiIcons/phone.svg'),
+  'ui-pin': async () => import('ASSETS/icons/uiIcons/pin.svg'),
   'ui-play': async () => import('ASSETS/icons/uiIcons/play.svg'),
   'ui-play-filled': async () => import('ASSETS/icons/uiIcons/play-filled.svg'),
   'ui-plus': async () => import('ASSETS/icons/uiIcons/plus.svg'),

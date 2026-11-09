@@ -9,6 +9,7 @@ export interface BlogPostResourceCardProps {
   comments: number;
   contentHtml: string;
   date: Moment;
+  pinned?: boolean;
   title: string;
   state: 'PUBLISHED' | 'SUBMITTED';
   resourceId: string;

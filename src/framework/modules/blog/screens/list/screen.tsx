@@ -57,6 +57,7 @@ const BlogPostListItem = ({
       comments={totalComments}
       contentHtml={item.content}
       date={dateAsMoment}
+      pinned={item.pinned}
       title={item.title}
       state={item.state as 'PUBLISHED' | 'SUBMITTED'}
       resourceId={item._id}
@@ -197,7 +198,7 @@ const BlogPostListScreenLoaded = ({
   }, [navigation, onFlushPosts, route.params.forceReload]);
 
   return (
-    <PaginatedFlatList
+    <PaginatedFlatList<BlogPostWithAudience>
       contentContainerStyle={styles.list}
       keyExtractor={keyExtractor}
       data={data}

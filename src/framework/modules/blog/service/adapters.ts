@@ -3,12 +3,13 @@ import moment from 'moment';
 
 import { AccountType } from '~/framework/modules/auth/model';
 import { Blog, BlogFolder, BlogPost } from '~/framework/modules/blog/reducer';
-import { CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
 import * as CommentsThread from '~/framework/modules/comments/types';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
 import { sessionFetch } from '~/framework/util/transport';
 
 import { IEntcoreBlog, IEntcoreBlogFolder, IEntcoreBlogPost, IEntcoreBlogPostBaseAuthor, IEntcoreBlogPostComments } from './types';
+
+import { CommentsThreadProps } from '~/framework/modules/comments/components/comments-thread';
 
 const mapBlogPostAuthor = (author: IEntcoreBlogPostBaseAuthor) => ({
   login: author.login,
@@ -23,6 +24,7 @@ export const blogFetchPostAdapter = (blogPost: Omit<IEntcoreBlogPost, 'content'>
     created: moment(blogPost.created.$date),
     firstPublishDate: blogPost.firstPublishDate?.$date && moment(blogPost.firstPublishDate.$date),
     modified: moment(blogPost.modified.$date),
+    pinned: blogPost.pinned ?? false,
     state: blogPost.state,
     title: blogPost.title,
     views: blogPost.views,
@@ -59,6 +61,7 @@ export const blogPostAdapter = (blogPost: IEntcoreBlogPost) => {
     created: moment(blogPost.created.$date),
     firstPublishDate: blogPost.firstPublishDate && moment(blogPost.firstPublishDate.$date),
     modified: moment(blogPost.modified.$date),
+    pinned: blogPost.pinned ?? false,
     state: blogPost.state,
     title: blogPost.title,
     views: blogPost.views,

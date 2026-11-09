@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
 import { IGlobalState, Reducers } from '~/app/store';
 import { PaginatedListItem, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { CommentDeletedItem, CommentItem } from '~/framework/modules/comments/types';
 import { createExplorerActions, createExplorerReducer, createExplorerSelectors } from '~/framework/modules/explorer/store';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
@@ -14,7 +15,6 @@ import { resourceRightFilter } from '~/framework/util/resourceRights';
 
 import moduleConfig from './module-config';
 import { createBlogPostResourceRight } from './rights';
-import { CommentDeletedItem, CommentItem } from '../comments/types';
 
 // Types
 
@@ -52,6 +52,7 @@ export interface BlogPost {
   created: Moment;
   firstPublishDate?: Moment;
   modified: Moment;
+  pinned: boolean;
   state: string;
   title: string;
   views: number;

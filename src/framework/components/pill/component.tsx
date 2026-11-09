@@ -1,8 +1,8 @@
 import React from 'react';
-import { PixelRatio, StyleSheet, TextProps, View, ViewStyle } from 'react-native';
+import { TextProps, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
+import { Svg } from '~/framework/components/picture';
 import {
   BodyBoldText,
   BodyItalicText,
@@ -13,37 +13,10 @@ import {
   SmallBoldText,
   SmallItalicText,
   SmallText,
-  TextSizeStyle,
 } from '~/framework/components/text';
 
+import styles, { ICON_SIZE_BY_SIZE, stylesBySize } from './styles';
 import { PillProps } from './types';
-
-const DOT_SIZE = getScaleWidth(6);
-
-const styles = StyleSheet.create({
-  container: {
-    maxWidth: '100%',
-  },
-  containerWithDot: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: UI_SIZES.spacing.tiny,
-    justifyContent: 'center',
-  },
-  dot: {
-    borderRadius: DOT_SIZE / 2,
-    height: DOT_SIZE,
-    width: DOT_SIZE,
-  },
-  text: {
-    color: theme.ui.text.inverse,
-    margin: 'auto',
-  },
-  textWithDot: {
-    color: theme.ui.text.inverse,
-    flexShrink: 1,
-  },
-});
 
 const BoldTextComponents: Record<NonNullable<PillProps['size']>, React.ComponentType<TextProps>> = {
   large: BodyBoldText,
@@ -63,38 +36,20 @@ const RegularTextComponents: Record<NonNullable<PillProps['size']>, React.Compon
   small: CaptionText,
 };
 
-const stylesBySize: Record<NonNullable<PillProps['size']>, ViewStyle> = {
-  large: {
-    borderRadius: (PixelRatio.getFontScale() * TextSizeStyle.Medium.lineHeight + UI_SIZES.spacing.tiny * 2) / 2,
-    height: PixelRatio.getFontScale() * TextSizeStyle.Medium.lineHeight + UI_SIZES.spacing.tiny * 2,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-  },
-  normal: {
-    borderRadius: (PixelRatio.getFontScale() * TextSizeStyle.Normal.lineHeight + UI_SIZES.spacing.tiny) / 2,
-    height: PixelRatio.getFontScale() * TextSizeStyle.Normal.lineHeight + UI_SIZES.spacing.tiny,
-    paddingHorizontal: UI_SIZES.spacing.small,
-  },
-  small: {
-    borderRadius: (PixelRatio.getFontScale() * TextSizeStyle.Small.lineHeight + UI_SIZES.spacing.tiny / 2) / 2,
-    height: PixelRatio.getFontScale() * TextSizeStyle.Small.lineHeight + UI_SIZES.spacing.tiny / 2,
-    paddingHorizontal: UI_SIZES.spacing.minor,
-  },
-};
-
-export function Pill({ bold, color, dot, italic, size = 'small', text, textColor }: Readonly<PillProps>) {
+export function Pill({ bold, color, dot, icon, italic, size = 'small', text, textColor }: Readonly<PillProps>) {
   const TextComponent = italic ? ItalicTextComponents[size] : bold ? BoldTextComponents[size] : RegularTextComponents[size];
-  const textStyle = React.useMemo(
-    () => [dot ? styles.textWithDot : styles.text, { color: textColor ?? theme.ui.text.inverse }],
-    [dot, textColor],
-  );
+  const isRow = !!dot || !!icon;
+  const contentColor = textColor ?? theme.ui.text.inverse;
+  const textStyle = React.useMemo(() => [isRow ? styles.textRow : styles.text, { color: contentColor }], [isRow, contentColor]);
   const containerStyle = React.useMemo(
-    () => [{ backgroundColor: color }, stylesBySize[size], styles.container, dot ? styles.containerWithDot : undefined],
-    [color, dot, size],
+    () => [{ backgroundColor: color }, stylesBySize[size], styles.container, isRow ? styles.containerRow : undefined],
+    [color, isRow, size],
   );
   const dotStyle = React.useMemo(() => [styles.dot, { backgroundColor: dot }], [dot]);
 
   return (
     <View style={containerStyle}>
+      {icon ? <Svg name={icon} fill={contentColor} width={ICON_SIZE_BY_SIZE[size]} height={ICON_SIZE_BY_SIZE[size]} /> : null}
       <TextComponent numberOfLines={1} style={textStyle}>
         {text}
       </TextComponent>
