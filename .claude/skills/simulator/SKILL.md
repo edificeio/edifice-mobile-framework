@@ -21,8 +21,8 @@ Règles :
 
 Ensuite, lis **uniquement** la documentation de la plateforme choisie (ne charge pas l'autre) :
 
-- iOS → [ios.md](ios.md)
-- Android → [android.md](android.md)
+- iOS → [IOS.md](IOS.md)
+- Android → [ANDROID.md](ANDROID.md)
 
 Les étapes ci-dessous sont communes ; chaque étape marquée **[OS]** renvoie à la section du même nom dans le fichier de la plateforme.
 

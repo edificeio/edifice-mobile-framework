@@ -6,7 +6,7 @@ paths:
 
 # Création d'écrans
 
-S'applique dès qu'un développeur demande de **créer** un écran (ou une page) dans un module. Pour les styles, applique aussi la rule **`design-system`** ; pour les composants créés au passage, la rule **`components`**.
+S'applique dès qu'un développeur demande de **créer** un écran (ou une page) dans un module. Pour les styles, applique aussi la rule **`DESIGN-SYSTEM`** ; pour les composants créés au passage, la rule **`COMPONENTS`**.
 
 Exemples à imiter : `src/framework/modules/communities/screens/*` (ex. `discussions-list`, `members`, `home`) et `src/framework/modules/communities/navigation/*`. Ne jamais prendre exemple sur le module `blog`.
 
@@ -23,7 +23,7 @@ Un dossier `src/framework/modules/<module>/screens/<nom-ecran>/` (**kebab-case**
 
 - Nom de l'écran en **PascalCase**, préfixé par le module : `screens/members` → `CommunitiesMembersScreen`.
 - Le nom des fichiers est `styles.ts` / `types.ts` (au pluriel), comme dans tout le repo.
-- Sous-composants propres à l'écran : dans `components/` du module (rule `components`), pas dans le dossier de l'écran.
+- Sous-composants propres à l'écran : dans `components/` du module (rule `COMPONENTS`), pas dans le dossier de l'écran.
 
 ## 2. `types.ts` — namespace de l'écran
 
