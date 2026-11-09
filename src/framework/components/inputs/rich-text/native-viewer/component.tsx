@@ -11,9 +11,9 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { openMedias } from '~/framework/modules/media';
 import { openUrl } from '~/framework/util/linking';
 
-import AttachmentPreview from './attachment-preview';
-import ImagePreview from './image-preview';
-import MediaPreview from './media-preview';
+import AttachmentPreview from './components/preview/attachment';
+import ImagePreview from './components/preview/image';
+import MediaPreview from './components/preview/media';
 import { ENRICHED_TEXT_HTML_STYLE, ENRICHED_TEXT_STYLE, getContainerStyle } from './styles';
 import { RichContentSegment, RichContentSegmentType, RichEditorNativeViewerProps } from './types';
 import { buildCarouselMedias, findMediaIndex, splitRichContent } from './util';
