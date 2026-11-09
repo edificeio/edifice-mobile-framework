@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
+import { AppDispatch } from '~/app/store';
 import theme from '~/app/theme';
-import { genericHitSlop, UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/empty-screens';
-import FlatList from '~/framework/components/list/flat-list';
+import { genericHitSlop, UI_SIZES } from '~/framework/components/constants';
+import type { SwipeRowAction } from '~/framework/components/list/swipeable';
 import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
@@ -17,13 +16,8 @@ import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { loadAuthorizedNotificationTypesAction } from '~/framework/modules/home/actions';
-import {
-  NotificationCard,
-  NotificationsPlaceholder,
-  PLACEHOLDER_NEXT_PAGE_CARDS,
-  UserbookNotificationCard,
-} from '~/framework/modules/home/components';
-import { canOpenNotification, isUserbookNotification } from '~/framework/modules/home/components/notification/util';
+import { NotificationList } from '~/framework/modules/home/components/notification/list';
+import { isUserbookNotification } from '~/framework/modules/home/components/notification/util';
 import { useRefresh } from '~/framework/modules/home/hooks';
 import { notificationsService } from '~/framework/modules/home/service';
 import { loadSentNotificationFiltersAction } from '~/framework/modules/user/actions';
@@ -42,20 +36,10 @@ export const computeNavBar = screenOptions(() => ({
   title: I18n.get('user-sentnotifications-title'),
 }));
 
-const keyExtractor = (item: ITimelineNotification) => item.id;
-
-const renderSeparator = () => <View style={styles.separator} />;
-
-const renderEmpty = () => (
-  <EmptyScreen
-    svgImage="empty-timeline"
-    title={I18n.get('user-sentnotifications-emptyscreen-title')}
-    text={I18n.get('user-sentnotifications-emptyscreen-text')}
-  />
-);
+const EMPTY_TEXTS_I18N = { text: 'user-sentnotifications-emptyscreen-text', title: 'user-sentnotifications-emptyscreen-title' };
 
 export default function UserSentNotificationsScreen({ navigation }: Readonly<UserSentNotificationsScreenPrivateProps>) {
-  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [notifications, setNotifications] = React.useState<ITimelineNotification[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -172,55 +156,60 @@ export default function UserSentNotificationsScreen({ navigation }: Readonly<Use
     [dispatch, navigation],
   );
 
-  const renderItem = React.useCallback(
-    ({ item }: ListRenderItemInfo<ITimelineNotification>) => {
-      const onPress = canOpenNotification(item) ? () => onPressItem(item) : undefined;
-      return (
-        <View style={styles.row}>
-          {isUserbookNotification(item) ? (
-            <UserbookNotificationCard notification={item} onPress={onPress} />
-          ) : (
-            <NotificationCard notification={item} onPress={onPress} />
-          )}
-        </View>
-      );
-    },
-    [onPressItem],
+  const deleteNotification = React.useCallback(async (id: string) => {
+    setNotifications(current => current.map(item => (item.id === id ? { ...item, deleted: true } : item)));
+    try {
+      await notificationsService.deleteSent(id);
+      setNotifications(current => current.filter(item => item.id !== id));
+      Toast.showSuccess(I18n.get('user-sentnotifications-delete-success'));
+    } catch (e) {
+      console.error('Error while deleting a sent notification', e);
+      setNotifications(current => current.map(item => (item.id === id ? { ...item, deleted: false } : item)));
+      Toast.showError(I18n.get('timeline-error-text'));
+    }
+  }, []);
+
+  const confirmDelete = React.useCallback(
+    (id: string) =>
+      new Promise<void>(resolve => {
+        Alert.alert(I18n.get('user-sentnotifications-delete-title'), I18n.get('user-sentnotifications-delete-description'), [
+          { onPress: () => resolve(), style: 'cancel', text: I18n.get('common-cancel') },
+          {
+            onPress: () => deleteNotification(id).finally(resolve),
+            style: 'destructive',
+            text: I18n.get('common-delete'),
+          },
+        ]);
+      }),
+    [deleteNotification],
   );
 
-  const refreshControl = React.useMemo(
-    () => <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />,
-    [onRefresh, refreshing],
+  const getSwipeActions = React.useCallback(
+    (notification: ITimelineNotification): SwipeRowAction[] => [
+      {
+        color: theme.palette.status.failure.regular,
+        filled: true,
+        icon: 'ui-delete',
+        label: I18n.get('common-delete'),
+        onPress: () => confirmDelete(notification.id),
+        testID: 'user-sentnotifications-delete',
+      },
+    ],
+    [confirmDelete],
   );
-
-  const loadingOrRefreshing = loading || refreshing;
-
-  function renderListEmpty() {
-    if (loadingOrRefreshing) return <NotificationsPlaceholder preview={false} />;
-    return renderEmpty();
-  }
-
-  function renderListFooter() {
-    if (!loadingMore) return null;
-    return <NotificationsPlaceholder count={PLACEHOLDER_NEXT_PAGE_CARDS} preview={false} />;
-  }
 
   function renderList() {
     return (
-      <FlatList
-        style={UI_STYLES.flex1}
-        showsVerticalScrollIndicator={false}
-        scrollEnabled={!loadingOrRefreshing}
-        data={loadingOrRefreshing ? undefined : notifications}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        ItemSeparatorComponent={loadingOrRefreshing ? undefined : renderSeparator}
-        contentContainerStyle={UI_STYLES.flexGrow1}
-        ListEmptyComponent={renderListEmpty()}
-        ListFooterComponent={renderListFooter()}
-        refreshControl={refreshControl}
+      <NotificationList
+        notifications={notifications}
+        loading={loading}
+        loadingMore={loadingMore}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         onEndReached={onEndReached}
-        onEndReachedThreshold={1}
+        onPressItem={onPressItem}
+        getSwipeActions={getSwipeActions}
+        emptyTextsI18n={EMPTY_TEXTS_I18N}
       />
     );
   }
