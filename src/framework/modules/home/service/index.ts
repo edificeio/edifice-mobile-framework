@@ -58,6 +58,12 @@ export const notificationsService = {
     return sessionFetch.json(api, { method: 'PUT' });
   },
 
+  // deletes a notification the user sent, for everyone who can see it (`delete` only hides it for the user).
+  deleteSent: async (id: string): Promise<void> => {
+    const api = `/timeline/${id}`;
+    await sessionFetch.json(api, { method: 'DELETE' });
+  },
+
   page: (page: number, filters: string[], apiVersion: string = NOTIFICATIONS_DEFAULT_VERSION) =>
     fetchNotificationsPage('page', { page, type: filters }, { Accept: `application/json;version=${apiVersion}` }),
 

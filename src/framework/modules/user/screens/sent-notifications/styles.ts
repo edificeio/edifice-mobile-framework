@@ -21,11 +21,4 @@ export default StyleSheet.create({
   infoTitle: {
     textAlign: 'center',
   },
-  row: {
-    backgroundColor: theme.palette.grey.white,
-  },
-  separator: {
-    backgroundColor: theme.palette.grey.cloudy,
-    height: UI_SIZES.border.thin,
-  },
 });
