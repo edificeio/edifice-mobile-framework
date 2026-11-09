@@ -1,6 +1,6 @@
 # iOS — spécificités
 
-On pilote **le Xcode ouvert du développeur** avec AppleScript (`osascript`) : Xcode builde avec son scheme actif (`appe`, Debug), installe l'app et la lance sur le simulateur choisi, exactement comme un clic sur ▶︎ Run.
+On pilote **le Xcode ouvert du développeur** avec AppleScript (`osascript`) : Xcode builde avec son scheme actif (`appe`, Debug), installe l'application et la lance sur le simulateur choisi, exactement comme un clic sur ▶︎ Run.
 
 ## Prérequis
 
@@ -81,11 +81,11 @@ En arrière-plan, boucle toutes les 5 s jusqu'à un état final :
 ```bash
 # Statut de l'action Xcode : not yet started | running | succeeded | failed | error occurred | cancelled
 osascript -e 'tell application "Xcode" to get (status of last scheme action result of active workspace document) as text'
-# L'app tourne-t-elle sur le simulateur ? (bundle id iOS = clé "appid.ios" de override.json)
+# L'application tourne-t-elle sur le simulateur ? (bundle id iOS = clé "appid.ios" de override.json)
 xcrun simctl spawn <UDID> launchctl list | grep -c "<appid.ios>"
 ```
 
-- **Succès** : l'app apparaît dans `launchctl list` (le statut Xcode reste `running` tant que l'app tourne, c'est normal).
+- **Succès** : l'application apparaît dans `launchctl list` (le statut Xcode reste `running` tant que l'application tourne, c'est normal).
 - **Échec** (`failed`, `error occurred`, `cancelled`) : récupère le message et rapporte-le :
   ```bash
   osascript -e 'tell application "Xcode" to get error message of last scheme action result of active workspace document'
@@ -94,7 +94,7 @@ xcrun simctl spawn <UDID> launchctl list | grep -c "<appid.ios>"
 
 ### Alternative sans Xcode ouvert (build seul, en ligne de commande)
 
-Si le développeur ne peut pas ouvrir Xcode, `xcodebuild` builde sans lancer l'app (même toolchain et même DerivedData) :
+Si le développeur ne peut pas ouvrir Xcode, `xcodebuild` builde sans lancer l'application (même toolchain et même DerivedData) :
 
 ```bash
 xcodebuild -workspace ios/appe.xcworkspace -scheme appe -configuration Debug -sdk iphonesimulator \

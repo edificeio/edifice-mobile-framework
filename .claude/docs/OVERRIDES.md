@@ -7,7 +7,7 @@ Source : documentation interne du framework, **recoupée avec `cli/override.js` 
 
 ## 1. Principe
 
-Un override applique, depuis un dépôt distant ou local, des modifications à l'app en marque blanche pour en faire une app fonctionnelle et publiable (App Store / Play Store). Il peut modifier des paramètres :
+Un override applique, depuis un dépôt distant ou local, des modifications à l'application en marque blanche pour en faire une applicationfonctionnelle et publiable (App Store / Play Store). Il peut modifier des paramètres :
 
 - **natifs** : icônes, splash screens, bundleId iOS, applicationId Android, configs Firebase… ;
 - **fonctionnels** : plateformes accessibles à la connexion, modules intégrés… ;
@@ -15,12 +15,12 @@ Un override applique, depuis un dépôt distant ou local, des modifications à l
 
 ## 2. Structure d'un override
 
-Un override est un dossier de `__overrides__/` dont le chemin est son nom (ex. `__overrides__/dev/default` → `dev/default`). La correspondance fichier de l'override → fichier de l'app est définie dans `_override_copyMergePaths` (`cli/override.js`) :
+Un override est un dossier de `__overrides__/` dont le chemin est son nom (ex. `__overrides__/dev/default` → `dev/default`). La correspondance fichier de l'override → fichier de l'application est définie dans `_override_copyMergePaths` (`cli/override.js`) :
 
 | Dans l'override | Copié / fusionné vers | Rôle |
 | --- | --- | --- |
 | `override.json` | `override.json` | Métadonnées de l'override (**seul fichier obligatoire**) |
-| `appconf.ts` | `src/app/override/appconf.ts` | Configuration de l'app + plateformes incluses |
+| `appconf.ts` | `src/app/override/appconf.ts` | Configuration de l'application + plateformes incluses |
 | `modules.ts` | `src/app/override/modules.ts` | Modules fonctionnels intégrés |
 | `platforms/` | `src/platforms` | Déclarations des plateformes (seules celles utilisées sont bundlées) |
 | `theme.ts` | `src/app/override/theme.ts` | Couleurs du thème |
@@ -34,7 +34,7 @@ Un override est un dossier de `__overrides__/` dont le chemin est son nom (ex. `
 | `ios/Assets.xcassets` | `ios/appe/Assets.xcassets` | Icônes, splash screens iOS |
 | `ios/Fonts`, `ios/images` | `ios/Fonts`, `ios/appe/images` | Polices, images iOS |
 
-En plus, le CLI met à jour **programmatiquement** (`_override_specialUpdates`) : `ios/appe/Info.plist`, `ios/appe.xcodeproj/project.pbxproj` et `android/gradle.properties` (ids et nom de l'app).
+En plus, le CLI met à jour **programmatiquement** (`_override_specialUpdates`) : `ios/appe/Info.plist`, `ios/appe.xcodeproj/project.pbxproj` et `android/gradle.properties` (ids et nom de l'application).
 
 Tous les fichiers sauf `override.json` ont une valeur par défaut versionnée dans le framework.
 
@@ -44,7 +44,7 @@ Tous les fichiers sauf `override.json` ont une valeur par défaut versionnée da
 {
   "override": "dev/default",   // nom de l'override = chemin du dossier
   "parent":   "common",        // héritage (cf. §4)
-  "appid":    "com.ode.mobile",// id de l'app
+  "appid":    "com.ode.mobile",// id de l'application
   "appname":  "Dev Pocket"     // nom affiché
 }
 ```
@@ -85,11 +85,11 @@ export default {
 
 ### theme.ts
 
-Surcharge des couleurs de l'app (voir la doc framework « Modification du thème dans un override » et `src/app/theme.ts`).
+Surcharge des couleurs de l'application (voir la doc framework « Modification du thème dans un override » et `src/app/theme.ts`).
 
 ### Fichiers JSON
 
-Par défaut, les `*.json` de l'override sont **fusionnés** (deepmerge) avec ceux de l'app. Exceptions **copiées telles quelles** (`_override_forceCopy`) : `assets/animations/audio/disque.json`, `android/app/google-services.json`.
+Par défaut, les `*.json` de l'override sont **fusionnés** (deepmerge) avec ceux de l'application. Exceptions **copiées telles quelles** (`_override_forceCopy`) : `assets/animations/audio/disque.json`, `android/app/google-services.json`.
 
 ## 4. Héritage
 
@@ -155,7 +155,7 @@ Elles rendent les fichiers overridés **visibles et committables**. Usage except
 1. Avant toute action : `grep '"override"' override.json`. Si ce n'est pas `dev/default`, appliquer `node cli/override.js -v --no-i dev/default`. En cas d'échec (identifiants du dépôt manquants…), demander au développeur de lancer `! node cli/override.js -v dev/default`.
 2. Après le travail : `yarn override-restore`.
 3. Ne jamais afficher ni committer `phrase.json`, `.phrase.yml`, `google-services.json`, `GoogleService-Info.plist`.
-4. Pour modifier le comportement de l'app pour toutes les déclinaisons, modifier le **code du framework**, pas un override. Modifier un override = modifier le dépôt `edifice-mobile-config`, hors de ce repo : demander avant.
+4. Pour modifier le comportement de l'application pour toutes les déclinaisons, modifier le **code du framework**, pas un override. Modifier un override = modifier le dépôt `edifice-mobile-config`, hors de ce dépôt : demander avant.
 
 ## 8. Écarts entre la doc interne et le code (à faire corriger dans la doc source)
 

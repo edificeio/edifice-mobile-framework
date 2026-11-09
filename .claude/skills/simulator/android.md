@@ -1,6 +1,6 @@
 # Android — spécificités
 
-Android Studio ne se pilote pas par script (pas d'équivalent de l'AppleScript d'Xcode). On utilise donc **les outils du SDK installé par Android Studio**, ceux que Studio appelle lui-même : `emulator` pour démarrer l'AVD, **Gradle** (`./gradlew`) pour builder et installer, `adb` pour lancer l'app et l'observer.
+Android Studio ne se pilote pas par script (pas d'équivalent de l'AppleScript d'Xcode). On utilise donc **les outils du SDK installé par Android Studio**, ceux que Studio appelle lui-même : `emulator` pour démarrer l'AVD, **Gradle** (`./gradlew`) pour builder et installer, `adb` pour lancer l'application et l'observer.
 
 Utilise toujours `-s <serial>` (ex. `emulator-5554`) dans les commandes `adb` si plusieurs appareils sont connectés.
 
@@ -34,7 +34,7 @@ adb -s emulator-5554 emu avd name      # vérifie que c'est bien l'AVD voulu
 
 ## Metro
 
-En Debug, l'app joint Metro sur **`10.0.2.2:8081`** (alias du Mac vu depuis l'émulateur Android Studio). En complément, sans danger et utile si l'app vise `localhost` :
+En Debug, l'application joint Metro sur **`10.0.2.2:8081`** (alias du Mac vu depuis l'émulateur Android Studio). En complément, sans danger et utile si l'application vise `localhost` :
 
 ```bash
 adb -s <serial> reverse tcp:8081 tcp:8081
@@ -57,9 +57,9 @@ grep -E "BUILD (SUCCESSFUL|FAILED)|Installed on|What went wrong" -A3 <scratchpad
 - **Échec** : rapporte le bloc `What went wrong` et les erreurs Kotlin/Java (lignes `e: `).
 - Repère de durée : ~11 min pour un build complet des 4 ABI ; plus court en limitant à une ABI et en build incrémental.
 
-### 2. Lancer l'app
+### 2. Lancer l'application
 
-**Réveille d'abord l'écran de l'émulateur** : écran éteint, Android coupe le réseau de l'app, qui ne joint pas Metro et crashe avec `Unable to load script` (et la capture d'écran est noire).
+**Réveille d'abord l'écran de l'émulateur** : écran éteint, Android coupe le réseau de l'application, qui ne joint pas Metro et crashe avec `Unable to load script` (et la capture d'écran est noire).
 
 ```bash
 adb -s <serial> shell input keyevent KEYCODE_WAKEUP

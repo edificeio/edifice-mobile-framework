@@ -28,7 +28,7 @@ Si un fichier sur lequel tu travailles contient un `StyleSheet.create` (hors `st
 - **Ne jamais utiliser `theme.ui`** dans le code que tu écris, même si le code existant l'utilise : prends l'équivalent dans `theme.palette`.
 - **Ne touche pas aux usages existants de `theme.ui`** dans les fichiers que tu modifies : pas de remplacement, pas de migration.
 - Ne pas utiliser `theme.legacy`.
-- Les couleurs varient selon l'app (marque blanche) : ne jamais recopier une valeur hex lue dans un override.
+- Les couleurs varient selon l'application (marque blanche) : ne jamais recopier une valeur hex lue dans un override.
 
 ## Valeurs de design — `constants.ts`
 
