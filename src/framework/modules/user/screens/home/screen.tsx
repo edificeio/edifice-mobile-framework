@@ -232,7 +232,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     ],
   );
 
-  const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const isFederated = session?.method === InitialAuthenticationMethod.WAYF_SAML;
   const showWhoAreWe = appConf.whoAreWeEnabled;
 
@@ -312,26 +311,22 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 testID="account-change-password"
               />
             ) : null}
-            {canEditPersonalInfo ? (
-              <>
-                <LineButton
-                  loading={currentLoadingMenu === ModificationType.EMAIL}
-                  disabled={!!currentLoadingMenu}
-                  title={I18n.get('user-page-editemail')}
-                  onPress={() => editUserInformation(ModificationType.EMAIL)}
-                  icon="ui-mail"
-                  testID="account-change-email"
-                />
-                <LineButton
-                  loading={currentLoadingMenu === ModificationType.MOBILE}
-                  disabled={!!currentLoadingMenu}
-                  title={I18n.get('user-page-editmobile')}
-                  onPress={() => editUserInformation(ModificationType.MOBILE)}
-                  icon="ui-smartphone"
-                  testID="account-change-phone"
-                />
-              </>
-            ) : null}
+            <LineButton
+              loading={currentLoadingMenu === ModificationType.EMAIL}
+              disabled={!!currentLoadingMenu}
+              title={I18n.get('user-page-editemail')}
+              onPress={() => editUserInformation(ModificationType.EMAIL)}
+              icon="ui-mail"
+              testID="account-change-email"
+            />
+            <LineButton
+              loading={currentLoadingMenu === ModificationType.MOBILE}
+              disabled={!!currentLoadingMenu}
+              title={I18n.get('user-page-editmobile')}
+              onPress={() => editUserInformation(ModificationType.MOBILE)}
+              icon="ui-smartphone"
+              testID="account-change-phone"
+            />
             <LineButton
               disabled={!!currentLoadingMenu}
               title={I18n.get('user-page-editlang')}
@@ -392,7 +387,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     [
       isFederated,
       currentLoadingMenu,
-      canEditPersonalInfo,
       showHelpCenter,
       showWhoAreWe,
       session,
