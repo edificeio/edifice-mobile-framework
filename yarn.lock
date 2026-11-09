@@ -5893,6 +5893,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:8.61.0"
     "@typescript-eslint/parser": "npm:8.61.0"
     "@welldone-software/why-did-you-render": "npm:10.0.1"
+    babel-plugin-inline-import: "npm:3.0.0"
     babel-plugin-module-resolver: "npm:5.0.3"
     babel-plugin-transform-decorators-legacy: "npm:1.3.5"
     babel-plugin-transform-remove-console: "npm:6.9.4"
@@ -5999,7 +6000,7 @@ __metadata:
     react-native-url-polyfill: "npm:3.0.0"
     react-native-vector-icons: "npm:10.3.0"
     react-native-video: "npm:6.19.2"
-    react-native-webview: "npm:13.16.1"
+    react-native-webview: "npm:14.0.1"
     react-native-worklets: "npm:0.9.2"
     react-redux: "npm:9.3.0"
     react-test-renderer: "npm:19.2.3"
@@ -6314,6 +6315,15 @@ __metadata:
   dependencies:
     babel-runtime: "npm:^6.22.0"
   checksum: 10/c8075c17587a33869e1a5bd0a5b73bbe395b68188362dacd5418debbc7c8fd784bcd3295e81ee7e410dc2c2655755add6af03698c522209f6a68334c15e6d6ca
+  languageName: node
+  linkType: hard
+
+"babel-plugin-inline-import@npm:3.0.0":
+  version: 3.0.0
+  resolution: "babel-plugin-inline-import@npm:3.0.0"
+  dependencies:
+    require-resolve: "npm:0.0.2"
+  checksum: 10/abb8de9995aa4f34bf587e1b18df3b9132e68890d336823a3f32512905c1b17fc890e9e248dde326d29c3bb8e1a88d93c0724d3bcde94ebfdebc5226c7019f0e
   languageName: node
   linkType: hard
 
@@ -13157,6 +13167,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"path-extra@npm:^1.0.2":
+  version: 1.0.3
+  resolution: "path-extra@npm:1.0.3"
+  checksum: 10/3e433436896986d657a2c2497e3a52a2a6802a1ec1622f4c2a1ebeae67ccd8f546615005061e66192632d9d935ed2d1df5e56ff991e63c6e8a9eb63bda34d155
+  languageName: node
+  linkType: hard
+
 "path-is-absolute@npm:^1.0.0":
   version: 1.0.1
   resolution: "path-is-absolute@npm:1.0.1"
@@ -14314,16 +14331,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-webview@npm:13.16.1":
-  version: 13.16.1
-  resolution: "react-native-webview@npm:13.16.1"
+"react-native-webview@npm:14.0.1":
+  version: 14.0.1
+  resolution: "react-native-webview@npm:14.0.1"
   dependencies:
     escape-string-regexp: "npm:^4.0.0"
     invariant: "npm:2.2.4"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/3b97550ccc7ad3f205342a9bdea31c83b2d8b9ab011d76a30a8b8f7a2738a0579238b1502bd0101e6210b3af6037dca8cf38276ad1705687d72a8fd3ed0138dd
+  checksum: 10/dc7591657aa699c843cf3af6b354748c1bca7050c30854d3832bbaced0113237bbf470c51bed50c49877941b4d8c45540cf485cb9455a6956b618c7cd63bd74e
   languageName: node
   linkType: hard
 
@@ -14672,6 +14689,15 @@ __metadata:
   version: 2.0.1
   resolution: "require-package-name@npm:2.0.1"
   checksum: 10/3332d4eec10a730627ca20f37a8a7d57badd9e8953f238472aa457b0084907f86ca5b2af94694a0c8bb2e1101bdb3ed6ddc964d2044b040fe076a9bf5b19755f
+  languageName: node
+  linkType: hard
+
+"require-resolve@npm:0.0.2":
+  version: 0.0.2
+  resolution: "require-resolve@npm:0.0.2"
+  dependencies:
+    x-path: "npm:^0.0.2"
+  checksum: 10/a9e3cd75fbebec6d81f0b756dd5044298d49f0b92675bf23318ba8f2a543d8476fb7a18d9378baa4861380e06dcb0996a57206cbf3617e4af38f96465a1fbd64
   languageName: node
   linkType: hard
 
@@ -16762,6 +16788,15 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 10/0873c813ce75c466b026ce0a4ce9a8b5b5f1dc9ef0dd7ae9690fa4025c66afb165d3a45550357080b29d66a0e3028cd13c72ccefc83ce10723b4822a574ebc99
+  languageName: node
+  linkType: hard
+
+"x-path@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "x-path@npm:0.0.2"
+  dependencies:
+    path-extra: "npm:^1.0.2"
+  checksum: 10/72a9c5459ac3a495e194039e4e529b98ffc3cca9c14013cb1da162e5886e5b5d40158a576362f0c3cc38b1d2a42cb4056d8435f745f9f50ceeaa5697a2eb19a6
   languageName: node
   linkType: hard
 

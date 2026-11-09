@@ -1,0 +1,134 @@
+diff --git a/node_modules/react-native-webview/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java b/node_modules/react-native-webview/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
+index 209b855..b6630d0 100644
+--- a/node_modules/react-native-webview/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
++++ b/node_modules/react-native-webview/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
+@@ -1,6 +1,7 @@
+ package com.reactnativecommunity.webview;
+ 
+ import android.graphics.Bitmap;
++import android.net.Uri;
+ import android.net.http.SslError;
+ import android.os.Build;
+ import android.os.SystemClock;
+@@ -32,7 +33,12 @@ import com.reactnativecommunity.webview.events.TopRenderProcessGoneEvent;
+ import com.reactnativecommunity.webview.events.TopShouldStartLoadWithRequestEvent;
+ import android.webkit.CookieManager;
+ 
++import java.io.IOException;
++import java.io.InputStream;
++import java.util.HashMap;
++import java.util.Map;
+ import java.util.concurrent.atomic.AtomicReference;
++import java.util.regex.Pattern;
+ 
+ public class RNCWebViewClient extends WebViewClient {
+     private static String TAG = "RNCWebViewClient";
+@@ -46,6 +52,34 @@ public class RNCWebViewClient extends WebViewClient {
+         basicAuthCredential = credential;
+     }
+ 
++    // Edifice: serves bundled fonts to WebViews by URL, so each page no longer inlines them as base64
++    // (one copy per WebView led to OOM in lists of rich-text views).
++    private static final String EDIFICE_LOCAL_SCHEME = "edifice-local";
++    private static final String EDIFICE_LOCAL_FONTS_HOST = "fonts";
++    private static final Pattern EDIFICE_LOCAL_FONT_NAME = Pattern.compile("^[a-z0-9_]+\\.woff$");
++
++    @Override
++    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
++        Uri url = request.getUrl();
++        if (!EDIFICE_LOCAL_SCHEME.equals(url.getScheme()) || !EDIFICE_LOCAL_FONTS_HOST.equals(url.getHost())) {
++            return super.shouldInterceptRequest(view, request);
++        }
++        // Fonts are subject to CORS: the page origin is the platform URL, not this scheme.
++        Map<String, String> headers = new HashMap<>();
++        headers.put("Access-Control-Allow-Origin", "*");
++        headers.put("Cache-Control", "max-age=31536000");
++        String fileName = url.getLastPathSegment();
++        if (fileName != null && EDIFICE_LOCAL_FONT_NAME.matcher(fileName).matches()) {
++            try {
++                InputStream stream = view.getContext().getAssets().open("fonts/" + fileName);
++                return new WebResourceResponse("font/woff", null, 200, "OK", headers, stream);
++            } catch (IOException e) {
++                FLog.w(TAG, "Edifice local font not found: " + fileName);
++            }
++        }
++        return new WebResourceResponse("text/plain", null, 404, "Not Found", headers, null);
++    }
++
+     @Override
+     public void onPageFinished(WebView webView, String url) {
+         super.onPageFinished(webView, url);
+diff --git a/node_modules/react-native-webview/apple/RNCWebViewImpl.m b/node_modules/react-native-webview/apple/RNCWebViewImpl.m
+index 3890426..6de743e 100644
+--- a/node_modules/react-native-webview/apple/RNCWebViewImpl.m
++++ b/node_modules/react-native-webview/apple/RNCWebViewImpl.m
+@@ -128,6 +128,56 @@ RCTAutoInsetsProtocol>
+ @property (nonatomic, strong) WKUserScript *atEndScript;
+ @end
+ 
++// Edifice: serves bundled fonts to WebViews by URL, so each page no longer inlines them as base64
++// (one copy per WebView led to OOM in lists of rich-text views).
++static NSString *const EdificeLocalScheme = @"edifice-local";
++static NSString *const EdificeLocalFontsHost = @"fonts";
++static NSString *const EdificeLocalFontNamePattern = @"^[a-z0-9_]+\\.woff$";
++
++@interface RNCEdificeLocalAssetSchemeHandler : NSObject <WKURLSchemeHandler>
++@end
++
++@implementation RNCEdificeLocalAssetSchemeHandler
++
++- (void)webView:(WKWebView *)webView startURLSchemeTask:(id<WKURLSchemeTask>)urlSchemeTask
++{
++  NSURL *url = urlSchemeTask.request.URL;
++  NSString *fileName = url.lastPathComponent;
++  NSData *data = nil;
++  if ([url.host isEqualToString:EdificeLocalFontsHost] && fileName != nil
++      && [fileName rangeOfString:EdificeLocalFontNamePattern options:NSRegularExpressionSearch].location != NSNotFound) {
++    NSString *path = [[NSBundle mainBundle] pathForResource:[fileName stringByDeletingPathExtension] ofType:@"woff"];
++    if (path != nil) {
++      data = [NSData dataWithContentsOfFile:path];
++    }
++  }
++  // Fonts are subject to CORS: the page origin is the platform URL, not this scheme.
++  NSMutableDictionary *headers = [@{
++    @"Access-Control-Allow-Origin": @"*",
++    @"Cache-Control": @"max-age=31536000",
++    @"Content-Type": data != nil ? @"font/woff" : @"text/plain",
++  } mutableCopy];
++  if (data != nil) {
++    headers[@"Content-Length"] = [NSString stringWithFormat:@"%lu", (unsigned long)data.length];
++  }
++  NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:url
++                                                            statusCode:(data != nil ? 200 : 404)
++                                                           HTTPVersion:@"HTTP/1.1"
++                                                          headerFields:headers];
++  [urlSchemeTask didReceiveResponse:response];
++  if (data != nil) {
++    [urlSchemeTask didReceiveData:data];
++  }
++  [urlSchemeTask didFinish];
++}
++
++- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id<WKURLSchemeTask>)urlSchemeTask
++{
++  // The response is sent synchronously in startURLSchemeTask: nothing to cancel.
++}
++
++@end
++
+ @implementation RNCWebViewImpl
+ {
+ #if !TARGET_OS_OSX
+@@ -423,6 +473,12 @@ RCTAutoInsetsProtocol>
+ - (WKWebViewConfiguration *)setUpWkWebViewConfig
+ {
+   WKWebViewConfiguration *wkWebViewConfig = [WKWebViewConfiguration new];
++  static RNCEdificeLocalAssetSchemeHandler *edificeLocalAssetSchemeHandler;
++  static dispatch_once_t edificeLocalAssetSchemeHandlerOnce;
++  dispatch_once(&edificeLocalAssetSchemeHandlerOnce, ^{
++    edificeLocalAssetSchemeHandler = [RNCEdificeLocalAssetSchemeHandler new];
++  });
++  [wkWebViewConfig setURLSchemeHandler:edificeLocalAssetSchemeHandler forURLScheme:EdificeLocalScheme];
+   WKPreferences *prefs = [[WKPreferences alloc]init];
+   BOOL _prefsUsed = NO;
+   if (!_javaScriptEnabled) {

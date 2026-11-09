@@ -152,4 +152,23 @@ module.exports = [
       'jest/valid-expect': 'error',
     },
   },
+  // ── rawjs files management ────────────────────────────────────────────
+  {
+    files: ['**/*.rawjs'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.browser,
+        renderMathInElement: 'readonly',
+      },
+      parser: espree,
+      parserOptions: { project: null },
+      sourceType: 'script',
+    },
+    rules: {
+      'no-console': 'off',
+      'no-unused-vars': 'off',
+      'no-var': 'off',
+    },
+  },
 ];
