@@ -11,6 +11,7 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { openMedias } from '~/framework/modules/media';
 import { openUrl } from '~/framework/util/linking';
 
+import Pane from './components/pane';
 import AttachmentPreview from './components/preview/attachment';
 import ImagePreview from './components/preview/image';
 import MediaPreview from './components/preview/media';
@@ -50,6 +51,12 @@ const RichEditorNativeViewer = ({ backgroundColor, content }: Readonly<RichEdito
         );
       case RichContentSegmentType.IMAGE:
         return <ImagePreview key={index} src={segment.src} declaredSize={segment.declaredSize} onPress={onOpenMedia} />;
+      case RichContentSegmentType.PANE:
+        return (
+          <Pane key={index} type={segment.paneType}>
+            {segment.segments.map(renderSegment)}
+          </Pane>
+        );
       case RichContentSegmentType.ATTACHMENTS:
         return segment.items.map(attachment => (
           <AttachmentPreview key={`${index}-${attachment.href}`} attachment={attachment} onPress={onOpenMedia} />

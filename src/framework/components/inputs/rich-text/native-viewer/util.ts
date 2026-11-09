@@ -14,7 +14,14 @@ import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { extractVideoResolution } from '~/framework/util/htmlParser/content';
 import { parseAttrs } from '~/utils/attrs';
 
-import { ImageSize, RichContentAttachment, RichContentImage, RichContentSegment, RichContentSegmentType } from './types';
+import {
+  ImageSize,
+  RichContentAttachment,
+  RichContentImage,
+  RichContentPaneType,
+  RichContentSegment,
+  RichContentSegmentType,
+} from './types';
 
 const TAG_REGEX = /<(\/?)([a-zA-Z][a-zA-Z0-9-]*)((?:[^>"']|"[^"]*"|'[^']*')*)>/g;
 const LINK_TAG_REGEX = /<a\b((?:[^>"']|"[^"]*"|'[^']*')*)>([\s\S]*?)<\/a>/gi;
@@ -42,6 +49,8 @@ const MEDIA_TAGS: Record<string, RichContentSegmentType> = {
   video: RichContentSegmentType.VIDEO,
 };
 
+const PANE_TYPES = new Set<string>(Object.values(RichContentPaneType));
+
 const getAttributes = (rawAttributes: string): Record<string, string> => {
   try {
     return parseAttrs(rawAttributes.replace(/\/\s*$/, '').trim()) as Record<string, string>;
@@ -57,6 +66,12 @@ const getMediaBlockType = (tagName: string, attributes: Record<string, string>):
   const classNames = attributes.class.split(/\s+/);
   const wrapperClass = classNames.find(className => WRAPPER_CLASSES[className]);
   return wrapperClass ? WRAPPER_CLASSES[wrapperClass] : undefined;
+};
+
+const getPaneType = (tagName: string, attributes: Record<string, string>): RichContentPaneType | undefined => {
+  if (tagName !== 'div' || attributes['data-information-pane'] === undefined) return undefined;
+  const type = attributes['data-type'];
+  return PANE_TYPES.has(type) ? (type as RichContentPaneType) : RichContentPaneType.INFO;
 };
 
 export const getAbsoluteUrl = (url: string, platformUrl?: string): string => {
@@ -169,6 +184,7 @@ const getAuthenticatedImage = (rawAttributes: string, platformUrl?: string): Ric
 /**
  * Images are moved right after the top-level block that contains them (`<p>`, `<div>`…),
  * so that the html given to `EnrichedText` stays balanced.
+ * Pane's content is split recursively.
  */
 export const splitRichContent = (html: string, platformUrl?: string): RichContentSegment[] => {
   const segments: RichContentSegment[] = [];
@@ -178,6 +194,8 @@ export const splitRichContent = (html: string, platformUrl?: string): RichConten
   let topLevelDepth = 0;
   // Currently opened media block: its type, the tag that opened it and the nesting depth of that tag
   let mediaBlock: { depth: number; start: number; tagName: string; type: RichContentSegmentType } | undefined;
+  // Currently opened information pane: `div` nesting depth, to find its closing tag
+  let paneBlock: { contentStart: number; depth: number; start: number; type: RichContentPaneType } | undefined;
 
   const flush = (end: number) => {
     pendingHtml += html.slice(textStart, end);
@@ -194,7 +212,30 @@ export const splitRichContent = (html: string, platformUrl?: string): RichConten
     const tagStart = match.index ?? 0;
     const tagEnd = tagStart + fullTag.length;
     const isSelfClosing = rawAttributes.trim().endsWith('/');
-    const mediaBlockType = !mediaBlock && !closingSlash ? getMediaBlockType(tagName, getAttributes(rawAttributes)) : undefined;
+
+    if (paneBlock) {
+      if (tagName === 'div' && !isSelfClosing) paneBlock.depth += closingSlash ? -1 : 1;
+      if (paneBlock.depth === 0) {
+        const paneSegments = splitRichContent(html.slice(paneBlock.contentStart, tagStart), platformUrl);
+        if (paneSegments.length) {
+          segments.push({ paneType: paneBlock.type, segments: paneSegments, type: RichContentSegmentType.PANE });
+        }
+        textStart = tagEnd;
+        paneBlock = undefined;
+      }
+      continue;
+    }
+
+    const attributes = !mediaBlock && !closingSlash ? getAttributes(rawAttributes) : undefined;
+    const paneType = attributes && !isSelfClosing ? getPaneType(tagName, attributes) : undefined;
+    const mediaBlockType = attributes && !paneType ? getMediaBlockType(tagName, attributes) : undefined;
+
+    if (paneType) {
+      flush(tagStart);
+      topLevelDepth = 0;
+      paneBlock = { contentStart: tagEnd, depth: 1, start: tagStart, type: paneType };
+      continue;
+    }
 
     if (mediaBlock) {
       if (tagName === mediaBlock.tagName && !isSelfClosing) mediaBlock.depth += closingSlash ? -1 : 1;
@@ -229,8 +270,9 @@ export const splitRichContent = (html: string, platformUrl?: string): RichConten
     }
   }
 
-  // An unclosed media block is rendered as html: EnrichedText strips the tags it does not support
+  // An unclosed media block or pane is rendered as html: EnrichedText strips the tags it does not support
   if (mediaBlock) textStart = mediaBlock.start;
+  if (paneBlock) textStart = paneBlock.start;
   flush(html.length);
   return segments;
 };
@@ -259,6 +301,8 @@ export const buildCarouselMedias = (segments: RichContentSegment[]): FileMedia[]
           src: item.href,
           type: getAttachmentMediaType(item.mime),
         }));
+      case RichContentSegmentType.PANE:
+        return buildCarouselMedias(segment.segments);
       default:
         return [];
     }
