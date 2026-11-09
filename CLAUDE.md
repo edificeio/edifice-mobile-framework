@@ -81,7 +81,7 @@ Dès qu'un développeur démarre un ticket (bug ou feature), **lis d'abord `.cla
 
 ## 7. Design system
 
-Les styles se trouvent **uniquement dans un fichier `styles.ts`** à côté du composant ou de l'écran, sauf les styles de navigation, définis dans l'écran. Pour tout ajout ou modification de style, applique la rule **`design-system`** (`.claude/rules/design-system.md`) : couleurs issues de `src/app/theme.ts`, valeurs de design issues de `src/framework/components/constants.ts`, aucune valeur en dur.
+Les styles se trouvent **uniquement dans un fichier `styles.ts`** à côté du composant ou de l'écran, sauf les styles de navigation, définis dans l'écran. Pour tout ajout ou modification de style, applique la rule **`DESIGN-SYSTEM`** (`.claude/rules/DESIGN-SYSTEM.md`) : couleurs issues de `src/app/theme.ts`, valeurs de design issues de `src/framework/components/constants.ts`, aucune valeur en dur.
 
 ## 8. Gestion des dépendances
 

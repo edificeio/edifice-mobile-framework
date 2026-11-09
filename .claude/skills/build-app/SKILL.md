@@ -7,8 +7,8 @@ description: Process commun pour builder l'application mobile Edifice (iOS ou An
 
 Ce skill décrit le process **commun aux deux plateformes**. Les commandes de build propres à chaque plateforme sont dans :
 
-- **iOS** → skill `simulator` avec l'argument `ios` (fichier `ios.md`, section « Builder et lancer ») ;
-- **Android** → skill `simulator` avec l'argument `android` (fichier `android.md`, section « Builder et lancer »).
+- **iOS** → skill `simulator` avec l'argument `ios` (fichier `IOS.md`, section « Builder et lancer ») ;
+- **Android** → skill `simulator` avec l'argument `android` (fichier `ANDROID.md`, section « Builder et lancer »).
 
 ## Paramètres
 
