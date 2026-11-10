@@ -5,7 +5,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   infoBody: {
-    gap: UI_SIZES.spacing.medium,
+    gap: UI_SIZES.spacing.major,
     paddingBottom: UI_SIZES.spacing.large,
     paddingHorizontal: UI_SIZES.spacing.big,
   },
@@ -14,9 +14,7 @@ export default StyleSheet.create({
   },
   infoHeader: {
     alignItems: 'flex-end',
-    paddingBottom: UI_SIZES.spacing.big,
-    paddingHorizontal: UI_SIZES.spacing.big,
-    paddingTop: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   infoTitle: {
     textAlign: 'center',
