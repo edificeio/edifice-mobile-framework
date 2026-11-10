@@ -1,6 +1,8 @@
-import { MediaDto, MediaType as MediaTypeDto } from '@edifice.io/community-client-rest-rn';
+import { MediaDto, MediaType as MediaTypeDto, MessageDto } from '@edifice.io/community-client-rest-rn';
 import { Temporal } from '@js-temporal/polyfill';
 
+import { AccountType } from '~/framework/modules/auth/model';
+import { CommentsThreadInternals } from '~/framework/modules/comments/components/comments-thread-internal/types';
 import {
   AttachmentMedia,
   AudioMedia,
@@ -73,4 +75,52 @@ export const toInstant = (date?: Date | string): Temporal.Instant | undefined =>
   if (!date) return undefined;
   const epochMs = new Date(date).getTime();
   return Number.isNaN(epochMs) ? undefined : Temporal.Instant.fromEpochMilliseconds(epochMs);
+};
+
+const parseAccountTypesMap = {
+  External: AccountType.External,
+  Guest: AccountType.Guest,
+  Personnel: AccountType.Personnel,
+  Relative: AccountType.Relative,
+  Student: AccountType.Student,
+  Teacher: AccountType.Teacher,
+} as const;
+
+export type DiscussionMessage = (CommentsThreadInternals.CommentItem | CommentsThreadInternals.CommentDeletedItem) & {
+  hidden?: boolean;
+};
+
+export const toDeletedMessage = ({
+  authorAccountType,
+  authorId,
+  authorName,
+  date,
+  hidden,
+  id,
+  nbReplies,
+}: DiscussionMessage): DiscussionMessage => ({
+  authorAccountType,
+  authorId,
+  authorName,
+  date,
+  deleted: true,
+  hidden,
+  id,
+  nbReplies,
+  type: CommentsThreadInternals.ITEM_COMMENT_DELETED,
+});
+
+export const toDiscussionMessage = (message: MessageDto): DiscussionMessage => {
+  const common = {
+    authorAccountType: parseAccountTypesMap[message.createdBy.profile],
+    authorId: message.createdBy.entId,
+    authorName: message.createdBy.displayName,
+    date: toInstant(message.updatedAt ?? message.createdAt)!,
+    hidden: message.isFirstMessage,
+    id: message.id.toString(),
+    nbReplies: 0,
+  };
+  return message.deleted
+    ? { ...common, deleted: true as const, type: CommentsThreadInternals.ITEM_COMMENT_DELETED }
+    : { ...common, content: message.htmlContent, isRichContent: true, type: CommentsThreadInternals.ITEM_COMMENT };
 };
