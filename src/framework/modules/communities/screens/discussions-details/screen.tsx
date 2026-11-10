@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Alert, ListRenderItemInfo, NativeScrollEvent, NativeSyntheticEvent, View } from 'react-native';
 
-import { MessageDto } from '@edifice.io/community-client-rest-rn';
 import { FlashListRef } from '@shopify/flash-list';
 import { useSharedValue } from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,9 +26,10 @@ import {
   CommentsThreadItemLoader,
 } from '~/framework/modules/comments/components/comments-thread-internal';
 import { CommentsThread } from '~/framework/modules/comments/components/comments-thread-internal/item';
-import { toInstant } from '~/framework/modules/communities/adapter';
+import { DiscussionMessage, toDeletedMessage, toDiscussionMessage, toInstant } from '~/framework/modules/communities/adapter';
 import DiscussionHeader, { DiscussionHeaderLoader } from '~/framework/modules/communities/components/discussions/header';
 import { MessageEditorLauncher } from '~/framework/modules/communities/components/discussions/message-editor-launcher';
+import DiscussionRepliesBar from '~/framework/modules/communities/components/discussions/replies-bar';
 import { useCollapsibleDiscussionHeader } from '~/framework/modules/communities/hooks/use-collapsible-discussion-header';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { deleteMessage, getDiscussion, getMessages, MESSAGES_PAGE_SIZE } from '~/framework/modules/communities/service/discussions';
@@ -43,53 +43,26 @@ const FIRST_MESSAGE_LOADER_LINES = [100, 100, 100, 70];
 const COMMENTS_LOADER_ROWS = Array.from({ length: DEFAULT_FLATLIST_PLACEHOLDER_ROWS }, (_, index) => index);
 /** The list stays at the bottom after a new message until its content doesn't change for this duration (ms). */
 const STICK_TO_BOTTOM_SETTLE_DELAY = 1500;
-
-const parseAccountTypesMap = {
-  External: AccountType.External,
-  Guest: AccountType.Guest,
-  Personnel: AccountType.Personnel,
-  Relative: AccountType.Relative,
-  Student: AccountType.Student,
-  Teacher: AccountType.Teacher,
-} as const;
+// const MAINTAIN_VISIBLE_CONTENT_POSITION = { disabled: true };
+const LATEST_REPLY_BUTTON_MIN_MESSAGES = 8;
 
 export const DiscussionDetailsScreenOptions = screenOptions(() => ({ headerTitle: '' }));
 
-type DiscussionMessage = (CommentsThreadInternals.CommentItem | CommentsThreadInternals.CommentDeletedItem) & { hidden?: boolean };
-
-const toDeletedMessage = ({
-  authorAccountType,
-  authorId,
-  authorName,
-  date,
-  hidden,
-  id,
-  nbReplies,
-}: DiscussionMessage): DiscussionMessage => ({
-  authorAccountType,
-  authorId,
-  authorName,
-  date,
-  deleted: true,
-  hidden,
-  id,
-  nbReplies,
-  type: CommentsThreadInternals.ITEM_COMMENT_DELETED,
-});
-
-function hydrateMessage(message: MessageDto): DiscussionMessage {
-  const common = {
-    authorAccountType: parseAccountTypesMap[message.createdBy.profile],
-    authorId: message.createdBy.entId,
-    authorName: message.createdBy.displayName,
-    date: toInstant(message.updatedAt ?? message.createdAt)!,
-    hidden: message.isFirstMessage,
-    id: message.id.toString(),
-    nbReplies: 0,
-  };
-  return message.deleted
-    ? { ...common, deleted: true as const, type: CommentsThreadInternals.ITEM_COMMENT_DELETED }
-    : { ...common, content: message.htmlContent, isRichContent: true, type: CommentsThreadInternals.ITEM_COMMENT };
+/**
+ * Like `staleOrSplice`, but a growing total keeps the loaded messages: they are never removed (deletion only flags them)
+ * and new ones are appended, so their index doesn't change.
+ */
+function mergeMessagesPage({
+  newData,
+  previousData,
+  reloadAll,
+  start,
+  total,
+}: Parameters<typeof staleOrSplice<DiscussionMessage>>[0]): PaginatedListItem<DiscussionMessage>[] {
+  if (reloadAll || total < previousData.length) return staleOrSplice({ newData, previousData, reloadAll: true, start, total });
+  const mergedData = [...previousData, ...new Array(total - previousData.length).fill(LOADING_ITEM_DATA)];
+  mergedData.splice(start, newData.length, ...newData);
+  return mergedData;
 }
 
 const DiscussionDetailsLoader = React.memo(() => (
@@ -147,11 +120,14 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     dispatch(communitiesActions.loadCommunityDiscussions(communityId, { [loaded.id]: loaded }));
   }, [communityId, discussionId, dispatch, session]);
 
+  const isDiscussionFreshRef = React.useRef(false);
+
   // Fetch discussion if it's missing from the store
   const hasDiscussion = !!discussion;
   React.useEffect(() => {
     if (hasDiscussion) return;
     let cancelled = false;
+    isDiscussionFreshRef.current = true;
     fetchDiscussion().catch(e => {
       if (cancelled) return;
       console.error('Error while loading community discussion', e);
@@ -165,31 +141,34 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
 
   const onPageReached = React.useCallback<NonNullable<PaginatedFlashListProps<DiscussionMessage>['onPageReached']>>(
     async (page, reloadAll) => {
-      if (page === 0 || reloadAll) await fetchDiscussion();
+      if (reloadAll) {
+        if (!isDiscussionFreshRef.current) await fetchDiscussion();
+        isDiscussionFreshRef.current = false;
+      }
 
       const { messages: loadedMessages, total } = await getMessages(session, communityId, discussionId, page, MESSAGES_PAGE_SIZE);
-      const newData = loadedMessages.map(hydrateMessage);
-      setMessages(previousData => staleOrSplice({ newData, previousData, reloadAll, start: page * MESSAGES_PAGE_SIZE, total }));
+      const newData = loadedMessages.map(toDiscussionMessage);
+      setMessages(previousData => mergeMessagesPage({ newData, previousData, reloadAll, start: page * MESSAGES_PAGE_SIZE, total }));
     },
     [communityId, discussionId, fetchDiscussion, session],
   );
 
-  /** Replaces the loaded messages by the last page only (the previous ones are skeletons until they are reached). */
-  const reloadLastPage = React.useCallback(async () => {
-    await fetchDiscussion();
-    // The new total is expected to be the previous one + 1, then checked with the response (someone else may have posted)
-    let page = Math.floor(messagesRef.current.length / MESSAGES_PAGE_SIZE);
-    let result = await getMessages(session, communityId, discussionId, page, MESSAGES_PAGE_SIZE);
-    const lastPage = Math.max(0, Math.floor((result.total - 1) / MESSAGES_PAGE_SIZE));
-    if (lastPage !== page) {
-      page = lastPage;
-      result = await getMessages(session, communityId, discussionId, page, MESSAGES_PAGE_SIZE);
-    }
-    const newData = result.messages.map(hydrateMessage);
-    setMessages(previousData =>
-      staleOrSplice({ newData, previousData, reloadAll: true, start: page * MESSAGES_PAGE_SIZE, total: result.total }),
-    );
-  }, [communityId, discussionId, fetchDiscussion, session]);
+  const loadLastPage = React.useCallback(
+    async (expectedTotal: number) => {
+      let page = Math.max(0, Math.floor((expectedTotal - 1) / MESSAGES_PAGE_SIZE));
+      let result = await getMessages(session, communityId, discussionId, page, MESSAGES_PAGE_SIZE);
+      const lastPage = Math.max(0, Math.floor((result.total - 1) / MESSAGES_PAGE_SIZE));
+      if (lastPage !== page) {
+        page = lastPage;
+        result = await getMessages(session, communityId, discussionId, page, MESSAGES_PAGE_SIZE);
+      }
+      const newData = result.messages.map(toDiscussionMessage);
+      setMessages(previousData =>
+        mergeMessagesPage({ newData, previousData, start: page * MESSAGES_PAGE_SIZE, total: result.total }),
+      );
+    },
+    [communityId, discussionId, session],
+  );
 
   const onAddMessage = React.useCallback(() => {
     navigation.navigate(communitiesRouteNames.discussionMessageEditor, { communityId, discussionId });
@@ -230,6 +209,22 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
   }, [stickToBottom]);
   React.useEffect(() => stopStickingToBottom, [stopStickingToBottom]);
 
+  const goToLatestMessage = React.useCallback(
+    (loading: Promise<unknown>) => {
+      loading.then(stickToBottom).catch(e => {
+        console.error('Error while reloading community discussion messages', e);
+        toast.showError();
+      });
+    },
+    [stickToBottom],
+  );
+
+  // No need to fetch again when the last page is already loaded: the unloaded pages are placeholders
+  const onPressLatestReply = React.useCallback(() => {
+    if (messagesRef.current.at(-1) !== LOADING_ITEM_DATA) stickToBottom();
+    else goToLatestMessage(loadLastPage(messagesRef.current.length));
+  }, [goToLatestMessage, loadLastPage, stickToBottom]);
+
   // Reload the affected page when coming back from the message editor
   const handledMutationRef = React.useRef<number>(undefined);
   React.useEffect(() => {
@@ -237,14 +232,8 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     handledMutationRef.current = lastMutation.at;
     const currentMessages = messagesRef.current;
     if (lastMutation.type === 'created') {
-      reloadLastPage()
-        .then(() => {
-          stickToBottom();
-        })
-        .catch(e => {
-          console.error('Error while reloading community discussion messages', e);
-          toast.showError();
-        });
+      // The discussion is fetched again for its updated messages count
+      goToLatestMessage(Promise.all([fetchDiscussion(), loadLastPage(currentMessages.length + 1)]));
     } else {
       const index = currentMessages.findIndex(
         message => message !== LOADING_ITEM_DATA && message.id === lastMutation.messageId.toString(),
@@ -255,7 +244,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
         toast.showError();
       });
     }
-  }, [lastMutation, onPageReached, reloadLastPage, stickToBottom]);
+  }, [fetchDiscussion, goToLatestMessage, lastMutation, loadLastPage, onPageReached]);
 
   const onDelete = React.useCallback(
     async (id: string) => {
@@ -282,9 +271,13 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
         <>
           <View style={spacerStyle} />
           <BodyText style={styles.firstMessage}>{discussion.firstMessage}</BodyText>
+          <DiscussionRepliesBar
+            onPressLatestReply={discussion.nMessages >= LATEST_REPLY_BUTTON_MIN_MESSAGES ? onPressLatestReply : undefined}
+            repliesCount={discussion.nMessages}
+          />
         </>
       ) : null,
-    [discussion, spacerStyle],
+    [discussion, onPressLatestReply, spacerStyle],
   );
 
   const deletedPlaceholder = I18n.get('communities-discussion-message-deleted');
