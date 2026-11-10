@@ -43,6 +43,7 @@ const FIRST_MESSAGE_LOADER_LINES = [100, 100, 100, 70];
 const COMMENTS_LOADER_ROWS = Array.from({ length: DEFAULT_FLATLIST_PLACEHOLDER_ROWS }, (_, index) => index);
 /** The list stays at the bottom after a new message until its content doesn't change for this duration (ms). */
 const STICK_TO_BOTTOM_SETTLE_DELAY = 1500;
+const MAINTAIN_VISIBLE_CONTENT_POSITION = { disabled: true };
 
 const parseAccountTypesMap = {
   External: AccountType.External,
@@ -345,6 +346,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
             onScrollBeginDrag={stopStickingToBottom}
             scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
             contentInsetAdjustmentBehavior="never"
+            maintainVisibleContentPosition={MAINTAIN_VISIBLE_CONTENT_POSITION}
           />
           <MessageEditorLauncher onPress={onAddMessage} placeholder={I18n.get('communities-discussion-message-add')} />
           <DiscussionHeader
