@@ -30,6 +30,7 @@ import { CommentsThread } from '~/framework/modules/comments/components/comments
 import { toInstant } from '~/framework/modules/communities/adapter';
 import DiscussionHeader, { DiscussionHeaderLoader } from '~/framework/modules/communities/components/discussions/header';
 import { MessageEditorLauncher } from '~/framework/modules/communities/components/discussions/message-editor-launcher';
+import DiscussionRepliesBar from '~/framework/modules/communities/components/discussions/replies-bar';
 import { useCollapsibleDiscussionHeader } from '~/framework/modules/communities/hooks/use-collapsible-discussion-header';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { deleteMessage, getDiscussion, getMessages, MESSAGES_PAGE_SIZE } from '~/framework/modules/communities/service/discussions';
@@ -44,6 +45,7 @@ const COMMENTS_LOADER_ROWS = Array.from({ length: DEFAULT_FLATLIST_PLACEHOLDER_R
 /** The list stays at the bottom after a new message until its content doesn't change for this duration (ms). */
 const STICK_TO_BOTTOM_SETTLE_DELAY = 1500;
 const MAINTAIN_VISIBLE_CONTENT_POSITION = { disabled: true };
+const LATEST_REPLY_BUTTON_MIN_MESSAGES = 8;
 
 const parseAccountTypesMap = {
   External: AccountType.External,
@@ -231,6 +233,21 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
   }, [stickToBottom]);
   React.useEffect(() => stopStickingToBottom, [stopStickingToBottom]);
 
+  const goToLatestMessage = React.useCallback(() => {
+    reloadLastPage()
+      .then(stickToBottom)
+      .catch(e => {
+        console.error('Error while reloading community discussion messages', e);
+        toast.showError();
+      });
+  }, [reloadLastPage, stickToBottom]);
+
+  // No need to fetch again when the last page is already loaded: the unloaded pages are placeholders
+  const onPressLatestReply = React.useCallback(() => {
+    if (messagesRef.current.at(-1) !== LOADING_ITEM_DATA) stickToBottom();
+    else goToLatestMessage();
+  }, [goToLatestMessage, stickToBottom]);
+
   // Reload the affected page when coming back from the message editor
   const handledMutationRef = React.useRef<number>(undefined);
   React.useEffect(() => {
@@ -238,14 +255,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     handledMutationRef.current = lastMutation.at;
     const currentMessages = messagesRef.current;
     if (lastMutation.type === 'created') {
-      reloadLastPage()
-        .then(() => {
-          stickToBottom();
-        })
-        .catch(e => {
-          console.error('Error while reloading community discussion messages', e);
-          toast.showError();
-        });
+      goToLatestMessage();
     } else {
       const index = currentMessages.findIndex(
         message => message !== LOADING_ITEM_DATA && message.id === lastMutation.messageId.toString(),
@@ -256,7 +266,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
         toast.showError();
       });
     }
-  }, [lastMutation, onPageReached, reloadLastPage, stickToBottom]);
+  }, [goToLatestMessage, lastMutation, onPageReached]);
 
   const onDelete = React.useCallback(
     async (id: string) => {
@@ -283,9 +293,13 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
         <>
           <View style={spacerStyle} />
           <BodyText style={styles.firstMessage}>{discussion.firstMessage}</BodyText>
+          <DiscussionRepliesBar
+            onPressLatestReply={discussion.nMessages >= LATEST_REPLY_BUTTON_MIN_MESSAGES ? onPressLatestReply : undefined}
+            repliesCount={discussion.nMessages}
+          />
         </>
       ) : null,
-    [discussion, spacerStyle],
+    [discussion, onPressLatestReply, spacerStyle],
   );
 
   const deletedPlaceholder = I18n.get('communities-discussion-message-deleted');
@@ -346,7 +360,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
             onScrollBeginDrag={stopStickingToBottom}
             scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
             contentInsetAdjustmentBehavior="never"
-            maintainVisibleContentPosition={MAINTAIN_VISIBLE_CONTENT_POSITION}
+            // maintainVisibleContentPosition={MAINTAIN_VISIBLE_CONTENT_POSITION}
           />
           <MessageEditorLauncher onPress={onAddMessage} placeholder={I18n.get('communities-discussion-message-add')} />
           <DiscussionHeader
