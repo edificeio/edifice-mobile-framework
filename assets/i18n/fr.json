@@ -377,6 +377,7 @@
   "communities-collect-distributed": "Distribué le {{date}}",
   "communities-collect-submitted": "Rendu",
   "communities-collect-unavailable": "Collecte indisponible",
+  "communities-discussion-latest-reply": "Réponse récente",
   "communities-discussion-message-add": "Ajouter une réponse...",
   "communities-discussion-message-create-title": "Nouveau message",
   "communities-discussion-message-deleted": "Message supprimé",
