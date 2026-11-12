@@ -4,6 +4,10 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  description: {
+    color: theme.palette.grey.graphite,
+    paddingBottom: UI_SIZES.spacing.small,
+  },
   page: {
     flex: 1,
     paddingHorizontal: UI_SIZES.spacing.medium,

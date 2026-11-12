@@ -100,6 +100,7 @@ export function NotificationFiltersTemplate({
 
   return (
     <View style={styles.page}>
+      {labelsI18n.description ? <SmallText style={styles.description}>{I18n.get(labelsI18n.description)}</SmallText> : null}
       <View style={styles.selectAllRow}>
         <TouchableOpacity
           style={styles.selectAll}

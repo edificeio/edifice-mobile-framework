@@ -34,40 +34,47 @@ export const NOTIFICATIONS_DEFAULT_VERSION = '3.0';
 // The server drops the user's own notifications before paginating; filtering them here would skew the page count.
 export const NOTIFICATIONS_WITHOUT_OWN_VERSION = '4.0';
 
+// the timeline and the sent notifications share this endpoint and its payload, only the query and headers differ.
+const fetchNotificationsPage = async (
+  caller: string,
+  query: queryString.StringifiableRecord,
+  headers?: Record<string, string>,
+): Promise<ITimelineNotification[]> => {
+  const api = queryString.stringifyUrl({ query, url: '/timeline/lastNotifications' });
+  const entcoreNotifications = await sessionFetch.json<{
+    results: IEntcoreTimelineNotification[];
+    status: string;
+  }>(api, { headers });
+
+  if (entcoreNotifications.status !== 'ok') {
+    throw new Error(`[notificationsService.${caller}] got status not ok from ${api}`);
+  }
+  return entcoreNotifications.results.map(n => notificationAdapter(n) as ITimelineNotification);
+};
+
 export const notificationsService = {
   delete: async (id: string) => {
     const api = `/timeline/${id}`;
     return sessionFetch.json(api, { method: 'PUT' });
   },
 
-  page: async (page: number, filters: string[], apiVersion: string = NOTIFICATIONS_DEFAULT_VERSION) => {
-    const url = '/timeline/lastNotifications';
-    const query = {
-      page,
-      type: filters,
-    };
-    const api = queryString.stringifyUrl({ query, url });
-    const headers = {
-      Accept: `application/json;version=${apiVersion}`,
-    };
-    const entcoreNotifications = await sessionFetch.json<{
-      results: IEntcoreTimelineNotification[];
-      status: string;
-      number: number;
-    }>(api, { headers });
-
-    if (entcoreNotifications.status !== 'ok') {
-      throw new Error('[notificationsService.page] got status not ok from ' + api);
-    }
-    // Run the notification adapter for each received notification
-    return entcoreNotifications.results.map(n => notificationAdapter(n) as ITimelineNotification);
+  // deletes a notification the user sent, for everyone who can see it (`delete` only hides it for the user).
+  deleteSent: async (id: string): Promise<void> => {
+    const api = `/timeline/${id}`;
+    await sessionFetch.json(api, { method: 'DELETE' });
   },
+
+  page: (page: number, filters: string[], apiVersion: string = NOTIFICATIONS_DEFAULT_VERSION) =>
+    fetchNotificationsPage('page', { page, type: filters }, { Accept: `application/json;version=${apiVersion}` }),
 
   report: async (id: string) => {
     const api = `/timeline/${id}/report`;
     const method = 'PUT';
     return sessionFetch.json(api, { method });
   },
+
+  sentPage: (page: number, filters: readonly string[]) =>
+    fetchNotificationsPage('sentPage', { _: Date.now(), mine: 1, page, type: filters }),
 };
 
 // Flash Messages

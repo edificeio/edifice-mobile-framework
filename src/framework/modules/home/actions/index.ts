@@ -92,6 +92,16 @@ export const loadNotificationsPageAction =
   };
 
 /**
+ * Every notification type the user is allowed to see, loaded first if needed.
+ */
+export const loadAuthorizedNotificationTypesAction =
+  () =>
+  async (dispatch: ThunkDispatch<any, any, any>): Promise<string[]> => {
+    const state = (await dispatch($prepareNotificationsAction())) as unknown as TimelineState; // TS BUG: await is needed here
+    return state.notifDefinitions.notifFilters.data.map(filter => filter.type);
+  };
+
+/**
  * Load the flash messages alone, for a screen that shows them without the notifications.
  */
 export const loadFlashMessagesAction = () => async (dispatch: ThunkDispatch<any, any, any>) => {

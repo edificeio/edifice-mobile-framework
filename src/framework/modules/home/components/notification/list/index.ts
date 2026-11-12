@@ -1,2 +1,5 @@
-export * from './component';
-export type * from './types';
+import NotificationList from './component';
+
+export { NotificationList };
+export type { NotificationListProps } from './types';
+export default NotificationList;
