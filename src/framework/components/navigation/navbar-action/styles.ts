@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_VALUES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   navBarActionDisabled: {
@@ -9,6 +9,9 @@ export default StyleSheet.create({
   },
   navBarActionIcon: {
     height: UI_SIZES.elements.icon.default,
+  },
+  navBarActionPressed: {
+    opacity: UI_VALUES.opacity.modal,
   },
   navBarActionText: {
     marginHorizontal: -UI_SIZES.spacing.tiny,

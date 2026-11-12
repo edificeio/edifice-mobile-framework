@@ -1,17 +1,58 @@
+diff --git a/node_modules/@react-navigation/elements/lib/module/Header/HeaderButton.js b/node_modules/@react-navigation/elements/lib/module/Header/HeaderButton.js
+index 0075a54..a81d75c 100644
+--- a/node_modules/@react-navigation/elements/lib/module/Header/HeaderButton.js
++++ b/node_modules/@react-navigation/elements/lib/module/Header/HeaderButton.js
+@@ -2,8 +2,8 @@
+ 
+ import * as React from 'react';
+ import { Platform, StyleSheet } from 'react-native';
+-import { PlatformPressable } from "../PlatformPressable.js";
+ import { jsx as _jsx } from "react/jsx-runtime";
++import { PlatformPressable } from "../PlatformPressable.js";
+ function HeaderButtonInternal({
+   disabled,
+   onPress,
+@@ -16,6 +16,7 @@ function HeaderButtonInternal({
+   children
+ }, ref) {
+   return /*#__PURE__*/_jsx(PlatformPressable, {
++    gestureHandler: true,
+     ref: ref,
+     disabled: disabled,
+     href: href,
 diff --git a/node_modules/@react-navigation/elements/lib/module/PlatformPressable.js b/node_modules/@react-navigation/elements/lib/module/PlatformPressable.js
-index 6d0c9e6..a721b43 100644
+index 6d0c9e6..6359485 100644
 --- a/node_modules/@react-navigation/elements/lib/module/PlatformPressable.js
 +++ b/node_modules/@react-navigation/elements/lib/module/PlatformPressable.js
-@@ -2,9 +2,10 @@
+@@ -2,9 +2,11 @@
  
  import { useTheme } from '@react-navigation/native';
  import * as React from 'react';
 -import { Animated, Easing, Platform, Pressable } from 'react-native';
-+import { Animated, Easing, Platform, Pressable as PressableIOS } from 'react-native';
-+import { Pressable as PressableAndroid } from 'react-native-gesture-handler';
- import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 -const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-+const AnimatedPressable = Animated.createAnimatedComponent(Platform.select({ios: PressableIOS, default: PressableAndroid}));
++import { Animated, Easing, Platform, Pressable as PressableIOS } from 'react-native';
++import { Pressable as GestureHandlerPressable } from 'react-native-gesture-handler';
++import { Fragment as _Fragment, jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
++const AnimatedPressable = Animated.createAnimatedComponent(Platform.select({ios: PressableIOS, default: GestureHandlerPressable}));
++const AnimatedIOSPressable = Animated.createAnimatedComponent(GestureHandlerPressable);
  const ANDROID_VERSION_LOLLIPOP = 21;
  const ANDROID_SUPPORTS_RIPPLE = Platform.OS === 'android' && Platform.Version >= ANDROID_VERSION_LOLLIPOP;
  const useNativeDriver = Platform.OS !== 'web';
+@@ -23,6 +25,7 @@ function PlatformPressableInternal({
+   hoverEffect,
+   style,
+   children,
++  gestureHandler,
+   ...rest
+ }, ref) {
+   const {
+@@ -68,7 +71,7 @@ function PlatformPressableInternal({
+     animateTo(1, 200);
+     onPressOut?.(e);
+   };
+-  return /*#__PURE__*/_jsxs(AnimatedPressable, {
++  return /*#__PURE__*/_jsxs(gestureHandler ? AnimatedIOSPressable : AnimatedPressable, {
+     ref: ref,
+     accessible: true,
+     role: Platform.OS === 'web' && rest.href != null ? 'link' : 'button',

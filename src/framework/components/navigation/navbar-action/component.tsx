@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { ColorValue, StyleProp, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { ColorValue, StyleProp, TextStyle, View, ViewStyle } from 'react-native';
+
+import { Pressable, PressableStateCallbackType } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
 import { genericHitSlop, UI_SIZES } from '~/framework/components/constants';
@@ -25,12 +27,16 @@ export default function NavBarAction(
     () => (props.disabled ? [styles.navBarActionText, styles.navBarActionDisabled] : styles.navBarActionText),
     [props.disabled],
   );
-
-  const Component = props.onPress ? TouchableOpacity : View;
+  const Component = props.onPress ? Pressable : View;
 
   const buttonStyle = React.useMemo(
     () => [styles.navBarActionWrapper, { ...(props.icon ? styles.navBarActionWrapperIcon : {}) }, props.style],
     [props.icon, props.style],
+  );
+
+  const pressableStyle = React.useCallback(
+    ({ pressed }: PressableStateCallbackType) => [buttonStyle, pressed ? styles.navBarActionPressed : undefined],
+    [buttonStyle],
   );
 
   return (
@@ -38,7 +44,7 @@ export default function NavBarAction(
       {...(props.onPress ? { onPress: props.onPress } : {})}
       hitSlop={genericHitSlop}
       disabled={props.disabled}
-      style={buttonStyle}
+      style={pressableStyle}
       {...(props.testID ? { testID: props.testID } : {})}>
       {props.icon ? (
         <Svg
