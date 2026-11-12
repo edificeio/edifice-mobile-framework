@@ -338,7 +338,6 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
             onScrollBeginDrag={stopStickingToBottom}
             scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
             contentInsetAdjustmentBehavior="never"
-            maintainVisibleContentPosition={MAINTAIN_VISIBLE_CONTENT_POSITION}
           />
           <MessageEditorLauncher onPress={onAddMessage} placeholder={I18n.get('communities-discussion-message-add')} />
           <DiscussionHeader
