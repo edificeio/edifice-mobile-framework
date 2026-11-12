@@ -8,6 +8,7 @@ import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
+import theme from '~/app/theme';
 import {
   DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
   LOADING_ITEM_DATA,
@@ -264,6 +265,11 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
   const createdAt = React.useMemo(() => toInstant(discussion?.createdAt), [discussion?.createdAt]);
 
   const spacerStyle = React.useMemo(() => ({ height: expandedBandHeight }), [expandedBandHeight]);
+  // Displays the spinner below the dicussion header
+  const refreshControlProps = React.useMemo(
+    () => ({ progressViewOffset: expandedBandHeight, tintColor: theme.palette.primary.regular }),
+    [expandedBandHeight],
+  );
 
   const listHeader = React.useMemo(
     () =>
@@ -329,6 +335,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
             keyExtractor={keyExtractor}
             onPageReached={onPageReached}
             pageSize={MESSAGES_PAGE_SIZE}
+            refreshControlProps={refreshControlProps}
             renderItem={renderItem}
             renderPlaceholderItem={renderPlaceholderItem}
             ListHeaderComponent={listHeader}
