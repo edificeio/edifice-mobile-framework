@@ -10,8 +10,10 @@ const globals = require('globals');
 const pluginImport = require('eslint-plugin-import');
 const pluginNoInlineStyles = require('eslint-plugin-no-inline-styles');
 const pluginPrettier = require('eslint-plugin-prettier');
+const pluginSonarjs = require('eslint-plugin-sonarjs');
 const pluginSortDestructureKeys = require('eslint-plugin-sort-destructure-keys');
 const pluginSortKeysFix = require('eslint-plugin-sort-keys-fix');
+const pluginUnicorn = require('eslint-plugin-unicorn').default;
 
 // Strip @typescript-eslint from the base config (index 5) so we can own
 // that registration exclusively in our main config object below.
@@ -48,6 +50,8 @@ module.exports = [
   },
   // ── React Native base (includes RN, React, TS-eslint, prettier-compat) ─
   ...fixedRNConfig,
+  // ── SonarJS (rules of SonarQube, standalone: no server needed) ───────
+  { ...pluginSonarjs.configs.recommended, files: ['**/*.{js,jsx,ts,tsx}'] },
   // ── Main config for all source files ─────────────────────────────────
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
@@ -152,6 +156,18 @@ module.exports = [
         tabWidth: 2,
         trailingComma: 'all',
       }],
+    },
+  },
+  // ── SonarQube Cloud rules that eslint-plugin-sonarjs does not ship ─────
+  // SonarQube Cloud runs them from other ESLint plugins (see `meta.ts` of each rule in SonarJS).
+  {
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    plugins: { unicorn: pluginUnicorn },
+    rules: {
+      '@typescript-eslint/no-floating-promises': 'error', // S9383
+      'prefer-object-has-own': 'error', // S6653
+      'react/no-array-index-key': 'error', // S6479
+      'unicorn/no-useless-spread': 'error', // S7747
     },
   },
   // ── Media module ────────────────────────────────────────────────────────
