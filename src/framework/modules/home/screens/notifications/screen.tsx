@@ -114,6 +114,7 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
             onPress: async () => {
               try {
                 await dispatch(deleteNotificationAction(id));
+                Toast.showSuccess(I18n.get('home-notifications-delete-success'));
               } catch {
                 Toast.showError(I18n.get('timeline-error-text'));
               } finally {

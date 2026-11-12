@@ -699,6 +699,7 @@
   "home-news-seemore": "Voir plus",
   "home-news-title": "Dernières actualités",
   "home-notifications-delete-description": "Cette action ne supprime la notification que pour vous. Êtes vous sur de vouloir supprimer la notification de votre fil ?",
+  "home-notifications-delete-success": "La notification a bien été supprimée.",
   "home-notifications-delete-title": "Supprimer la notification ?",
   "home-notifications-filter": "Filtrer",
   "home-notifications-title": "Notifications",
