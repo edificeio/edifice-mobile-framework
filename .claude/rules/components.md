@@ -5,7 +5,7 @@ paths:
 
 # Création de composants
 
-S'applique dès qu'un développeur demande de **créer** un composant (partagé ou propre à un module), ou d'en ajouter une déclinaison. Pour les styles, applique aussi la rule **`design-system`**. Pour un état de chargement, utilise le skill **`component-skeleton`**.
+S'applique dès qu'un développeur demande de **créer** un composant (partagé ou propre à un module), ou d'en ajouter une déclinaison. Pour les styles, applique aussi la rule **`DESIGN-SYSTEM`**. Pour un état de chargement, utilise le skill **`component-skeleton`**.
 
 Exemples à imiter : `src/framework/modules/communities/components/*` (ex. `discussions/author-line`, `discussions/card`, `community-card-small`) et `src/framework/components/buttons/*` pour les déclinaisons. Ne jamais prendre exemple sur le module `blog`.
 
@@ -69,14 +69,14 @@ Référence : `src/framework/components/buttons/primary`.
 
 ## 5. Textes et i18n
 
-- Textes via les composants de `~/framework/components/text` (cf. rule `design-system`).
+- Textes via les composants de `~/framework/components/text` (cf. rule `DESIGN-SYSTEM`).
 - **Aucun texte en dur** affiché à l'utilisateur : `I18n.get('<cle>')` depuis `~/app/i18n`, avec paramètres si besoin (`I18n.get('communities-members', { count })`).
 - Clés en kebab-case préfixées par le module (`communities-discussioncard-newmessage`). Ajoute-les dans `assets/i18n/fr.json` et liste-les dans le compte rendu.
 - Pour un singulier/pluriel, suivre le pattern existant (une clé par forme, choisie selon `count`).
 
 ## 6. `styles.ts`
 
-- `StyleSheet.create`, clés **triées par ordre alphabétique**, valeurs issues de `theme.ts` / `constants.ts` uniquement (rule `design-system`).
+- `StyleSheet.create`, clés **triées par ordre alphabétique**, valeurs issues de `theme.ts` / `constants.ts` uniquement (rule `DESIGN-SYSTEM`).
 - Constantes de taille calculées en haut du fichier (`getScaleWidth(52)`, `TextSizeStyle.Normal.lineHeight * PixelRatio.getFontScale()`).
 - Styles dynamiques : **fonction exportée** depuis `styles.ts` qui retourne un style du `StyleSheet` selon un état, plutôt que des objets créés dans le JSX :
 

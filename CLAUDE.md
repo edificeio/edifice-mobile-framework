@@ -63,15 +63,15 @@ yarn lint-all   # eslint .
 
 > À valider/ajuster par l'équipe : à chaque type de chantier correspond **un exemple récent et de qualité** (jamais le module `blog`, ancien).
 
-| Chantier | Exemple à imiter |
-| --- | --- |
+| Chantier                   | Exemple à imiter                                                         |
+| -------------------------- | ------------------------------------------------------------------------ |
 | Nouveau module / structure | `src/framework/modules/communities` (module récent, activement maintenu) |
-| Écran + hooks | `src/framework/modules/communities/screens/*` |
-| Service / appels backend | `src/framework/modules/communities/service/*` |
-| Composant UI partagé | `src/framework/components/*` — _exemple précis à désigner_ |
-| Navigation / navbar | `src/framework/modules/communities/hooks/use-community-navbar` |
-| Auth / session | `src/framework/modules/auth` — _à confirmer_ |
-| i18n | `assets/i18n/fr.json` + clés des écrans communities |
+| Écran + hooks              | `src/framework/modules/communities/screens/*`                            |
+| Service / appels backend   | `src/framework/modules/communities/service/*`                            |
+| Composant UI partagé       | `src/framework/components/*` — _exemple précis à désigner_               |
+| Navigation / navbar        | `src/framework/modules/communities/hooks/use-community-navbar`           |
+| Auth / session             | `src/framework/modules/auth` — _à confirmer_                             |
+| i18n                       | `assets/i18n/fr.json` + clés des écrans communities                      |
 
 Si aucun exemple ne convient pour ton chantier, signale-le et demande lequel suivre plutôt que de copier un module ancien.
 
@@ -81,7 +81,7 @@ Dès qu'un développeur démarre un ticket (bug ou feature), **lis d'abord `.cla
 
 ## 7. Design system
 
-Les styles se trouvent **uniquement dans un fichier `styles.ts`** à côté du composant ou de l'écran, sauf les styles de navigation, définis dans l'écran. Pour tout ajout ou modification de style, applique la rule **`design-system`** (`.claude/rules/design-system.md`) : couleurs issues de `src/app/theme.ts`, valeurs de design issues de `src/framework/components/constants.ts`, aucune valeur en dur.
+Les styles se trouvent **uniquement dans un fichier `styles.ts`** à côté du composant ou de l'écran, sauf les styles de navigation, définis dans l'écran. Pour tout ajout ou modification de style, applique la rule **`DESIGN-SYSTEM`** (`.claude/rules/DESIGN-SYSTEM.md`) : couleurs issues de `src/app/theme.ts`, valeurs de design issues de `src/framework/components/constants.ts`, aucune valeur en dur.
 
 ## 8. Gestion des dépendances
 
