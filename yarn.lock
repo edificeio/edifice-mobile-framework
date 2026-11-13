@@ -6132,8 +6132,8 @@ __metadata:
     eslint-plugin-sort-destructure-keys: "npm:3.0.0"
     eslint-plugin-sort-keys-fix: "npm:1.1.2"
     events: "npm:3.3.0"
-    fast-xml-parser: "npm:5.12.0"
-    filesize: "npm:11.0.31"
+    fast-xml-parser: "npm:5.12.1"
+    filesize: "npm:11.0.32"
     flat: "npm:6.0.1"
     global: "npm:4.4.0"
     globals: "npm:17.14.0"
@@ -6192,7 +6192,7 @@ __metadata:
     react-native-network-logger: "npm:3.0.0"
     react-native-nitro-modules: "npm:0.37.2"
     react-native-orientation-locker: "npm:1.7.0"
-    react-native-pager-view: "npm:10.0.0"
+    react-native-pager-view: "npm:10.0.2"
     react-native-pdf: "npm:7.0.5"
     react-native-permissions: "npm:5.6.3"
     react-native-phone-number-input: "npm:2.1.0"
@@ -9079,7 +9079,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-builder@npm:^1.2.0, fast-xml-builder@npm:^1.3.1":
+"fast-xml-builder@npm:^1.2.0":
   version: 1.3.1
   resolution: "fast-xml-builder@npm:1.3.1"
   dependencies:
@@ -9089,19 +9089,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:5.12.0":
-  version: 5.12.0
-  resolution: "fast-xml-parser@npm:5.12.0"
+"fast-xml-builder@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "fast-xml-builder@npm:1.3.2"
+  dependencies:
+    path-expression-matcher: "npm:^1.6.2"
+    xml-naming: "npm:^0.3.0"
+  checksum: 10/147cba62efaf1ef66598c2abb2cf816d44159fe2e24a4655a9c5e9e52ff972947d860eb24222bdb1470bf50c97f7671f67eab8d6310cc6e23201b6e021dfe731
+  languageName: node
+  linkType: hard
+
+"fast-xml-parser@npm:5.12.1":
+  version: 5.12.1
+  resolution: "fast-xml-parser@npm:5.12.1"
   dependencies:
     "@nodable/entities": "npm:^3.1.0"
-    fast-xml-builder: "npm:^1.3.1"
+    fast-xml-builder: "npm:^1.3.2"
     is-unsafe: "npm:^2.0.3"
     path-expression-matcher: "npm:^1.6.2"
     strnum: "npm:^2.5.1"
     xml-naming: "npm:^0.3.0"
   bin:
     fxparser: src/cli/cli.js
-  checksum: 10/86b16fd9f4458350e95b5fcfe0bfe2b76a6c508dcc5fdeda128ecf8ed41f419a7e33acaf2718f2fd7b694392d7e204d242a0fd871368efbfb24f96b457e556d5
+  checksum: 10/eda4e8f1874bf58b0f6f8bde03551d45ee3ecffae0abd38e0fb523a7410ca228dbff074bcbe7e1892635cf96875165c74c491dfe9cf59fe8db6cb7d4cb505a33
   languageName: node
   linkType: hard
 
@@ -9193,10 +9203,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"filesize@npm:11.0.31":
-  version: 11.0.31
-  resolution: "filesize@npm:11.0.31"
-  checksum: 10/354d7a8accec1232c699c67fbab533cb9dd03d753eff99bd1983a7fa000ab2350a37decda272b35f264db1bf46b6e253c9c47dc3bb706024d62367ee4b151db8
+"filesize@npm:11.0.32":
+  version: 11.0.32
+  resolution: "filesize@npm:11.0.32"
+  checksum: 10/5804e82a45a49b29332ec72fb57921d52fdd7f711422a4fe641c943cd299fe913e81dab035c7c774119950cfed3670c3682175dad6ce76550c75df6fe4c8128c
   languageName: node
   linkType: hard
 
@@ -13946,13 +13956,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-pager-view@npm:10.0.0":
-  version: 10.0.0
-  resolution: "react-native-pager-view@npm:10.0.0"
+"react-native-pager-view@npm:10.0.2":
+  version: 10.0.2
+  resolution: "react-native-pager-view@npm:10.0.2"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/6d8a225abb85ace566a4161f991ea2d7029514e4db5017c991c4c56699beb682b9b789c7e2198a7344be18fa56f5d4d40532cb402470bea03adece709368d8b0
+  checksum: 10/bffab96acb2cf7ecd7f85e65c7bd6f86062391663b1bf3b17758b587f343bc3ee83d5474e1faa49500b0ab3d3635e96c503582853f7375b894d6925e6218afdb
   languageName: node
   linkType: hard
 
