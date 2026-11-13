@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Extrapolation, interpolate, SharedValue, useDerivedValue, useSharedValue } from 'react-native-reanimated';
 
 import { getScaleWidth } from '~/framework/components/constants';
+import { COLLAPSIBLE_SMALL_HEIGHT } from '~/framework/modules/communities/components/discussions/header/styles';
 
 import { UseCollapsibleDiscussionHeader } from './types';
 
@@ -15,11 +16,13 @@ export function useCollapsibleDiscussionHeader(scrollOffset: SharedValue<number>
   const expandedBandHeightShared = useSharedValue(0);
   const collapsibleHeight = useSharedValue(0);
   const [expandedBandHeight, setExpandedBandHeight] = React.useState(0);
+  const [collapsedBandHeight, setCollapsedBandHeight] = React.useState(0);
 
   const onLayoutChange = React.useCallback(
     (nextBandHeight: number, nextCollapsibleHeight: number) => {
       if (Math.abs(collapsibleHeight.value - nextCollapsibleHeight) >= LAYOUT_EPSILON)
         collapsibleHeight.value = nextCollapsibleHeight;
+      setCollapsedBandHeight(nextBandHeight - Math.max(nextCollapsibleHeight - COLLAPSIBLE_SMALL_HEIGHT, 0));
       if (Math.abs(expandedBandHeightShared.value - nextBandHeight) < LAYOUT_EPSILON) return;
       expandedBandHeightShared.value = nextBandHeight;
       setExpandedBandHeight(nextBandHeight);
@@ -37,5 +40,5 @@ export function useCollapsibleDiscussionHeader(scrollOffset: SharedValue<number>
     [expandedBandHeightShared, collapsibleHeight, onLayoutChange, progress],
   );
 
-  return { collapse, expandedBandHeight };
+  return { collapse, collapsedBandHeight, expandedBandHeight };
 }
