@@ -21,6 +21,7 @@ export namespace CommentsThread {
   export const CommentItem = ({
     canAddComment,
     canAddReply,
+    hideTopBorder,
     onPressDelete,
     onPressEdit,
     onPressReply,
@@ -28,12 +29,16 @@ export namespace CommentsThread {
   }: ListRenderItemInfo<CommentsThreadInternals.CommentItem> & {
     canAddComment?: boolean;
     canAddReply?: boolean;
+    hideTopBorder?: boolean;
     onPressReply?: (item: CommentsThreadInternals.CommentItem, index: number) => void;
     onPressEdit?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
     onPressDelete?: (item: CommentsThreadInternals.CommentItem | CommentsThreadInternals.ReplyItem, index: number) => void;
   }) => {
     const { item } = info;
-    const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
+    const itemStyle = React.useMemo(
+      () => [styles.itemCommon, styles.itemComment, hideTopBorder && styles.itemCommentNoTopBorder],
+      [hideTopBorder],
+    );
     const itemTreeStyle = React.useMemo(() => [styles.itemTreeCommon, styles.itemTreeComment], []);
     const itemTreeDecoStyle = React.useMemo(() => [styles.itemTreeDecoStraight, styles.itemTreeDecoStraightComment], []);
 
@@ -59,9 +64,13 @@ export namespace CommentsThread {
 
   export const DeletedCommentItem = ({
     contentPlaceholder,
+    hideTopBorder,
     ...info
-  }: ListRenderItemInfo<CommentsThreadInternals.CommentDeletedItem> & { contentPlaceholder?: string }) => {
-    const itemStyle = React.useMemo(() => [styles.itemCommon, styles.itemComment], []);
+  }: ListRenderItemInfo<CommentsThreadInternals.CommentDeletedItem> & { contentPlaceholder?: string; hideTopBorder?: boolean }) => {
+    const itemStyle = React.useMemo(
+      () => [styles.itemCommon, styles.itemComment, hideTopBorder && styles.itemCommentNoTopBorder],
+      [hideTopBorder],
+    );
     const contentStyle = React.useMemo(
       () => [styles.itemCommentContentWrapper, info.item.nbReplies > 0 && styles.itemCommentContentWrapperDeletedComment],
       [info.item.nbReplies],
@@ -326,6 +335,7 @@ export namespace CommentsThread {
     canAddComment,
     canAddReply,
     deletedContentPlaceholder,
+    hideTopBorder,
     inputRef,
     listRef,
     onPressDelete,
@@ -349,6 +359,7 @@ export namespace CommentsThread {
         <CommentItem
           canAddReply={canAddReply}
           canAddComment={canAddComment}
+          hideTopBorder={hideTopBorder}
           onPressReply={onPressReply}
           onPressEdit={onPressEdit}
           onPressDelete={onPressDelete}
@@ -376,6 +387,7 @@ export namespace CommentsThread {
         <DeletedCommentItem
           {...(info as ListRenderItemInfo<CommentsThreadInternals.CommentDeletedItem>)}
           contentPlaceholder={deletedContentPlaceholder}
+          hideTopBorder={hideTopBorder}
         />
       );
     } else if (info.item.type === CommentsThreadInternals.ITEM_REPLY_DELETED) {

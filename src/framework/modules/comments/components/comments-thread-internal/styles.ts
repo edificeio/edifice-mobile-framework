@@ -64,6 +64,7 @@ export default StyleSheet.create({
   itemCommentEdit: {
     gap: 0,
   },
+  itemCommentNoTopBorder: { borderTopWidth: 0, paddingTop: UI_SIZES.spacing.small },
   itemCommon: {
     flexDirection: 'row',
     gap: UI_SIZES.spacing.minor,
