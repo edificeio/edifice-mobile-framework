@@ -68,6 +68,8 @@ export namespace I18n {
   // Supported locales
   const supportedLanguages = ['co', 'en', 'es', 'fr', 'fr-MQ', 'it'] as const;
   export type SupportedLocales = (typeof supportedLanguages)[number];
+  // Primary languages only (no regional variants like fr-MQ), used for device language detection
+  const primaryLanguages = supportedLanguages.filter(lang => !lang.includes('-'));
 
   // Transform translations for all embeded locales
   const localResources = {
@@ -131,7 +133,7 @@ export namespace I18n {
 
   // Set language to device one
   export async function setLanguage() {
-    const bestAvailableLanguage = RNLocalize.findBestLanguageTag(supportedLanguages) as {
+    const bestAvailableLanguage = RNLocalize.findBestLanguageTag(primaryLanguages) as {
       languageTag: string;
       isRTL: boolean;
     };
