@@ -31,7 +31,10 @@ import { DiscussionMessage, toDeletedMessage, toDiscussionMessage, toInstant } f
 import DiscussionHeader, { DiscussionHeaderLoader } from '~/framework/modules/communities/components/discussions/header';
 import { MessageEditorLauncher } from '~/framework/modules/communities/components/discussions/message-editor-launcher';
 import DiscussionRepliesBar from '~/framework/modules/communities/components/discussions/replies-bar';
+import UnreadMessagesSeparator from '~/framework/modules/communities/components/discussions/unread-messages-separator';
 import { useCollapsibleDiscussionHeader } from '~/framework/modules/communities/hooks/use-collapsible-discussion-header';
+import { useFirstUnreadMessage } from '~/framework/modules/communities/hooks/use-first-unread-message';
+import { useScrollAndStickToTarget } from '~/framework/modules/communities/hooks/use-scroll-and-stick-to-target';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
 import { deleteMessage, getDiscussion, getMessages, MESSAGES_PAGE_SIZE } from '~/framework/modules/communities/service/discussions';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
@@ -42,9 +45,6 @@ import { CommunitiesDiscussionDetailsScreen } from './types';
 
 const FIRST_MESSAGE_LOADER_LINES = [100, 100, 100, 70];
 const COMMENTS_LOADER_ROWS = Array.from({ length: DEFAULT_FLATLIST_PLACEHOLDER_ROWS }, (_, index) => index);
-/** The list stays at the bottom after a new message until its content doesn't change for this duration (ms). */
-const STICK_TO_BOTTOM_SETTLE_DELAY = 1500;
-// const MAINTAIN_VISIBLE_CONTENT_POSITION = { disabled: true };
 const LATEST_REPLY_BUTTON_MIN_MESSAGES = 8;
 
 export const DiscussionDetailsScreenOptions = screenOptions(() => ({ headerTitle: '' }));
@@ -105,7 +105,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     },
     [scrollOffset],
   );
-  const { collapse, expandedBandHeight } = useCollapsibleDiscussionHeader(scrollOffset);
+  const { collapse, collapsedBandHeight, expandedBandHeight } = useCollapsibleDiscussionHeader(scrollOffset);
   const [isLayoutReady, setIsLayoutReady] = React.useState(false);
   const isHeaderMeasured = expandedBandHeight > 0;
   React.useEffect(() => {
@@ -122,7 +122,6 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
   }, [communityId, discussionId, dispatch, session]);
 
   const isDiscussionFreshRef = React.useRef(false);
-
   // Fetch discussion if it's missing from the store
   const hasDiscussion = !!discussion;
   React.useEffect(() => {
@@ -139,6 +138,15 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
       cancelled = true;
     };
   }, [fetchDiscussion, hasDiscussion, navigation]);
+
+  const firstUnread = useFirstUnreadMessage({
+    communityId,
+    discussion,
+    discussionId,
+    messagesCount: messages.length,
+    session,
+  });
+  const firstUnreadIndex = firstUnread.status === 'unread' ? firstUnread.index : undefined;
 
   const onPageReached = React.useCallback<NonNullable<PaginatedFlashListProps<DiscussionMessage>['onPageReached']>>(
     async (page, reloadAll) => {
@@ -188,27 +196,11 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     [communityId, discussionId, navigation],
   );
 
-  /**
-   * After a new message, the heights of the list change while it settles: the previous page replaces its placeholders,
-   * and the WebViews measure their content. A single `scrollToEnd` would end up in the middle of the list,
-   * so the list is kept at the bottom until its content stops changing, or the user scrolls.
-   */
-  const isStickingToBottomRef = React.useRef(false);
-  const stickToBottomTimeoutRef = React.useRef<ReturnType<typeof setTimeout>>(undefined);
-  const stopStickingToBottom = React.useCallback(() => {
-    isStickingToBottomRef.current = false;
-    clearTimeout(stickToBottomTimeoutRef.current);
-  }, []);
-  const stickToBottom = React.useCallback(() => {
-    isStickingToBottomRef.current = true;
-    scrollRef.current?.scrollToEnd({ animated: false });
-    clearTimeout(stickToBottomTimeoutRef.current);
-    stickToBottomTimeoutRef.current = setTimeout(stopStickingToBottom, STICK_TO_BOTTOM_SETTLE_DELAY);
-  }, [stopStickingToBottom]);
-  const onContentSizeChange = React.useCallback(() => {
-    if (isStickingToBottomRef.current) stickToBottom();
-  }, [stickToBottom]);
-  React.useEffect(() => stopStickingToBottom, [stopStickingToBottom]);
+  const { onContentSizeChange, scrollAndStickTo, stopSticking } = useScrollAndStickToTarget({
+    listRef: scrollRef,
+    viewOffset: -collapsedBandHeight,
+  });
+  const stickToBottom = React.useCallback(() => scrollAndStickTo('end'), [scrollAndStickTo]);
 
   const goToLatestMessage = React.useCallback(
     (loading: Promise<unknown>) => {
@@ -225,6 +217,26 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     if (messagesRef.current.at(-1) !== LOADING_ITEM_DATA) stickToBottom();
     else goToLatestMessage(loadLastPage(messagesRef.current.length));
   }, [goToLatestMessage, loadLastPage, stickToBottom]);
+
+  // Opens the discussion on its first unread message, or on the latest one when everything has already been read
+  const hasInitiallyFocusedRef = React.useRef(false);
+  const hasMessages = messages.length > 0;
+  React.useEffect(() => {
+    if (hasInitiallyFocusedRef.current || !isLayoutReady || !hasMessages || firstUnread.status === 'pending') return;
+    hasInitiallyFocusedRef.current = true;
+    if (firstUnread.status === 'all-read') onPressLatestReply();
+    else if (firstUnread.status === 'unread') {
+      const { index } = firstUnread;
+      if (messagesRef.current[index] !== LOADING_ITEM_DATA) scrollAndStickTo(index);
+      else
+        onPageReached(Math.floor(index / MESSAGES_PAGE_SIZE))
+          .then(() => scrollAndStickTo(index))
+          .catch(e => {
+            console.error('Error while loading community discussion messages', e);
+            toast.showError();
+          });
+    }
+  }, [firstUnread, hasMessages, isLayoutReady, onPageReached, onPressLatestReply, scrollAndStickTo]);
 
   // Reload the affected page when coming back from the message editor
   const handledMutationRef = React.useRef<number>(undefined);
@@ -300,24 +312,35 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
 
   const keyExtractor = React.useCallback((item: DiscussionMessage) => item.id, []);
 
-  // Distinct types so recycled cells are only reused between messages of the same kind
+  // Distinct types so recycled cells are only reused between messages of the same kind (the unread separator changes the height)
   const getItemType = React.useCallback(
-    (item: DiscussionMessage) => (item.type === CommentsThreadInternals.ITEM_COMMENT_DELETED ? 'deleted' : 'message'),
-    [],
+    (item: DiscussionMessage, index: number) => {
+      if (index === firstUnreadIndex) return 'unread-separator';
+      return item.type === CommentsThreadInternals.ITEM_COMMENT_DELETED ? 'deleted' : 'message';
+    },
+    [firstUnreadIndex],
   );
 
+  // The separator replaces the top border of the first unread message
   const renderItem = React.useCallback<PaginatedFlashListProps<DiscussionMessage>['renderItem']>(
-    info =>
-      info.item.hidden ? null : (
-        <CommentsThread.Item
-          {...(info as unknown as ListRenderItemInfo<CommentsThreadInternals.Item>)}
-          canAddComment
-          deletedContentPlaceholder={deletedPlaceholder}
-          onPressDelete={onPressDelete}
-          onPressEdit={onEditMessage}
-        />
-      ),
-    [deletedPlaceholder, onEditMessage, onPressDelete],
+    info => {
+      if (info.item.hidden) return null;
+      const isFirstUnread = info.index === firstUnreadIndex;
+      return (
+        <>
+          {isFirstUnread ? <UnreadMessagesSeparator /> : null}
+          <CommentsThread.Item
+            {...(info as unknown as ListRenderItemInfo<CommentsThreadInternals.Item>)}
+            canAddComment
+            deletedContentPlaceholder={deletedPlaceholder}
+            hideTopBorder={isFirstUnread}
+            onPressDelete={onPressDelete}
+            onPressEdit={onEditMessage}
+          />
+        </>
+      );
+    },
+    [deletedPlaceholder, firstUnreadIndex, onEditMessage, onPressDelete],
   );
 
   const renderPlaceholderItem = React.useCallback(() => <CommentsThreadItemLoader />, []);
@@ -331,6 +354,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
           <PaginatedFlashList
             ref={scrollRef}
             data={messages}
+            extraData={firstUnreadIndex}
             getItemType={getItemType}
             keyExtractor={keyExtractor}
             onPageReached={onPageReached}
@@ -342,7 +366,7 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
             onScroll={onScroll}
             onContentSizeChange={onContentSizeChange}
             // stops list position fix if user starts scrolling
-            onScrollBeginDrag={stopStickingToBottom}
+            onScrollBeginDrag={stopSticking}
             scrollIndicatorInsets={SCROLL_INDICATOR_INSETS}
             contentInsetAdjustmentBehavior="never"
           />

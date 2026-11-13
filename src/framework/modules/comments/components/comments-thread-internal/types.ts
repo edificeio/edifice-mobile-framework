@@ -105,6 +105,7 @@ export namespace CommentsThreadInternals {
     canAddComment?: boolean;
     canAddReply?: boolean;
     deletedContentPlaceholder?: string;
+    hideTopBorder?: boolean;
     onPressReply?: (item: CommentsThreadInternals.CommentItem, index: number) => void;
     onSendEdit?: CommentsThreadInternalProps['onEdit'];
     inputRef?: ChatTextAreaProps['ref'];
