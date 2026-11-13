@@ -211,7 +211,6 @@ export namespace I18n {
         });
     } else {*/
     await i18n.use(initReactI18next).init({
-      compatibilityJSON: 'v3',
       fallbackLng,
       interpolation: {
         escapeValue: false,
