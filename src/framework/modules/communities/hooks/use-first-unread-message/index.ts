@@ -1,64 +1,47 @@
 import * as React from 'react';
 
-import { countUnreadMessages, Discussion } from '~/framework/modules/communities/service/discussions';
+import { countMessages, countUnreadMessages, DiscussionRuntimeExtras } from '~/framework/modules/communities/service/discussions';
 
-import { FirstUnreadMessage, UseFirstUnreadMessageParams } from './types';
+import { FirstUnreadMessage, UseFirstUnreadMessage, UseFirstUnreadMessageParams } from './types';
 
 export function useFirstUnreadMessage({
   communityId,
   discussion,
   discussionId,
-  messagesCount,
   session,
-}: UseFirstUnreadMessageParams): FirstUnreadMessage {
-  const lastVisitRef = React.useRef<Partial<Pick<Discussion, 'hasUnreadMessages' | 'lastVisitedTime' | 'unreadCount'>>>(undefined);
+}: UseFirstUnreadMessageParams): UseFirstUnreadMessage {
+  // Kept from the first render: the discussion is fetched again on opening, and is then marked as visited
+  const lastVisitRef = React.useRef<Partial<Pick<DiscussionRuntimeExtras, 'hasUnreadMessages' | 'lastVisitedTime'>>>(undefined);
   if (discussion && !lastVisitRef.current) {
-    const { hasUnreadMessages, lastVisitedTime, unreadCount } = discussion as Partial<Discussion>;
-    lastVisitRef.current = { hasUnreadMessages, lastVisitedTime, unreadCount };
+    const { hasUnreadMessages, lastVisitedTime } = discussion as Partial<DiscussionRuntimeExtras>;
+    lastVisitRef.current = { hasUnreadMessages, lastVisitedTime };
   }
 
-  // Number of messages posted since the last visit. Reuses the count of the discussions list when available.
-  // undefined: not known yet, null: the count failed
-  const hasDiscussion = !!discussion;
-  const [unreadCount, setUnreadCount] = React.useState<number | null>();
-  React.useEffect(() => {
+  const [firstUnread, setFirstUnread] = React.useState<FirstUnreadMessage>();
+
+  // Both counts are made together: the unread count of the discussions list can be outdated compared to the total
+  const resolveFirstUnread = React.useCallback(async () => {
     const lastVisit = lastVisitRef.current;
-    if (!hasDiscussion || !lastVisit?.hasUnreadMessages || !lastVisit.lastVisitedTime) return;
-    if (lastVisit.unreadCount) {
-      setUnreadCount(lastVisit.unreadCount);
-      return;
-    }
-    let cancelled = false;
-    countUnreadMessages(session, communityId, discussionId, lastVisit.lastVisitedTime)
-      .then(count => {
-        if (!cancelled) setUnreadCount(count);
-      })
-      .catch(e => {
-        console.error('Error while counting community discussion unread messages', e);
-        if (!cancelled) setUnreadCount(null);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [communityId, discussionId, hasDiscussion, session]);
+    const lastVisitedTime = lastVisit?.hasUnreadMessages ? lastVisit.lastVisitedTime : undefined;
+    const [total, unreadCount] = await Promise.all([
+      countMessages(session, communityId, discussionId),
+      lastVisitedTime
+        ? countUnreadMessages(session, communityId, discussionId, lastVisitedTime).catch(e => {
+            console.error('Error while counting community discussion unread messages', e);
+            return null;
+          })
+        : undefined,
+    ]);
 
-  const [firstUnreadIndex, setFirstUnreadIndex] = React.useState<number>();
-  React.useEffect(() => {
-    if (!unreadCount || !messagesCount || firstUnreadIndex !== undefined) return;
-    setFirstUnreadIndex(Math.max(0, messagesCount - unreadCount));
-  }, [firstUnreadIndex, messagesCount, unreadCount]);
+    let result: FirstUnreadMessage;
+    if (!lastVisit?.lastVisitedTime || unreadCount === null) result = { status: 'never-visited' };
+    else if (!unreadCount) result = { status: 'all-read' };
+    else result = { index: Math.max(0, total - unreadCount), status: 'unread' };
+    setFirstUnread(result);
+    return { firstUnread: result, total };
+  }, [communityId, discussionId, session]);
 
-  const lastVisit = lastVisitRef.current;
-  let status: Exclude<FirstUnreadMessage['status'], 'unread'> | undefined;
-  if (!lastVisit) status = 'pending';
-  else if (!lastVisit.lastVisitedTime || unreadCount === null) status = 'never-visited';
-  else if (!lastVisit.hasUnreadMessages || unreadCount === 0) status = 'all-read';
-  else if (firstUnreadIndex === undefined) status = 'pending';
-
-  // Memoized on primitives: the returned object only changes when the result changes
-  return React.useMemo<FirstUnreadMessage>(
-    () =>
-      status || firstUnreadIndex === undefined ? { status: status ?? 'pending' } : { index: firstUnreadIndex, status: 'unread' },
-    [firstUnreadIndex, status],
-  );
+  return { firstUnread, resolveFirstUnread };
 }
+
+export type { FirstUnreadMessage } from './types';

@@ -359,6 +359,8 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
         data={placeholderData}
         scrollEnabled={false}
         {...flashListProps}
+        initialScrollIndex={undefined}
+        initialScrollIndexParams={undefined}
       />
     ),
     [flashListProps, keyExtractor, placeholderData, renderPlaceholderItem],

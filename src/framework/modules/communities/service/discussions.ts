@@ -22,6 +22,16 @@ export interface DiscussionsSummary {
   hasUnreadMessages: boolean;
   totalDiscussions: number;
 }
+/**
+ * Number of messages of the discussion, including deleted ones.
+ * The backend count excludes the first message, while `getMessages` includes it: we do +1 here
+ * so that the count matches the indexes of the messages list.
+ */
+export const countMessages = async (session: AuthActiveAccount, communityId: number, discussionId: number): Promise<number> => {
+  const { count } = await accountApi(session, moduleConfig, DiscussionClient).countMessages(communityId, discussionId);
+  return count + 1;
+};
+
 export const countUnreadMessages = async (
   session: AuthActiveAccount,
   communityId: number,

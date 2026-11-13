@@ -48,3 +48,5 @@ export function useScrollAndStickToTarget<T>({
 
   return { onContentSizeChange, scrollAndStickTo, stopSticking };
 }
+
+export type { ScrollTarget } from './types';

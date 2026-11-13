@@ -3,7 +3,6 @@ import { Alert, ListRenderItemInfo, NativeScrollEvent, NativeSyntheticEvent, Vie
 
 import { FlashListRef } from '@shopify/flash-list';
 import { useSharedValue } from 'react-native-reanimated';
-import { useDispatch, useSelector } from 'react-redux';
 import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
@@ -11,11 +10,9 @@ import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import {
   DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
-  LOADING_ITEM_DATA,
   PaginatedFlashList,
   PaginatedFlashListProps,
   PaginatedListItem,
-  staleOrSplice,
 } from '~/framework/components/list/paginated-list';
 import { BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
@@ -27,17 +24,17 @@ import {
   CommentsThreadItemLoader,
 } from '~/framework/modules/comments/components/comments-thread-internal';
 import { CommentsThread } from '~/framework/modules/comments/components/comments-thread-internal/item';
-import { DiscussionMessage, toDeletedMessage, toDiscussionMessage, toInstant } from '~/framework/modules/communities/adapter';
+import { DiscussionMessage, toInstant } from '~/framework/modules/communities/adapter';
 import DiscussionHeader, { DiscussionHeaderLoader } from '~/framework/modules/communities/components/discussions/header';
 import { MessageEditorLauncher } from '~/framework/modules/communities/components/discussions/message-editor-launcher';
 import DiscussionRepliesBar from '~/framework/modules/communities/components/discussions/replies-bar';
 import UnreadMessagesSeparator from '~/framework/modules/communities/components/discussions/unread-messages-separator';
 import { useCollapsibleDiscussionHeader } from '~/framework/modules/communities/hooks/use-collapsible-discussion-header';
-import { useFirstUnreadMessage } from '~/framework/modules/communities/hooks/use-first-unread-message';
+import { useDiscussion } from '~/framework/modules/communities/hooks/use-discussion';
+import { useDiscussionMessages } from '~/framework/modules/communities/hooks/use-discussion-messages';
 import { useScrollAndStickToTarget } from '~/framework/modules/communities/hooks/use-scroll-and-stick-to-target';
 import { communitiesRouteNames } from '~/framework/modules/communities/navigation';
-import { deleteMessage, getDiscussion, getMessages, MESSAGES_PAGE_SIZE } from '~/framework/modules/communities/service/discussions';
-import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
+import { deleteMessage, MESSAGES_PAGE_SIZE } from '~/framework/modules/communities/service/discussions';
 import { getDiscussionStatus } from '~/framework/modules/communities/utils';
 
 import styles, { SCROLL_INDICATOR_INSETS } from './styles';
@@ -48,23 +45,6 @@ const COMMENTS_LOADER_ROWS = Array.from({ length: DEFAULT_FLATLIST_PLACEHOLDER_R
 const LATEST_REPLY_BUTTON_MIN_MESSAGES = 8;
 
 export const DiscussionDetailsScreenOptions = screenOptions(() => ({ headerTitle: '' }));
-
-/**
- * Like `staleOrSplice`, but a growing total keeps the loaded messages: they are never removed (deletion only flags them)
- * and new ones are appended, so their index doesn't change.
- */
-function mergeMessagesPage({
-  newData,
-  previousData,
-  reloadAll,
-  start,
-  total,
-}: Parameters<typeof staleOrSplice<DiscussionMessage>>[0]): PaginatedListItem<DiscussionMessage>[] {
-  if (reloadAll || total < previousData.length) return staleOrSplice({ newData, previousData, reloadAll: true, start, total });
-  const mergedData = [...previousData, ...new Array(total - previousData.length).fill(LOADING_ITEM_DATA)];
-  mergedData.splice(start, newData.length, ...newData);
-  return mergedData;
-}
 
 const DiscussionDetailsLoader = React.memo(() => (
   <View style={styles.loaderRoot}>
@@ -92,11 +72,6 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
   },
   session,
 }) {
-  const dispatch = useDispatch();
-  const discussion = useSelector(communitiesSelectors.getCommunityDiscussion(communityId, discussionId));
-  const [messages, setMessages] = React.useState<PaginatedListItem<DiscussionMessage>[]>([]);
-  const messagesRef = React.useRef(messages);
-  messagesRef.current = messages;
   const scrollRef = React.useRef<FlashListRef<PaginatedListItem<DiscussionMessage>>>(null);
   const scrollOffset = useSharedValue(0);
   const onScroll = React.useCallback(
@@ -116,68 +91,32 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     return () => cancelAnimationFrame(frame);
   }, [isHeaderMeasured]);
 
-  const fetchDiscussion = React.useCallback(async () => {
-    const loaded = await getDiscussion(session, communityId, discussionId);
-    dispatch(communitiesActions.loadCommunityDiscussions(communityId, { [loaded.id]: loaded }));
-  }, [communityId, discussionId, dispatch, session]);
-
-  const isDiscussionFreshRef = React.useRef(false);
-  // Fetch discussion if it's missing from the store
-  const hasDiscussion = !!discussion;
-  React.useEffect(() => {
-    if (hasDiscussion) return;
-    let cancelled = false;
-    isDiscussionFreshRef.current = true;
-    fetchDiscussion().catch(e => {
-      if (cancelled) return;
+  const onDiscussionLoadError = React.useCallback(
+    (e: unknown) => {
       console.error('Error while loading community discussion', e);
       toast.showError();
       if (navigation.canGoBack()) navigation.goBack();
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [fetchDiscussion, hasDiscussion, navigation]);
-
-  const firstUnread = useFirstUnreadMessage({
+    },
+    [navigation],
+  );
+  const { discussion, fetchDiscussion, refreshDiscussion } = useDiscussion({
     communityId,
-    discussion,
     discussionId,
-    messagesCount: messages.length,
+    onLoadError: onDiscussionLoadError,
     session,
   });
-  const firstUnreadIndex = firstUnread.status === 'unread' ? firstUnread.index : undefined;
 
-  const onPageReached = React.useCallback<NonNullable<PaginatedFlashListProps<DiscussionMessage>['onPageReached']>>(
-    async (page, reloadAll) => {
-      if (reloadAll) {
-        if (!isDiscussionFreshRef.current) await fetchDiscussion();
-        isDiscussionFreshRef.current = false;
-      }
-
-      const { messages: loadedMessages, total } = await getMessages(session, communityId, discussionId, page, MESSAGES_PAGE_SIZE);
-      const newData = loadedMessages.map(toDiscussionMessage);
-      setMessages(previousData => mergeMessagesPage({ newData, previousData, reloadAll, start: page * MESSAGES_PAGE_SIZE, total }));
-    },
-    [communityId, discussionId, fetchDiscussion, session],
-  );
-
-  const loadLastPage = React.useCallback(
-    async (expectedTotal: number) => {
-      let page = Math.max(0, Math.floor((expectedTotal - 1) / MESSAGES_PAGE_SIZE));
-      let result = await getMessages(session, communityId, discussionId, page, MESSAGES_PAGE_SIZE);
-      const lastPage = Math.max(0, Math.floor((result.total - 1) / MESSAGES_PAGE_SIZE));
-      if (lastPage !== page) {
-        page = lastPage;
-        result = await getMessages(session, communityId, discussionId, page, MESSAGES_PAGE_SIZE);
-      }
-      const newData = result.messages.map(toDiscussionMessage);
-      setMessages(previousData =>
-        mergeMessagesPage({ newData, previousData, start: page * MESSAGES_PAGE_SIZE, total: result.total }),
-      );
-    },
-    [communityId, discussionId, session],
-  );
+  const {
+    consumeInitialTarget,
+    firstUnreadIndex,
+    initialScrollIndex,
+    isLastPageLoaded,
+    loadLastPage,
+    markMessageAsDeleted,
+    messages,
+    onPageReached,
+    reloadMessagePage,
+  } = useDiscussionMessages({ communityId, discussion, discussionId, refreshDiscussion, session });
 
   const onAddMessage = React.useCallback(() => {
     navigation.navigate(communitiesRouteNames.discussionMessageEditor, { communityId, discussionId });
@@ -212,66 +151,49 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
     [stickToBottom],
   );
 
-  // No need to fetch again when the last page is already loaded: the unloaded pages are placeholders
   const onPressLatestReply = React.useCallback(() => {
-    if (messagesRef.current.at(-1) !== LOADING_ITEM_DATA) stickToBottom();
-    else goToLatestMessage(loadLastPage(messagesRef.current.length));
-  }, [goToLatestMessage, loadLastPage, stickToBottom]);
+    if (isLastPageLoaded()) stickToBottom();
+    else goToLatestMessage(loadLastPage());
+  }, [goToLatestMessage, isLastPageLoaded, loadLastPage, stickToBottom]);
 
-  // Opens the discussion on its first unread message, or on the latest one when everything has already been read
-  const hasInitiallyFocusedRef = React.useRef(false);
-  const hasMessages = messages.length > 0;
-  React.useEffect(() => {
-    if (hasInitiallyFocusedRef.current || !isLayoutReady || !hasMessages || firstUnread.status === 'pending') return;
-    hasInitiallyFocusedRef.current = true;
-    if (firstUnread.status === 'all-read') onPressLatestReply();
-    else if (firstUnread.status === 'unread') {
-      const { index } = firstUnread;
-      if (messagesRef.current[index] !== LOADING_ITEM_DATA) scrollAndStickTo(index);
-      else
-        onPageReached(Math.floor(index / MESSAGES_PAGE_SIZE))
-          .then(() => scrollAndStickTo(index))
-          .catch(e => {
-            console.error('Error while loading community discussion messages', e);
-            toast.showError();
-          });
-    }
-  }, [firstUnread, hasMessages, isLayoutReady, onPageReached, onPressLatestReply, scrollAndStickTo]);
+  const initialScrollIndexParams = React.useMemo(() => ({ viewOffset: -collapsedBandHeight }), [collapsedBandHeight]);
+
+  // The list already opens on its target: sticking to it absorbs the height changes of the messages measuring their
+  // content, and puts the latest message at the bottom of the screen (`initialScrollIndex` puts it at the top).
+  // The placeholder list also calls `onLoad`, without the list ref.
+  const onLoad = React.useCallback(() => {
+    if (!scrollRef.current) return;
+    const target = consumeInitialTarget();
+    if (target !== undefined) scrollAndStickTo(target);
+  }, [consumeInitialTarget, scrollAndStickTo]);
 
   // Reload the affected page when coming back from the message editor
   const handledMutationRef = React.useRef<number>(undefined);
   React.useEffect(() => {
     if (!lastMutation || handledMutationRef.current === lastMutation.at) return;
     handledMutationRef.current = lastMutation.at;
-    const currentMessages = messagesRef.current;
     if (lastMutation.type === 'created') {
       // The discussion is fetched again for its updated messages count
-      goToLatestMessage(Promise.all([fetchDiscussion(), loadLastPage(currentMessages.length + 1)]));
+      goToLatestMessage(Promise.all([fetchDiscussion(), loadLastPage()]));
     } else {
-      const index = currentMessages.findIndex(
-        message => message !== LOADING_ITEM_DATA && message.id === lastMutation.messageId.toString(),
-      );
-      if (index === -1) return;
-      onPageReached(Math.floor(index / MESSAGES_PAGE_SIZE)).catch(e => {
+      reloadMessagePage(lastMutation.messageId).catch(e => {
         console.error('Error while reloading community discussion messages', e);
         toast.showError();
       });
     }
-  }, [fetchDiscussion, goToLatestMessage, lastMutation, loadLastPage, onPageReached]);
+  }, [fetchDiscussion, goToLatestMessage, lastMutation, loadLastPage, reloadMessagePage]);
 
   const onDelete = React.useCallback(
     async (id: string) => {
       try {
         await deleteMessage(session, communityId, discussionId, Number(id));
-        setMessages(previous =>
-          previous.map(message => (message !== LOADING_ITEM_DATA && message.id === id ? toDeletedMessage(message) : message)),
-        );
+        markMessageAsDeleted(id);
       } catch (e) {
         console.error('Error while deleting community discussion message', e);
         toast.showError();
       }
     },
-    [communityId, discussionId, session],
+    [communityId, discussionId, markMessageAsDeleted, session],
   );
 
   const createdAt = React.useMemo(() => toInstant(discussion?.createdAt), [discussion?.createdAt]);
@@ -356,7 +278,10 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
             data={messages}
             extraData={firstUnreadIndex}
             getItemType={getItemType}
+            initialScrollIndex={initialScrollIndex}
+            initialScrollIndexParams={initialScrollIndexParams}
             keyExtractor={keyExtractor}
+            onLoad={onLoad}
             onPageReached={onPageReached}
             pageSize={MESSAGES_PAGE_SIZE}
             refreshControlProps={refreshControlProps}
