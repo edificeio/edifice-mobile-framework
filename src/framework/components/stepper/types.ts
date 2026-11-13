@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ColorValue } from 'react-native';
 
-import { FlashListProps } from '@shopify/flash-list';
+import { FlashListProps, FlashListRef } from '@shopify/flash-list';
 
 import { SvgIconName } from '~/framework/components/picture';
 
@@ -10,6 +10,7 @@ export type StepperProps<ItemT> = Omit<
   'data' | 'getItemType' | 'keyExtractor' | 'renderItem'
 > & {
   keyExtractor?: (item: ItemT, index: number) => string;
+  ref?: React.Ref<FlashListRef<StepperRow<ItemT>>>;
   renderItem: (info: StepperRenderItemInfo<ItemT>) => React.ReactElement | null;
   sections: readonly StepperSection<ItemT>[];
 };

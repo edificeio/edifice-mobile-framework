@@ -2,6 +2,7 @@ import * as React from 'react';
 import { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent, View } from 'react-native';
 
 import { Temporal } from '@js-temporal/polyfill';
+import { FlashListRef } from '@shopify/flash-list';
 import moment from 'moment';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -13,10 +14,12 @@ import { UI_SIZES } from '~/framework/components/constants';
 import DayPicker from '~/framework/components/pickers/day';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import SegmentedControl from '~/framework/components/segmented-control';
+import type { StepperRow } from '~/framework/components/stepper';
 import { withSession } from '~/framework/modules/auth/util';
 import { MenuLegend, MenuSteps, MenuStepsPlaceholder } from '~/framework/modules/widgets/cantine/components/menu';
 import { useCantineMenu } from '~/framework/modules/widgets/cantine/hooks/menu';
 import { useCantineStructure } from '~/framework/modules/widgets/cantine/hooks/structure';
+import type { MenuItem } from '~/framework/modules/widgets/cantine/model';
 import { WidgetMessage } from '~/framework/modules/widgets/components/message';
 import { momentToPlainDate } from '~/framework/util/date';
 
@@ -96,13 +99,14 @@ function useDaySwipe(selectedDate: Temporal.PlainDate, onDayChange: (date: Tempo
   return { gesture, style };
 }
 
-function useCollapsingHeader() {
+function useCollapsingHeader(hasStickyPart: boolean) {
   const scrollY = useSharedValue(0);
   const [headerHeight, setHeaderHeight] = React.useState<number>(0);
   const [collapsibleHeight, setCollapsibleHeight] = React.useState<number>(0);
+  const maxTranslation = hasStickyPart ? collapsibleHeight : headerHeight;
 
   const style = useAnimatedStyle(() => ({
-    transform: [{ translateY: -Math.min(Math.max(scrollY.value, 0), collapsibleHeight) }],
+    transform: [{ translateY: -Math.min(Math.max(scrollY.value, 0), maxTranslation) }],
   }));
 
   const onScroll = React.useCallback(
@@ -114,16 +118,19 @@ function useCollapsingHeader() {
 
   const onHeaderLayout = React.useCallback((event: LayoutChangeEvent) => setHeaderHeight(event.nativeEvent.layout.height), []);
 
-  const onCollapsibleLayout = React.useCallback(
-    (event: LayoutChangeEvent) => setCollapsibleHeight(event.nativeEvent.layout.height + UI_SIZES.spacing.medium),
-    [],
-  );
+  const collapsibleHeightRef = React.useRef<number>(0);
+  const onCollapsibleLayout = React.useCallback((event: LayoutChangeEvent) => {
+    collapsibleHeightRef.current = event.nativeEvent.layout.height;
+    setCollapsibleHeight(event.nativeEvent.layout.height);
+  }, []);
 
   const reset = React.useCallback(() => {
     scrollY.value = 0;
   }, [scrollY]);
 
-  return { headerHeight, onCollapsibleLayout, onHeaderLayout, onScroll, reset, style };
+  const getMenuStartOffset = React.useCallback(() => Math.min(scrollY.value, collapsibleHeightRef.current), [scrollY]);
+
+  return { getMenuStartOffset, headerHeight, onCollapsibleLayout, onHeaderLayout, onScroll, reset, style };
 }
 
 export const computeNavBar = modalScreenOptions('modal', () => ({ title: I18n.get('widget-cantine-home-title') }));
@@ -168,24 +175,30 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
       [selectStructure, selectedStructureValue],
     );
 
-    const collapsingHeader = useCollapsingHeader();
+    const hasMealSegments = Boolean(dinnerItems && lunchItems.length);
+    const collapsingHeader = useCollapsingHeader(hasMealSegments);
     const resetHeader = collapsingHeader.reset;
-    React.useEffect(resetHeader, [isDinner, resetHeader, selectedDate]);
+    React.useEffect(resetHeader, [resetHeader, selectedDate]);
 
+    const menuListRef = React.useRef<FlashListRef<StepperRow<MenuItem>>>(null);
+    const getMenuStartOffset = collapsingHeader.getMenuStartOffset;
+    React.useEffect(() => {
+      menuListRef.current?.scrollToOffset({ animated: true, offset: getMenuStartOffset() });
+    }, [getMenuStartOffset, isDinner]);
+
+    // the structure and day pickers move up with the scroll, only the meal segments stay.
     const renderPickers = () => (
-      <View style={styles.contentHeader}>
+      <View style={styles.contentHeader} onLayout={collapsingHeader.onCollapsibleLayout}>
         {dropdownItemsStructures.length > 1 && (
-          <View onLayout={collapsingHeader.onCollapsibleLayout}>
-            <DropdownPicker
-              open={isOpen}
-              value={selectedStructureValue}
-              items={dropdownItemsStructures}
-              setOpen={setIsOpen}
-              setValue={onStructureChange}
-              placeholder={I18n.get('widget-cantine-home-select-structure')}
-              style={styles.dropdownContainer}
-            />
-          </View>
+          <DropdownPicker
+            open={isOpen}
+            value={selectedStructureValue}
+            items={dropdownItemsStructures}
+            setOpen={setIsOpen}
+            setValue={onStructureChange}
+            placeholder={I18n.get('widget-cantine-home-select-structure')}
+            style={styles.dropdownContainer}
+          />
         )}
         <DayPicker
           onDateChange={date => {
@@ -201,7 +214,7 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
     const daySwipe = useDaySwipe(selectedDate, selectDate);
 
     const renderMealSegments = () =>
-      dinnerItems && lunchItems.length ? (
+      hasMealSegments ? (
         <View style={styles.mealSegments}>
           <SegmentedControl
             initialSelectedIndex={LUNCH_SEGMENT}
@@ -229,6 +242,7 @@ const CantineHomeScreen = withSession<{ embedded?: boolean; noScroll?: boolean }
           <Animated.View style={[styles.menuWrapper, daySwipe.style]}>
             <MenuSteps
               key={selectedDay}
+              ref={menuListRef}
               menuItems={isLoaded ? mealItems : []}
               showAllergens
               scrollEnabled={!(embedded && noScroll)}
