@@ -6207,7 +6207,7 @@ __metadata:
     react-native-snap-carousel: "npm:3.9.1"
     react-native-svg: "npm:15.16.1"
     react-native-svg-transformer: "npm:1.5.3"
-    react-native-swipe-list-view: "npm:3.2.9"
+    react-native-swipe-list-view: "npm:4.0.1"
     react-native-swiper: "npm:1.6.0"
     react-native-tab-view: "npm:4.3.4"
     react-native-toast-message: "npm:2.5.2"
@@ -14128,14 +14128,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-swipe-list-view@npm:3.2.9":
-  version: 3.2.9
-  resolution: "react-native-swipe-list-view@npm:3.2.9"
+"react-native-swipe-list-view@npm:4.0.1":
+  version: 4.0.1
+  resolution: "react-native-swipe-list-view@npm:4.0.1"
   peerDependencies:
-    prop-types: ">=15.5.0"
-    react: ">=0.14.8"
-    react-native: ">=0.23.1"
-  checksum: 10/d35dc570dab82b2dfa2e3fd41361001545635b3d8ac417623fe38924491b5dc1ef6ec33c3956006c2ae8522bd8a3ca67fc8c6addf826819074e0f0026a1081f1
+    react: ">=18.0.0"
+    react-native: ">=0.73.0"
+    react-native-gesture-handler: ">=2.14.0"
+    react-native-reanimated: ">=3.6.0"
+  checksum: 10/c5e6deeee059cc8de16da16e05a995d6cacf643fd5be61a22b1c4b733d9cd89f2b4c5ac39d2c9759a555d21c452693923e2b87ca955a0c55e344b9c22921ecfd
   languageName: node
   linkType: hard
 
