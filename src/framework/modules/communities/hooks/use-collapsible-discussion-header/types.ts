@@ -2,5 +2,6 @@ import type { DiscussionHeaderCollapse } from '~/framework/modules/communities/c
 
 export interface UseCollapsibleDiscussionHeader {
   collapse: DiscussionHeaderCollapse;
+  collapsedBandHeight: number;
   expandedBandHeight: number;
 }
