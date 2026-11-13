@@ -73,7 +73,7 @@ export const useRootStackNavigation = () => {
         RequirementScreens: {
           if: useHasRequirement,
           screenOptions: visibleStackScreenOptions,
-          screens: requirementsModule.screens,
+          screens: { ...requirementsModule.screens, ...coreScreens },
         },
         UserModals: {
           if: useIsSignedIn,
