@@ -85,4 +85,8 @@ Les styles se trouvent **uniquement dans un fichier `styles.ts`** à côté du c
 
 ## 8. Gestion des dépendances
 
-Applique la règle `PACKAGE` (`.claude/rules/PACKAGE.md`) pour toute modification du fichier `package.json` (`./package.json`).
+Applique la règle `PACKAGE` (`.claude/rules/PACKAGE.md`) pour toute modification du fichier `package.json` (`package.json`).
+
+## 9. Code natif iOS et Android
+
+Applique la règle `NATIVE` (`.claude/rules/NATIVE.md`) pour toute modification du code natif iOS (dossier `ios`) et Android (dossier `android`).
