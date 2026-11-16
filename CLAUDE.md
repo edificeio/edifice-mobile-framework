@@ -46,8 +46,9 @@ node cli/override.js -v --no-i dev/default   # appliquer dev/default (non intera
 yarn override-restore                         # restaurer l'état d'origine
 ```
 
-- Applique `dev/default` **avant** de modifier du code, et `yarn override-restore` **après** : l'override réécrit des fichiers suivis par git (ex. `override.json`, `phrase.json`, `src/platforms/*`) — ne pas les committer par erreur.
-- Regarde `override.json` avant toute action : si l'override actif n'est pas `dev/default`, applique `dev/default`.
+- Regarde `override.json` avant toute action : si **aucun** override n'est actif, applique `dev/default` ; si le développeur en a mis un autre, **conserve-le**.
+- `yarn override-restore` à la fin, seulement si c'est toi qui as appliqué `dev/default`. L'override réécrit des fichiers suivis par git (ex. `override.json`, `phrase.json`, `src/platforms/*`) — ne pas les committer par erreur.
+- **Fichiers overridés** (listés dans `override.json`, masqués à git tant que l'override est appliqué) : avant d'en modifier un, préviens le développeur et propose de retirer l'override (`yarn override-restore`), de modifier et committer, puis de réappliquer son override. Sinon, ne touche pas au fichier et demande comment procéder.
 - Ne jamais afficher ni committer de secrets (`phrase.json`, `.phrase.yml`, tokens, clés Firebase).
 
 ## 4. Vérification (à faire à la fin de toute modification de un ou plusieurs fichiers)
