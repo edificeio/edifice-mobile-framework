@@ -20,6 +20,8 @@ Ce dossier sert de **mémoire partagée entre les sessions** (humaines ou Claude
 
 ## Protocole d'une session
 
+Pour migrer un module avec Claude Code : `/migrate-module <chemin du module>` (skill `.claude/skills/migrate-module/`, lancé à la main). Il suit ce protocole, écrit la fiche et le plan, puis exécute les phases une à une avec validation. Il reprend où on en était si la fiche existe déjà.
+
 **En début de session**
 
 1. Lire [STATUS.md](STATUS.md) et [later.md](later.md) (ce qu'il ne faut pas démarrer), puis les 2-3 dernières entrées de [JOURNAL.md](JOURNAL.md).

@@ -12,6 +12,13 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-16 — Skill `migrate-module` (`feat/navigation`)
+
+- Fait : skill `.claude/skills/migrate-module/` (lancé à la main) : préparation, inventaire du module, état des dépendances transverses, fiche + plan par phases, exécution phase par phase avec relecture. Registre des modules de référence (`myapps`, `auth`), enrichi à la main après relecture. Mention dans [README.md](README.md). Aucun code modifié.
+- Décidé (utilisateur) : un module migré reste dans `src/framework/modules/` sauf réécriture quasi complète ; le développeur prend les décisions, le skill propose.
+- En suspens : skill pas encore essayé sur un module.
+- Prochaine étape : premier essai sur un module (relecture du skill au passage).
+
 ## 2026-11-11 — Détails de `GET /api/me/applications` (`feat/ia/vmou`)
 
 - Décidé (utilisateur) : on ne change rien, comme le client web (détection des bibliothèques par l'adresse, `libraries` et `isExternal` ignorés, pas de repli sur les anciennes routes).

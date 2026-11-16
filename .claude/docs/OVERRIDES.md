@@ -3,7 +3,7 @@
 Système d'overrides (marque blanche), à destination des agents IA.
 Source : documentation interne du framework, **recoupée avec `cli/override.js` et `package.json`** (en cas d'écart, le code fait foi — les écarts connus sont listés en §8).
 
-> Rappel `CLAUDE.md` §3 : on travaille **uniquement avec `dev/default`**. Ne jamais committer de fichier overridé ni afficher de secret (`phrase.json`, `.phrase.yml`, configs Firebase, tokens).
+> Rappel `CLAUDE.md` §3 : override par défaut `dev/default` quand aucun n'est actif ; un override mis par le développeur est conservé. Ne jamais committer de fichier overridé ni afficher de secret (`phrase.json`, `.phrase.yml`, configs Firebase, tokens).
 
 ## 1. Principe
 
@@ -152,10 +152,11 @@ Elles rendent les fichiers overridés **visibles et committables**. Usage except
 
 ## 7. Règles pour les agents
 
-1. Avant toute action : `grep '"override"' override.json`. Si ce n'est pas `dev/default`, appliquer `node cli/override.js -v --no-i dev/default`. En cas d'échec (identifiants du dépôt manquants…), demander au développeur de lancer `! node cli/override.js -v dev/default`.
-2. Après le travail : `yarn override-restore`.
-3. Ne jamais afficher ni committer `phrase.json`, `.phrase.yml`, `google-services.json`, `GoogleService-Info.plist`.
-4. Pour modifier le comportement de l'application pour toutes les déclinaisons, modifier le **code du framework**, pas un override. Modifier un override = modifier le dépôt `edifice-mobile-config`, hors de ce dépôt : demander avant.
+1. Avant toute action : `grep '"override"' override.json`. Si **aucun** override n'est actif, appliquer `node cli/override.js -v --no-i dev/default`. En cas d'échec (identifiants du dépôt manquants…), demander au développeur de lancer `! node cli/override.js -v dev/default`. Si le développeur en a mis un autre, le conserver.
+2. Après le travail : `yarn override-restore`, seulement si c'est l'agent qui a appliqué `dev/default`.
+3. Avant de modifier un fichier overridé : prévenir le développeur et proposer de retirer l'override (`yarn override-restore`), de modifier et committer, puis de réappliquer son override. Sinon, ne pas toucher au fichier et demander comment procéder.
+4. Ne jamais afficher ni committer `phrase.json`, `.phrase.yml`, `google-services.json`, `GoogleService-Info.plist`.
+5. Pour modifier le comportement de l'application pour toutes les déclinaisons, modifier le **code du framework**, pas un override. Modifier un override = modifier le dépôt `edifice-mobile-config`, hors de ce dépôt : demander avant.
 
 ## 8. Écarts entre la doc interne et le code (à faire corriger dans la doc source)
 
