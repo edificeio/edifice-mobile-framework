@@ -21,7 +21,7 @@ const getBorderStyle = (dayOfTheWeek: DayOfTheWeek, isSelected: boolean, isPastD
 
 const DayCell = ({ dayOfTheWeek, dayReference, isSelected, onPress }: DayCellProps) => {
   const [currentFontScale, setCurrentFontScale] = React.useState(deviceFontScale());
-  const currentState = React.useRef<AppStateStatus>();
+  const currentState = React.useRef<AppStateStatus>(AppState.currentState);
   const handleAppStateChange = React.useCallback(
     (nextAppState: AppStateStatus) => {
       currentState.current = nextAppState;
