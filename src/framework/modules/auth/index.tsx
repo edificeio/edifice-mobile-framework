@@ -4,6 +4,7 @@ import { Action } from 'redux';
 
 import { CoreModule } from '~/app/module';
 import { BaseStackScreenLayout } from '~/app/navigation/layout';
+import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import type { HostId, Platform } from '~/framework/util/appConf';
 
 import { AuthCredentials } from './model';
@@ -115,3 +116,5 @@ export default new CoreModule<
     </>
   ),
 );
+
+setModalModeForRoutes(['auth/add-account']);
