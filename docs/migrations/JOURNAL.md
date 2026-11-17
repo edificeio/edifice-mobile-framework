@@ -12,6 +12,14 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-17 — Points d'entrée `entries` et clé `fileManager` (`feat/navigation`)
+
+- Fait : phase 0 du plan de `user`, à part : `ModuleConfig.entry` / `tab` remplacés par `entries` (`myApps`, `tab`, `userMenu`), `route` obligatoire sans params ; `getUserMenuEntries` / `useUserMenuEntries` pour les liens de l'accueil de `user` ; clé `fileManager` enregistrée au chargement des modules. `myapps`, modules de test, tabs, `useOpenModule` adaptés. Doc : ARCHITECTURE, [myapps.md](myapps.md), [user.md](user.md) §9, signaux du skill. Détail dans [user.md](user.md) §9.
+- Décidé (utilisateur) : **migration de `user` reportée** ; seules ses évolutions du framework sont faites maintenant.
+- Vérifié : tsc 776 (inchangé), eslint 2 090 / 88 (inchangé), `yarn test` 431/431 (+3). **Pas testé dans l'app.**
+- En suspens : test dans l'app (onglets, ouverture des modules depuis « Mes applis ») ; champs d'un lien `userMenu` gardés comme proposés (à revoir avec le premier consommateur).
+- Prochaine étape : tester dans l'app ; reprise de `user` à la phase 0 bis.
+
 ## 2026-11-17 — Spécification de `user` (`feat/navigation`)
 
 - Fait : premier essai du skill `migrate-module`. Fiche [user.md](user.md) : inventaire de `framework/modules/user` (écrans, consommateurs, dépendances), comportements à conserver, cible, plan par phases. Override `dev/default` appliqué par le skill. Aucun code modifié.

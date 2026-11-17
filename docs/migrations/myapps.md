@@ -168,10 +168,13 @@ export default new EntModule({
   storages: [storage],
   sessionSetup, // apps (bloquant)
   onSessionStart, // préférences (favoris)
-  entry: 'myapps/home', // accueil du module ; `tab.route` en hérite
+  entries: {
+    // depuis le 2026-11-17 (avant : `entry` + `tab` qui en héritait la route)
+    myApps: { route: 'myapps/home' },
+    tab: { route: 'myapps/home', order: 40, iconActive: 'ui-applications-fill', iconInactive: 'ui-applications', testId: 'tabbar-myapps' },
+  },
   screens: { 'myapps/home': … },
   modals: { 'myapps/menu': …, 'myapps/app-actions': …, 'myapps/favorites': …, 'myapps/onboarding': … },
-  tab: { order: 40, iconActive: 'ui-applications-fill', iconInactive: 'ui-applications', testId: 'tabbar-myapps' },
 });
 ```
 
@@ -375,18 +378,18 @@ La recherche par **scope** de `buildAppLookupMap` (un `entcoreScope` pointe vers
 
 Une seule question à l'ouverture : l'app a-t-elle un module qui peut s'ouvrir ? (simplifié le 2026-11-07)
 
-- son module (`useAppModules()`) peut s'ouvrir (`canOpenModule(name)` : disponible et doté d'une `entry`) → `openModule(name)` ;
+- son module (`useAppModules()`) peut s'ouvrir (`canOpenModule(name)` : disponible et doté d'`entries.myApps`) → `openModule(name)` ;
 - sinon → `openUrl(getAppUrl(address, session.platform.url))` : une adresse de la plateforme (sans domaine, ou de même origine) telle quelle, `openUrl` la rend absolue et la signe ; une autre (connecteur) par `/auth/redirect`, qui connecte l'utilisateur sur la cible.
 
-`ListedApp.hasModule` (`getAppModules`) ne retient que les modules qui peuvent s'ouvrir (disponibles et dotés d'une `entry`) : la carte dit comment l'app s'ouvre vraiment. La carte n'a besoin que de `ListedApp.hasModule` : pictogramme « lien externe » et icône de connecteur (à défaut d'icône) pour une app sans module. `isOtherService(app, hasModule)` : pas de module et catégorie `other`.
+`ListedApp.hasModule` (`getAppModules`) ne retient que les modules qui peuvent s'ouvrir (disponibles et dotés d'`entries.myApps`) : la carte dit comment l'app s'ouvre vraiment. La carte n'a besoin que de `ListedApp.hasModule` : pictogramme « lien externe » et icône de connecteur (à défaut d'icône) pour une app sans module. `isOtherService(app, hasModule)` : pas de module et catégorie `other`.
 
 Écart volontaire avec l'ancien code : il distinguait une app « web » (module sans route, adresse ouverte telle quelle) d'un connecteur (via `/auth/redirect`, avec une détection sur `target`, l'adresse et `prefix`). Ce cas ne se présente pas avec les modules actuels. Autre écart : l'ancien code passait par `/auth/redirect` pour toute app sans module, même sur la plateforme ; seule une adresse d'un autre domaine y passe maintenant.
 
 **`useOpenModule`** : API publique **du framework** (`src/app/navigation-new/open-module.ts`), réutilisable plus tard par les notifications, les intents et les liens profonds.
 
-- `const openModule = useOpenModule(); openModule('blog')`. Le nom est typé sur les seuls modules qui ont une `entry`. Renvoie `false` sans rien faire si le module n'est pas disponible pour l'utilisateur.
-- Module à onglet → `JUMP_TO` vers `getTabScreenName(name)` (l'onglet s'ouvre sur `tab.route`, donc sur `entry`) ; module sans onglet → `navigate(entry)` dans l'onglet courant. Pas de traitement particulier pour un onglet déjà ouvert plus loin dans sa pile : le fonctionnel ne permet pas ce cas.
-- `entry` doit être une route **sans params obligatoires** (vérifié par son type).
+- `const openModule = useOpenModule(); openModule('blog')`. Le nom est typé sur les seuls modules qui ont `entries.myApps` (`AllModulesWithMyAppsEntryNames`). Renvoie `false` sans rien faire si le module n'est pas disponible pour l'utilisateur.
+- Module à onglet → `JUMP_TO` vers `getTabScreenName(name)` (l'onglet s'ouvre sur `entries.tab.route`) ; module sans onglet → `navigate(entries.myApps.route)` dans l'onglet courant. Pas de traitement particulier pour un onglet déjà ouvert plus loin dans sa pile : le fonctionnel ne permet pas ce cas.
+- Chaque `route` d'`entries` est une route **sans params obligatoires** (vérifié par son type).
 - Ne fonctionne que depuis un écran des onglets, pas depuis une modale : à prendre en compte pour `myapps/app-actions` (phase 5).
 
 ### 5.7 Droits
@@ -619,3 +622,4 @@ Aucune question bloquante. Ce qui est remis à plus tard est dans [later.md](lat
   - Vérifié : tsc 767, eslint propre (sauf erreurs préexistantes de `main-navigation.tsx`), `yarn test` 411/411. **Pas testé dans l'app.**
 - 2026-11-11 : **recherche de `MyAppsFilters`** (sujet de [later.md](later.md) tranché par l'utilisateur) : on garde la recherche animée faite main, conforme au design fourni ; pas de `headerSearchBarOptions`. Aucun changement de code. §4 n° 13 clos.
 - 2026-11-11 : **détails de `GET /api/me/applications`** (sujet de [later.md](later.md) tranché par l'utilisateur) : on ne change rien. Détection des bibliothèques par l'adresse (`library.edifice.io`, sans catégorie), `libraries` et `isExternal` ignorés, pas de repli sur `/applications-list` + `/myApps/config` : c'est le comportement du client web, voulu à l'identique. Aucun changement de comportement ; les commentaires de `classification.ts` (`ToDo` retiré) et `service/api.ts` le disent.
+- 2026-11-17 : **`entry` et `tab` remplacés par `entries`** (évolution du framework décidée pour `user`, [user.md](user.md) §5.3) : `entries: { myApps: { route: 'myapps/home' }, tab: { route: 'myapps/home', … } }`, `hasEntry` lit `entries.myApps`. Aucun changement de comportement. Le §5 est à jour ; les décisions et l'avancement plus anciens parlent encore d'`entry`.

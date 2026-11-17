@@ -8,9 +8,12 @@ import {
   AllModulesStaticModals,
   AllModulesStaticScreens,
   CoreModule,
+  getUserMenuEntries,
   isModuleAvailableForUser,
   useModules,
   useModulesOfType,
+  type UserMenuEntry,
+  type UserMenuSection,
 } from '.';
 
 /**
@@ -101,4 +104,13 @@ export const useUserAvailableModules = (): AllModulesArray => {
     () => (session === undefined ? [] : (modules.filter(module => isModuleAvailableForUser(module, session)) as AllModulesArray)),
     [modules, session],
   );
+};
+
+/**
+ * The links that the modules available for the user add to a section of the home of `user` (`entries.userMenu`), sorted (see
+ * `getUserMenuEntries`).
+ */
+export const useUserMenuEntries = (section: UserMenuSection): UserMenuEntry[] => {
+  const modules = useUserAvailableModules();
+  return React.useMemo(() => getUserMenuEntries(modules, section), [modules, section]);
 };

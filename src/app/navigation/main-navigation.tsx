@@ -43,7 +43,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
   const { apps } = useEntApps();
   /** Label of the tab of a module (see `getTabLabel`: the old modules have no `tab.labelI18n`). */
   const getModuleTabLabel = (module: { name: string; matchEntcoreApp?: string }) =>
-    getTabLabel({}, { label: apps.find(app => app.name === module.matchEntcoreApp)?.label ?? module.name });
+    getTabLabel(undefined, { label: apps.find(app => app.name === module.matchEntcoreApp)?.label ?? module.name });
   const availableModules = React.useMemo(() => (session ? EntModule.getAvailableForAccount(session) : []), [session]);
   const availableTabModules = React.useMemo(() => EntModule.filterTabModules(availableModules), [availableModules]);
   const rightsMemoValue = React.useMemo(
@@ -54,7 +54,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
   const tabModulesOptions = React.useMemo(
     () =>
       availableTabModules.map<BottomTabNavigationOptions>(m => ({
-        tabBarButtonTestID: m.tab.testId,
+        tabBarButtonTestID: m.entries.tab.testId,
         tabBarIcon: ({ color, focused }) => <TabIcon module={m} focused={focused} size={tabBarIconSize} color={color} />,
         tabBarLabel: ({ color }) => (
           // negative marginHorizontal is necessary to prevent text wrapping
@@ -71,7 +71,7 @@ export const MainNavigation = React.memo(function MainNavigation() {
     () =>
       availableTabModules.map(tabModule => {
         return () => (
-          <LeafStack.Navigator key={tabModule.name} initialRouteName={tabModule.tab.route}>
+          <LeafStack.Navigator key={tabModule.name} initialRouteName={tabModule.entries.tab.route}>
             {
               // New Modules screens here
               availableModules.map(module => (
@@ -202,7 +202,9 @@ export const MainNavigation = React.memo(function MainNavigation() {
 export const MainNavigationOptions: NativeStackNavigationOptions = { headerShown: false };
 
 function TabIcon({ color, focused, module, size }: { module: TabModule<string>; focused: boolean; color: string; size: number }) {
-  return <Svg width={size} height={size} name={focused ? module.tab.iconActive : module.tab.iconInactive} fill={color} />;
+  return (
+    <Svg width={size} height={size} name={focused ? module.entries.tab.iconActive : module.entries.tab.iconInactive} fill={color} />
+  );
 }
 
 /**
