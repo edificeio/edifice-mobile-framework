@@ -11,7 +11,7 @@ import { BarBackgroundProps } from './types';
  * `tabBarBackground`. it has to paint the background itself: react-navigation turns the bar
  * transparent as soon as one of these options is given.
  */
-export function BarBackground({ backgroundColor, barType, lineImage }: BarBackgroundProps) {
+export function BarBackground({ backgroundColor, barType, lineImage }: Readonly<BarBackgroundProps>) {
   const backgroundStyle = React.useMemo(() => [styles.background, { backgroundColor }], [backgroundColor]);
   const lineStyle = React.useMemo(() => [styles.line, barType === 'tabBar' ? styles.lineTabBar : styles.lineNavBar], [barType]);
 

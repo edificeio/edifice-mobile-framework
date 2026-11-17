@@ -1,5 +1,2 @@
-import { BarBackground } from './component';
-import type { BarBackgroundProps } from './types';
-
-export { BarBackground, type BarBackgroundProps };
-export default BarBackground;
+export { BarBackground, BarBackground as default } from './component';
+export type { BarBackgroundProps } from './types';
