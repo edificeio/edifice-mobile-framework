@@ -34,14 +34,17 @@ export default StyleSheet.create({
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: UI_SIZES.border.thin,
     flexDirection: 'row',
-    gap: UI_SIZES.spacing.minor,
+    gap: UI_SIZES.spacing.tiny,
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
   },
   selectAllRow: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: UI_SIZES.spacing.small,
+    gap: UI_SIZES.spacing.minor,
     paddingBottom: UI_SIZES.spacing.medium,
+  },
+  selectedCount: {
+    flexShrink: 1,
   },
 });

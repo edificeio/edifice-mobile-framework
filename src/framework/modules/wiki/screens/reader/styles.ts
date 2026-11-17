@@ -54,6 +54,7 @@ export default StyleSheet.create({
   },
   page: {
     backgroundColor: theme.ui.background.card,
+    flex: 1,
   },
   scrollContent: {
     flexGrow: 1,

@@ -110,7 +110,9 @@ export function NotificationFiltersTemplate({
           <BodyText>{I18n.get(labelsI18n.selectAll)}</BodyText>
           <Checkbox checked={areAllSelected} partialyChecked={isPartiallySelected} onPress={toggleAll} />
         </TouchableOpacity>
-        <SmallText>{I18n.get(labelsI18n.selectedCount, { count: selectedCount, total: items.length })}</SmallText>
+        <SmallText style={styles.selectedCount} numberOfLines={1} adjustsFontSizeToFit>
+          {I18n.get(labelsI18n.selectedCount, { count: selectedCount, total: items.length })}
+        </SmallText>
       </View>
 
       <FlashList

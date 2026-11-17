@@ -79,7 +79,4 @@ export default StyleSheet.create({
     flexShrink: 1,
     maxWidth: '50%',
   },
-  title: {
-    color: theme.palette.grey.darkness.toString(),
-  },
 });

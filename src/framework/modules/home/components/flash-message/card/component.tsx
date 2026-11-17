@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { Svg, SvgIconName } from '~/framework/components/picture';
-import { SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
+import { SmallItalicText, SmallText } from '~/framework/components/text';
 import type { IEntcoreFlashMessage } from '~/framework/modules/home/reducer/flash-messages';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import HtmlContentView from '~/ui/HtmlContentView';
@@ -69,7 +69,6 @@ export const FlashMessage = React.memo(({ flashMessage, onDismiss }: FlashMessag
       <View style={styles.header}>
         <FlashMessageIcon color={tint.accent} name={tint.icon} />
         <View style={[styles.content, showClose && styles.contentWithClose]}>
-          {flashMessage.title ? <SmallBoldText style={styles.title}>{flashMessage.title}</SmallBoldText> : null}
           {expanded ? (
             <HtmlContentView html={html} opts={HTML_OPTIONS} />
           ) : (

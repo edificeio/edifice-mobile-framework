@@ -2076,6 +2076,7 @@
   "widget-cantine-menu-allergene-sesame": "Sésame",
   "widget-cantine-menu-allergene-soja": "Soja",
   "widget-cantine-menu-allergenes-label": "Allergènes",
+  "widget-cantine-menu-allergenes-list": "Allergènes : {{allergens}}",
   "widget-cantine-menu-footer": "* Les informations figurant dans ces menus peuvent être modifiées en fonction des approvisionnements; les mises à jour seront effectuées en conséquence",
   "widget-cantine-menu-legend-bio": "Bio",
   "widget-cantine-menu-legend-fait-maison": "Fait maison",

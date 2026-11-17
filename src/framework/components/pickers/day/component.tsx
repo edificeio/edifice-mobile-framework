@@ -3,9 +3,6 @@ import { AppState, AppStateStatus, View } from 'react-native';
 
 import { Moment } from 'moment';
 
-import styles from './styles';
-import { DayPickerProps } from './types';
-
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { CHEVRON_HIT_SLOP, deviceFontScale } from '~/framework/components/constants';
@@ -20,6 +17,9 @@ import {
   subtractTime,
   today,
 } from '~/framework/util/date';
+
+import styles from './styles';
+import { DayPickerProps } from './types';
 
 export const defaultSelectedDate = today().day() === 6 ? addTime(today(), 2, 'day') : addTime(today(), 1, 'day');
 
@@ -55,7 +55,7 @@ const DayPicker = ({ initialSelectedDate = defaultSelectedDate, maximumWeeks = 8
   };
 
   const [currentFontScale, setCurrentFontScale] = React.useState(deviceFontScale());
-  const currentState = React.useRef<AppStateStatus>();
+  const currentState = React.useRef<AppStateStatus>(AppState.currentState);
   const handleAppStateChange = React.useCallback(
     (nextAppState: AppStateStatus) => {
       currentState.current = nextAppState;
