@@ -5,10 +5,10 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import TouchableSelectorPictureCard from '~/framework/components/card/picture';
 import { UI_SIZES } from '~/framework/components/constants';
 import GridList from '~/framework/components/GridList';
 import { HeadingSText, SmallText } from '~/framework/components/text';
+import TouchableSelectorPictureCard from '~/framework/modules/auth/components/picture-card';
 import { DebugOptions } from '~/framework/modules/debug';
 import appConf, { Platform } from '~/framework/util/appConf';
 
