@@ -4,8 +4,9 @@ import { ImageProps, ImageURISource, StyleSheet, View, ViewStyle } from 'react-n
 import RNFastImage from '@d11/react-native-fast-image';
 import styled from '@emotion/native';
 
+import { navigationRef } from '~/app/navigation';
 import theme from '~/app/theme';
-import { openCarousel } from '~/framework/components/carousel/openCarousel';
+import { convertLegacyMediaToFileMedia } from '~/framework/components/carousel/utils/adapter';
 import { getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { SmallInverseText } from '~/framework/components/text';
@@ -132,7 +133,7 @@ class Images extends React.Component<
       ...(img.alt ? { alt: img.alt } : undefined),
       ...(img.linkTo ? { link: img.linkTo } : undefined),
     }));
-    openCarousel({ data, referer: this.props.referer, startIndex });
+    navigationRef.navigate('media/carousel', { media: convertLegacyMediaToFileMedia(data), startIndex });
   }
 
   public images() {

@@ -1,17 +1,17 @@
 import React from 'react';
 import { FlatList, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
-import { FormAnswerText } from './FormAnswerText';
-import { FormRadio } from './FormRadio';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionChoice, IQuestionResponse } from '~/framework/modules/form/model';
+import { openCarousel } from '~/framework/modules/form/utils/image';
 import { sessionImageSource } from '~/framework/util/transport';
+
+import { FormAnswerText } from './FormAnswerText';
+import { FormRadio } from './FormRadio';
 
 const styles = StyleSheet.create({
   choiceContainer: {
@@ -122,9 +122,7 @@ export const FormSingleAnswerRadioCard = ({
                 />
               ) : null}
               {item.image ? (
-                <TouchableOpacity
-                  onPress={() => openCarousel({ data: [{ src: item.image, type: 'image' }] })}
-                  style={styles.imageContainer}>
+                <TouchableOpacity onPress={() => openCarousel(item.image)} style={styles.imageContainer}>
                   <Image source={sessionImageSource({ height: 75, uri: item.image, width: 75 })} />
                 </TouchableOpacity>
               ) : null}

@@ -6,7 +6,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { I18n } from '~/app/i18n';
 import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
-import { useCarouselFileHandler } from '~/framework/components/carousel-multimedia/hooks';
+import { useCarouselFileHandler } from '~/framework/components/carousel/hooks/use-carousel-file-handler';
 import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 

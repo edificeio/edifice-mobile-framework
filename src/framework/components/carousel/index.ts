@@ -1,4 +1,5 @@
-import CarouselScreen from './screen';
+import Carousel from './screen/screen';
 
-export { CarouselScreen };
-export default CarouselScreen;
+export { CarouselScreenOptions } from './screen/navbar';
+
+export default Carousel;
