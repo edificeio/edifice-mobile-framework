@@ -33,12 +33,6 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: PictureCar
     </CC>
   );
 }
-export function PictureCard(props: PictureCardProps) {
-  return <PictureCard_Base cardComponent={Card} {...props} />;
-}
-export function TouchablePictureCard(props: PictureCardProps & TouchableOpacityProps) {
-  return <PictureCard_Base cardComponent={TouchCard} {...props} />;
-}
 
 function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: PictureCardComponent }) {
   const { cardComponent, picture, pictureStyle, style, ...rest } = props;
@@ -52,9 +46,6 @@ function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: Pi
       {...rest}
     />
   );
-}
-export function SelectorPictureCard(props: PictureCardProps) {
-  return <SelectorPictureCard_Base cardComponent={Card} {...props} />;
 }
 export function TouchableSelectorPictureCard(props: PictureCardProps & TouchableOpacityProps) {
   return <SelectorPictureCard_Base cardComponent={TouchCard} {...props} />;
