@@ -11,9 +11,9 @@ import { View, ViewProps } from 'react-native';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
+import { navigationRef } from '~/app/navigation';
 import { IGlobalState } from '~/app/store';
-import { openMultimediaCarousel } from '~/framework/components/carousel-multimedia/openCarousel';
-import { convertNotificationToFileMedia } from '~/framework/components/carousel-multimedia/util';
+import { convertNotificationToFileMedia } from '~/framework/components/carousel/utils/adapter';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
@@ -149,7 +149,7 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
           return m.src === src;
         });
 
-        openMultimediaCarousel({
+        navigationRef.navigate('media/carousel', {
           media: fileMedia,
           startIndex: selectedIndex !== -1 ? selectedIndex : 0,
         });

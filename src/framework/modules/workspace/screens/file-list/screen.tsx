@@ -9,10 +9,10 @@ import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { navigationRef } from '~/app/navigation';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { openMultimediaCarousel } from '~/framework/components/carousel-multimedia/openCarousel';
-import { convertIFileToFileMedia } from '~/framework/components/carousel-multimedia/util';
+import { convertIFileToFileMedia } from '~/framework/components/carousel/utils/adapter';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -172,7 +172,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
       const allFiles = props.files.filter(f => !f.isFolder && f.url !== undefined);
       const mediaList = convertIFileToFileMedia(allFiles);
       const startIndex = allFiles.findIndex(f => f.id === file.id);
-      openMultimediaCarousel({
+      navigationRef.navigate('media/carousel', {
         media: mediaList,
         startIndex: startIndex >= 0 ? startIndex : 0,
       });
