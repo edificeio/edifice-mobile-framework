@@ -54,11 +54,7 @@ const styles = StyleSheet.create({
 });
 
 // `withSession`: the hooks of an account storage work on the account of the session
-const AModuleHomeScreen = withSession<
-  StaticScreenProps<{
-    aParam: boolean;
-  }>
->(function ({ session }) {
+const AModuleHomeScreen = withSession<StaticScreenProps<undefined>>(function ({ session }) {
   const navigation = useNavigation();
   const { confirmLogout } = useAuthFlows();
   // Pilot of the storage API: a counter of the device, and a number of the account. Both render again when they change.
@@ -263,6 +259,9 @@ const AModuleModalScreenDeclaration = defineModal({
 });
 
 export default new EntModule({
+  entries: {
+    tab: { iconActive: 'home-fill', iconInactive: 'home-outline', order: 10, route: 'amodule/home', testId: 'tabbar-timeline' },
+  },
   modals: {
     'amodule/modal': AModuleModalScreenDeclaration,
   },
@@ -272,5 +271,4 @@ export default new EntModule({
     'amodule/home': AModuleHomeScreenDeclaration,
   },
   storages: [storage, preferences],
-  tab: { iconActive: 'home-fill', iconInactive: 'home-outline', order: 10, route: 'amodule/home', testId: 'tabbar-timeline' },
 });

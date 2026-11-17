@@ -9,20 +9,20 @@ import type { Action } from 'redux';
 import type { ScreenComponent } from '~/app/navigation-new';
 
 import {
-  ConfigForTab,
+  ConfigForEntries,
   CoreModuleConfig,
   EntModuleConfig,
   EntryRoute,
   ModuleConfig,
   ModuleScreensConfig,
   ModuleStaticScreens,
-  ModuleTab,
   StrictModuleScreens,
 } from './types';
 
 export * from './types';
 export * from './hooks';
 export * from './loader';
+export * from './entries';
 export * from './rights';
 
 // ToDo: does the hasRight must check token scope too ?
@@ -33,30 +33,31 @@ export abstract class Module<
   Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
   ReduxState = undefined,
   ReduxAction extends Action = never,
-  Entry extends EntryRoute<Screens> | undefined = undefined,
+  Entries extends ConfigForEntries<EntryRoute<Screens>> = {},
   Scope extends string = never,
 > {
-  name: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>['name'];
-  scope: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>['scope'];
-  entry: Entry;
-  tab: ModuleTab<keyof Screens> | undefined;
-  redux: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>['redux'];
-  storages: NonNullable<ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>['storages']>;
-  onSessionRelease: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>['onSessionRelease'];
-  onSessionStart: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>['onSessionStart'];
-  sessionSetup: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>['sessionSetup'];
+  name: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['name'];
+  scope: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['scope'];
+  /** The entries given to the module, `{}` without any. */
+  entries: ConfigForEntries<EntryRoute<Screens>> & Entries;
+  redux: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['redux'];
+  storages: NonNullable<ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['storages']>;
+  fileManager: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['fileManager'];
+  onSessionRelease: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['onSessionRelease'];
+  onSessionStart: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['onSessionStart'];
+  sessionSetup: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['sessionSetup'];
   screens: ModuleStaticScreens<Screens>;
   modals: ModuleStaticScreens<Modals>;
   /** Routes (screens and modals) that only host another navigation container, which tracks them itself (`delegatesTelemetry`). */
   telemetryDelegatedRoutes: ReadonlySet<string>;
 
-  constructor(opts: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>) {
+  constructor(opts: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>) {
     this.name = opts.name;
     this.scope = opts.scope;
-    this.entry = opts.entry as Entry;
-    this.tab = Module.createTab<keyof Screens>(opts);
+    this.entries = opts.entries ?? ({} as Entries);
     this.redux = opts.redux;
     this.storages = opts.storages ?? [];
+    this.fileManager = opts.fileManager;
     this.screens = Module.createScreens(opts.screens);
     this.modals = Module.createScreens(opts.modals);
     this.telemetryDelegatedRoutes = new Set([
@@ -66,20 +67,6 @@ export abstract class Module<
     this.onSessionRelease = opts.onSessionRelease;
     this.onSessionStart = opts.onSessionStart;
     this.sessionSetup = opts.sessionSetup;
-  }
-
-  // The tab opens on its own route, or else on the entry of the module.
-  private static createTab<Route extends PropertyKey>(opts: {
-    entry?: Route;
-    name: string;
-    tab?: ConfigForTab<Route>;
-  }): ModuleTab<Route> | undefined {
-    if (opts.tab === undefined) return undefined;
-    const route = opts.tab.route ?? opts.entry;
-    if (route === undefined) {
-      throw new Error(`[Module] The tab of "${opts.name}" has no route: give the module an \`entry\`, or its tab a \`route\`.`);
-    }
-    return { ...opts.tab, route };
   }
 
   // Screens and modals will always be added to a native stack navigator.
@@ -110,11 +97,11 @@ export class CoreModule<
   Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
   ReduxState = undefined,
   ReduxAction extends Action = never,
-  Entry extends EntryRoute<Screens> | undefined = undefined,
+  Entries extends ConfigForEntries<EntryRoute<Screens>> = {},
   Scope extends string = never,
 >
-  extends Module<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>
-  implements Omit<CoreModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>, 'screens' | 'modals'> {}
+  extends Module<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>
+  implements Omit<CoreModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>, 'screens' | 'modals'> {}
 
 export class EntModule<
   Name extends string,
@@ -122,18 +109,18 @@ export class EntModule<
   Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
   ReduxState = undefined,
   ReduxAction extends Action = never,
-  Entry extends EntryRoute<Screens> | undefined = undefined,
+  Entries extends ConfigForEntries<EntryRoute<Screens>> = {},
   Scope extends string = never,
 >
-  extends Module<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>
-  implements Omit<EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>, 'screens' | 'modals'>
+  extends Module<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>
+  implements Omit<EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>, 'screens' | 'modals'>
 {
-  matchEntcoreApp: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>['matchEntcoreApp'];
-  matchEntcoreWidget: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>['matchEntcoreWidget'];
-  hasRight: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>['hasRight'];
-  entTrackingName: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>['entTrackingName'];
+  matchEntcoreApp: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['matchEntcoreApp'];
+  matchEntcoreWidget: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['matchEntcoreWidget'];
+  hasRight: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['hasRight'];
+  entTrackingName: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['entTrackingName'];
 
-  constructor(config: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>) {
+  constructor(config: EntModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>) {
     super(config);
     this.matchEntcoreApp = config.matchEntcoreApp;
     this.matchEntcoreWidget = config.matchEntcoreWidget;

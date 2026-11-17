@@ -7,9 +7,7 @@ import { EntModule } from '~/app/module';
 import { HeadingSText } from '~/framework/components/text';
 import { AccountsButton } from '~/modules/auth/components';
 
-function BModuleHomeScreen({}: StaticScreenProps<{
-  bParam: boolean;
-}>) {
+function BModuleHomeScreen({}: StaticScreenProps<undefined>) {
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
       <HeadingSText>Là c'est les mails</HeadingSText>
@@ -39,6 +37,9 @@ function BModuleModalScreen({}: StaticScreenProps<{
 }
 
 export default new EntModule({
+  entries: {
+    tab: { iconActive: 'ui-mails-fill', iconInactive: 'ui-mails', order: 20, route: 'bmodule/home', testId: 'tabbar-mails' },
+  },
   modals: {
     'bmodule/modal': { screen: BModuleModalScreen },
   },
@@ -47,5 +48,4 @@ export default new EntModule({
     'bmodule/details': { screen: BModuleDetailsScreen },
     'bmodule/home': { screen: BModuleHomeScreen },
   },
-  tab: { iconActive: 'ui-mails-fill', iconInactive: 'ui-mails', order: 20, route: 'bmodule/home', testId: 'tabbar-mails' },
 });

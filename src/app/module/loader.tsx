@@ -5,6 +5,7 @@
 import React from 'react';
 
 import moduleImports from '~/app/config/modules';
+import { registerModuleFileManager } from '~/framework/util/fileHandler/services/fileManagerRegistry';
 
 import { AllModulesArray, AllModulesNames, AllModulesRecord, AnyModule, AnyTabModule, Module } from '.';
 
@@ -28,6 +29,10 @@ const loadModules = Promise.all(moduleImports).then((imported): LoadedModules =>
     __DEV__ && console.debug(`[Module] Loaded module ${m.default.name}.`);
     return m.default;
   }) as AllModulesArray;
+  // `FileManager.pick({ module, usecase })` reads the config of the module in this registry
+  for (const module of modules) {
+    if (module.fileManager) registerModuleFileManager(module.name, module.fileManager);
+  }
   const record = Object.freeze(Object.fromEntries(modules.map(module => [module.name, module]))) as AllModulesRecord;
   return { modules: Object.freeze(modules), record };
 });
@@ -87,5 +92,5 @@ export const useModulesOfType = <T extends typeof Module>(type: T): InstanceType
  */
 export const useTabModules = (): AnyTabModule[] => {
   const modules = useModules();
-  return React.useMemo(() => modules.filter(module => module.tab !== undefined) as unknown as AnyTabModule[], [modules]);
+  return React.useMemo(() => modules.filter(module => module.entries.tab !== undefined) as unknown as AnyTabModule[], [modules]);
 };

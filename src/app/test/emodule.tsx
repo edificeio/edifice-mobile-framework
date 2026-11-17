@@ -6,9 +6,7 @@ import { StaticScreenProps } from '@react-navigation/native';
 import { EntModule } from '~/app/module';
 import { HeadingSText } from '~/framework/components/text';
 
-function EModuleHomeScreen({}: StaticScreenProps<{
-  eParam: boolean;
-}>) {
+function EModuleHomeScreen({}: StaticScreenProps<undefined>) {
   return (
     <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
       <HeadingSText>Là c'est les applis</HeadingSText>
@@ -37,19 +35,21 @@ function EModuleModalScreen({}: StaticScreenProps<{
 }
 
 export default new EntModule({
+  entries: {
+    tab: {
+      iconActive: 'ui-applications-fill',
+      iconInactive: 'ui-applications',
+      order: 40,
+      route: 'emodule/home',
+      testId: 'tabbar-myapps',
+    },
+  },
   modals: {
-    'emodule/modal': { screen: EModuleHomeScreen },
+    'emodule/modal': { screen: EModuleModalScreen },
   },
   name: 'emodule',
   screens: {
     'emodule/details': { screen: EModuleDetailsScreen },
-    'emodule/home': { screen: EModuleModalScreen },
-  },
-  tab: {
-    iconActive: 'ui-applications-fill',
-    iconInactive: 'ui-applications',
-    order: 40,
-    route: 'emodule/home',
-    testId: 'tabbar-myapps',
+    'emodule/home': { screen: EModuleHomeScreen },
   },
 });

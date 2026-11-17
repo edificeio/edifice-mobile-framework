@@ -16,7 +16,16 @@ const { onSessionStart, sessionSetup } = createMyAppsSessionHooks({
 });
 
 export default new EntModule({
-  entry: 'myapps/home',
+  entries: {
+    myApps: { route: 'myapps/home' },
+    tab: {
+      iconActive: 'ui-applications-fill',
+      iconInactive: 'ui-applications',
+      order: 40,
+      route: 'myapps/home',
+      testId: 'tabbar-myapps',
+    },
+  },
   entTrackingName: 'Portal',
   // « Mes applis » is the app `Portal`: a right every user has (always sent by the server). It gives its label to the tab.
   matchEntcoreApp: 'Portal',
@@ -35,10 +44,4 @@ export default new EntModule({
   },
   sessionSetup,
   storages: [storage],
-  tab: {
-    iconActive: 'ui-applications-fill',
-    iconInactive: 'ui-applications',
-    order: 40,
-    testId: 'tabbar-myapps',
-  },
 });
