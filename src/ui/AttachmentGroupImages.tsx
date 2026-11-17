@@ -2,9 +2,10 @@ import * as React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
+import { navigationRef } from '~/app/navigation';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
-import { openCarousel } from '~/framework/components/carousel/openCarousel';
+import { convertLocalAttachmentToFileMedia } from '~/framework/components/carousel/utils/adapter';
 import { UI_SIZES } from '~/framework/components/constants';
 import { cameraActionFm, galleryActionFm } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
@@ -85,12 +86,7 @@ export class AttachmentGroupImages extends React.PureComponent<{
 
   onOpenImage = () => {
     const { images } = this.props;
-    const carouselImages = images.map(image => ({
-      alt: 'image',
-      src: { uri: image.uri },
-      type: 'image' as const,
-    }));
-    openCarousel({ data: carouselImages, referer: undefined });
+    navigationRef.navigate('media/carousel', { media: convertLocalAttachmentToFileMedia(images) });
   };
 
   renderItemSeparator = () => <View style={styles.itemSeperator} />;

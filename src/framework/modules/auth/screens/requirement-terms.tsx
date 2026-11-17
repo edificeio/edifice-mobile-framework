@@ -13,6 +13,7 @@ import { ModuleScreenProps } from '~/app/navigation/types';
 import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
+import { convertPdfUrlToFileMedia } from '~/framework/components/carousel/utils/adapter';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
@@ -21,7 +22,6 @@ import Toast from '~/framework/components/toast';
 import { LegalUrls } from '~/framework/modules/auth/model';
 import { getPlatformLegalUrls } from '~/framework/modules/auth/redux/reducer';
 import { logoutAction, revalidateTermsAction } from '~/framework/modules/auth/thunks';
-import { MediaType } from '~/framework/modules/media';
 import { tryAction } from '~/framework/util/redux/actions';
 
 // TYPES ==========================================================================================
@@ -90,8 +90,7 @@ const RequirementTermsScreen = (props: RequirementTermsScreenProps) => {
     (title: string, url?: string) => {
       if (!url) return;
       navigation.navigate('media/carousel', {
-        media: [{ mime: 'application/pdf', src: url, type: MediaType.ATTACHMENT }],
-        startIndex: 0,
+        media: [convertPdfUrlToFileMedia(url)],
         title,
       });
     },
