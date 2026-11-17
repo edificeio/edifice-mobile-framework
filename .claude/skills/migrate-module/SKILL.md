@@ -47,37 +47,55 @@ Classer chaque dépendance transverse selon [framework.md](framework.md).
 Créer `docs/migrations/<module>.md` depuis `docs/migrations/_template.md`, statut `spec`. Français, phrases courtes, dates absolues, noms de code non traduits, « requirements » jamais « prérequis ».
 
 - §1 à §4 : résultat de l'analyse. §4 liste les conversions d'UI imposées et les cas où react-navigation ferait mieux (statut `à valider`).
-- §5 « Cible » : emplacement, type de module, config (`name`, `scope`, `entry`, `tab`, droits, `redux`, `storages`, hooks de session), structure (CONVENTIONS « Structure d'un module »), API publique, façades.
+- §5 « Cible » : emplacement, type de module, config (`name`, `scope`, points d'entrée `entries` — voir [framework.md](framework.md) —, droits, `redux`, `storages`, `fileManager`, hooks de session), structure (CONVENTIONS « Structure d'un module »), API publique, façades.
 - §6 « Plan par phases » : partir des phases types ci-dessous, retirer celles qui ne servent pas, découper une phase trop grosse. Chaque phase dit son contenu et sa vérification.
 - §8 « Questions ouvertes » : toutes les décisions à prendre, avec options et recommandation. Les dépendances transverses incertaines en font partie.
+- Ce qui n'est pas dans le périmètre (demande du développeur, écrans d'un autre module) est dit en §1, avec ce qui le remplace (ex. un lien `entries.userMenu` déclaré par le module qui reprend l'écran).
 
 ### Emplacement
 
-Par défaut, le module migré **reste dans `src/framework/modules/<module>/`** (ARCHITECTURE §2 : d'autres équipes y travaillent, les diffs git restent lisibles).
+L'emplacement est **toujours une question** de §8, posée au développeur à chaque migration, avec une recommandation tirée de l'analyse :
+
+- `src/framework/modules/<module>/` (sur place) : la règle par défaut d'ARCHITECTURE §2 (d'autres équipes y travaillent, les diffs git restent lisibles) ;
+- `src/modules/<module>/` : pour un module **quasiment réécrit** (souvent un `CoreModule` technique, comme `auth` ou `media`), avec des façades `@deprecated` aux anciens chemins ;
+- si `src/modules/<module>/` **existe déjà** (migration commencée) : le dire dans la question. Deux dossiers ne peuvent pas déclarer le même module : il faut choisir l'un des deux.
+
+Dans tous les cas :
 
 - Garder les chemins existants autant que possible : un fichier dont le rôle ne change pas reste où il est (écrans, composants, styles).
 - Un fichier qui doit bouger se déplace **avec `git mv`, sans changer son contenu, dans une phase à part** (phase « Déplacements ») : proposer au développeur de la committer avant la suite, pour que git suive le renommage.
-- Exception : un module **quasiment réécrit** (souvent un `CoreModule` technique, comme `auth` ou `media`) va dans `src/modules/<module>/`, avec des façades `@deprecated` aux anciens chemins. C'est une décision du développeur : la poser en §8 si l'analyse y pousse.
 
 ### Phases types
 
-| #   | Phase                    | Contenu                                                                                                                                                                                          | Vérification                                     |
-| --- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------ |
-| 0   | Préalables du framework  | Évolutions du framework décidées en §8 (nouvelle clé de config, hook, composant remonté dans le framework…). Doc ARCHITECTURE mise à jour.                                                       | tsc, eslint, tests de la logique pure            |
-| 1   | Déplacements             | `git mv` seuls (si nécessaires).                                                                                                                                                                 | tsc inchangé                                     |
-| 2   | Données                  | `model/` (types + règles), `service/` (`namespace API`, `adapter.ts`, `getModuleTransport`), `store/`, `storage.ts` (clés et namespaces inchangés), `actions.ts`. Tests Jest de la logique pure. | tsc, eslint, `yarn test`                         |
-| 3   | Déclaration + chargement | `index.ts` en `EntModule` / `CoreModule`, ajout dans `src/app/config/modules.ts`, droits, `scope`, `entry` / `tab`, `sessionSetup` / `onSessionStart` (plus de `callAtLogin`).                   | tsc ; connexion : state rempli (test dans l'app) |
-| 4   | API publique + façades   | Hooks / composants publics, façades `@deprecated` aux chemins importés de l'extérieur, consommateurs migrés.                                                                                     | tsc, aucun import cassé                          |
-| 5   | Écrans                   | `defineScreen`, portés tels quels ; header par options (`headerLeftActions` / `headerRightActions`) ; `testID` conservés.                                                                        | parcours dans l'app                              |
-| 6   | Modales                  | `defineModal` ; bottom sheet → `formSheet`, `react-native-modal` → `transparentModal` ; `useConfirmRemove`.                                                                                      | parcours dans l'app                              |
-| 7   | Points reportés          | Notifications, intents, widgets, emplacement « Mes applis »… selon l'état du framework : souvent reportés (`later.md` + `ToDo(<module>-migration)`).                                             | selon décision                                   |
-| 8   | Nettoyage                | Suppression de `module-config.ts`, `navigation/`, de l'ancien Redux et des façades sans importeur.                                                                                               | `grep -rn` des anciens chemins                   |
+| #     | Phase                    | Contenu                                                                                                                                                                                                                                                                                                                      | Vérification                                     |
+| ----- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| 0     | Préalables du framework  | Évolutions du framework décidées en §8 (nouvelle clé de config, hook, composant remonté dans le framework…). Doc ARCHITECTURE mise à jour.                                                                                                                                                                                   | tsc, eslint, tests de la logique pure            |
+| 0 bis | Préalables : modules     | Seulement si le développeur a choisi, pour une dépendance, de migrer d'abord un autre module (catégorie « Ancien, à migrer », option A de [framework.md](framework.md) ; voir « Modules préalables » ci-dessous). Chacun sa fiche (`/migrate-module`). Dire ce que chacun bloque : souvent une partie d'une phase seulement. | selon leurs fiches                               |
+| 1     | Déplacements             | `git mv` seuls (si nécessaires).                                                                                                                                                                                                                                                                                             | tsc inchangé                                     |
+| 2     | Données                  | `model/` (types + règles), `service/` (`namespace API`, `adapter.ts`, `getModuleTransport`), `store/`, `storage.ts` (clés et namespaces inchangés), `actions.ts`. Tests Jest de la logique pure.                                                                                                                             | tsc, eslint, `yarn test`                         |
+| 3     | Déclaration + chargement | `index.ts` en `EntModule` / `CoreModule`, ajout dans `src/app/config/modules.ts`, droits, `scope`, `entries` (`myApps`, `tab`, `userMenu`), `sessionSetup` / `onSessionStart` (plus de `callAtLogin`).                                                                                                                       | tsc ; connexion : state rempli (test dans l'app) |
+| 4     | API publique + façades   | Hooks / composants publics, façades `@deprecated` aux chemins importés de l'extérieur, consommateurs migrés.                                                                                                                                                                                                                 | tsc, aucun import cassé                          |
+| 5     | Écrans                   | `defineScreen`, portés tels quels ; header par options (`headerLeftActions` / `headerRightActions`) ; `testID` conservés.                                                                                                                                                                                                    | parcours dans l'app                              |
+| 6     | Modales                  | `defineModal` ; bottom sheet → `formSheet`, `react-native-modal` → `transparentModal` ; `useConfirmRemove`.                                                                                                                                                                                                                  | parcours dans l'app                              |
+| 7     | Points reportés          | Notifications, intents, widgets, navigation vers un module pas encore migré… selon l'état du framework : souvent reportés (`later.md` + `ToDo(<module>-migration)`).                                                                                                                                                         | selon décision                                   |
+| 8     | Nettoyage                | Suppression de `module-config.ts`, `navigation/`, de l'ancien Redux, des façades sans importeur, des fichiers orphelins et du code hors périmètre non repris (il reste dans git ; décidé pour `user`). Demander si ce code doit plutôt être gardé.                                                                           | `grep -rn` des anciens chemins                   |
+
+### Modules préalables
+
+Migrer d'abord un autre module ancien est **toujours une question** (catégorie « Ancien, à migrer » de [framework.md](framework.md)), jamais une phase ajoutée d'office.
+
+- Si le développeur choisit de le migrer d'abord et que ce module est **gros** (plusieurs écrans, un store, des consommateurs) : proposer d'**arrêter ici** la migration en cours, de migrer le préalable avec son propre `/migrate-module`, puis de reprendre (la fiche garde l'état : statut, §7, §8, §9 ; le préalable va dans §9 et dans `STATUS.md`).
+- S'il est petit : proposer la phase 0 bis dans le plan, ou l'arrêt, au choix du développeur.
 
 Tests Jest : la logique pure a son test (CONVENTIONS « Structure d'un module »). Le plan les prévoit ; valider le plan vaut demande explicite de tests. Si le développeur les retire du plan, ne pas en écrire.
 
 ### Validation du plan
 
-Résumer la fiche en quelques lignes dans le chat (cible, phases, nombre de questions), puis poser les questions de §8 avec `AskUserQuestion`. Reporter les réponses (§7), mettre la fiche au statut `en cours`, ajouter la ligne du module à jour dans `STATUS.md`. **Attendre l'accord explicite du développeur sur le plan** avant la première phase.
+Résumer la fiche en quelques lignes dans le chat (cible, phases, nombre de questions), puis poser les questions de §8 avec `AskUserQuestion`, les plus structurantes d'abord (emplacement, évolutions du framework, gestion d'état).
+
+Une réponse qui ouvre une **évolution du framework** (nouvelle clé de config, regroupement de clés…) appelle ses propres questions de forme avant la validation : typage, valeurs par défaut et héritages, clés prévues mais sans consommateur, une valeur ou une liste. Mesurer d'abord son impact (`grep` des usages des clés touchées) et le décrire en §5 (fichiers touchés, phase 0). Exemple : `entries`, décidé pendant le plan de `user` ([user.md](../../../docs/migrations/user.md) §5.3).
+
+Reporter les réponses (§7), mettre la fiche au statut `en cours`, ajouter la ligne du module à jour dans `STATUS.md`. **Attendre l'accord explicite du développeur sur le plan** avant la première phase.
 
 ## Étape 4 : exécuter une phase
 
