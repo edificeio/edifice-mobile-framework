@@ -22,24 +22,24 @@ function PictureCardText({ text, textStyle }: PictureCardTextProps) {
   return text;
 }
 
-function PictureCard_Base(props: PictureCardProps & { cardComponent?: PictureCardComponent }) {
+function PictureCardBase(props: PictureCardProps & { cardComponent?: PictureCardComponent }) {
   const { cardComponent, picture, style, text, textStyle, ...viewProps } = props;
-  const CC = cardComponent ?? CardWithoutPadding;
+  const CardComponent = cardComponent ?? CardWithoutPadding;
 
   return (
-    <CC {...(viewProps as ViewProps & TouchableOpacityProps)} style={[styles.cardContainer, style]}>
+    <CardComponent {...(viewProps as ViewProps & TouchableOpacityProps)} style={[styles.cardContainer, style]}>
       <Picture {...picture} />
       <PictureCardText text={text} textStyle={textStyle} />
-    </CC>
+    </CardComponent>
   );
 }
 
-function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: PictureCardComponent }) {
+function SelectorPictureCardBase(props: PictureCardProps & { cardComponent?: PictureCardComponent }) {
   const { cardComponent, picture, pictureStyle, style, ...rest } = props;
   picture.style = { maxWidth: '100%', ...pictureStyle };
   if (picture.type === 'Image') picture.resizeMode = 'contain';
   return (
-    <PictureCard_Base
+    <PictureCardBase
       cardComponent={cardComponent ?? Card}
       style={[styles.selectorCardPadding, style]}
       picture={picture}
@@ -48,5 +48,5 @@ function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: Pi
   );
 }
 export function TouchableSelectorPictureCard(props: PictureCardProps & TouchableOpacityProps) {
-  return <SelectorPictureCard_Base cardComponent={TouchCard} {...props} />;
+  return <SelectorPictureCardBase cardComponent={TouchCard} {...props} />;
 }
