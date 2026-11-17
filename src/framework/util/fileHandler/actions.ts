@@ -3,8 +3,8 @@
  */
 import FileViewer from 'react-native-file-viewer';
 
-import { openCarousel } from '~/framework/components/carousel/openCarousel';
-import { openMediaPlayer } from '~/framework/components/media/player';
+import { navigationRef } from '~/app/navigation';
+import { convertLegacyMediaToFileMedia, convertPlayableSourceToFileMedia } from '~/framework/components/carousel/utils/adapter';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { MediaType, toURISource } from '~/framework/modules/media';
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler/models';
@@ -162,30 +162,38 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia, 
 
   switch (mediaType) {
     case 'image':
-      openCarousel({
-        data: [
+      navigationRef.navigate('media/carousel', {
+        media: convertLegacyMediaToFileMedia([
           onlineMedia ?? {
             mime: localFile?.filetype,
             src: localFile?._filepathNative!,
             type: MediaType.IMAGE,
           },
-        ],
+        ]),
       });
       success = true;
       break;
     case 'audio':
-      openMediaPlayer({
-        filetype: document.filetype,
-        source: sessionURISource(toURISource(onlineMedia?.src ?? localFile?._filepathNative)),
-        type: MediaType.AUDIO,
+      navigationRef.navigate('media/carousel', {
+        media: [
+          convertPlayableSourceToFileMedia(
+            sessionURISource(toURISource(onlineMedia?.src ?? localFile?._filepathNative)),
+            MediaType.AUDIO,
+            document.filetype,
+          ),
+        ],
       });
       success = true;
       break;
     case 'video':
-      openMediaPlayer({
-        filetype: document.filetype,
-        source: sessionURISource(toURISource(onlineMedia?.src ?? localFile?._filepathNative)),
-        type: MediaType.VIDEO,
+      navigationRef.navigate('media/carousel', {
+        media: [
+          convertPlayableSourceToFileMedia(
+            sessionURISource(toURISource(onlineMedia?.src ?? localFile?._filepathNative)),
+            MediaType.VIDEO,
+            document.filetype,
+          ),
+        ],
       });
       success = true;
       break;
