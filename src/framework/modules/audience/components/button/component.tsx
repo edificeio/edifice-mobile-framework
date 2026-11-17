@@ -9,8 +9,8 @@ import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import { Svg } from '~/framework/components/picture';
 import { CaptionBoldText } from '~/framework/components/text';
+import { useRegisterOpenModal } from '~/framework/hooks/modal';
 import { getValidReactionTypes } from '~/framework/modules/auth/redux/reducer';
-import { useRegisterModalClose } from '~/framework/navigation/modals/modal-dismissal';
 import Feedback from '~/framework/util/feedback/feedback';
 
 import styles from './styles';
@@ -26,7 +26,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   const { userReaction } = props;
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const closeReactions = React.useCallback(() => setIsOpen(false), []);
-  useRegisterModalClose(isOpen, closeReactions);
+  useRegisterOpenModal(isOpen, closeReactions);
   const [itemSelected, setItemSelected] = React.useState<null | string>(null);
   const [longPressTimeout, setLongPressTimeout] = React.useState(null);
   const topInset = useSafeAreaInsets().top;

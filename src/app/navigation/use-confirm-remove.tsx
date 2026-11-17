@@ -14,7 +14,7 @@ import {
 } from '@react-navigation/native';
 
 import { I18n } from '~/app/i18n';
-import { closeOpenModals } from '~/framework/navigation/modals/modal-dismissal';
+import { closeOpenModals } from '~/framework/hooks/modal';
 import { NAVIGATE_CLOSE_DELAY } from '~/framework/navigation/nextTabJump';
 
 export const ConfirmRemoveContext = React.createContext<React.RefObject<NavigationAction[]>>({ current: [] });

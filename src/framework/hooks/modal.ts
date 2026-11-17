@@ -7,7 +7,7 @@ import * as React from 'react';
  */
 const closeListeners = new Set<() => void>();
 
-export function useRegisterModalClose(isOpen: boolean, close: () => void) {
+export function useRegisterOpenModal(isOpen: boolean, close: () => void) {
   React.useEffect(() => {
     if (!isOpen) return;
     closeListeners.add(close);

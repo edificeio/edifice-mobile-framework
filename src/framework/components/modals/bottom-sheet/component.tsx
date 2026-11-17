@@ -16,8 +16,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
+import { useRegisterOpenModal } from '~/framework/hooks/modal';
 import { useSyncRef } from '~/framework/hooks/ref';
-import { useRegisterModalClose } from '~/framework/navigation/modals/modal-dismissal';
 
 import styles from './styles';
 
@@ -74,7 +74,7 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
       onDismiss?.();
     }, [onDismiss]);
     const dismiss = React.useCallback(() => bottomSheetRef.current?.dismiss(), []);
-    useRegisterModalClose(presented, dismiss);
+    useRegisterOpenModal(presented, dismiss);
 
     const header =
       _header ??
