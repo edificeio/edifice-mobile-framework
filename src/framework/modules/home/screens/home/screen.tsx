@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { headerAction, screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
 import PopupMenu from '~/framework/components/menus/popup';
-import { BarLine, NavBarProfileButton } from '~/framework/components/navigation';
+import { BarBackground, NavBarProfileButton } from '~/framework/components/navigation';
 import { BodyBoldText, CaptionText } from '~/framework/components/text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { withSession } from '~/framework/modules/auth/util';
@@ -29,7 +29,7 @@ export const HomeScreenOptions = screenOptions(({ navigation }) => {
   const profileButton = <NavBarProfileButton onPress={() => navigation.navigate('user')} />;
 
   return {
-    headerBackground: () => <BarLine bar="navBar" background={theme.ui.navigation.navBar.background} />,
+    headerBackground: () => <BarBackground barType="navBar" backgroundColor={theme.ui.navigation.navBar.background} />,
     headerLeft: () => profileButton,
     headerShadowVisible: false,
     headerTitle: HomeScreenNavBarTitle,
