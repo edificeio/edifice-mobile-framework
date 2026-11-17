@@ -12,6 +12,17 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-17 — Spécification de `user` (`feat/navigation`)
+
+- Fait : premier essai du skill `migrate-module`. Fiche [user.md](user.md) : inventaire de `framework/modules/user` (écrans, consommateurs, dépendances), comportements à conserver, cible, plan par phases. Override `dev/default` appliqué par le skill. Aucun code modifié.
+- Décidé (utilisateur) : écrans des notifications push hors périmètre (repris par `notifications`, supprimés au nettoyage) ; points d'entrée des modules regroupés dans `entries` (`myApps` ex-`entry`, `tab`, `userMenu` = tableau de liens dans l'accueil de `user`, `create` plus tard), `route` obligatoire et sans params ; emplacement `src/modules/user` ; store Redux des profils ; clé `fileManager` dans `ModuleConfig` ; alerte « heures calmes » portée ; « Envoyer un message » masqué ; `debug` et `splashads` migrés d'abord ; `birthdate` en `Temporal`.
+- Vérifié : base tsc 776 erreurs (39 dans `modules/user`), eslint 2 090 erreurs / 88 warnings, 428 tests.
+- En suspens : validation du plan ; champs d'un lien `userMenu` à confirmer en phase 0.
+- Prochaine étape : phase 0 (`entries`, `fileManager`) après accord sur le plan.
+- Ensuite (utilisateur) : skill `migrate-module` mis à jour avec les décisions de ce plan : `entries` et `fileManager` (inventaire, signaux de `framework.md`, phase 3), module déjà commencé dans `src/modules/` → on continue là, phase « 0 bis » pour les modules à migrer d'abord, nettoyage du code orphelin et hors périmètre, questions de forme quand une réponse ouvre une évolution du framework, valeurs renvoyées par params → store, `Temporal` recommandé.
+- Retours (utilisateur) sur le skill : l'emplacement du module est **toujours demandé** (pas de règle « on continue dans `src/modules/` ») ; migrer d'abord un autre module est **toujours demandé**, et s'il est gros, le skill propose d'arrêter la migration en cours pour faire le préalable d'abord.
+- Relecture (utilisateur) : store des profils de `user` en **zustand** (`createSessionStore`) au lieu de Redux (fiche §4 n°4, §5, §7) ; plus de clé `redux` dans la config de `user`.
+
 ## 2026-11-16 — Skill `migrate-module` (`feat/navigation`)
 
 - Fait : skill `.claude/skills/migrate-module/` (lancé à la main) : préparation, inventaire du module, état des dépendances transverses, fiche + plan par phases, exécution phase par phase avec relecture. Registre des modules de référence (`myapps`, `auth`), enrichi à la main après relecture. Mention dans [README.md](README.md). Aucun code modifié.

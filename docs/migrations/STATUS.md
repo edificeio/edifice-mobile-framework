@@ -1,6 +1,6 @@
 # État de la migration
 
-> Mis à jour le **2026-11-07** (branche `feat/ia/vmou`). À mettre à jour en fin de chaque session (voir [README.md](README.md)).
+> Mis à jour le **2026-11-17** (branche `feat/navigation`). À mettre à jour en fin de chaque session (voir [README.md](README.md)).
 
 ## Ce qu'il faut savoir avant tout
 
@@ -18,7 +18,7 @@
 | `editor`        | en cours                    | Rafraîchit le `oneSessionId` à `onSessionStart`. Pas d'écran.                                                                                                                                                                                                                                                                 | —                      |
 | `notifications` | en cours                    | Enregistre / désenregistre le push (FCM) par session. **Pas d'ouverture de notification** (reportée, voir plus bas).                                                                                                                                                                                                          | —                      |
 | `myapps`        | fait (pas testé dans l'app) | Phases 0 à 7 faites : droits / `entry` / `useOpenModule` ; modèle, service, store Redux, storage ; chargement par les hooks de session ; API publique (hooks, libellés d'onglets) ; écran, modales (menu, actions d'une app, favoris, onboarding), ouverture des apps ; ancien `framework/modules/myapps` supprimé (phase 7). | [myapps.md](myapps.md) |
-| `user`          | en cours                    | Seulement l'accueil (comptes + déconnexion). Le reste est dans `framework/modules/user`.                                                                                                                                                                                                                                      | —                      |
+| `user`          | en cours                    | Accueil provisoire (comptes + déconnexion). Migration du reste spécifiée, plan en attente de validation (2026-11-17) ; phase 0 = `entries` (points d'entrée des modules) + `fileManager` ; préalables `debug`, `splashads`.                                                                                                   | [user.md](user.md)     |
 
 ## Modules anciens (`src/framework/modules/`)
 
@@ -27,7 +27,7 @@ Tous `à faire` sauf mention. Ordre indicatif : **myapps → user → timeline**
 | Module                                                                                                                                                                                     | Statut   | Remarque                                                                                                                                                                                                                                             |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `myapps`                                                                                                                                                                                   | supprimé | Remplacé par `src/modules/myapps` (phase 7, 2026-11-10). Ses consommateurs passent par les hooks du nouveau module (voir [myapps.md](myapps.md)).                                                                                                    |
-| `user`                                                                                                                                                                                     | à faire  | Ses écrans `change-email` / `change-mobile` / `mfa` utilisent encore des écrans de `framework/modules/auth` (à supprimer avec lui).                                                                                                                  |
+| `user`                                                                                                                                                                                     | spec     | Migré vers `src/modules/user` : fiche [user.md](user.md). Ses écrans email / mobile / MFA passent aux templates de `src/modules/auth`.                                                                                                               |
 | `timeline`                                                                                                                                                                                 | à faire  | Fiche : [timeline.md](timeline.md) (contrainte : notifications dans leur propre module). `index.tsx` est un `EntModule` d'une **API intermédiaire obsolète** (2ᵉ argument `Stack => …`, clé `storage`) : ne compile pas avec l'actuelle, non chargé. |
 | `audience`                                                                                                                                                                                 | à faire  | **Pas migré** : seule la partie qui était dans `auth` est passée dans `src/modules/audience`. Restent `service.ts` (utilisé par le nouveau module), `components/` (bouton de réactions…) et les écrans `reactions` et `views`.                       |
 | `auth`, `media`                                                                                                                                                                            | façades  | Voir [auth.md](auth.md), [media.md](media.md).                                                                                                                                                                                                       |
@@ -63,7 +63,7 @@ Points flous à valider ou à débattre. Une question tranchée part dans la fic
 1. **Notifications vs `timeline`.** Qui porte l'ouverture des notifications : un registre dans le module `notifications` (les modules s'y déclarent), ou une clé de config de module (`notifications: { 'BLOG.PUBLISH-POST': handler }`) lue par le framework ? Et que garde `timeline` : seulement l'écran du fil, ou aussi les définitions des types de notifications (`notif-definitions`, aujourd'hui en redux, lues par `useNotificationBadge`) ? Reporté, mais à trancher **avant de migrer `timeline`**. Contrainte connue (2026-11-07) : un nouveau module `home` aura lui aussi un fil de notifications ; les notifications sortent donc de `timeline` dans le module `notifications`, consommé par `home` et `timeline` (voir [timeline.md](timeline.md) §5.1).
 2. **Reste d'`audience`.** Ses composants (bouton de réactions) et écrans sont utilisés par des modules fonctionnels : les migrer dans `src/modules/audience` avant eux, ou au fil de l'eau ?
 
-Tranchées le 2026-11-04 : `isModuleAvailable` en phase 0 de `myapps` ; ordre des onglets sur la nouvelle échelle (`timeline` = 0, `myapps` = 40) ; route d'entrée = clé `entry` facultative, dont `tab.route` hérite ; `useOpenModule` = API publique du framework.
+Tranchées le 2026-11-04 : `isModuleAvailable` en phase 0 de `myapps` ; ordre des onglets sur la nouvelle échelle (`timeline` = 0, `myapps` = 40) ; route d'entrée = clé `entry` facultative, dont `tab.route` hérite (**remplacé le 2026-11-17** par `entries`, voir [user.md](user.md) §5.3) ; `useOpenModule` = API publique du framework.
 
 ### `myapps`
 
@@ -71,5 +71,6 @@ Aucune question bloquante. Phases 0 à 7 faites (ancien module supprimé). Reste
 
 ## Prochaines étapes
 
+0. `user` : valider le plan ([user.md](user.md)), puis phase 0 (`entries`, `fileManager`).
 1. `myapps` : tester les phases 4 à 6 dans l'app.
 2. Trancher la question 1 (notifications) avant `timeline`.
