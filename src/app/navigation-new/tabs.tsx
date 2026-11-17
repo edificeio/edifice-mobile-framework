@@ -36,22 +36,22 @@ export const getTabScreenName = <Name extends AnyTabModule['name']>(name: Name):
 
 /**
  * Label of the tab of a module: an arbitrary rule, kept here. In order:
- * 1. the translation of `tab.labelI18n`, when the module gives one (and the key has a translation);
+ * 1. the translation of `entries.tab.labelI18n`, when the module gives one (and the key has a translation);
  * 2. else the label of the app of the module (`useModuleAppDisplay`: `appName` translated by the server, loaded by `myapps`, else the
  *    name of the module, always defined).
  */
-export const getTabLabel = (module: { tab?: { labelI18n?: string } }, appDisplay: Pick<EntAppDisplay, 'label'>): string => {
-  const key = module.tab?.labelI18n;
+export const getTabLabel = (tab: { labelI18n?: string } | undefined, appDisplay: Pick<EntAppDisplay, 'label'>): string => {
+  const key = tab?.labelI18n;
   const translated = key ? I18n.get(key) : undefined;
   return translated && translated !== key ? translated : appDisplay.label;
 };
 
-/** Label of a tab: the translation of `tab.labelI18n`, else the label of the app of the module, else its name (see `getTabLabel`). */
+/** Label of a tab: the translation of `entries.tab.labelI18n`, else the label of the app of the module, else its name (see `getTabLabel`). */
 function TabLabel({
   color,
   module,
 }: { module: AnyTabModule } & Parameters<Extract<BottomTabNavigationOptions['tabBarLabel'], Function>>[0]) {
-  const label = getTabLabel(module, useModuleAppDisplay(module.name));
+  const label = getTabLabel(module.entries.tab, useModuleAppDisplay(module.name));
   return (
     <CaptionText numberOfLines={1} ellipsizeMode="middle" style={{ color, marginHorizontal: -UI_SIZES.spacing.minor }}>
       {label}
@@ -66,7 +66,7 @@ function TabIcon({
   focused,
   iconActive,
   iconInactive,
-}: Readonly<AnyTabModule['tab'] & Parameters<Extract<BottomTabNavigationOptions['tabBarIcon'], Function>>[0]>) {
+}: Readonly<AnyTabModule['entries']['tab'] & Parameters<Extract<BottomTabNavigationOptions['tabBarIcon'], Function>>[0]>) {
   return <Svg width={tabBarIconSize} height={tabBarIconSize} name={focused ? iconActive : iconInactive} fill={color} />;
 }
 
@@ -81,7 +81,7 @@ const useIsTabAvailable = (module: AnyTabModule) => {
 };
 
 const createTabRoute = (screens: AllModulesStaticScreens, module: AnyTabModule) => {
-  const tabConfig = module.tab;
+  const tabConfig = module.entries.tab;
   const useIsAvailable = () => useIsTabAvailable(module);
   return createBottomTabScreen({
     if: useIsAvailable,

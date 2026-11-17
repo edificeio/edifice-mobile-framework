@@ -19,19 +19,21 @@ export default new EntModule<
   TimelinePreferencesData
 >(
   {
+    entries: {
+      tab: {
+        iconActive: 'home-fill',
+        iconInactive: 'home-outline',
+        order: 0,
+        route: 'timeline',
+        testId: 'tabbar-timeline',
+      },
+    },
     entTrackingName: 'Timeline',
     matchEntcoreApp: 'Timeline',
     name: 'timeline',
     redux: { reducer },
     scope: ['timeline', 'userbook'],
     storage: { account: preferences, device: storage, namespace: 'timeline' },
-    tab: {
-      iconActive: 'home-fill',
-      iconInactive: 'home-outline',
-      order: 0,
-      route: 'timeline',
-      testId: 'tabbar-timeline',
-    },
   },
   Stack => (
     <>

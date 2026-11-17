@@ -27,7 +27,7 @@ export const getAppUrl = (address: string, platformUrl: string): string => {
 
 /**
  * The module of each app (its name), by the name of the app: a module is the one of an app when its `matchEntcoreApp` is the name
- * of the app, and it can be opened (it has an `entry`, see `useOpenModule`). An app without such a module opens in the browser.
+ * of the app, and it can be opened (it has `entries.myApps`, see `useOpenModule`). An app without such a module opens in the browser.
  * @param modules the modules available for the user.
  */
 export const getAppModules = (

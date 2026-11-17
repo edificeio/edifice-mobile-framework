@@ -6,6 +6,7 @@ import type { Action, Reducer } from 'redux';
 import type importModules from '~/app/config/modules';
 import type { ScreenComponent, ScreenTelemetryConfig } from '~/app/navigation-new/types';
 import type { SvgIconName } from '~/framework/components/picture';
+import type { IModuleFileManagerConfig } from '~/framework/util/fileHandler/types';
 import type { StorageHandler } from '~/framework/util/storage/storage-handler';
 import type { AuthActiveAccount, AuthLoggedAccount } from '~/modules/auth/model';
 
@@ -50,8 +51,11 @@ export type NavigationParamsOfScreens<Components> = {
 };
 
 /**
- * Routes of the screens that open without params: the ones a module can give as its `entry`.
- * A screen whose params are all optional doesn't qualify: navigating to it still needs an object.
+ * Routes of the screens that open without params: the ones a module can give in its `entries`.
+ * An entry opens its screen with no params at all (`route.params` is `undefined`, not `{}`): `undefined` must be one of its params.
+ * - `StaticScreenProps<undefined>`: qualifies.
+ * - `StaticScreenProps<{ a?: string } | undefined>`: qualifies (optional params, read with `route.params?.a`).
+ * - `StaticScreenProps<{ a?: string }>`: doesn't qualify, its params say there is always an object. Add `| undefined`.
  */
 export type EntryRoute<Components> = {
   [RouteName in keyof Components]: undefined extends NavigationParamsOfScreen<Components[RouteName]> ? RouteName : never;
@@ -89,9 +93,16 @@ export interface ConfigForRights {
   hasRight?: (session: AuthActiveAccount) => boolean;
 }
 
-export interface ConfigForTab<Route extends PropertyKey> {
-  // Name of the route that goes to the tab home. Defaults to the `entry` of the module: one of both is needed.
-  route?: Route;
+/** Entry of a module in « Mes applis »: the module can be opened from elsewhere (`useOpenModule`). */
+export interface ConfigForMyAppsEntry<Route extends PropertyKey> {
+  // Route that opens the module: one of its screens, that needs no params.
+  route: Route;
+}
+
+/** Entry of a module in the tab bar. */
+export interface ConfigForTabEntry<Route extends PropertyKey> {
+  // Route of the home of the tab: one of the screens of the module, that needs no params.
+  route: Route;
 
   // Visible icon when the tab is not active
   iconInactive: SvgIconName;
@@ -110,8 +121,45 @@ export interface ConfigForTab<Route extends PropertyKey> {
   labelI18n?: string;
 }
 
-/** The tab of a loaded module: its route is always known (given, or the `entry` of the module). */
-export type ModuleTab<Route extends PropertyKey> = ConfigForTab<Route> & { route: Route };
+/** Section of the home of the module `user` where a link of `entries.userMenu` is shown. */
+export type UserMenuSection = 'configuration' | 'others';
+
+/** A link that a module adds to the home of the module `user` (« Mon compte »), which knows nothing of the module. */
+export interface ConfigForUserMenuEntry<Route extends PropertyKey> {
+  // Route that the link opens: one of the screens of the module, that needs no params.
+  route: Route;
+
+  // Key (i18n) of the label of the link.
+  labelI18n: string;
+
+  // Icon shown before the label.
+  icon: SvgIconName;
+
+  // TestID of the link.
+  testID: string;
+
+  // Section of the home where the link is shown.
+  section: UserMenuSection;
+
+  // Order of the link in its section, among the links of all modules (ascending; links without one come last, in the order of the
+  // modules). They are all shown before the own links of `user`.
+  order?: number;
+}
+
+/**
+ * Places where a module can be opened from. Each entry has a `route`: one of the screens of the module that needs no params
+ * (`EntryRoute`). A module without any can only be reached by the navigation of other screens.
+ */
+export interface ConfigForEntries<Route extends PropertyKey> {
+  // « Mes applis » (and `useOpenModule`: notifications, intents...).
+  myApps?: ConfigForMyAppsEntry<Route>;
+
+  // The tab bar. Opening the module (`useOpenModule`) jumps to its tab when it has one.
+  tab?: ConfigForTabEntry<Route>;
+
+  // Links in the home of the module `user` (« Mon compte »).
+  userMenu?: readonly ConfigForUserMenuEntry<Route>[];
+}
 
 interface ConfigForRedux<State = undefined, ActionType extends Action = never> {
   // Reducer instance of this module
@@ -168,7 +216,7 @@ export interface ModuleConfig<
   Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
   ReduxState = undefined,
   ReduxAction extends Action = never,
-  Entry extends EntryRoute<Screens> | undefined = undefined,
+  Entries extends ConfigForEntries<EntryRoute<Screens>> = {},
   Scope extends string = never,
 > extends ConfigForSession {
   // Technical name of this module. Needs to be the same as its folder name.
@@ -178,12 +226,9 @@ export interface ModuleConfig<
   // A scope is most often the first segment of the paths it covers (`/timeline/...`): `getModuleTransport` relies on it.
   scope?: readonly Scope[];
 
-  // Route that opens the module (`useOpenModule`): one of its screens, that needs no params. Without it, the module can't be opened
-  // from elsewhere (« Mes applis », notifications...). The tab, if any, opens on it unless it has its own `route`.
-  entry?: Entry;
-
-  // Makes the module appear in the tab bar. The route must be one of its screens; it defaults to `entry`.
-  tab?: ConfigForTab<keyof Screens>;
+  // Where the module can be opened from: « Mes applis » (`myApps`), the tab bar (`tab`), the home of `user` (`userMenu`). Without
+  // `myApps`, the module can't be opened from elsewhere (`useOpenModule`: « Mes applis », notifications...).
+  entries?: Entries;
 
   // Screens and Modals, each one configured like with `createNativeStackScreen`.
   screens?: ModuleScreensConfig<Screens>;
@@ -195,6 +240,9 @@ export interface ModuleConfig<
   // The storages of this module that have migrations (given to `Storage.device` / `Storage.account`). They must be declared here:
   // the migrations run at the app startup for the declared ones, and a storage with migrations that is not declared throws when used.
   storages?: readonly StorageHandler<any>[];
+
+  // What the user can pick (camera, gallery, documents...) in this module, by use case: `FileManager.pick({ module, usecase })` reads it.
+  fileManager?: IModuleFileManagerConfig;
 }
 
 export interface CoreModuleConfig<
@@ -203,9 +251,9 @@ export interface CoreModuleConfig<
   Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
   ReduxState = undefined,
   ReduxAction extends Action = never,
-  Entry extends EntryRoute<Screens> | undefined = undefined,
+  Entries extends ConfigForEntries<EntryRoute<Screens>> = {},
   Scope extends string = never,
-> extends ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope> {}
+> extends ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope> {}
 
 export interface EntModuleConfig<
   Name extends string,
@@ -213,10 +261,10 @@ export interface EntModuleConfig<
   Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
   ReduxState = undefined,
   ReduxAction extends Action = never,
-  Entry extends EntryRoute<Screens> | undefined = undefined,
+  Entries extends ConfigForEntries<EntryRoute<Screens>> = {},
   Scope extends string = never,
 >
-  extends ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>, ConfigForRights {
+  extends ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>, ConfigForRights {
   entTrackingName?: string;
 }
 
@@ -226,10 +274,12 @@ export type TabModule<
   Modals extends Record<string, ScreenComponent> & StrictModuleScreens<Name, Modals> = {},
   ReduxState = undefined,
   ReduxAction extends Action = never,
-  Entry extends EntryRoute<Screens> | undefined = undefined,
+  Entries extends ConfigForEntries<EntryRoute<Screens>> = {},
   Scope extends string = never,
-> = Omit<Module<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>, 'tab'> & {
-  tab: NonNullable<Module<Name, Screens, Modals, ReduxState, ReduxAction, Entry, Scope>['tab']>;
+> = Omit<Module<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>, 'entries'> & {
+  entries: Module<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['entries'] & {
+    tab: NonNullable<Module<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['entries']['tab']>;
+  };
 };
 
 export type ModuleScreens<T> =
@@ -247,7 +297,8 @@ export type ModuleReduxState<T> =
 export type ModuleReduxAction<T> =
   T extends Module<infer Name, any, any, any, infer ReduxAction, any, any> ? (Name extends any ? ReduxAction : never) : never;
 
-export type ModuleEntry<T> = T extends { entry: infer Entry } ? Entry : never;
+/** The entries of a module, as it reads them: each key it was given is required, the other ones optional. */
+export type ModuleEntries<T> = T extends { entries: infer Entries } ? Entries : never;
 
 /** Scopes declared by a module (`never` without any). */
 export type ModuleScope<T> = T extends { scope?: readonly (infer Scope extends string)[] } ? Scope : never;
@@ -263,8 +314,8 @@ export type AllModulesNames = AnyModule['name'];
 
 // Modules of the collection, typed as modules that have a tab (a module that has no tab is filtered at runtime).
 export type AnyTabModule = AnyModule extends infer M
-  ? M extends Module<infer Name, infer Screens, infer Modals, infer State, infer ReduxAction, infer Entry, infer Scope>
-    ? TabModule<Name, Screens, Modals, State, ReduxAction, Entry, Scope>
+  ? M extends Module<infer Name, infer Screens, infer Modals, infer State, infer ReduxAction, infer Entries, infer Scope>
+    ? TabModule<Name, Screens, Modals, State, ReduxAction, Entries, Scope>
     : never
   : never;
 
@@ -273,9 +324,9 @@ export type AllModulesRecord = {
   [name in AllModulesNames]: Extract<AnyModule, { name: name }>;
 };
 
-// Names of the modules that have an `entry`: the ones `useOpenModule` can open.
-export type AllModulesWithEntryNames = {
-  [Name in AllModulesNames]: [ModuleEntry<AllModulesRecord[Name]>] extends [undefined] ? never : Name;
+// Names of the modules that have an entry in « Mes applis » (`entries.myApps`): the ones `useOpenModule` can open.
+export type AllModulesWithMyAppsEntryNames = {
+  [Name in AllModulesNames]: ModuleEntries<AllModulesRecord[Name]> extends { myApps: object } ? Name : never;
 }[AllModulesNames];
 
 // Names of the modules that provide a redux configuration (a module without it has `undefined` as state).

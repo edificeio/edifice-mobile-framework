@@ -20,12 +20,12 @@ import type { MyAppsDispatch } from './types';
 /** Any module of the app: only an `EntModule` may have an app (`matchEntcoreApp`). */
 interface ModuleLike {
   name: AllModulesNames;
-  entry?: unknown;
+  entries: { myApps?: unknown };
 }
 
 /** What the rules need to know of a module. */
 const toModuleData = (module: ModuleLike) => ({
-  hasEntry: module.entry !== undefined,
+  hasEntry: module.entries.myApps !== undefined,
   matchEntcoreApp: 'matchEntcoreApp' in module && typeof module.matchEntcoreApp === 'string' ? module.matchEntcoreApp : undefined,
   name: module.name,
 });
