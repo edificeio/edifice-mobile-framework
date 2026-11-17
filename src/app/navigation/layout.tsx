@@ -17,7 +17,7 @@ import { StackPresentationTypes } from 'react-native-screens';
 
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
-import { BarLine } from '~/framework/components/navigation';
+import { BarBackground } from '~/framework/components/navigation';
 import ErrorScreenView from '~/framework/components/screen/error';
 import { TextFontStyle } from '~/framework/components/text';
 import { ToastContainer } from '~/framework/components/toast';
@@ -92,7 +92,11 @@ export const defaultScreenOptions = ({ theme: navTheme }) =>
     // painting the header itself so current behavior is preserved.
     ...(hasNavigationLine && {
       headerBackground: () => (
-        <BarLine background={theme.ui.navigation.navBar.background} bar="navBar" line={theme.ui.navigation.line} />
+        <BarBackground
+          backgroundColor={theme.ui.navigation.navBar.background}
+          barType="navBar"
+          lineImage={theme.ui.navigation.line}
+        />
       ),
       headerShadowVisible: false,
     }),
@@ -140,7 +144,11 @@ export const defaultTabOptions: BottomTabNavigatorProps['screenOptions'] = ({ na
     tabBarInactiveTintColor: theme.ui.navigation.tabBar.tintBlur.toString(),
     ...(hasNavigationLine && {
       tabBarBackground: () => (
-        <BarLine background={theme.ui.navigation.tabBar.background} bar="tabBar" line={theme.ui.navigation.line} />
+        <BarBackground
+          backgroundColor={theme.ui.navigation.tabBar.background}
+          barType="tabBar"
+          lineImage={theme.ui.navigation.line}
+        />
       ),
     }),
     tabBarStyle: [styles.tabBar, hasNavigationLine && styles.tabBarWithLine, getTabBarStyleForNavState(navigation.getState())],
