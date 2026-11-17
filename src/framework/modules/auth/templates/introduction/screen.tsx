@@ -2,6 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -27,6 +28,9 @@ export const computeNavBar = ({
 });
 
 export default function AuthIntroductionScreen(props: AuthIntroductionScreenPrivateProps) {
+  const insets = useSafeAreaInsets();
+  const bottomContainerStyle = React.useMemo(() => [styles.bottomContainer, { paddingBottom: insets.bottom }], [insets.bottom]);
+
   return (
     <PageView style={styles.page}>
       <View style={styles.topContainer}>
@@ -34,7 +38,7 @@ export default function AuthIntroductionScreen(props: AuthIntroductionScreenPriv
         <HeadingSText style={styles.title}>{props.title}</HeadingSText>
         <SmallText style={styles.description}>{props.description}</SmallText>
       </View>
-      <View style={styles.bottomContainer}>
+      <View style={bottomContainerStyle}>
         <PrimaryButton
           text={props.buttonText}
           iconRight="ui-arrowRight"

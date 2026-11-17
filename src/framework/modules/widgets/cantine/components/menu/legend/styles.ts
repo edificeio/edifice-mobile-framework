@@ -5,9 +5,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
-  allergens: {
-    color: theme.palette.cantine.allergens,
-  },
   container: {
     backgroundColor: theme.palette.grey.white,
     borderRadius: UI_SIZES.radius.medium,
