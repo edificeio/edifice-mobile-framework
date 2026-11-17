@@ -23,6 +23,8 @@ const ALLERGENS = [
 export const hasAllergens = (item: MenuItem): boolean => ALLERGENS.some(allergen => item[allergen.key] !== 0);
 
 export const formatAllergens = (item: MenuItem): string =>
-  ALLERGENS.filter(allergen => item[allergen.key] !== 0)
-    .map(allergen => I18n.get(allergen.labelI18n))
-    .join(I18n.get('widget-cantine-menu-allergene-separator'));
+  I18n.get('widget-cantine-menu-allergenes-list', {
+    allergens: ALLERGENS.filter(allergen => item[allergen.key] !== 0)
+      .map(allergen => I18n.get(allergen.labelI18n))
+      .join(I18n.get('widget-cantine-menu-allergene-separator')),
+  });

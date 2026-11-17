@@ -22,7 +22,6 @@ export interface IEntcoreFlashMessage {
   };
   customColor: string | null; // Custom background color
   id: number; // Flash message unique ID
-  title?: string; // Message title, shown above its content
   signature: string; // Message signature
   signatureColor: string; // Signature color
   dismiss?: boolean; // Has the user asked for dismiss

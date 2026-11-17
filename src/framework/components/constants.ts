@@ -259,6 +259,17 @@ export const UI_VALUES = {
   },
 };
 
+export const UI_SHADOWS = {
+  card: [
+    {
+      blurRadius: 5,
+      color: 'rgba(0, 0, 0, 0.2)',
+      offsetX: 0,
+      offsetY: 2,
+    },
+  ],
+};
+
 export const genericHitSlop: Insets = {
   bottom: UI_SIZES.spacing.minor,
   left: UI_SIZES.spacing.minor,

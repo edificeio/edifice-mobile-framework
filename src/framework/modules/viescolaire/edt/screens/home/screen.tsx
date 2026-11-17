@@ -56,6 +56,12 @@ export const computeNavBar = ({
 
 const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
+const getTabBorderColor = (dayKey: string, focused: boolean, isToday: boolean) => {
+  if (focused) return theme.ui.dayPicker?.selectedBorder ?? theme.color.homework.days[dayKey]?.accent;
+  if (isToday) return theme.ui.dayPicker?.todayBorder ?? theme.palette.grey.grey;
+  return theme.palette.grey.white;
+};
+
 const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
@@ -266,12 +272,10 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
                 style={[
                   styles.tabBarItem,
                   {
-                    backgroundColor: focused ? theme.color.homework.days[route.key]?.background : theme.palette.grey.white,
-                    borderColor: focused
-                      ? theme.color.homework.days[route.key]?.accent
-                      : route.icon
-                        ? theme.palette.grey.grey
-                        : theme.palette.grey.white,
+                    backgroundColor: focused
+                      ? (theme.ui.dayPicker?.selectedBackground ?? theme.color.homework.days[route.key]?.background)
+                      : theme.palette.grey.white,
+                    borderColor: getTabBorderColor(route.key, focused, !!route.icon),
                   },
                 ]}>
                 <CaptionBoldText ellipsizeMode="tail" style={styles.tabBarItemText}>

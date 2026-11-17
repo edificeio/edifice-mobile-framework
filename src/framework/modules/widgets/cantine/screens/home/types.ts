@@ -13,12 +13,6 @@ export interface CantineHomeScreenNavParams {
 }
 
 export interface CantineHomeScreenPrivateProps
-  extends NativeStackScreenProps<CantineNavigationParams, 'home'>,
-    CantineHomeScreenProps {
+  extends NativeStackScreenProps<CantineNavigationParams, 'home'>, CantineHomeScreenProps {
   // @scaffolder add HOC props here
-}
-
-export enum SwipeDirection {
-  LEFT = 'LEFT',
-  RIGHT = 'RIGHT',
 }

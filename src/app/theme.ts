@@ -169,6 +169,11 @@ export interface ITheme {
       danger: IButtonColors;
     };
     checkbox: ICheckboxColors;
+    dayPicker?: {
+      selectedBackground: ColorValue;
+      selectedBorder: ColorValue;
+      todayBorder: ColorValue;
+    };
     radio: ISelectionColors;
     toggle: ISelectionColors;
     navigation: {
