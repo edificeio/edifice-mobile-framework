@@ -1,10 +1,10 @@
 ---
 name: pre-review
 description: Pré-review d'une PR GitHub du dépôt edifice-mobile-framework avant la review humaine.
-  Produit un rapport classé (bloquant / à corriger / suggestion) avec fichier:ligne et règle citée, sans toucher au code ni poster sur la PR. À utiliser automatiquement quand je dis « pré-review de la PR 355 », « vérifie la pull request 360 avant que je la relise », « qu'est-ce qui cloche dans la PR 356 »). NE PAS utiliser pour relire le diff local non poussé (c'est /code-review) ni pour corriger le code.
-argument-hint: "[numéro de PR ou url]"
-allowed-tools: Read Grep Glob Bash(gh pr view *) Bash(gh pr diff *) Bash(git fetch origin *) Bash(git show *) Bash(git log *) Bash(git diff *)
-disallowed-tools: Edit Write Bash(git commit) Bash(git commit *) Bash(git push) Bash(git push *) Bash(git merge *) Bash(git rebase *) Bash(git cherry-pick *) Bash(git revert *) Bash(git am *)
+  Écrit un rapport classé (bloquant / à corriger / mineur / suggestion) avec fichier:ligne et règle citée dans docs/reviews/, sans toucher au code ; une fois le rapport validé par le reviewer, le publie en commentaire sur la PR et propose des évolutions du skill et des règles. À utiliser automatiquement quand je dis « pré-review de la PR 355 », « vérifie la pull request 360 avant que je la relise », « qu'est-ce qui cloche dans la PR 356 », et pour la publication « la pré-review 355 est validée », « publie la pré-review 355 » (`/pre-review 355 publier`). NE PAS utiliser pour relire le diff local non poussé (c'est /code-review) ni pour corriger le code.
+argument-hint: '[numéro de PR ou url] [publier]'
+allowed-tools: Read Grep Glob Write(docs/reviews/**) Edit(docs/reviews/**) Bash(gh pr view *) Bash(gh pr diff *) Bash(gh pr comment *) Bash(git fetch origin *) Bash(git show *) Bash(git log *) Bash(git diff *) Bash(rm docs/reviews/*)
+disallowed-tools: Bash(git commit) Bash(git commit *) Bash(git push) Bash(git push *) Bash(git merge *) Bash(git rebase *) Bash(git cherry-pick *) Bash(git revert *) Bash(git am *)
 context: fork
 ---
 
@@ -14,12 +14,15 @@ Le reviewer humain (tech lead) lance ce skill **avant** de relire une PR. Ton r�
 
 Deux principes guident tout le reste :
 
-- **Lecture seule.** Tu ne modifies ni le working tree, ni la branche, ni la PR. Pas de `git checkout`, pas de `gh pr checkout`, pas de `gh pr comment` / `gh pr review`. Le reviewer décide lui-même de ce qu'il remonte à l'auteur ; un commentaire posté à sa place l'engagerait.
+- **Le code et la PR restent intacts.** Pas de `git checkout`, `gh pr checkout`, `gh pr review`, ni d'écriture hors de `docs/reviews/` (dossier ignoré par git). Ta seule écriture est le rapport. Rien ne part sur GitHub sans la validation du reviewer (mode publication, §6) : un commentaire posté à sa place l'engagerait.
 - **Chaque remarque est vérifiable.** Elle cite `fichier:ligne` et la règle (fichier + section) qu'elle applique. Une remarque sans règle derrière est une opinion : range-la en « Suggestion » et dis-le. Un faux positif coûte plus cher au reviewer qu'un oubli, car il doit le réfuter.
 
-## 1. Paramètre
+## 1. Paramètres
 
-PR reçue : `$ARGUMENTS` — un numéro (`355`, `#355`) ou une URL `github.com/edificeio/edifice-mobile-framework/pull/355`. Si rien n'est passé, demande le numéro et arrête-toi.
+`$ARGUMENTS` : un numéro de PR (`355`, `#355`) ou une URL `github.com/edificeio/edifice-mobile-framework/pull/355`, suivi éventuellement de `publier`. Si aucun numéro n'est passé, demande-le et arrête-toi.
+
+- Sans `publier` : **mode rapport** (§2 à §5).
+- Avec `publier`, ou si la demande dit que la pré-review est validée : **mode publication** (§6).
 
 ## 2. Collecter la PR (lecture seule)
 
@@ -59,24 +62,15 @@ Les règles ne s'appliquent qu'au **code ajouté ou modifié** par la PR. Le cod
 - **Branche** : nom `<type>/<squad>/<TICKET>-…` et **base** cohérente avec le modèle de branches (`CONVENTIONS.md` §1) : une branche de travail vise `dev/<squad>`, pas `main` ni `dev/m.n.r`. Les PRs générées (Phrase, release) font exception.
 - **Titre** : format de commit `type(scope): TICKET, description en minuscules` (§2). La PR est squashée, le titre devient le commit.
 - **Commits** : même format ; signale les commits fourre-tout ou de merge descendant (§1 « Descendre = rebase »).
-- **Description** : création d'un composant ou d'une logique alors qu'un équivalent existe → la PR doit le justifier (§9 « Revue »).
+- **Description** : création d'un composant ou d'une logique alors qu'un équivalent existe → la PR doit le justifier (§10 « Revue »).
 
 ### 4.2 Règles du repo
 
-Applique les règles chargées à l'étape 3 au code ajouté : structure et nommage des fichiers, `index.ts`, imports `~/`, namespace de types, styles dans `styles.ts` avec valeurs de `theme.ts` / `constants.ts`, i18n, hooks, rendu conditionnel, etc. Cite la section exacte.
+Vérifie l'application des règles chargées à l'étape 3 au code ajouté : structure et nommage des fichiers, `index.ts`, imports `~/`, namespace de types, styles dans `styles.ts` avec valeurs de `theme.ts` / `constants.ts`, i18n, hooks, rendu conditionnel, etc. Cite la section exacte.
 
-### 4.3 Pièges propres à l'app Edifice
+### 4.3 Pièges propres à l'app
 
-Ce sont les erreurs que le lint ne voit pas et qui cassent en production. Pour chacune, vérifie dans le code, pas seulement dans le diff :
-
-- **Réseau** : un `fetch` (ou `axios`) direct dans un écran ou un composant, au lieu de `src/framework/util/transport` et du `service/` du module.
-- **Droits et profils** : une fonctionnalité, un bouton ou un écran affiché sans vérifier les droits (`rights.ts` du module, `resourceRights.ts`) ou le profil (élève, parent, enseignant). Demande-toi : que voit un élève ? un parent sans enfant rattaché ?
-- **Session** : code qui lit ou stocke le token, ou appelle une API hors de la session gérée par `src/framework/util/oauth2.ts` / le module `auth` (refresh, expiration, déconnexion).
-- **i18n** : texte en dur, clé absente de `assets/i18n/fr.json` (ouvre le fichier de la branche), clé qui ne suit pas `module-screen-key`, **valeur existante modifiée** (à inventorier pour l'équipe, §8).
-- **Dépendances** : ajout ou montée de version dans `package.json`, un Pod ou Gradle. Version non exacte (`^`, `~`), dépendance applicative qui aurait pu être de dev (`PACKAGE.md`). Une nouvelle dépendance doit être annoncée dans la description.
-- **Natif** : toute modification sous `ios/` ou `android/` mérite une ligne dans le rapport (impact sur les overrides, `NATIVE.md`).
-- **Modèle** : nouveau code calqué sur le module `blog` ou sur un ancien fichier en camelCase, alors que `communities` montre la bonne façon.
-- **Robustesse** : erreurs réseau non gérées (pas d'état d'erreur, promesse non catchée), état de chargement absent, `0 && <X />`, listes longues en `ScrollView`.
+Passe en revue chaque point de `CONVENTIONS.md` §11 (réseau, droits et profils, session, i18n, dépendances, natif, modèle, robustesse), en vérifiant dans le code et pas seulement dans le diff. Pour l'i18n, ouvre `assets/i18n/fr.json` de la branche.
 
 ### 4.4 Overrides et secrets
 
@@ -85,40 +79,41 @@ L'application d'un override réécrit des fichiers suivis par git ; ils ne doive
 - `override.json`, `phrase.json`, `.phrase.yml`, `src/platforms/**` ;
 - fichiers Firebase (`GoogleService-Info.plist`, `google-services.json`) ou tout ce qui ressemble à un jeton, une clé d'API ou un mot de passe.
 
-Ne recopie **jamais** la valeur d'un secret dans le rapport : cite le fichier et la ligne, c'est tout. Le rapport peut être collé ailleurs.
+Ne recopie **jamais** la valeur d'un secret dans le rapport : cite le fichier et la ligne, c'est tout. Le rapport finit sur GitHub.
 
 ## 5. Rapport
-
-En français, dans le terminal, avec ce gabarit. Sois concis : une ligne de constat, une ligne de piste. Omets une section vide plutôt que d'y écrire « rien ».
-
-```markdown
-# Pré-review PR #<n> — <titre>
-
-**Auteur** : <login> · **Branche** : `<head>` → `<base>` · **Taille** : <fichiers> fichiers, +<add>/-<del>
-**En bref** : <ce que fait la PR, en une phrase>
-**Règles appliquées** : CONVENTIONS, SCREENS, DESIGN-SYSTEM, …
-
-## Bloquant
-- `src/…/screen.tsx:42` — <constat>. *Règle* : CONVENTIONS §8 i18n. *Piste* : <correction>.
-
-## À corriger
-- …
-
-## Suggestions
-- … (préciser « sans règle écrite » quand c'est un avis)
-
-## Points à vérifier par le reviewer
-- <ce qui ne se tranche pas en lisant le diff : rendu UI, comportement par profil, test iOS/Android, choix de conception>
-
-## Non vérifié
-- `yarn ts-all` / `yarn lint-all` non lancés (pas de checkout).
-- <fichiers non lus, faute de temps ou parce que générés>
-```
 
 Gradation :
 
 - **Bloquant** : casse en production, fuite de secret / fichier d'override, faille de droits, régression probable.
-- **À corriger** : violation d'une règle écrite de l'équipe.
+- **À corriger** : violation d'une règle écrite de l'équipe, à corriger dans cette PR.
+- **Mineur** : écart réel mais sans impact fonctionnel, qui peut être reporté à une PR ultérieure sans bloquer le merge.
 - **Suggestion** : amélioration ou avis non couvert par une règle.
 
-Termine par une ligne de synthèse (`<x> bloquants, <y> à corriger, <z> suggestions`). Ne propose pas de poster les remarques sur la PR.
+Verdict, en fin de rapport, déduit des remarques (il éclaire le reviewer, il ne vaut pas approbation) :
+
+- **Changements requis** : au moins un bloquant.
+- **Corrections avant merge** : aucun bloquant, au moins un « à corriger ».
+- **Prêt pour la review** : seulement des mineurs ou des suggestions, ou rien.
+
+**Reste concis** : une ligne de constat, une ligne de piste. Omets une section vide plutôt que d'y écrire « rien ».
+
+1. Si `docs/reviews/pr-<n>.md` existe déjà, ne l'écrase pas : signale-le et arrête-toi (le reviewer est peut-être en train de le relire).
+2. Écris le rapport en français dans `docs/reviews/pr-<n>.md`, avec le gabarit `.claude/skills/pre-review/templates/report.md`.
+3. Écris le même contenu dans `docs/reviews/pr-<n>.generated.md` : cette copie non modifiée sert, à la publication, à voir ce que le reviewer a corrigé.
+4. Réponds dans le terminal avec le chemin du rapport, la ligne de synthèse, le verdict et la liste des bloquants. Rappelle au reviewer de relire et d'éditer le fichier, puis de lancer `/pre-review <n> publier` quand il le valide.
+
+## 6. Mode publication
+
+Le reviewer a relu et validé `docs/reviews/pr-<n>.md`, éventuellement après l'avoir modifié. Ce fichier fait foi : publie-le tel quel.
+
+1. Si `docs/reviews/pr-<n>.md` n'existe pas, dis-le et arrête-toi.
+2. Publie : `gh pr comment <n> --body-file docs/reviews/pr-<n>.md`. Si la commande échoue, arrête-toi sans rien supprimer.
+3. Compare le rapport validé à la copie générée : `git diff --no-index docs/reviews/pr-<n>.generated.md docs/reviews/pr-<n>.md` (si la copie manque, travaille sur le seul rapport validé).
+4. Supprime les fichiers locaux : `rm docs/reviews/pr-<n>.md docs/reviews/pr-<n>.generated.md`.
+5. Réponds avec l'URL du commentaire, puis propose des évolutions, chacune avec le fichier et la section à modifier, **sans les appliquer** :
+   - remarque retirée ou déclassée par le reviewer → faux positif : préciser le skill (§4) ou la règle concernée ;
+   - remarque ajoutée ou surclassée par le reviewer → oubli : ajouter la vérification au skill (§4) ou à `CONVENTIONS.md` ;
+   - suggestion « sans règle écrite » conservée par le reviewer → règle candidate pour `CONVENTIONS.md` ou `.claude/rules/`.
+
+   Sans écart notable, dis-le en une ligne.

@@ -113,6 +113,19 @@ En anglais, concis. Ils expliquent le **pourquoi** (maquette, contournement, dé
 - Revue : avant de créer un composant ou une logique, vérifier l'existant (composants partagés, utilitaires du framework) ; sinon justifier dans la PR.
 - SonarQube : après génération d'une pull request, traiter les issues rouges **et** jaunes (sauf les TODO) avant de demander la review.
 
+## 11. Pièges propres à l'app
+
+Erreurs que le lint ne voit pas et qui cassent en production. À vérifier dans le code (pas seulement dans le diff) avant de pousser comme en revue.
+
+- **Réseau** : pas de `fetch` direct dans un écran ou un composant ; passer par `src/framework/util/transport` et le `service/` du module (`sessionFetch`, §7).
+- **Droits et profils** : une fonctionnalité, un bouton ou un écran ne s'affiche qu'après vérification des droits (`rights.ts` du module, `resourceRights.ts`) et du profil (élève, parent, enseignant). Se demander : que voit un élève ? un parent sans enfant rattaché ?
+- **Session** : ne pas lire ni stocker le token, ni appeler une API hors de la session gérée par `src/framework/util/oauth2.ts` et le module `auth` (refresh, expiration, déconnexion). Composant dépendant de la session : `withSession` (§6).
+- **i18n** : toute clé utilisée existe dans `assets/i18n/fr.json` ; une valeur existante modifiée est inventoriée pour l'équipe (§9).
+- **Dépendances** : versions exactes, dépendance de dev quand c'est possible (`.claude/rules/PACKAGE.md`) ; une nouvelle dépendance (JS, Pod, Gradle) est annoncée dans la description de la PR.
+- **Natif** : toute modification sous `ios/` ou `android/` est signalée dans la PR, avec son impact sur les overrides (`.claude/rules/NATIVE.md`).
+- **Modèle** : ne pas calquer le module `blog` ni un ancien fichier en camelCase ; `communities` est la référence (§3, `CLAUDE.md` §5).
+- **Robustesse** : erreur réseau gérée (état d'erreur, promesse catchée), état de chargement présent ; ni `0 && <X />` (§6), ni liste longue en `ScrollView` (§5).
+
 ## Suivis
 
 - Ajouter `update` et `release` à `commitlint.config.js` le jour où les hooks sont réactivés.

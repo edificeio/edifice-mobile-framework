@@ -1,4 +1,4 @@
 schema_version: "1.1"
 name: pr-358-navbar-rename
 expected_outcome: |
-  Rapport de pré-review court de la PR 358 (refactor de renommage bar-line → bar-background), peu de remarques et pas de faux positifs inventés, sans modifier le code ni poster sur la PR.
+  Rapport de pré-review court de la PR 358 (refactor de renommage bar-line → bar-background), peu de remarques et pas de faux positifs inventés, écrit dans docs/reviews/, sans modifier le code ni poster sur la PR.
