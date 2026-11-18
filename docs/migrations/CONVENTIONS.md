@@ -23,8 +23,9 @@ Règles valables **pour toute la durée de la migration**, pour tous les modules
 - **Signaler les autres cas** où react-navigation ferait mieux que le code actuel (dans la section « Ancienneté de conception » de la fiche, statut `à valider`). Exemples déjà vus :
   - `useScrollToTop(ref)` au lieu d'écouter `tabPress` à la main ;
   - `usePreventRemove` / `useConfirmRemove` (`src/app/navigation-new/confirm-remove.tsx`) au lieu d'intercepter seulement le bouton fermer (le geste de fermeture d'une modale passe sinon outre la confirmation) ;
-  - options de l'écran (`defineScreen({ options })`, ou un composant de header qui lit ses hooks) au lieu de `navigation.setOptions` dans un effet ;
+  - options de l'écran (`defineScreen({ options })`, ou un composant de header qui lit ses hooks, sauf pour le titre : voir plus bas) au lieu de `navigation.setOptions` dans un effet ;
   - enchaînements d'écrans par la navigation plutôt que par des `setTimeout`.
+- **Titre de l'en-tête : jamais `headerTitle`** (composant de titre), même pour un titre lu dans le store : on perd le titre natif. Le titre passe par l'option `title` (décidé le 2026-11-17, [wiki.md](wiki.md) §7 ; moyen de lire le store : question 7 de cette fiche).
 
 ## Nommage et rédaction
 
