@@ -1,6 +1,8 @@
 ---
 name: pre-review
-description: Pré-review d'une PR GitHub du dépôt edifice-mobile-framework avant la review humaine — confronte le diff aux règles de l'équipe (.claude/docs/CONVENTIONS.md, .claude/rules/*), aux pièges propres à l'app Edifice (droits par profil, couche transport, session OAuth2, i18n, dépendances, natif) et signale les fichiers d'override ou secrets embarqués par erreur. Produit uniquement un rapport classé (bloquant / à corriger / suggestion) avec fichier:ligne et règle citée, sans toucher au code ni poster sur la PR. À utiliser dès qu'on donne un numéro ou un lien de PR à préparer, déblayer ou passer au crible (« pré-review de la PR 355 », « déblaie la 360 avant que je la relise », « qu'est-ce qui cloche dans #358 ? »). NE PAS utiliser pour relire le diff local non poussé (c'est /code-review) ni pour corriger le code.
+description: Pré-review d'une PR GitHub du dépôt edifice-mobile-framework avant la review humaine.
+  Produit un rapport classé (bloquant / à corriger / suggestion) avec fichier:ligne et règle citée, sans toucher au code ni poster sur la PR. À utiliser automatiquement quand je dis « pré-review de la PR 355 », « vérifie la pull request 360 avant que je la relise », « qu'est-ce qui cloche dans la PR 356 »). NE PAS utiliser pour relire le diff local non poussé (c'est /code-review) ni pour corriger le code.
+argument-hint: "[numéro de PR ou url]"
 allowed-tools: Read Grep Glob Bash(gh pr view *) Bash(gh pr diff *) Bash(git fetch origin *) Bash(git show *) Bash(git log *) Bash(git diff *)
 disallowed-tools: Edit Write Bash(git commit) Bash(git commit *) Bash(git push) Bash(git push *) Bash(git merge *) Bash(git rebase *) Bash(git cherry-pick *) Bash(git revert *) Bash(git am *)
 context: fork
