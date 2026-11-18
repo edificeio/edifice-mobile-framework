@@ -250,6 +250,7 @@ export function useMyAppsHomeController() {
     loadingMenuItem,
     modalRef,
     navigateToFavorites: () => navigation.navigate(ModalsRouteNames.FavoritesManagement),
+    navigateToFavoritesReorder: () => navigation.navigate(ModalsRouteNames.FavoritesReorder),
     onExternalLinkPress,
     onPressApp,
     onRefresh,
