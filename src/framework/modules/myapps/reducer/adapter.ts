@@ -76,6 +76,18 @@ export const computeNextBookmarks = (bookmarks: string[], appName: string): stri
   return isFavorite ? bookmarks.filter(name => name !== appName) : [...bookmarks, appName];
 };
 
+export const sortAppsByBookmarks = (apps: AppsInfoAggregated[], bookmarks: string[]): AppsInfoAggregated[] => {
+  const appsByName = new Map(apps.map(app => [app.name, app]));
+  // A duplicated bookmark would render the same app twice, with the same list key.
+  return [...new Set(bookmarks)].flatMap(name => appsByName.get(name) ?? []);
+};
+
+// Bookmarks of apps hidden from the list must not be dropped.
+export const mergeReorderedBookmarks = (orderedNames: string[], bookmarks: string[]): string[] => [
+  ...orderedNames,
+  ...bookmarks.filter(name => !orderedNames.includes(name)),
+];
+
 export const checkIfIsConnector = (app: AppsInfo): boolean => {
   if (!app.isMobile) return true;
   if (app.target === '_blank') return true;

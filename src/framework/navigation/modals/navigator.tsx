@@ -19,6 +19,9 @@ import {
   computeNavBar as ManageFavoritesAddNavbar,
   ManageFavoritesModalScreen,
 } from '~/framework/modules/myapps/components/manage-favorite-modal';
+import MyAppsFavoritesReorderScreen, {
+  computeNavBar as MyAppsFavoritesReorderNavBar,
+} from '~/framework/modules/myapps/screens/favorites-reorder';
 import SplashadsScreen, { computeNavBar as SplashadsNavBar } from '~/framework/modules/splashads/screen';
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
@@ -83,6 +86,11 @@ export default (
         options={ManageFavoritesAddNavbar}
         component={ManageFavoritesModalScreen}
       />
+      <RootStack.Screen
+        name={ModalsRouteNames.FavoritesReorder}
+        options={MyAppsFavoritesReorderNavBar}
+        component={MyAppsFavoritesReorderScreen}
+      />
     </RootStack.Group>
   </>
 );
@@ -104,6 +112,7 @@ setModalModeForRoutes([
   ModalsRouteNames.RichTextEditor,
   ModalsRouteNames.SplashAds,
   ModalsRouteNames.FavoritesManagement,
+  ModalsRouteNames.FavoritesReorder,
 ]);
 
 setCrossIconBlackForRoutes([ModalsRouteNames.AttachmentsImport, ModalsRouteNames.FileImport, ModalsRouteNames.SplashAds]);
