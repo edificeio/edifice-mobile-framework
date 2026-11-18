@@ -12,6 +12,30 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-18 — Révision de la cible d'`explorer` (`feat/navigation`)
+
+- Fait : [explorer.md](explorer.md) §1, §3, §4 n° 4 et 10, §5, §6 (phases 2 à 4), §7 ; [wiki.md](wiki.md) §5.1, §5.2, §7. Aucun code modifié.
+- Décidé (utilisateur) : `explorer` garde dans **son** store (`state.explorer`) l'inventaire des dossiers et ressources **par app** (nom ENT : `Wiki`, `Blog`, `Cahier de texte`, `Cahier Multimédia`) ; API publique en **fonctions qui prennent l'app** (`loadExplorerPage`, `selectExplorerFolder`, `resourceExplorerScreenOptions`, prop `app` du template), pas de fabrique ; contexte de l'API (`application` / `resource_type`) dans le service d'`explorer`. Remplace « un slice par consommateur ». Flux des noms d'apps détaillé ([explorer.md](explorer.md) §5.4) : l'ancien nom (`wiki`) ne sort pas du service ; `appName` d'une ressource = nom ENT de l'app demandée (`item.application` non lu).
+- Vérifié : rien à lancer (documentation seule).
+- En suspens : validation du plan ; règle « mapping de noms d'apps hors de l'adapter de l'API = anti-pattern » proposée pour CONVENTIONS, sans réponse.
+- Prochaine étape : phase 1 (déplacements) d'`explorer`, après validation.
+
+## 2026-11-17 — Spécification d'`explorer` (`feat/navigation`)
+
+- Fait : fiche [explorer.md](explorer.md) (inventaire, consommateurs `wiki` / `blog` / `homework` / `scrapbook`, dépendances, comportements, cible, plan en 5 phases). Override `dev/default` gardé (déjà actif). Aucun code modifié.
+- Décidé (utilisateur) : sur place ; `CoreModule` sans `redux` (state par consommateur, fabrique préfixée par son nom) ; sous-dossier par callback `onOpenFolder` ; titre lu dans le store depuis la fonction `options` de `defineScreen` ; **pas de façade** (ancien template et anciennes fabriques supprimés, les 4 consommateurs cassent jusqu'à leur migration) ; conversion des noms d'apps de `/explorer` dans l'adapter d'`explorer`, `newEntAppNameFromOldMap` retiré d'`intents.ts` (un mapping de noms d'apps hors de l'adapter de l'API qui l'impose est un anti-pattern) ; corrections §4 n° 6, 7, 8.
+- Vérifié : base tsc 776 (5 dans `explorer`, orphelin `model/index.ts`), eslint 2 090 / 88, `yarn test` 431/431.
+- En suspens : validation du plan.
+- Prochaine étape : phase 1 (déplacements) d'`explorer`.
+
+## 2026-11-17 — Spécification de `wiki` (`feat/navigation`)
+
+- Fait : fiche [wiki.md](wiki.md) (inventaire, consommateurs, dépendances, comportements, cible, plan par phases). Override `dev/default` appliqué par le skill. Aucun code modifié.
+- Décidé (utilisateur) : migration sur place ; `explorer` puis `audience` migrés d'abord, migration de `wiki` **arrêtée** en attendant ; orphelins non portés (`wiki/create`, `image-input`, `resource-thumbnail-loader`, pas de `fileManager`) ; corrections §4 n° 3, 4, 7 ; `testID` de l'en-tête abandonnés au profit du header du framework ; **jamais `headerTitle`** pour un titre lu dans le store (perd le titre natif).
+- Vérifié : base tsc 776 erreurs (22 dans `modules/wiki`), eslint 2 090 / 88, `yarn test` 431/431.
+- En suspens : question 7 de la fiche (moyen d'afficher un titre lu dans le store sans `headerTitle`) ; validation du plan.
+- Prochaine étape : `/migrate-module src/framework/modules/explorer`, puis `audience`, puis reprise de `wiki`.
+
 ## 2026-11-17 — Points d'entrée `entries` et clé `fileManager` (`feat/navigation`)
 
 - Fait : phase 0 du plan de `user`, à part : `ModuleConfig.entry` / `tab` remplacés par `entries` (`myApps`, `tab`, `userMenu`), `route` obligatoire sans params ; `getUserMenuEntries` / `useUserMenuEntries` pour les liens de l'accueil de `user` ; clé `fileManager` enregistrée au chargement des modules. `myapps`, modules de test, tabs, `useOpenModule` adaptés. Doc : ARCHITECTURE, [myapps.md](myapps.md), [user.md](user.md) §9, signaux du skill. Détail dans [user.md](user.md) §9.

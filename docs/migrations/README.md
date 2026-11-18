@@ -17,6 +17,7 @@ Ce dossier sert de **mémoire partagée entre les sessions** (humaines ou Claude
 | [myapps.md](myapps.md)           | Spécification de la migration de `myapps` (à valider)                             |
 | [user.md](user.md)               | Fiche de `user` : plan validé en attente, `entries` (points d'entrée des modules) |
 | [timeline.md](timeline.md)       | Fiche de `timeline` (pas encore spécifiée) : découpage avec `notifications`       |
+| [wiki.md](wiki.md)               | Fiche de `wiki` : spécifiée, en attente des préalables `explorer` et `audience`   |
 | [\_template.md](_template.md)    | Gabarit d'une fiche de module                                                     |
 
 ## Protocole d'une session
