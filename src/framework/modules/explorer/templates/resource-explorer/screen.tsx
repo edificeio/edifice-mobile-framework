@@ -8,7 +8,7 @@ import { screenOptions } from '~/app/navigation/util';
 import { getStore } from '~/app/store';
 import { PaginatedDocumentFlashList } from '~/framework/components/list/paginated-document-list/component';
 import { PaginatedDocumentFlashListProps } from '~/framework/components/list/paginated-document-list/types';
-import { ExplorerResourceIdType, RootFolderId } from '~/framework/modules/explorer/model/types';
+import { ExplorerResourceIdType, RootFolderId } from '~/framework/modules/explorer/model';
 import service from '~/framework/modules/explorer/service/index';
 import { emptyFolderData, ExplorerAction, useExplorerActions } from '~/framework/modules/explorer/store';
 import { ResourceMedia } from '~/framework/modules/media';

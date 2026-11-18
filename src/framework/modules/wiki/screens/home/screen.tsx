@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { RootFolderId } from '~/framework/modules/explorer/model/types';
+import { RootFolderId } from '~/framework/modules/explorer/model';
 import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
 import { createResourceExplorerNavBar } from '~/framework/modules/explorer/templates/resource-explorer/screen';
 import moduleConfig from '~/framework/modules/wiki/module-config';

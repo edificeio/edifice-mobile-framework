@@ -12,6 +12,14 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-18 — `explorer` : phase 1, déplacements (`feat/navigation`)
+
+- Fait : orphelin `model/index.ts` supprimé (`git rm`) ; `git mv` `model/types.ts` → `model/index.ts`, `service/types.ts` → `service/api.ts`, `store.ts` → `store/index.ts` ; chemins d'import mis à jour (module + 4 fichiers de `wiki`). `eslint --fix` a corrigé au passage les 2 erreurs de lint du module.
+- Décidé : plan validé (utilisateur).
+- Vérifié : tsc 772 ; base remesurée sur HEAD : 777 (et non 776) : seules les 5 erreurs de l'orphelin disparaissent. eslint : 0 erreur dans le module, rien de nouveau ailleurs. Total eslint 1 109 / 88 (la base notée, 2 090, ne correspond plus : écart sans lien avec la phase, non expliqué).
+- En suspens : commit de la phase (en deux commits pour que git suive `model/types.ts` → `model/index.ts`) ; règle sur les tables de noms d'apps pour CONVENTIONS.
+- Prochaine étape : phase 2 (données).
+
 ## 2026-11-18 — Révision de la cible d'`explorer` (`feat/navigation`)
 
 - Fait : [explorer.md](explorer.md) §1, §3, §4 n° 4 et 10, §5, §6 (phases 2 à 4), §7 ; [wiki.md](wiki.md) §5.1, §5.2, §7. Aucun code modifié.

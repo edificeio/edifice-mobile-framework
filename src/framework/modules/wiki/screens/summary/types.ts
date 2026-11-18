@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { Resource } from '~/framework/modules/explorer/model/types';
+import { Resource } from '~/framework/modules/explorer/model';
 import type { WikiNavigationParams } from '~/framework/modules/wiki/navigation';
 
 export namespace WikiSummaryScreen {

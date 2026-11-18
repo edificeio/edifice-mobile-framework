@@ -1,11 +1,11 @@
 import { Temporal } from '@js-temporal/polyfill';
 
 import { newEntAppNameFromOldMap } from '~/app/intents';
-import type { ExplorerPageData } from '~/framework/modules/explorer/model/types';
+import type { ExplorerPageData } from '~/framework/modules/explorer/model';
 import { MediaType } from '~/framework/modules/media/types';
 import { sessionFetch } from '~/framework/util/transport';
 
-import type { API } from './types';
+import type { API } from './api';
 
 // Backend does not always provide timestamps, and does not always provide them as an epoch in ms.
 // If date isn't provided, render without it instead of throwing
@@ -22,7 +22,6 @@ const hydrateTimestamp = (timestamp: unknown): Temporal.Instant | undefined => {
   }
   return undefined;
 };
-
 
 const hydrateFolder = (data: ArrayElement<API.Explorer.ResourcesPageOK['folders']>): ArrayElement<ExplorerPageData['folders']> => ({
   id: data.id,

@@ -6,8 +6,8 @@ import { staleOrSplice } from '~/framework/components/list/paginated-list';
 import { IUnkownModuleConfig } from '~/framework/util/moduleTool';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 
-import type { ExplorerFolderContent, ExplorerPageData, FolderId } from './model/types';
-import explorerModuleConfig from './module-config';
+import type { ExplorerFolderContent, ExplorerPageData, FolderId } from '../model';
+import explorerModuleConfig from '../module-config';
 
 export type ExplorerAction = { type: `${string}_LOAD_PAGE`; flushPreviousData: boolean; folderId: FolderId } & ExplorerPageData;
 

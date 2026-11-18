@@ -3,8 +3,8 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { FlashListProps } from '@shopify/flash-list';
 
 import { DocumentItem, FolderItem } from '~/framework/components/list/paginated-document-list/types';
-import type { ExplorerResourceIdType, FolderId } from '~/framework/modules/explorer/model/types';
-import { API } from '~/framework/modules/explorer/service/types';
+import type { ExplorerResourceIdType, FolderId } from '~/framework/modules/explorer/model';
+import { API } from '~/framework/modules/explorer/service/api';
 import { createExplorerSelectors } from '~/framework/modules/explorer/store';
 import { ResourceMedia } from '~/framework/modules/media';
 import type { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';

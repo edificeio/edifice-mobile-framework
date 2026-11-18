@@ -1,6 +1,6 @@
 # Migration : `explorer`
 
-> Statut : en cours (plan à valider) — mis à jour le 2026-11-18
+> Statut : en cours (phase 1 faite) — mis à jour le 2026-11-18
 
 ## 1. Périmètre
 
@@ -236,3 +236,4 @@ Aucune. Plan à valider.
 
 - 2026-11-17 : analyse et plan. Base : tsc 776 erreurs (5 dans `framework/modules/explorer`, toutes dans `model/index.ts`), eslint 2 090 erreurs / 88 warnings (2 dans le module : `import/order`, `prettier`), `yarn test` 431/431. Override `dev/default` actif, gardé (déjà appliqué avant la session). Questions tranchées (§7). Aucun code modifié.
 - 2026-11-18 : cible revue : store d'`explorer` par app, fonctions qui prennent l'app (§5, §6 phases 2 à 4, §7) ; flux des noms d'apps (§5.4), `appName` = app demandée. Aucun code modifié.
+- 2026-11-18 : **plan validé**. **Phase 1 faite** (déplacements) : `git rm model/index.ts` ; `git mv` `model/types.ts` → `model/index.ts`, `service/types.ts` → `service/api.ts`, `store.ts` → `store/index.ts` ; chemins d'import mis à jour (module, et 4 fichiers de `wiki`). `eslint --fix` a aussi corrigé les 2 erreurs de lint du module (`import/order` dans `index.ts`, ligne vide dans `service/index.ts`). Vérifié : tsc 772 (base remesurée sur HEAD : 777, et non 776 ; seules les 5 erreurs de l'orphelin disparaissent, aucune nouvelle) ; eslint : 0 erreur dans le module, rien de nouveau dans les fichiers touchés (`popupActions` de `wiki/screens/home` existait avant). Pas testé dans l'app (aucun consommateur chargé). Non committé.

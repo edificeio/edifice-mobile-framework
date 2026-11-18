@@ -2,7 +2,7 @@
  * Data model for the module wiki
  */
 
-import { Resource, ResourceHistory } from '~/framework/modules/explorer/model/types';
+import { Resource, ResourceHistory } from '~/framework/modules/explorer/model';
 
 export type WikiResourceMetadata = Pick<
   Resource,
