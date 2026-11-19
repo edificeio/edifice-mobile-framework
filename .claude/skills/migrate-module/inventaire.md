@@ -1,59 +1,82 @@
 # Inventaire d'un module ancien
 
-Relevé à faire à l'étape 2 du skill, en lecture seule. Le résultat remplit §1 à §4 de la fiche. Citer des chemins depuis la racine ; ne pas recopier le code.
+Relevé en lecture seule. La partie « Bascule » sert à l'étape 2 de `/migrate-module` et remplit §1 à §5 de la fiche ; la partie « Assainissement » sert à `/sanitize-module`. Citer des chemins depuis la racine ; ne pas recopier le code.
 
 `<dir>` = dossier du module, `<module>` = son nom.
 
-## 1. Le module lui-même
+## Bascule
 
-| Où regarder                      | Ce qu'il faut relever                                                                                                                                                                                                                                      | Devient (nouveau système)                                                                                                                                                                                                                                      |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `module-config.ts`               | `name`, `entcoreScope`, `matchEntcoreApp` (string ou fonction ?), `hasRight` (ancienne signature `matchingApps, matchingWidgets`), `displayAs` (`tabModule` / `myAppsModule`), `display*`, `storageName`, `entcoreTrackingName`, `testID`, `displayBadges` | Clés de `ModuleConfig` (`src/app/module/types.ts`) : `scope`, `matchEntcoreApp`, `hasRight(session)`, `entries` (`myApps`, `tab`, `userMenu`), `fileManager`, `entTrackingName`. `display*`, `myAppsModule`, `fileManager` : voir [framework.md](framework.md) |
-| `index.ts`                       | `NavigableModule` / `EntModule` d'une API intermédiaire ; `setUpNotifHandlers`, widgets ou sections branchés après `module.exports`                                                                                                                        | `export default new EntModule({...})` ou `CoreModule`                                                                                                                                                                                                          |
-| `navigation/`                    | Noms de routes, types des params, `createModuleNavigator`, options d'écran                                                                                                                                                                                 | `screens` / `modals` du module, routes `<module>/<suffixe>` en kebab-case, params typés                                                                                                                                                                        |
-| `screens/`                       | Liste des écrans ; composants classe ; `navigation.setOptions` dans un effet ; `headerAction` / `headerRight` à la main ; écoute de `tabPress` ; `setTimeout` entre écrans ; `testID`                                                                      | `defineScreen` / `defineModal`, options d'écran, `headerLeftActions` / `headerRightActions`, `useScrollToTop`                                                                                                                                                  |
-| `components/`                    | Composants propres ; ceux importés par d'autres modules ; bottom sheets, modales                                                                                                                                                                           | Restent sur place ; publics → API publique ; génériques → candidats au framework                                                                                                                                                                               |
-| `reducer*`, `actions/`, `store*` | Forme du state, thunks, sélecteurs ; `createSessionReducer` ou non ; stores zustand                                                                                                                                                                        | `store/` (plomberie), `actions.ts` (actions de l'utilisateur), `redux: { reducer }` dans la config                                                                                                                                                             |
-| `service/`                       | URL appelées (sous les scopes du module ?), fonctions du transport utilisées, adaptateurs                                                                                                                                                                  | `service/` : `namespace API`, `adapter.ts`, `getModuleTransport('<module>')`                                                                                                                                                                                   |
-| `model/`, `rights.ts`            | Types, règles métier, droits par fonction (workflows)                                                                                                                                                                                                      | `model/` (types + règles par objectif), droits du module                                                                                                                                                                                                       |
-| `storage*`                       | Clés, namespaces, migrations, API de storage utilisée                                                                                                                                                                                                      | `storage.ts` + `storages` de la config, **clés inchangées**                                                                                                                                                                                                    |
-| `notif-handler.ts`               | Types de notifications gérés, routes ouvertes                                                                                                                                                                                                              | Pas d'équivalent : voir [framework.md](framework.md)                                                                                                                                                                                                           |
-| `calls-at-login`, `callAtLogin`  | Ce qui est chargé à la connexion                                                                                                                                                                                                                           | `sessionSetup` (bloquant) / `onSessionStart`                                                                                                                                                                                                                   |
-| Widgets, sections d'accueil      | `home-widget.ts`, `home-section.ts`, sous-modules `widgets/*`                                                                                                                                                                                              | Pas d'équivalent connu : voir [framework.md](framework.md)                                                                                                                                                                                                     |
+### 1. Le module, geste par geste
 
-Relever aussi : `moment` (`media` et `user` sont passés à `Temporal` : demander, en le recommandant), les **fichiers orphelins** (écrans hors du navigator, sans importeur, routes qui n'existent plus), les imports de paquets natifs d'images / vidéo / PDF, `Alert` et confirmations de sortie, les traductions (`assets/i18n`, clés inchangées), le tracking.
+Pour chaque ligne : ce qu'il y a dans le module, et le geste de [BASCULE.md](BASCULE.md) qui s'applique. Ce qui marche dans la nouvelle navigation sans geste va dans §5 de la fiche.
 
-## 2. Consommateurs externes
+| Où regarder | Ce qu'il faut relever | Geste |
+| --- | --- | --- |
+| `module-config.ts` | `name`, `entcoreScope`, `matchEntcoreApp`, `hasRight` (ancienne signature `matchingApps, matchingWidgets`), `displayAs` (`tabModule` / `myAppsModule`), `display*`, `storageName`, `entcoreTrackingName`, `fileManager`, `routeName` | 1, 3 |
+| `index.ts` | `NavigableModule`, ou `EntModule` d'une API intermédiaire ; `setUpNotifHandlers`, widgets ou sections branchés après `module.exports` | 2 ; notifications et widgets : arrêt |
+| `navigation/` | Noms de routes (route d'accueil = nom du module ?), params, `Stack.Group` en modale, options d'écran | 4, 5 |
+| `screens/` | `computeNavBar`, `navBarOptions`, `headerAction` de l'ancienne navigation, `NativeStackScreenProps`, `props.navigation`, composants classe, `navigation.setOptions` et son contenu, `usePreventBack`, `testID` | 6, 7, 8, 10 |
+| Tout le dossier | Imports de `~/framework/navigation/*` (`navBar`, `helper`, `hideTabBarAndroid`, `tabModules`, `modals`), `AllModules()`, `moduleConfig.*` d'un autre module, imports de `~/framework/modules/auth` | 9, 11, 14 ; `modals` : arrêt |
+| `callAtLogin`, `calls-at-login` | Ce qui est chargé à la connexion, bloquant ou non | 12 |
+| Écrans qui lisent la session | `getSession()` / `assertSession()` dans l'écran ou son `mapStateToProps`, `sessionScreen`, `withSession` de `~/framework/modules/auth/util` | 18 |
+| `storage*` | Clés, namespaces, migrations, API de storage utilisée | 13, clés inchangées |
+| Imports d'autres modules anciens | Pour chacun : code seul (service, util, constantes, types) ou navigation / state | 16 ; navigation / state : arrêt |
+| `notif-handler.ts`, widgets (`home-widget.ts`, `home-section.ts`), intents | Types gérés, routes ouvertes | arrêt ([framework.md](framework.md)) |
 
-Qui dépend du module, et par quoi le remplacer. Chemins d'import avec alias `~/` ; vérifier aussi les imports relatifs.
+Relever aussi, pour §5 de la fiche (sans y toucher) : `connect(`, `tryAction` / `tryActionLegacy` / `handleAction`, classes, `useCallback` / `useMemo` manquants, styles en ligne ou `StyleSheet.create` hors de `styles.ts`, ce que les autres modules importent (API publique : types, hooks, utilitaires), `moment`, bottom sheets et modales (`@gorhom/bottom-sheet`, `CustomBottomSheetModal`, `BottomMenu`, `react-native-modal`, `ModalBox`), `rights.ts`, structure du dossier, erreurs `tsc` / ESLint existantes, bugs vus à la lecture, fichiers orphelins.
+
+### 2. Importeurs
+
+Qui importe le module, et quoi. Chemins avec alias `~/` ; vérifier aussi les imports relatifs.
 
 ```bash
 grep -rln "framework/modules/<module>" src | grep -v "^<dir>/"
-grep -rn "<module>/module-config\|moduleConfig.routeName" src | grep -v "^<dir>/"
-grep -rln "<module>" src/app __overrides__ 2>/dev/null
+grep -rn "<module>/module-config\|<module>/navigation\|moduleConfig.routeName" src | grep -v "^<dir>/"
+grep -rln "<module>" src/app 2>/dev/null
 ```
 
-Pour chaque consommateur : ce qu'il importe (types, composants, sélecteurs, noms de routes, config), et la cible :
+Pour chaque importeur :
 
-- reste valable (chemin et export inchangés) ;
-- **façade `@deprecated`** au même chemin, qui lit le nouveau code ;
-- consommateur migré vers l'API publique du module ;
-- consommateur lui-même ancien et non chargé (STATUS « l'app ne charge plus les modules anciens ») : le noter, ne pas le migrer.
+- chemin et export inchangés : rien à faire ;
+- il importe `module-config.ts` ou `navigation/` : **façade** au même chemin (geste 15), avec les routes renommées ;
+- il est lui-même ancien et non chargé : le noter, ne pas le migrer.
 
-Navigation entrante : les autres modules qui naviguent vers les routes du module (noms de routes en dur, `moduleConfig.routeName`), l'ouverture par `myapps` (`entries.myApps`, ex-`entry` ; `matchEntcoreApp`), les liens d'autres modules (`entries.userMenu`), les liens profonds et intents (`src/app/intents.ts`).
+Navigation entrante : les modules qui naviguent vers les routes du module (noms de routes en dur, `<module>RouteNames`), l'ouverture par `myapps` (`entries.myApps`, `matchEntcoreApp`), les liens d'autres modules (`entries.userMenu`), les liens profonds et intents (`src/app/intents.ts`).
 
-## 3. Comportements à conserver
+### 3. Comportements à conserver
 
-Liste vérifiable pour §3 de la fiche : données affichées et règles métier (tri, filtres, cas particuliers en dur), écritures vers le serveur, stockage (clés), `testID` (tests E2E), textes i18n, retours haptiques, accessibilité, comportements au focus / à l'appui sur l'onglet. Les fonctionnalités faciles à oublier vont en tête (exemple : §1 de `docs/migrations/myapps.md`).
+Liste vérifiable pour §3 de la fiche : données affichées et règles métier (tri, filtres, cas particuliers en dur), écritures vers le serveur, stockage (clés), `testID` (tests E2E), textes i18n, comportements au focus / à l'appui sur l'onglet, confirmations de sortie. Les fonctionnalités faciles à oublier vont en tête (exemple : §1 de [journal/myapps.md](journal/myapps.md)). Pour chacune : un flow Maestro proposé, ou la recette manuelle en une ligne.
 
-## 4. Ancienneté de conception
+## Assainissement
 
-Pour §4 de la fiche, chaque point avec constat, correction proposée et statut (`réglé par la cible` · `à faire au portage` · `à valider` · `noté`) :
+### 4. Points à assainir
 
-- conversions d'UI imposées (CONVENTIONS « UI ») : `@gorhom/bottom-sheet` / `CustomBottomSheetModal` → `formSheet` (un mode de sheet = un écran) ; `react-native-modal` / `ModalBox` → `transparentModal` ;
-- cas où react-navigation ferait mieux : `useScrollToTop`, `useConfirmRemove` (`src/app/navigation-new/confirm-remove.tsx`), options d'écran au lieu de `setOptions`, navigation au lieu de `setTimeout` ;
+Pour un sujet de `/sanitize-module`, chaque point avec constat, correction proposée et statut (`à faire` · `à valider` · `noté`) :
+
+- conversions d'UI ([CONVENTIONS.md](CONVENTIONS.md) « UI ») : `@gorhom/bottom-sheet` / `CustomBottomSheetModal` → `formSheet` (un mode de sheet = un écran) ; `react-native-modal` / `ModalBox` → `transparentModal` ;
+- cas où react-navigation ferait mieux : `useScrollToTop`, navigation au lieu de `setTimeout` ;
 - écrans qui renvoient des valeurs à l'écran précédent par ses params (`navigate(…, { new* }, { pop: true })`) : les valeurs passent par le store du module, que l'écran précédent lit ; l'écran d'édition peut alors être une modale (décidé pour `user`) ;
-- routes non kebab-case : renommées (CONVENTIONS), en notant que les noms de la télémétrie changent ;
-- bugs ou dette **locaux au module** repérés à la lecture. Ce qui touche d'autres modules va en question (§8) ou dans `later.md`.
+- `connect(` vers les hooks, suppression de `tryAction` (son option `track` part avec lui, sans appel à `Trackers`), classes vers fonctions ;
+- performance : `useCallback` / `useMemo` / `React.memo` ([.claude/rules/COMPONENTS.md](../../rules/COMPONENTS.md) §4) ;
+- styles statiques vers `styles.ts` ([.claude/rules/DESIGN-SYSTEM.md](../../rules/DESIGN-SYSTEM.md)) ;
+- API publique : types, hooks, utilitaires, composants utilisés par les autres modules ;
+- erreurs `tsc` et ESLint du modèle et du reste du code ;
+- structure du module ([CONVENTIONS.md](CONVENTIONS.md) « Structure d'un module ») : `model/`, `actions.ts`, `service/` (`types.ts`, `adapter.ts`, `getModuleTransport`), `store/`, `storage.ts`, `session.ts` ;
+- `moment` → `Temporal` (`media` et `user` y sont passés) ;
+- `rights.ts` → `hasRight` : change ce que l'utilisateur voit (sans le droit, le module devient indisponible : son entrée « Mes applis » ouvre l'app web dans le navigateur (`useOpenApp`, `src/modules/myapps/hooks/apps.ts`) au lieu de l'écran vide ; son onglet, s'il en a un, est masqué), à valider ;
+- bugs ou dette **locaux au module**. Ce qui touche d'autres modules va en question ou dans [journal/later.md](journal/later.md).
 
-Par défaut on porte tel quel : un point de §4 n'est corrigé que s'il est validé.
+Pas de passage de Redux à zustand (hors des deux skills).
+
+### 5. Recettes de vérification
+
+Commandes qui prouvent qu'un changement d'assainissement ne casse rien (`<module>`, `<dir>` comme plus haut) :
+
+| Pour | Commande |
+| --- | --- |
+| Un reducer, un type d'action ou un sélecteur est mort | `grep -rn "state\.<module>\|<TYPE_D_ACTION>\|<sélecteur>" src` hors de `<dir>` : rien |
+| Élargir ou changer un type partagé | `grep -rn "<champ ou type>" src` : liste de ses lecteurs ; puis `tsc` fichier par fichier sur tout le dépôt (des erreurs d'autres modules peuvent disparaître : les noter) |
+| `testID` inchangés | `git diff -- <dir> \| grep -E "^[-+].*testID"` : seulement des lignes déplacées, aucune valeur changée |
+| Clés de stockage et i18n inchangées | `git diff -- <dir> \| grep -E "^[-+].*(I18n\.get\|Storage\.)"` : idem |
+| Un appel au serveur inchangé | test de l'adapter qui compare le corps envoyé à l'ancien (ex. `src/framework/modules/support/service/adapter.test.ts`) |
+| Plus de `connect(` | ligne du module dans `journal/SUIVI.md` après `yarn migration-status`, colonne `connect(` |

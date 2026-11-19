@@ -1,6 +1,6 @@
 # Comportement visé : un appui long sur une appli ouvre ses actions ; « Ajouter aux favoris » la fait apparaître
 # sous le filtre Favoris, « Retirer des favoris » l'en fait disparaître. Le libellé de l'action suit l'état.
-# Fiche docs/migrations/myapps.md : §1 « actions d'une app (app_actions, appui long) », §3.4 « Favoris (règle
+# Fiche .claude/skills/migrate-module/journal/myapps.md : §1 « actions d'une app (app_actions, appui long) », §3.4 « Favoris (règle
 # d'écriture) », §4 n° 6 (l'étoile ne change qu'après la réponse du serveur), §3.5 (`myapps-toggle-favorite`).
 #
 # Variable : APP_TESTID, testID de la carte d'une appli affichée sur le compte (`myapps-<name en kebab-case>`).

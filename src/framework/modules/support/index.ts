@@ -1,11 +1,10 @@
 import { EntModule } from '~/app/module';
 
-import reducer from './reducer';
 import supportCreateTicketScreen from './screens/create-ticket';
 
 export default new EntModule({
   entries: {
-    myApps: { route: 'support' },
+    myApps: { route: 'support/create-ticket' },
   },
   entTrackingName: 'Support',
   fileManager: {
@@ -17,9 +16,8 @@ export default new EntModule({
   } as const,
   matchEntcoreApp: 'Aide et support',
   name: 'support',
-  redux: { reducer },
   scope: ['support'],
   screens: {
-    support: supportCreateTicketScreen,
+    'support/create-ticket': supportCreateTicketScreen,
   },
 });

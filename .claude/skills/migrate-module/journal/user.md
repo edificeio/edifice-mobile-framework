@@ -2,7 +2,7 @@
 
 > Statut : **reporté** (plan en attente de validation ; phase 0 faite à part) — mis à jour le 2026-11-17
 
-Les règles communes à toute la migration sont dans [CONVENTIONS.md](CONVENTIONS.md) et ne sont pas répétées ici.
+Les règles communes à toute la migration sont dans [CONVENTIONS.md](../CONVENTIONS.md) et ne sont pas répétées ici.
 
 ## 1. Périmètre
 
@@ -164,7 +164,7 @@ Pas de droits (`hasRight: () => true` de l'ancien = toujours disponible ; un `En
 Celle de `myapps` (CONVENTIONS « Structure d'un module ») :
 
 - `model/` : `index.ts` (`InfoPerson`, `HobbieItem`… ; `birthdate` en `Temporal.PlainDate`), `profile.ts` (règles : ordre des hobbies, famille dédoublonnée, qui voit quoi, résumés structures / classes), `rights.ts` (humeur / devise).
-- `service/` : `api.ts` (`namespace API`), `adapter.ts`, `index.ts` (`getModuleTransport('user')`).
+- `service/` : `types.ts` (`namespace API`), `adapter.ts`, `index.ts` (`getModuleTransport('user')`).
 - `store/` : store **zustand** `createSessionStore` (`~/modules/auth/store/session`, vidé à la fin de chaque session), profils par id, comme les stores de `auth` (`State` / `Action`, hook sélecteur + getter non React).
 - `actions.ts` : charger un profil, enregistrer description / humeur / hobbies, changer / supprimer l'avatar, mettre à jour email / mobile dans la session.
 - `screens/` : chemins actuels gardés autant que possible ; écrans email / mobile / MFA nouveaux (sur les templates).
@@ -202,7 +202,7 @@ Aux anciens chemins encore importés : `navigation/index.ts` (`userRouteNames`),
 | 0     | Préalables du framework (**fait**) | `entries` (§5.3) : types, `Module`, onglets, `useOpenModule`, `myapps`, modules de test ; clé `fileManager` remplie par le chargement des modules. Doc ARCHITECTURE §2.3, §3.2.                                                                                                                                            | tsc, eslint, tests (filtre / tri des liens)              |
 | 0 bis | Préalables : `debug`, `splashads`  | Migrer `debug` (modales Infos / Log / Network, `DebugOptions`) et `splashads` (modale SplashAds, affichage à la connexion) : chacun sa fiche (`/migrate-module`), dans cette session ou une autre. Bloque seulement les lignes debug / splashads de l'accueil (phase 5).                                                   | selon leurs fiches                                       |
 | 1     | Déplacements                       | `git mv` de `framework/modules/user/{screens,components,model,service,rights.ts,storage.ts}` vers `src/modules/user/` (sauf écrans de notifications et orphelins), chemins d'import ajustés à l'identique. L'accueil provisoire `screens/home.tsx` reste jusqu'à la phase 5. À committer seul.                             | tsc : même nombre d'erreurs                              |
-| 2     | Données                            | `model/` (types + règles), `service/` (`api.ts`, `adapter.ts`, `getModuleTransport('user')`), `store/`, `actions.ts`. Tests Jest des règles et de l'adapter.                                                                                                                                                               | tsc, eslint, `yarn test`                                 |
+| 2     | Données                            | `model/` (types + règles), `service/` (`types.ts`, `adapter.ts`, `getModuleTransport('user')`), `store/`, `actions.ts`. Tests Jest des règles et de l'adapter.                                                                                                                                                               | tsc, eslint, `yarn test`                                 |
 | 3     | Déclaration                        | `index.ts` : `scope`, `entries`, `entTrackingName`, `fileManager`.                                                                                                                                                                                                                                                         | tsc ; l'accueil provisoire s'ouvre toujours (dans l'app) |
 | 4     | Façades                            | Façades `@deprecated` (§5.4), `appConf` sur le nouveau chemin.                                                                                                                                                                                                                                                             | tsc, aucun import cassé                                  |
 | 5     | Écrans                             | `defineScreen` : accueil (remplace `home.tsx`, liens `entries.userMenu`, `confirmLogout`, alerte « heures calmes », debug / splashads des modules migrés en 0 bis), profil, langue, mentions légales (`usePlatformLegalUrls`, `openPdf`), email / mobile / MFA (templates `auth`). Header par options, `testID` conservés. | parcours dans l'app                                      |

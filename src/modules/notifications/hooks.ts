@@ -2,7 +2,7 @@
  * The app of a notification, and how to show it (the badge of a notification).
  * The app of a notification type is given by its definition (`app-name`), loaded by `timeline`.
  * ToDo(timeline-migration): the definitions are still read from the redux store of the old `timeline` (see the architecture question
- * « notifications vs `timeline` » in `docs/migrations/STATUS.md`).
+ * « notifications vs `timeline` » in `.claude/skills/migrate-module/journal/STATUS.md`).
  */
 import React from 'react';
 

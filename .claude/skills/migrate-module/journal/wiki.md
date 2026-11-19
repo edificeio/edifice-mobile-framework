@@ -118,7 +118,7 @@ Pas de droits supplémentaires, pas de hook de session, pas de storage. `fileMan
 Celle de `myapps` (CONVENTIONS « Structure d'un module ») :
 
 - `model/` : `index.ts` (types), `rights.ts` (droits depuis `rights`, `hasWikiCreationRights`, qui voit les pages masquées), `pages.ts` (ordre en arbre, précédente / suivante). Tests.
-- `service/` : `api.ts` (`namespace API`, ex-`types.ts`), `adapter.ts` (→ modèle, `Temporal`), `index.ts` (`getModuleTransport('wiki')`). Tests de l'adapter.
+- `service/` : `types.ts` (`namespace API`, nom gardé : décidé le 2026-11-19), `adapter.ts` (→ modèle, `Temporal`), `index.ts` (`getModuleTransport('wiki')`). Tests de l'adapter.
 - `store/` : Redux `createSessionReducer` : `wikis`, `pages` ; `state.ts`, `action-creators.ts`, `selectors.ts`. Plus de slice `explorer` : les dossiers et wikis de l'explorateur sont dans le store d'`explorer`, sous l'app `Wiki` ([explorer.md](explorer.md) §5.3).
 - `actions.ts` : charger un wiki, charger une page.
 - `screens/` : `home/`, `summary/`, `reader/` gardés ; `pages.tsx` nouveau (formSheet).
@@ -133,7 +133,7 @@ Celle de `myapps` (CONVENTIONS « Structure d'un module ») :
 | #     | Phase                    | Contenu                                                                                                                                                                                                                                                                                   | Vérification                                |
 | ----- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
 | 0 bis | Préalables : modules     | **Arrêt de cette migration** (§7) : `/migrate-module src/framework/modules/explorer`, puis `/migrate-module src/framework/modules/audience`, chacun sa fiche. `explorer` bloque le store (phase 2) et l'explorateur (phase 5) ; `audience` bloque la vue marquée de la lecture (phase 5). | selon leurs fiches                          |
-| 1     | Déplacements             | `git mv` seuls : `store.ts` → `store/index.ts`, `service/types.ts` → `service/api.ts`, `rights.ts` → `model/rights.ts`. À committer seul.                                                                                                                                                 | tsc : même nombre d'erreurs                 |
+| 1     | Déplacements             | `git mv` seuls : `store.ts` → `store/index.ts`, `rights.ts` → `model/rights.ts`. À committer seul.                                                                                                                                                 | tsc : même nombre d'erreurs                 |
 | 2     | Données                  | `model/` (types §4 n° 1, règles §4 n° 2), `service/` (`getModuleTransport('wiki')`, adapter), `store/`, `actions.ts`. Tests Jest : droits, pages masquées, ordre des pages, adapter.                                                                                                      | tsc, eslint, `yarn test`                    |
 | 3     | Déclaration + chargement | `index.ts` en `EntModule` (§5.1), ajout dans `src/app/config/modules.ts`.                                                                                                                                                                                                                 | tsc ; « Mes applis » montre Wiki et l'ouvre |
 | 4     | Façades                  | `navigation/index.ts` (`wikiRouteNames`) pour `communities`.                                                                                                                                                                                                                              | tsc, aucun import cassé                     |
@@ -155,7 +155,7 @@ Celle de `myapps` (CONVENTIONS « Structure d'un module ») :
 - 2026-11-17 (utilisateur) : **arrêt de cette migration** pour migrer d'abord `explorer` puis `audience`, chacun avec son `/migrate-module`. `wiki` reprend à la phase 1 (plan à valider à la reprise).
 - 2026-11-17 (utilisateur) : **corrections au passage** §4 n° 3 (détents du `formSheet`), n° 4 (titres) et n° 7 (bouton du dossier vide).
 - 2026-11-17 (utilisateur) : **`testID` de l'en-tête abandonnés** (`wiki-back-button`, `page-back-button`, `wiki-title`) : on prend le comportement du framework (bouton retour et `header-title` du nouveau header). Tests E2E concernés à mettre à jour.
-- 2026-11-17 (utilisateur) : **jamais `headerTitle`** pour afficher le titre lu dans le store : on perdrait le titre natif. Le moyen reste à trouver (§8 question 7). Règle ajoutée à [CONVENTIONS.md](CONVENTIONS.md) (« UI »).
+- 2026-11-17 (utilisateur) : **jamais `headerTitle`** pour afficher le titre lu dans le store : on perdrait le titre natif. Le moyen reste à trouver (§8 question 7). Règle ajoutée à [CONVENTIONS.md](../CONVENTIONS.md) (« UI »).
 
 ## 8. Questions ouvertes
 

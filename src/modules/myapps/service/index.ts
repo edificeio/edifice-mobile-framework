@@ -7,7 +7,7 @@ import type { AppsPreferences, EntApp } from '~/modules/myapps/model';
 import { I18n } from '~/util/i18n';
 
 import { fromPreferences, toEntApps, toPreferences } from './adapter';
-import type { API } from './api';
+import type { API } from './types';
 
 type Account = Parameters<typeof accountFetch>[0];
 

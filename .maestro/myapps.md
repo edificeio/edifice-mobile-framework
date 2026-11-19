@@ -11,7 +11,7 @@
 
 But : un oracle de non-régression pour la migration de `myapps`. Les mêmes flows tournent sur l'**ancienne**
 génération (`origin/dev/1.17.10`, `src/framework/modules/myapps`) puis sur la **nouvelle** (`origin/feat/navigation`,
-`src/modules/myapps`). Fiche : `docs/migrations/myapps.md` sur `origin/feat/navigation`.
+`src/modules/myapps`). Fiche : `.claude/skills/migrate-module/journal/myapps.md` sur `origin/feat/navigation`.
 
 ## Installer Maestro
 

@@ -1,6 +1,6 @@
 # Comportement visé : la liste des applis s'affiche (filtre « Tout » par défaut, barre de filtres, boutons de la
 # navbar actifs, au moins une carte d'appli) et survit à un tirer-pour-rafraîchir.
-# Fiche docs/migrations/myapps.md : §3.2 « MyAppsHomeScreen » (filtres, liste groupée), §1 « Écrans vides distincts »
+# Fiche .claude/skills/migrate-module/journal/myapps.md : §3.2 « MyAppsHomeScreen » (filtres, liste groupée), §1 « Écrans vides distincts »
 # et « Boutons de la navbar désactivés tant qu'aucune app n'est affichable », §3.5 (testID conservés).
 appId: ${APP_ID}
 tags:

@@ -1,7 +1,7 @@
 # Comportement visé : les six filtres (Tout, Favoris, Communiquer, Produire, Organiser, Autres services) se
 # sélectionnent tour à tour, la barre de filtres reste en place et l'écran vide global n'apparaît jamais ; un filtre
 # sans résultat montre SON écran vide (favoris / autre), pas celui de l'écran.
-# Fiche docs/migrations/myapps.md : §3.2 « Filtres », §1 « Écrans vides distincts », §3.5 (testID `myapps-filter-*`,
+# Fiche .claude/skills/migrate-module/journal/myapps.md : §3.2 « Filtres », §1 « Écrans vides distincts », §3.5 (testID `myapps-filter-*`,
 # `myapps-empty-{favorites,other}`).
 #
 # Le contenu de chaque filtre dépend du compte : l'oracle est la capture par filtre, comparée entre générations.

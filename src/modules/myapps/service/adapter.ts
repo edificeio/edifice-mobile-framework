@@ -5,7 +5,7 @@ import { AppConfig, AppsPreferences, EMPTY_PREFERENCES, EntApp } from '~/modules
 import { getAppCategory, getAppConfig, isLibrary, LIBRARY_CONFIG_APP_NAME } from '~/modules/myapps/model/classification';
 import { getAppColor, getAppIcon } from '~/modules/myapps/model/display';
 
-import type { API } from './api';
+import type { API } from './types';
 
 // # Apps
 
