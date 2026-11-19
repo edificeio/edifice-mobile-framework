@@ -8,7 +8,7 @@ description: Mise à jour de la stack technique de l'application mobile Edifice,
 - A utilisier UNIQUEMENT quand le développeur le demande explicitement. Ne jamais déclencher ce process de ta propre initiative.
 - Ne jamais mettre à jour React Native et ses dépendances.
 - Les règles de gestion de `package.json`sont définies dans `.claude/rules/PACKAGE.md`.
-- Les règles de gestion du code natif sont définies dans `.claude/rules/PACKAGE.md`.
+- Les règles de gestion du code natif sont définies dans `.claude/rules/NATIVE.md`.
 - Certains packages ont été patchés (dans `patches`). Si un package patché a été mis à jour, refaire le patch en utilisant EXCLUSIVEMENT la commande `yarn patch-package [Nom du package]` et prévenir le développeur que le patch a été mis à jour.
 - Ne jamais mettre à jour les dépendances `@edifice.io/*`.
 - Ne jamais mettre à jour les dépendances de React Native: `react`, `react-test-renderer`, `react-renderer`, etc. Elles sont fixées par React Native.
