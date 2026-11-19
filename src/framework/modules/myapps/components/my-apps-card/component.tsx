@@ -8,8 +8,8 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg, SvgProps } from '~/framework/components/picture';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
-import { getAppTestID } from '~/framework/modules/myapps/utils';
 import { Image } from '~/framework/modules/media/components/image';
+import { getAppTestID } from '~/framework/modules/myapps/utils';
 
 import { MyAppsCardProps } from './types';
 import { useController } from './useController';
@@ -72,6 +72,8 @@ export const MyAppsCard = ({ app, onLongPress, onPress }: MyAppsCardProps) => {
             width={UI_SIZES.spacing.huge}
             height={UI_SIZES.spacing.huge}
             onError={() => setIconError(true)}
+            // onError only covers the download: a file that is not valid SVG renders this fallback instead.
+            fallback={renderFallbackIcon()}
           />
         );
 
