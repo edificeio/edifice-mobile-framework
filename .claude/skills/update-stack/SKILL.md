@@ -1,76 +1,86 @@
 ---
 name: update-stack
-description: Mise à jour de la stack technique de l'application mobile Edifice, excepté React Native.
+description: Mise à jour des dépendances de l'application mobile Edifice (hors React Native et @edifice.io/*), catégorie par catégorie (patch, minor, major version zero), avec clean, builds iOS/Android, type-check, lint et un commit par catégorie ; plan seulement pour les majeures. Lancement manuel uniquement.
+argument-hint: "[patch|minor|major-zero|major]"
+disable-model-invocation: true
 ---
-
-# Rappel des règles
-
-- A utilisier UNIQUEMENT quand le développeur le demande explicitement. Ne jamais déclencher ce process de ta propre initiative.
-- Ne jamais mettre à jour React Native et ses dépendances.
-- Les règles de gestion de `package.json`sont définies dans `.claude/rules/PACKAGE.md`.
-- Les règles de gestion du code natif sont définies dans `.claude/rules/NATIVE.md`.
-- Certains packages ont été patchés (dans `patches`). Si un package patché a été mis à jour, refaire le patch en utilisant EXCLUSIVEMENT la commande `yarn patch-package [Nom du package]` et prévenir le développeur que le patch a été mis à jour.
-- Ne jamais mettre à jour les dépendances `@edifice.io/*`.
-- Ne jamais mettre à jour les dépendances de React Native: `react`, `react-test-renderer`, `react-renderer`, etc. Elles sont fixées par React Native.
-- Ne jamais mettre à jour `lottie-ios` sans regarder la version fixée par `lottie-react-native`.
 
 # Mise à jour de la stack technique
 
+Ce skill se lance **uniquement** quand le développeur tape `/update-stack` : il touche `package.json`, le natif et crée des commits. Si tu lis ce fichier pour une autre raison (un autre skill, un sous-agent, une demande sans `/update-stack`), arrête-toi et propose au développeur de lancer `/update-stack` lui-même.
+
+## Paramètres
+
+Catégories demandées : `$ARGUMENTS`
+
+- Valeurs acceptées : `patch`, `minor`, `major-zero`, `major` (une ou plusieurs, séparées par des espaces).
+- Sans argument : toutes les catégories, dans l'ordre patch → minor → major-zero → major.
+- Valeur inconnue : rappelle le format et arrête-toi.
+
+## Règles
+
+- **Exclus de toute mise à jour** :
+  - React Native et ce qui suit sa version : `react`, `react-native`, `react-test-renderer`, `@react-native/*`, `@react-native-community/cli*`, `metro*` ;
+  - `@edifice.io/*` ;
+  - les paquets dont la version est imposée par un autre (peerDependencies). Exemple : `lottie-ios` suit la version attendue par `lottie-react-native`.
+
+  Ces exclusions sont déclarées dans `.ncurc.json` (`reject`), donc `yarn check-deps` ne les propose pas. Si l'un d'eux apparaît quand même, ne le mets pas à jour et signale-le.
+- `package.json` : rule `.claude/rules/PACKAGE.md` (versions exactes, `resolutions`).
+- Natif (`ios/`, `android/`) : rule `.claude/rules/NATIVE.md`.
+- En cas d'erreur (clean, build, type-check, lint) : **préviens le développeur avant de corriger quoi que ce soit**.
+
 ## 1. Préparation
 
-- Prévenir le développeur que l'override courant va être retiré et lancer la commande `yarn override-restore`.
+1. **Branche** : regarde la branche courante (`git branch --show-current`). Si ce n'est pas une branche `update/…` (CONVENTIONS §1), demande au développeur s'il faut en créer une et sur quelle base. N'en crée pas sans son accord.
+2. **Working tree** : `git status` doit être propre, hors fichiers d'override. Sinon, demande au développeur quoi faire des modifications en cours.
+3. **Override** : préviens le développeur que l'override courant va être retiré, puis lance `yarn override-restore`.
 
-## 2. Analyse des dépendances
+## 2. Analyse
 
-- Lancer la commande `yarn check-deps` pour savoir quelles dépendances mettre à jour. Cette commande groupe les mises à jour par catégorie: `Patch`, `Minor`, `Major` et `Major version zero`.
+Lance `yarn check-deps` (`ncu`). Le résultat est groupé en `Patch`, `Minor`, `Major version zero` et `Major`. Montre au développeur la liste des catégories demandées et attends sa confirmation avant de modifier `package.json`.
 
-## 3. Catégories `Patch`
+## 3. Procédure par catégorie (patch, minor, major-zero)
 
-- Mettre à jour avec la version spécifiée.
-- Lancer la commande `yarn clean`pour s'assurer que la mise à jour est ok.
-- Lancer la commande `yarn override dev/default`.
-- Lancer un build debug iOS en ligne de commande.
-- Lancer un build `assembleDebug` Android en ligne de commande.
-- En cas d'erreur, prévenir le développeur avant de corriger.
-- Retirer l'override en lançant la commande `yarn override-restore`.
-- En fin d'opération faire un commit des modifications avec le message `update(stack): patch-level dependency update`.
+Traite une catégorie à la fois, dans l'ordre. Pour chacune :
 
-## 4. Catégorie `Minor`
+1. Mets à jour `package.json` avec les versions proposées pour cette catégorie, en versions exactes : `npx ncu -u --target <patch|minor>`, ou à la main pour `major-zero`.
+2. Lance `yarn clean` **en arrière-plan** (plusieurs minutes), log dans le scratchpad :
+   ```bash
+   yarn clean > <scratchpad>/clean-<categorie>.log 2>&1; echo "EXIT=$?"
+   ```
+3. **Patches** : `postinstall` applique `patches/*.patch`. Lis la sortie dans le log.
+   - Si un paquet patché a changé de version et que le patch s'applique encore : régénère-le avec `yarn patch-package <paquet>`, puis supprime l'ancien fichier `.patch` (son nom contient l'ancienne version).
+   - S'il ne s'applique plus : arrête-toi et préviens le développeur, ne réécris pas le patch à l'aveugle.
+4. Applique l'override : `node cli/override.js -v --no-i dev/default`.
+5. Builds Debug en ligne de commande :
+   - iOS : `xcodebuild`, voir `.claude/skills/simulator/IOS.md` § « Alternative sans Xcode ouvert ».
+   - Android : `assembleDebug`, voir `.claude/skills/simulator/ANDROID.md` § « Builder et installer (Gradle) ».
+6. Lance `yarn ts-all` et `yarn lint-all`.
+7. Si une étape échoue : identifie le paquet en cause (log, stack, changelog) et propose au développeur de l'exclure de la catégorie ou de corriger. Attends sa réponse.
+8. Retire l'override : `yarn override-restore`.
+9. Commite avec le message exact du tableau, sans rien y ajouter :
 
-- Mettre à jour avec la version spécifiée.
-- Lancer la commande `yarn clean`pour s'assurer que la mise à jour est ok.
-- Lancer la commande `yarn override dev/default`.
-- Lancer un build debug iOS en ligne de commande.
-- Lancer un build `assembleDebug` Android en ligne de commande.
-- En cas d'erreur, prévenir le développeur avant de corriger.
-- Retirer l'override en lançant la commande `yarn override-restore`.
-- En fin d'opération faire un commit des modifications avec le message `update(stack): minor-level dependency update`.
+| Catégorie | Message de commit |
+| --- | --- |
+| patch | `update(stack): patch-level dependency update` |
+| minor | `update(stack): minor-level dependency update` |
+| major-zero | `update(stack): major-version-zero-level dependency update` |
 
-## 4. Catégorie `Major version zero`
+## 4. Catégorie `major`
 
-- Mettre à jour avec la version spécifiée.
-- Lancer la commande `yarn clean`pour s'assurer que la mise à jour est ok.
-- Lancer la commande `yarn override dev/default`.
-- Lancer un build debug iOS en ligne de commande.
-- Lancer un build `assembleDebug` Android en ligne de commande.
-- En cas d'erreur, prévenir le développeur avant de corriger.
-- Retirer l'override en lançant la commande `yarn override-restore`.
-- En fin d'opération faire un commit des modifications avec le message `update(stack): major-version-zero-level dependency update`.
+Ne mets rien à jour. Pour chaque dépendance :
 
-## 4. Catégorie `Major`
+- évalue le risque et l'effort (changelog, breaking changes, usages dans `src/`, impact natif) ;
+- propose un plan que le développeur exécutera paquet par paquet.
 
-Pour chaque dépendance de cette catégorie:
-- Evaluer le risque et l'effort nécessaire pour faire la mise à jour.
-- Proposer un plan que le développeur pourra ensuite exécuter unitairement.
+## 5. Compte rendu
 
-## 6. Compte rendu
-
-- Rappeler au développeur quels packages ont été mis à jour et vers quelle version pour chaque catégorie de mise à jour.
-- Rappeler au développeur les patches qui ont été mis à jour.
-- Rappeler au développeur quels mises à jour peuvent présenter un risque (catégorie `Major version zero`).
-- Rappeler au développeur quels packages nécéssitent une mise à jour individuelle (catégorie `Major`).
-- Rappeler au développeur quelles versions des packages `@edifice.io/*` sont disponibles.
-- Rappeler au développeur de faire un test en debug iOS et Android avec les scenaris suivants:
-  - Première connexion.
-  - Reconnexion automatique.
-- Rappeler au développeur de tester un build release en générant un `api` avec Xcode et un `apk` avec Android Studio ou en ligne de commande (` cd android && ./gradlew assembleRelease`).
+- Paquets mis à jour, avec l'ancienne et la nouvelle version, par catégorie.
+- Patches régénérés, ou qui ne s'appliquent plus.
+- Résultat de chaque étape (clean, build iOS, build Android, ts-all, lint-all) par catégorie. Si une étape n'a pas été lancée, dis-le.
+- Mises à jour à risque (catégorie `Major version zero`).
+- Paquets qui demandent une mise à jour individuelle (catégorie `Major`), avec le plan.
+- Versions disponibles des paquets `@edifice.io/*`.
+- À tester par le développeur :
+  - en Debug iOS et Android : première connexion, reconnexion automatique ;
+  - un build release : `ipa` avec Xcode, `apk` avec Android Studio ou `cd android && ./gradlew assembleRelease`.

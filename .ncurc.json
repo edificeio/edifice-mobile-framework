@@ -1,0 +1,12 @@
+{
+  "reject": [
+    "react",
+    "react-native",
+    "react-test-renderer",
+    "@react-native/*",
+    "@react-native-community/cli*",
+    "metro*",
+    "lottie-ios",
+    "@edifice.io/*"
+  ]
+}
