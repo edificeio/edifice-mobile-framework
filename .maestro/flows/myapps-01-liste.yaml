@@ -1,0 +1,53 @@
+# Comportement visé : la liste des applis s'affiche (filtre « Tout » par défaut, barre de filtres, boutons de la
+# navbar actifs, au moins une carte d'appli) et survit à un tirer-pour-rafraîchir.
+# Fiche docs/migrations/myapps.md : §3.2 « MyAppsHomeScreen » (filtres, liste groupée), §1 « Écrans vides distincts »
+# et « Boutons de la navbar désactivés tant qu'aucune app n'est affichable », §3.5 (testID conservés).
+appId: ${APP_ID}
+tags:
+  - myapps
+---
+- runFlow: 00-connexion.yaml
+- runFlow: communs/aller-mes-applis.yaml
+
+# L'écran vide global n'est pas là, la barre de filtres oui.
+- assertNotVisible:
+    id: "myapps-empty-screen"
+- assertVisible:
+    id: "myapps-filter-all"
+- assertVisible:
+    id: "myapps-filter-favorites"
+
+# Titre de l'écran. Optionnel : `header-title` est posé par du natif sur iOS dans la nouvelle génération.
+- assertVisible:
+    id: "header-title"
+    optional: true
+
+# Boutons de la navbar. Onboarding écarté par « Plus tard », donc jamais vu : cloche pleine.
+- assertVisible:
+    id: "myapps-navbar-notif"
+    enabled: true
+- assertVisible:
+    id: "myapps-navbar-context-menu"
+    enabled: true
+
+# Au moins une carte d'appli : un `myapps-<nom>` qui n'est ni un filtre, ni un bouton, ni un écran vide.
+- assertVisible:
+    id: "myapps-(?!filter-|navbar-|empty-|onboarding-|menu-|all-|toggle-|app-info$|favorites-validate$).+"
+
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "myapps-01-liste"
+
+# Tirer-pour-rafraîchir : la liste revient, sans écran vide ni erreur.
+- swipe:
+    start: 50%, 40%
+    end: 50%, 85%
+- extendedWaitUntil:
+    visible:
+      id: "myapps-(?!filter-|navbar-|empty-|onboarding-|menu-|all-|toggle-|app-info$|favorites-validate$).+"
+    timeout: 15000
+- assertNotVisible:
+    id: "myapps-empty-screen"
+- assertVisible:
+    id: "myapps-filter-all"

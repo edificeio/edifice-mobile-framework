@@ -1,0 +1,88 @@
+# Sous-flow réutilisable : connexion par identifiant / mot de passe, depuis une app remise à zéro.
+# Comportement visé : arriver sur la barre d'onglets avec une session ouverte. Ce n'est pas un comportement de la
+# fiche myapps, c'est le préalable de tous les flows (fiche §2.1 « Chargement » : les applis sont chargées à la
+# connexion, un échec de leur chargement refuse la connexion sur la nouvelle génération).
+#
+# Variables (toutes par -e, jamais dans un fichier) :
+#   APP_ID         identifiant du paquet : clé "appid" (Android) ou "appid.ios" (iOS) de override.json
+#   PLATFORM_NAME  `name` de la plateforme dans la config de marque (testID `network-<name>`) ; ignoré si la marque
+#                  n'a qu'une plateforme
+#   LOGIN, PASSWORD  compte de RECETTE uniquement
+#
+# Limites : plateforme à formulaire identifiant / mot de passe seulement (pas WAYF, pas redirection) ; compte sans
+# vérification d'e-mail / de mobile ni changement de mot de passe en attente.
+appId: ${APP_ID}
+tags:
+  - connexion
+---
+# clearState : chaque flow repart d'une app vierge (pas de compte enregistré, onboarding de Mes applis non vu).
+# permissions : non précisé, donc toutes accordées (défaut documenté) : pas de pop-up de notifications.
+- launchApp:
+    clearState: true
+    clearKeychain: true
+
+# Premier écran : accueil (bouton « S'identifier »). 60 s : en Debug, le bundle Metro peut être long à charger.
+- extendedWaitUntil:
+    visible:
+      id: "onboarding-join"
+    timeout: 60000
+- tapOn:
+    id: "onboarding-join"
+
+# Marque à plusieurs plateformes : écran de choix. Marque à une seule plateforme : on arrive droit sur le formulaire.
+# `id` est une regex : on attend l'un OU l'autre, puis on choisit la plateforme si l'écran de choix est là.
+- extendedWaitUntil:
+    visible:
+      id: "network-welcome-title|login-identifier"
+    timeout: 15000
+- runFlow:
+    when:
+      visible:
+        id: "network-welcome-title"
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: "network-${PLATFORM_NAME}"
+          direction: DOWN
+      - tapOn:
+          id: "network-${PLATFORM_NAME}"
+
+# Formulaire
+- extendedWaitUntil:
+    visible:
+      id: "login-identifier"
+    timeout: 15000
+- tapOn:
+    id: "login-identifier"
+- inputText: ${LOGIN}
+- tapOn:
+    id: "login-password"
+# `label` remplace la valeur saisie dans la console et les rapports (elle reste dans les logs de debug bruts).
+- inputText:
+    text: ${PASSWORD}
+    label: "Saisie du mot de passe (masqué)"
+- hideKeyboard
+- tapOn:
+    id: "login-connect"
+
+# Écran intermédiaire possible : revalidation des CGU (bouton « Accepter », SANS testID dans les deux générations).
+# On attend la barre d'onglets 20 s sans échouer ; si elle n'est pas là, on tente « Accepter ».
+- extendedWaitUntil:
+    visible:
+      id: "tabbar-myapps"
+    timeout: 20000
+    optional: true
+- runFlow:
+    when:
+      notVisible:
+        id: "tabbar-myapps"
+    commands:
+      - tapOn:
+          text: "Accepter"
+          optional: true
+
+# Session ouverte : l'onglet Mes applis est dans la barre d'onglets.
+- extendedWaitUntil:
+    visible:
+      id: "tabbar-myapps"
+    timeout: 30000

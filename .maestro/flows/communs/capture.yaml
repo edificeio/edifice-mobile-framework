@@ -1,0 +1,23 @@
+# Sous-flow : capture d'écran, et comparaison à la référence si elle est demandée.
+# Variable locale (passée par `env` du runFlow appelant) : NOM, nom de la capture, sans extension.
+# Variables globales (par -e) :
+#   COMPARER=true   active la comparaison (sinon : capture seule)
+#   REF_DIR         dossier ABSOLU des captures de référence (ancienne génération), barres obliques « / »
+#   SEUIL           pourcentage de ressemblance exigé (défaut de Maestro : 95)
+appId: ${APP_ID}
+---
+# N'échoue pas si une animation tourne encore au bout du délai (comportement documenté).
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# Enregistrée sous <dossier de sortie>/…/<NOM>.png (extension ajoutée par Maestro).
+- takeScreenshot: ${NOM}
+
+# Une variable non passée vaut `undefined` : sans COMPARER, ce bloc est sauté.
+- runFlow:
+    when:
+      true: ${COMPARER == "true"}
+    commands:
+      - assertScreenshot:
+          path: ${REF_DIR + "/" + NOM + ".png"}
+          thresholdPercentage: ${Number(SEUIL || 95)}

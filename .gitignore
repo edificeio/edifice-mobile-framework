@@ -84,3 +84,7 @@ vendor
 
 # VS Code
 .vscode/
+
+# Maestro (smoke tests) : screenshots show an account
+.maestro/captures/
+.maestro/references/

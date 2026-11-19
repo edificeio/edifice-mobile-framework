@@ -1,0 +1,79 @@
+# Comportement visé : le menu « ⋯ » de la navbar propose gérer les favoris, l'accès par le navigateur et
+# l'interrupteur « afficher toutes les applis » (activé par défaut) ; sur le filtre Favoris il ne garde que
+# « gérer les favoris », qui ouvre la modale de gestion.
+# Fiche docs/migrations/myapps.md : §1 « menu de la navbar (home_menu) », §3.2 « Interrupteur afficher toutes les
+# applis », §3.3 « ManageFavoritesModalScreen », §5.8 « Navigation » (feuille puis modale, sans délai), §3.5.
+#
+# Non couvert, volontairement :
+# - l'effet de l'interrupteur sur la liste. Désactivé, seules les applis à module restent ; sur la nouvelle
+#   génération il n'y en a pas : l'écran passerait à `myapps-empty-screen`, boutons de la navbar désactivés, sans
+#   moyen de revenir en arrière dans le flow. On bascule donc aller-retour sans fermer la feuille ;
+# - la sélection et la validation dans la modale des favoris : ni son bouton valider ni son bouton fermer n'ont de
+#   testID dans l'ancienne génération (voir selecteurs.md). Le flow s'arrête à l'ouverture de la modale.
+appId: ${APP_ID}
+tags:
+  - myapps
+---
+- runFlow: 00-connexion.yaml
+- runFlow: communs/aller-mes-applis.yaml
+
+# --- Filtre « Tout » : menu complet ---
+- tapOn:
+    id: "myapps-navbar-context-menu"
+- assertVisible:
+    id: "myapps-menu-manage-favorites"
+- assertVisible:
+    id: "myapps-menu-access-by-browser"
+# Jamais modifié sur une app vierge : activé.
+- assertVisible:
+    id: "myapps-all-showed"
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "myapps-05-menu"
+
+# Aller-retour de l'interrupteur : son testID suit son état.
+- tapOn:
+    id: "myapps-all-showed"
+- assertVisible:
+    id: "myapps-all-hidden"
+- tapOn:
+    id: "myapps-all-hidden"
+- assertVisible:
+    id: "myapps-all-showed"
+
+# Fermer la feuille en la tirant vers le bas (ancienne : @gorhom/bottom-sheet ; nouvelle : formSheet native).
+- swipe:
+    from:
+      id: "myapps-menu-manage-favorites"
+    direction: DOWN
+- assertNotVisible:
+    id: "myapps-menu-manage-favorites"
+- assertVisible:
+    id: "myapps-filter-all"
+
+# --- Filtre « Favoris » : menu réduit ---
+- tapOn:
+    id: "myapps-filter-favorites"
+- tapOn:
+    id: "myapps-navbar-context-menu"
+- assertVisible:
+    id: "myapps-menu-manage-favorites"
+- assertNotVisible:
+    id: "myapps-menu-access-by-browser"
+- assertNotVisible:
+    id: "myapps-all-showed"
+
+# --- Gérer les favoris : la feuille se ferme, la modale s'ouvre ---
+- tapOn:
+    id: "myapps-menu-manage-favorites"
+- assertNotVisible:
+    id: "myapps-menu-manage-favorites"
+# Seul repère de la modale, et seulement dans la nouvelle génération : optionnel (avertissement sur l'ancienne).
+- assertVisible:
+    id: "myapps-favorites-validate"
+    optional: true
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "myapps-05-modale-favoris"

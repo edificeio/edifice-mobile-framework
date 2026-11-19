@@ -1,0 +1,92 @@
+# Comportement visé : un appui long sur une appli ouvre ses actions ; « Ajouter aux favoris » la fait apparaître
+# sous le filtre Favoris, « Retirer des favoris » l'en fait disparaître. Le libellé de l'action suit l'état.
+# Fiche docs/migrations/myapps.md : §1 « actions d'une app (app_actions, appui long) », §3.4 « Favoris (règle
+# d'écriture) », §4 n° 6 (l'étoile ne change qu'après la réponse du serveur), §3.5 (`myapps-toggle-favorite`).
+#
+# Variable : APP_TESTID, testID de la carte d'une appli affichée sur le compte (`myapps-<name en kebab-case>`).
+#
+# Les favoris sont enregistrés CÔTÉ SERVEUR : clearState ne les efface pas. Le flow commence donc par retirer
+# l'appli des favoris si un lancement précédent l'y a laissée, et la retire à la fin.
+appId: ${APP_ID}
+tags:
+  - myapps
+  - ecrit-sur-le-compte
+---
+- runFlow: 00-connexion.yaml
+- runFlow: communs/aller-mes-applis.yaml
+
+# --- Remise en état : l'appli ne doit pas être en favori au départ ---
+- tapOn:
+    id: "myapps-filter-favorites"
+- waitForAnimationToEnd:
+    timeout: 3000
+- runFlow:
+    when:
+      visible:
+        id: "${APP_TESTID}"
+    commands:
+      - longPressOn:
+          id: "${APP_TESTID}"
+      - tapOn:
+          id: "myapps-toggle-favorite"
+      - extendedWaitUntil:
+          notVisible:
+            id: "${APP_TESTID}"
+          timeout: 15000
+
+# --- Ajout ---
+- tapOn:
+    id: "myapps-filter-all"
+- scrollUntilVisible:
+    element:
+      id: "${APP_TESTID}"
+    direction: DOWN
+    centerElement: true
+- longPressOn:
+    id: "${APP_TESTID}"
+- assertVisible:
+    id: "myapps-toggle-favorite"
+# Libellé selon l'état (texte français, fragile).
+- assertVisible: "Ajouter l'appli aux favoris"
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "myapps-04-actions-appli"
+- tapOn:
+    id: "myapps-toggle-favorite"
+
+# La feuille se ferme, l'enregistrement part, un toast confirme. On laisse passer le toast (sans testID) avant de
+# toucher à la barre de filtres qu'il peut recouvrir.
+- assertNotVisible:
+    id: "myapps-toggle-favorite"
+- extendedWaitUntil:
+    notVisible: "Vos modifications ont bien été enregistrées"
+    timeout: 10000
+    optional: true
+
+- tapOn:
+    id: "myapps-filter-favorites"
+- extendedWaitUntil:
+    visible:
+      id: "${APP_TESTID}"
+    timeout: 15000
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "myapps-04-favori-ajoute"
+
+# --- Retrait (et remise en état du compte) ---
+- longPressOn:
+    id: "${APP_TESTID}"
+- assertVisible: "Retirer l'appli des favoris"
+- tapOn:
+    id: "myapps-toggle-favorite"
+- extendedWaitUntil:
+    notVisible:
+      id: "${APP_TESTID}"
+    timeout: 15000
+
+# Si le compte n'a aucun autre favori : écran vide des favoris (optionnel, dépend du compte).
+- assertVisible:
+    id: "myapps-empty-favorites"
+    optional: true

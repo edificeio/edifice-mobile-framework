@@ -1,0 +1,40 @@
+# Comportement visé : un appui sur une appli SANS module mobile (appli web ou connecteur) demande la confirmation
+# « Redirection sur le navigateur » ; « Annuler » ramène à la liste sans quitter l'app.
+# Fiche docs/migrations/myapps.md : §3.2 « Appui sur une app », §5.6 « Ouvrir une app » (et ses écarts volontaires).
+#
+# Variable : APP_WEB_TESTID, testID de la carte d'une appli qui n'a de module mobile dans AUCUNE des deux générations
+# (forme `myapps-<name en kebab-case>`).
+#
+# Non couvert, volontairement : l'ouverture d'une appli qui a un module (navigation dans l'app). Sur la nouvelle
+# génération, aucun module migré ne déclare d'appli hormis « Mes applis » : toute appli s'y ouvre dans le navigateur
+# (fiche §9, 2026-11-10). Un flow « module » échouerait donc par construction ; à écrire au premier module migré.
+# On s'arrête à « Annuler » : « Continuer » sort de l'app vers le navigateur, hors de portée d'un flow stable.
+appId: ${APP_ID}
+tags:
+  - myapps
+---
+- runFlow: 00-connexion.yaml
+- runFlow: communs/aller-mes-applis.yaml
+
+- scrollUntilVisible:
+    element:
+      id: "${APP_WEB_TESTID}"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "${APP_WEB_TESTID}"
+
+# Alerte native : pas de testID possible, on se rabat sur les textes (français).
+- assertVisible: "Redirection sur le navigateur"
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "myapps-03-confirmation-navigateur"
+- tapOn: "Annuler"
+
+# Toujours sur Mes applis, dans l'app.
+- assertNotVisible: "Redirection sur le navigateur"
+- assertVisible:
+    id: "myapps-filter-all"
+- assertVisible:
+    id: "${APP_WEB_TESTID}"

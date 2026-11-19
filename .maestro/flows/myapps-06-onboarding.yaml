@@ -1,0 +1,85 @@
+# Comportement visé : l'onboarding s'ouvre seul à la première arrivée sur Mes applis, une seule fois par session ;
+# « Plus tard » le ferme sans le marquer vu (cloche pleine) ; le parcourir jusqu'au bout le marque vu (cloche vide) ;
+# la cloche le rouvre.
+# Fiche docs/migrations/myapps.md : §3.2 « Onboarding », §4 n° 4-5 (version, une fois par session), §5.8
+# (« Onboarding automatique : au focus de myapps/home »), §3.5 (`myapps-onboarding-modal(-later|-previous|-next|-complete)`).
+#
+# N'utilise pas communs/aller-mes-applis.yaml, qui écarte l'onboarding.
+appId: ${APP_ID}
+tags:
+  - myapps
+---
+- runFlow: 00-connexion.yaml
+
+# --- Ouverture automatique (app vierge : jamais vu) ---
+- tapOn:
+    id: "tabbar-myapps"
+- extendedWaitUntil:
+    visible:
+      id: "myapps-onboarding-modal-later"
+    timeout: 15000
+- assertVisible:
+    id: "myapps-onboarding-modal-title"
+- assertVisible:
+    id: "myapps-onboarding-modal-next"
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "myapps-06-onboarding-1"
+
+# --- « Plus tard » : fermé, pas marqué vu ---
+- tapOn:
+    id: "myapps-onboarding-modal-later"
+- assertNotVisible:
+    id: "myapps-onboarding-modal-later"
+- assertVisible:
+    id: "myapps-navbar-notif"
+# Garde-fou : si la correspondance des `id` n'est pas ancrée, la ligne du dessus accepterait aussi `…-notif-empty`.
+- assertNotVisible:
+    id: "myapps-navbar-notif-empty"
+
+# --- Une fois par session : quitter l'onglet et y revenir ne le rouvre pas ---
+- tapOn:
+    id: "tabbar-timeline"
+- tapOn:
+    id: "tabbar-myapps"
+- waitForAnimationToEnd:
+    timeout: 3000
+- assertNotVisible:
+    id: "myapps-onboarding-modal-later"
+- assertVisible:
+    id: "myapps-filter-all"
+
+# --- La cloche le rouvre ; on le parcourt jusqu'au bout ---
+- tapOn:
+    id: "myapps-navbar-notif"
+- assertVisible:
+    id: "myapps-onboarding-modal-later"
+- tapOn:
+    id: "myapps-onboarding-modal-next"
+- assertVisible:
+    id: "myapps-onboarding-modal-previous"
+- tapOn:
+    id: "myapps-onboarding-modal-next"
+- assertVisible:
+    id: "myapps-onboarding-modal-complete"
+- tapOn:
+    id: "myapps-onboarding-modal-complete"
+
+# --- Marqué vu : cloche vide ---
+- assertNotVisible:
+    id: "myapps-onboarding-modal-complete"
+- assertVisible:
+    id: "myapps-navbar-notif-empty"
+
+# --- La cloche vide le rouvre encore ; la croix le ferme ---
+- tapOn:
+    id: "myapps-navbar-notif-empty"
+- assertVisible:
+    id: "myapps-onboarding-modal-later"
+- tapOn:
+    id: "myapps-onboarding-modal-close"
+- assertNotVisible:
+    id: "myapps-onboarding-modal-later"
+- assertVisible:
+    id: "myapps-navbar-notif-empty"
