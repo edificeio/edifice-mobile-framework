@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Platform, ScrollView, TextInput, View } from 'react-native';
 
-import { CommonActions } from '@react-navigation/native';
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { defineScreen } from '~/app/navigation-new';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { Attachment } from '~/framework/components/attachment';
@@ -20,31 +20,18 @@ import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, NestedBoldText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { postSupportTicketAction, uploadSupportTicketAttachmentsAction } from '~/framework/modules/support/actions';
-import moduleConfig from '~/framework/modules/support/module-config';
-import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/support/navigation';
 import { getSupportWorkflowInformation } from '~/framework/modules/support/rights';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler/models';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { getSession } from '~/modules/auth/store/accounts';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { ISupportCreateTicketScreenEventProps, ISupportCreateTicketScreenProps } from './types';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<SupportNavigationParams, typeof supportRouteNames.home>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('support-createticket-title'),
-  }),
-});
-
 const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
+  const navigation = useNavigation();
   const hasTicketCreationRights = props.session && getSupportWorkflowInformation(props.session)?.createTicket;
   const [isCategoryDropdownOpen, setCategoryDropdownOpen] = React.useState(false);
   const [isStructureDropdownOpen, setStructureDropdownOpen] = React.useState(false);
@@ -71,7 +58,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
         uploadedAttachments = await props.uploadAttachments(attachments);
       }
       const ticketId = await props.postTicket(category, structure, subject, description, uploadedAttachments);
-      props.navigation.dispatch(CommonActions.goBack());
+      navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(I18n.get('support-createticket-successmessage', { id: ticketId }));
     } catch {
       setSending(false);
@@ -148,7 +135,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             <View style={styles.attachmentsContainer}>
               <BottomMenu
                 title={I18n.get('support-createticket-addfiles')}
-                actions={fns.map(fn => fn(moduleConfig.name, 'attachments', attachOpts))}>
+                actions={fns.map(fn => fn('support', 'attachments', attachOpts))}>
                 <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
                   <SmallActionText style={styles.actionText}>{I18n.get('support-createticket-addfiles')}</SmallActionText>
                   <Svg name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
@@ -188,7 +175,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
   return <PageComponent>{renderPage()}</PageComponent>;
 };
 
-export default connect(
+const SupportCreateTicketScreenConnected = connect(
   (state: IGlobalState) => {
     const session = getSession();
     const apps =
@@ -229,3 +216,10 @@ export default connect(
       dispatch,
     ),
 )(SupportCreateTicketScreen);
+
+export default defineScreen({
+  options: () => ({
+    title: I18n.get('support-createticket-title'),
+  }),
+  screen: SupportCreateTicketScreenConnected,
+});

@@ -1,11 +1,11 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { actionTypes } from '~/framework/modules/support/reducer';
 import { supportService } from '~/framework/modules/support/service';
 import workspaceFileTransferActions from '~/framework/modules/workspace/actions/fileTransfer';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler/models';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
+import { assertSession } from '~/modules/auth/store/accounts';
 
 export const uploadSupportTicketAttachmentsAction =
   (attachments: LocalFile[]) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {

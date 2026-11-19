@@ -1,13 +1,12 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { StaticScreenProps } from '@react-navigation/native';
 
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/support/navigation';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler/models';
+import { AuthActiveAccount } from '~/modules/auth/model';
 
 export interface ISupportCreateTicketScreenDataProps {
   apps: { label: string; value: string }[];
   structures: { label: string; value: string }[];
-  session?: AuthLoggedAccount;
+  session?: AuthActiveAccount;
 }
 
 export type SupportScreenNavParams = undefined;
@@ -19,4 +18,4 @@ export interface ISupportCreateTicketScreenEventProps {
 
 export type ISupportCreateTicketScreenProps = ISupportCreateTicketScreenDataProps &
   ISupportCreateTicketScreenEventProps &
-  NativeStackScreenProps<SupportNavigationParams, typeof supportRouteNames.home>;
+  StaticScreenProps<SupportScreenNavParams>;

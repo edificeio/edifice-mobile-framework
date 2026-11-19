@@ -1,6 +1,6 @@
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { SyncedFileWithId } from '~/framework/util/fileHandler';
 import { sessionFetch } from '~/framework/util/transport';
+import { AuthActiveAccount } from '~/modules/auth/model';
 
 interface IBackendTicket {
   id: number | null;
