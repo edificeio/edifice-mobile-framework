@@ -6,7 +6,7 @@ import { accountFetch, getModuleTransport } from '~/framework/util/transport';
 import type { AppsPreferences, EntApp } from '~/modules/myapps/model';
 
 import { fromPreferences, toEntApps, toPreferences } from './adapter';
-import type { API } from './api';
+import type { API } from './types';
 
 type Account = Parameters<typeof accountFetch>[0];
 

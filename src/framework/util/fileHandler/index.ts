@@ -232,7 +232,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
 
   filetype: string; // Mime type of the file
 
-  nativeInfo: DocumentPickerResponse | Asset; // Backup of the full information given by react-native-fs
+  nativeInfo: DocumentPickerResponse | Asset | LocalFile.CustomUploadFileItem; // Backup of the full information given by react-native-fs, or the upload item given
 
   _needIOSReleaseSecureAccess?: boolean; // Recommended by react-native-fs. A LocalFile created with pick() must be free when it's no more used.
 
@@ -248,7 +248,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     this._filepathNative = (file as LocalFile.CustomUploadFileItem).filepath || (file as DocumentPickerResponse | Asset).uri!;
     this.filepath = LocalFile.formatUrlForUpload(this._filepathNative);
     this.filetype = (file as LocalFile.CustomUploadFileItem).filetype || (file as DocumentPickerResponse | Asset).type!;
-    this.nativeInfo = file as DocumentPickerResponse | Asset;
+    this.nativeInfo = file;
   }
 
   setExtension(ext: string) {

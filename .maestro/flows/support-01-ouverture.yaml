@@ -1,9 +1,10 @@
 # Comportement visé : « Assistance ENT » (appli ENT « Aide et support ») s'ouvre DANS l'app depuis « Mes applis »,
 # avec son titre ; le bouton retour ramène à « Mes applis ».
-# Fiche docs/migrations/support.md : §3 n° 1.
+# Fiche .claude/skills/migrate-module/journal/support.md : §3 n° 1.
 #
-# Le contenu du formulaire n'est pas vérifié : l'écran n'a aucun testID (fiche §3). Un module non chargé ne s'ouvre
-# pas dans l'app (l'appli part dans le navigateur, avec une alerte de confirmation) : le titre attendu n'apparaît pas.
+# Le contenu du formulaire n'est pas vérifié ici : ses testID (`support-createticket-*`) servent aux flows 2 à 6 (fiche §3).
+# Un module non chargé ne s'ouvre pas dans l'app (l'appli part dans le navigateur, avec une alerte de confirmation) : le
+# titre attendu n'apparaît pas. C'est l'ancien comportement sur les marques qui ne chargeaient pas `support` (fiche §2).
 appId: ${APP_ID}
 tags:
   - support

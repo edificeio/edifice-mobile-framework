@@ -1,6 +1,8 @@
 # ARCHITECTURE.md
 
-> Important : deux générations de code cohabitent (modules et navigation). **Avant de modifier un module, identifie sa génération** (§2) et suis ses conventions. Ne mélange pas les deux dans un même module. L'objectif à court terme est de migrer l'ancienne génration vers la nouvelle.
+Architecture du code de l'application, à destination des agents IA (et des développeurs). Fusion, le 2026-11-19, de `docs/ARCHITECTURE.md` (les deux générations) et de l'ancienne version de ce fichier (système historique seul).
+
+> Important : deux générations de code cohabitent (modules et navigation). **Avant de modifier un module, identifie sa génération** (§2) et suis ses conventions. Ne mélange pas les deux dans un même module. L'objectif à court terme est de migrer l'ancienne génération vers la nouvelle : voir le skill `migrate-module` ([INTENT.md](../skills/migrate-module/INTENT.md)).
 
 ## 1. Arborescence
 
@@ -18,13 +20,13 @@
 │   │   ├── navigation/         Helpers de navigation de l'ancien système (helper.ts, tabModules.tsx)
 │   │   ├── util/               Transport, oauth2, storage, notifications, …
 │   │   └── modules/            Modules ANCIENS (+ communities, voir §2)
-│   ├── modules/                Modules NOUVEAUX (auth, media, user, audience, editor, notifications)
+│   ├── modules/                Modules NOUVEAUX réécrits (auth, media, myapps, user, audience, editor, notifications)
 │   ├── infra/, ui/, util/      Legacy (non vérifié)
 │   └── specs, test-utils, types/
 ├── __overrides__/              Marque blanche (common, dev, neo, one, ent77, openent, …)
 ├── ios/  android/             Natif
 ├── assets/                     i18n, icônes, images, animations
-├── docs/                       Documentation
+├── .claude/                    Doc pour les agents : docs/ (ce fichier, CONVENTIONS, OVERRIDES, TICKET-WORKFLOW), rules/, skills/ (dont migrate-module : règles et suivi de la migration)
 └── cli, gen, jest, patches, vendor, svgs-backup/   Outillage
 ```
 
@@ -46,7 +48,7 @@ Un module est une fonctionnalité isolée (blog, mails, auth, …) avec son doss
 
 Conséquence : l'emplacement ne dit pas la génération. Un module de `framework/modules/` peut être ancien ou déjà migré : regarde son `index.ts` (`NavigableModule` = ancien, `CoreModule` / `EntModule` = nouveau). **Ne déplace pas un module migré sur place vers `src/modules/`.**
 
-> `communities` est dans `framework/modules/` avec l'ancienne structure (`NavigableModule`). C'est la référence récente d'après `AGENTS.md`.
+> `communities` est dans `framework/modules/` avec l'ancienne structure (`NavigableModule`). `CLAUDE.md` §5 le cite comme référence récente, mais il ne sert pas de modèle de migration.
 
 Les modules du nouveau système sont de deux types (`src/app/module/types.ts`) :
 
@@ -130,7 +132,7 @@ export default new CoreModule({
 - `entries.userMenu` : `user` lit les liens des modules disponibles avec `useUserMenuEntries(section)` (triés par `order`, puis dans l'ordre des modules) ; le module qui déclare un lien ne dépend pas de `user`. Une entrée `create` est prévue, ajoutée avec son premier consommateur.
 - `fileManager` : enregistré au chargement des modules (`ModuleLoader`) dans le registre que lit `FileManager.pick`.
 - Les modules peuvent se brancher sur le cycle de session (`sessionSetup`, `onSessionStart`, `onSessionRelease`). Voir les commentaires de `src/app/module/types.ts`.
-- Structure attendue d'un module : `model/` (domaine agnostique, règles par objectif), `actions.ts` (actions de l'utilisateur), `util.ts`, `service/`, `store/`, `storage.ts`. Voir « Structure d'un module » dans `docs/migrations/CONVENTIONS.md` (exemple : `src/modules/myapps`).
+- Structure attendue d'un module : `model/` (domaine agnostique, règles par objectif), `actions.ts` (actions de l'utilisateur), `util.ts`, `service/`, `store/`, `storage.ts`. Voir « Structure d'un module » dans `.claude/skills/migrate-module/CONVENTIONS.md` (exemple : `src/modules/myapps`).
 - Dossiers observés dans `modules/auth` (le plus complet) : `screens/`, `navigation/`, `components/`, `hooks/`, `service/`, `model/`, `store/`, `storage.ts`, `tracking.ts`, tests `*.test.ts` à côté du code.
 
 ## 3. Navigation
@@ -209,8 +211,6 @@ Les deux systèmes existent en même temps : l'ancien `index.tsx` importe encore
 
 ## 4. Notifications (ancien système uniquement)
 
-Voir aussi [NOTIFICATIONS.md](NOTIFICATIONS.md) (vide à date).
-
 Un module enregistre ses comportements d'ouverture de notification / push dans `notif-handler.ts` :
 
 ```ts
@@ -239,20 +239,18 @@ Les reducers s'enregistrent dans une map globale : `Reducers.register(moduleConf
 
 À l'inverse, le nouveau système ajoute : les hooks de session (`sessionSetup`, `onSessionStart`, `onSessionRelease`), les liens d'un module dans l'accueil de `user` (`entries.userMenu`), la déclaration des `storages` avec migrations, et la télémétrie des écrans.
 
-## 7. Autres documents (`docs/`)
+## 7. Autres documents
 
-Ces fichiers existent mais sont **encore vides** à date. Leur sujet est déduit de leur nom. Si tu as besoin d'une info qui devrait s'y trouver, demande plutôt que d'inventer.
+| Document | Sujet |
+| --- | --- |
+| `CLAUDE.md` (racine) | Règles de collaboration, overrides, vérification |
+| [CONVENTIONS.md](CONVENTIONS.md) | Git, commits, nommage, React / TypeScript, commentaires, i18n |
+| [OVERRIDES.md](OVERRIDES.md) | Marque blanche |
+| [TICKET-WORKFLOW.md](TICKET-WORKFLOW.md) | Déroulé d'un ticket |
+| `.claude/rules/` | Création d'écrans et de composants, design system, dépendances, natif |
+| [skills/migrate-module/](../skills/migrate-module/INTENT.md) | Migration vers le nouveau système : intention, patron de bascule, conventions, suivi (`journal/`) |
 
-| Fichier                              | Sujet attendu                                                  |
-| ------------------------------------ | -------------------------------------------------------------- |
-| [BUILD.md](BUILD.md)                 | Build et release (Fastlane, overrides, natif)                  |
-| [CODEREVIEW.md](CODEREVIEW.md)       | Conventions et checklist de revue de code                      |
-| [FETCH.md](FETCH.md)                 | Appels réseau (transport, `service/`)                          |
-| [NOTIFICATIONS.md](NOTIFICATIONS.md) | Notifications / push (voir §4 et §6)                           |
-| [STORAGE.md](STORAGE.md)             | Stockage local (`storage`, migrations, `storages` des modules) |
-| [TESTS.md](TESTS.md)                 | Stratégie et exécution des tests                               |
-
-Voir aussi `AGENTS.md` (règles de collaboration, conventions, vérification) à la racine du repo.
+Pas de documentation dédiée pour le build, la revue de code, le réseau, les notifications, le stockage ni les tests (les anciens fichiers vides de `docs/` ont été retirés le 2026-11-19). Si tu as besoin d'une info sur ces sujets, demande plutôt que d'inventer.
 
 ## À compléter
 
@@ -260,5 +258,5 @@ Voir aussi `AGENTS.md` (règles de collaboration, conventions, vérification) à
 - Exemple concret d'un module avec onglet (`tab`).
 - Liste des modules déjà migrés sur place dans `framework/modules/`.
 - Rôle exact de `src/infra`, `src/ui`, `src/util`, `src/modules` hors `auth`/`media`.
-- Services / transport, rights, couche réseau (voir [FETCH.md](FETCH.md), §1 de `AGENTS.md`).
-- ~~Statut de migration module par module~~ : voir [migrations/STATUS.md](migrations/STATUS.md) (et le protocole de suivi dans [migrations/README.md](migrations/README.md)).
+- Services / transport, rights, couche réseau (voir §1 de `CLAUDE.md`).
+- ~~Statut de migration module par module~~ : voir [STATUS.md](../skills/migrate-module/journal/STATUS.md) (et le protocole de suivi dans [README.md](../skills/migrate-module/journal/README.md)).

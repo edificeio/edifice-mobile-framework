@@ -1,5 +1,5 @@
 import { fromPreferences, toEntApps, toPreferences } from './adapter';
-import type { API } from './api';
+import type { API } from './types';
 
 const createResponse = (overrides: Partial<API.EntAppResponse> & Pick<API.EntAppResponse, 'name'>): API.EntAppResponse => ({
   address: `/${overrides.name.toLowerCase()}`,

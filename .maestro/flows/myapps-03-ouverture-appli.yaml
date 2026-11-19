@@ -1,6 +1,6 @@
 # Comportement visé : un appui sur une appli SANS module mobile (appli web ou connecteur) demande la confirmation
 # « Redirection sur le navigateur » ; « Annuler » ramène à la liste sans quitter l'app.
-# Fiche docs/migrations/myapps.md : §3.2 « Appui sur une app », §5.6 « Ouvrir une app » (et ses écarts volontaires).
+# Fiche .claude/skills/migrate-module/journal/myapps.md : §3.2 « Appui sur une app », §5.6 « Ouvrir une app » (et ses écarts volontaires).
 #
 # Variable : APP_WEB_TESTID, testID de la carte d'une appli qui n'a de module mobile dans AUCUNE des deux générations
 # (forme `myapps-<name en kebab-case>`).

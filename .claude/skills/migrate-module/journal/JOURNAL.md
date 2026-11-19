@@ -12,13 +12,38 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-19 — Assainissement de `support`, tous les sujets (`feat/ia/migration-outillage`)
+
+- Fait : premier passage de `/sanitize-module`, par un agent, sur `src/framework/modules/support`, en huit patchs non commités (`sanitize-patches/01` à `08`) : `connect` (avec `try-action` et le reducer `ticket` mort : plus de Redux dans le module) ; `structure` en deux PR (service : `service/api.ts`, `service/adapter.ts`, `getModuleTransport('support').accountFetch` ; puis `model/` avec `business.ts` et `actions.ts`, `rights.ts` supprimé) ; `performance` ; `styles` (équivalents exacts seulement) ; `dette` (texte de l'alerte de sortie, libellé des catégories par « Mes applis ») ; patch du framework (`nativeInfo` du `LocalFile` de `src/framework/util/fileHandler/index.ts`) ; `erreurs` (absorbé). Fiche [support.md](support.md) §5, §6, §9.
+- Décidé (utilisateur) : `droits` et `ui` abandonnés ; `connect` + `try-action` + Redux mort en une PR ; `structure` en deux PR ; pas de nouveaux flows Maestro, recette par PR dans la fiche ; `accountFetch(session, …)` ; `actions` de `BottomMenu` jamais mémoïsées ; patch du framework pour `LocalFile` ; styles : équivalents exacts seulement ; texte de l'alerte et libellés des catégories corrigés ; `PageView` / `KeyboardPageView` et `DropDownPicker` notés.
+- Décidé seul (à relire) : `SyncedFileWithId` de `~/framework/util/fileHandler` dans tout le module dès `connect` (sans le cast de `mapDispatchToProps`, l'autre classe donnait une erreur nouvelle) ; types `TicketDraft` et `TicketAttachment` dans `model/index.ts` dès la PR du service ; `actions.ts` en fonction async simple (`sendSupportTicket`), le module n'ayant plus de store ; condition Android du style de la liste des catégories gardée dans l'écran (un `Platform.select` dans `styles.ts` aurait mis `position: undefined` sur iOS).
+- Vérifié : `tsc` 778 → 770, aucune erreur nouvelle par fichier et par code (−5 dans le module, −3 ailleurs grâce au patch du framework) ; ESLint du dossier 0 ; Jest 431 → 447 ; `yarn migration-status --check` vert à chaque patch ; `testID` inchangés. **Pas testé dans l'app.**
+- En suspens : relecture des huit patchs ; recette par patch dans l'app (fiche §9) ; les deux classes `LocalFile` / `SyncedFileWithId` du framework (`fileHandler/index.ts` et `fileHandler/models`) restent.
+- Prochaine étape : relire, jouer la recette, puis commiter un patch par PR.
+- Ensuite (utilisateur) : les huit patchs appliqués à l'arbre de travail (la fiche reprise du worktree, qui avait déjà la bonne phrase sur `hasRight`) ; `screens/create-ticket/types.ts` supprimé (un seul type, utilisé par un seul fichier). Retours de l'essai intégrés aux skills : mode « plan d'ensemble » (`/sanitize-module <chemin> tous`), ordre par défaut des sujets, statuts `absorbé par <sujet>` et `sans objet`, base `tsc` d'un sujet = état après le précédent, mesures dans le scratchpad, `yarn migration-status` seulement en fin de session, total de `yarn lint-all` comparé à la base, une entrée de JOURNAL par session ; CONVENTIONS : actions qui **reçoivent la session** en paramètre (décidé), dossier d'un écran (avec template : un fichier ; sans template : `screen.tsx` + `index.ts` qui réexporte, décidé), droits par fonction dans `model/business.ts`, section « Styles » (équivalents exacts, style de plateforme dans le JSX), mock Jest d'un service exporté par défaut ; `framework.md` : `PageView`, `BottomMenu`, les deux classes `LocalFile` ; `inventaire.md` : recettes de vérification ; gabarit : §5 « Backlog » / « Noté, non traité », colonne « Recette » en §9 ; `cli/migration-status.js` ne compte plus les tests (`support` : 534 lignes). La doc de migration n'est pas formatée par Prettier (décidé).
+- Ensuite (utilisateur) : le fichier des types de l'API d'un service s'appelle `service/types.ts`, jamais `service/api.ts` (fichier de types du dossier, CONVENTIONS « Types »). `src/modules/myapps/service/api.ts` et `src/framework/modules/support/service/api.ts` renommés `types.ts`, imports corrigés ; CONVENTIONS, `sanitize-module`, `inventaire.md`, `modules-de-reference.md` et les fiches (`myapps`, `support`, plans de `wiki`, `explorer`, `user` : plus de renommage `types.ts` → `api.ts`) mis à jour.
+- Ensuite (utilisateur) : dans `support`, `PageView` remplacé par un fragment (le layout de la nouvelle navigation donne déjà fond, taille et `ErrorBoundary`), `KeyboardPageView` par `KeyboardAvoidingView` (`~/framework/components/keyboard`, iOS seulement comme avant), `pageGutterSize` par `UI_SIZES.spacing.medium`. Règle écrite dans `framework.md` et le sujet `dette` de `sanitize-module`. Vérifié : `tsc` 770, rien dans `support` ; ESLint du dossier propre ; Jest 16/16. **Pas testé dans l'app** : la marge du bas sur iOS (le `SafeAreaView` de `KeyboardPageView` disparaît).
+- Ensuite (utilisateur) : `docs/ARCHITECTURE.md` (les deux générations) fusionné dans `.claude/docs/ARCHITECTURE.md` (qui ne décrivait que l'ancien système), numérotation des sections gardée (les fiches et les skills citent §2, §3.2, §6) ; `AGENTS.md` (inexistant) remplacé par `CLAUDE.md` ; §7 renvoie aux vrais documents. Dossier `docs/` retiré : les autres fichiers étaient vides (`TESTS.md` : « Pas de tests. »). Liens mis à jour (`CLAUDE.md`, INTENT, `framework.md`, `journal/README.md`) ; aucun lien cassé.
+- Ensuite (utilisateur) : INTENT revu et réécrit sans détails techniques (pourquoi, quoi, comment, quand ; les gestes renvoient à BASCULE, les sujets à `sanitize-module`). Ajouts : la raison des deux étapes et de la migration sur place ; « la migration ne change rien pour les utilisateurs, un changement visible ne vient qu'avec l'assainissement, validé ». Retirés : identifiants de code, listes d'API, dates de décision, notice du script (reportée dans `migrate-module/SKILL.md`, « Le suivi calculé »). Numéros des §4 et §8, cités ailleurs, gardés.
+- Ensuite (utilisateur) : INTENT §4 « En profiter pour relever bugs et défauts de conception » et règle §5.3 « tout noter » : propre au module → fiche §5 (corrigé en assainissement) ; au-delà ou plus tard → `later.md`, nouvelle table « Bugs et défauts de conception relevés », remplie avec les 5 relevés de la session (`BottomMenu`, classes de fichiers en double, `auth`, carrousel de `media`, `SCREENS.md`). Consigne ajoutée aux deux skills.
+
+## 2026-11-19 — Revue de `support`, deux skills (bascule / assainissement), suivi déplacé (`feat/ia/migration-outillage`)
+
+- Fait : revue de `support` face au nouveau framework et confrontation du skill `migrate-module` avec INTENT / BASCULE (issus d'une formation). `docs/migrations/` déplacé dans le skill : règles à la racine de `.claude/skills/migrate-module/`, suivi et gabarits dans `journal/` ; copie en double `docs/migrations/migration-status.js` supprimée ; chemins corrigés (`cli/migration-status.js`, `.maestro/`, `docs/ARCHITECTURE.md`, un commentaire de `src/modules/notifications/hooks.ts`). INTENT, BASCULE (17 gestes), CONVENTIONS, gabarit de fiche (§9 « Assainissement »), `later.md` réécrits. `migrate-module` réécrit pour la bascule seule ; nouveau skill `sanitize-module` (un sujet par PR, phases d'une réécriture complète). `support` aligné : route `support/create-ticket`, `useConfirmRemove`, `ToDo(support-migration)` sur les imports de `workspace`. Compteur : `~/framework/navigation` compté, `setOptions` seulement avec un contenu ancien, `bascule incomplète` seulement pour la navigation ancienne ou l'import des routes d'un module ancien.
+- Décidé (utilisateur) : deux skills, bascule puis assainissement ; dans la bascule, tout ce qui ne marche pas dans la nouvelle navigation (`setOptions` en entier, `usePreventBack` → `useConfirmRemove`, routes renommées `<module>/<dossier de l'écran>`, suffixe de la route d'accueil demandé au développeur) ; conversions d'UI en assainissement ; **plus de passage de Redux à zustand** (exception `user` gardée) ; sur place, jamais de déplacement vers `src/modules/` sauf dossier existant ; façade pour les importeurs de `module-config.ts` / `navigation/` ; `setOptions` permis avec les nouveaux items pour un bouton qui dépend de l'état ; import du code d'un module ancien permis avec `ToDo`, navigation ou state : arrêt ; Maestro recommandé, pas bloquant ; module ajouté au registre quelle que soit la marque (liste par marque dans `later.md`) ; tout le suivi dans le skill `migrate-module`.
+- Vérifié : `tsc` 778 erreurs, identiques par fichier et par code avant / après (le texte de certaines erreurs d'autres modules change : il cite l'union des routes) ; ESLint sur `support` : 3 erreurs, 3 avertissements, les mêmes ; `yarn migration-status --check` vert après régénération (navigation ancienne 219 → 238 : nouvelle règle de comptage, pas du code nouveau) ; `myapps` et `support` passent `basculé, testable` ; aucun lien Markdown cassé dans les fichiers déplacés. **Pas testé dans l'app** (route renommée, `useConfirmRemove`).
+- En suspens : `auth` importe encore `~/app/navigation/types` ; `media` (carrousel) masque ses boutons par `setOptions({ headerLeft, headerRight })`, signalé par la nouvelle règle ; `.claude/rules/SCREENS.md` et `CLAUDE.md` §5 décrivent la création d'écran à l'ancienne ; le commit `4307c0738` (`chore(support)`) touche aussi `src/app/store/index.tsx`.
+- Prochaine étape : relire les deux skills ; rejouer `support-01` et la recette de `support` dans l'app ; premier vrai essai de `/migrate-module` sur un module.
+- Ensuite (utilisateur) : ajouts aux deux skills. Bascule : geste 18, `withSession` (`~/modules/auth/hoc`) sur **tout** écran qui lit la session (`getSession()` / `assertSession()`, `sessionScreen`, ancien chemin de `withSession`), appliqué à `support` (session passée à `mapStateToProps`). Assainissement : nouveaux sujets `try-action` (supprimer `tryAction`, tracking gardé), `performance` (`useCallback` / `useMemo`), `styles` (styles statiques dans `styles.ts`), `erreurs` (`tsc` / ESLint du modèle et du reste du code) ; `api-publique` élargi (types, hooks, utilitaires). Pendant la bascule, DESIGN-SYSTEM et les règles d'écriture de COMPONENTS / SCREENS ne s'appliquent pas au code porté (CONVENTIONS « Portage »). Vérifié : `tsc` 778, identiques par fichier et par code ; ESLint `support` 2 erreurs, 3 avertissements. **Pas testé dans l'app.**
+- Ensuite (utilisateur) : sujet `try-action` corrigé : l'option `track` est supprimée avec `tryAction`, sans appel de remplacement à `Trackers`, qui n'est plus compatible avec la stack Firebase. Remplace « tracking gardé » de la ligne précédente.
+
 ## 2026-11-19 — Intention, suivi calculé, tests Maestro, bascule de `support` (`feat/ia/migration-outillage`)
 
-- Fait : [INTENT.md](INTENT.md) (contexte, migration en deux étapes, règles de conduite, définition de « terminé ») ; [BASCULE.md](BASCULE.md) (patron de l'étape 1) et [\_template-bascule.md](_template-bascule.md) ; `yarn migration-status` (`cli/migration-status.js`) qui génère [SUIVI.md](SUIVI.md) et `suivi.json`, avec `--check` qui échoue si un compteur de l'ancienne génération augmente ; suite Maestro dans `.maestro/` (connexion, six flows `myapps`, guide), script `yarn e2e` ; bascule de `support` sur place ([support.md](support.md)) : 11 fichiers, +47 / −79.
+- Fait : [INTENT.md](../INTENT.md) (contexte, migration en deux étapes, règles de conduite, définition de « terminé ») ; [BASCULE.md](../BASCULE.md) (patron de l'étape 1) et [\_template-bascule.md](_template-bascule.md) ; `yarn migration-status` (`cli/migration-status.js`) qui génère [SUIVI.md](SUIVI.md) et `suivi.json`, avec `--check` qui échoue si un compteur de l'ancienne génération augmente ; suite Maestro dans `.maestro/` (connexion, six flows `myapps`, guide), script `yarn e2e` ; bascule de `support` sur place ([support.md](support.md)) : 11 fichiers, +47 / −79.
 - Décidé : rien. Tout ce qui est écrit ici est une proposition à relire ; les choix pris pour `support` sont des choix par défaut ([support.md](support.md) §6).
 - Vérifié : `yarn migration-status` (8 modules sur 41 sur la nouvelle génération, 97 écrans anciens) ; `tsc`, ESLint et Jest sur `support` le 2026-11-18, avant sa remise sur place. **Pas testé dans l'app. Aucun flow Maestro n'a tourné.**
 - En suspens : `support` importe l'ancien `workspace` pour l'envoi des pièces jointes (aussi importé par `blog`, `homework`, `mails`, `user`) ; `support` n'a aucun `testID` ; trois `testID` ont changé avec la migration (`header-back` → `BackButton`, `network-welcome-version` → `network-welcome-subtitle`, `network-version-number` disparu), à l'encontre de la règle « `testID` inchangés ».
-- Prochaine étape : faire passer `.maestro/flows/00-connexion.yaml` puis `myapps-01-liste.yaml` sur un build de l'ancienne génération ([.maestro/README.md](../../.maestro/README.md)) ; jouer `support` dans l'app ; trancher les questions ouvertes de [support.md](support.md).
+- Prochaine étape : faire passer `.maestro/flows/00-connexion.yaml` puis `myapps-01-liste.yaml` sur un build de l'ancienne génération ([.maestro/README.md](../../../../.maestro/README.md)) ; jouer `support` dans l'app ; trancher les questions ouvertes de [support.md](support.md).
 
 ## 2026-11-18 — Révision de la cible d'`explorer` (`feat/navigation`)
 
@@ -189,7 +214,7 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ## 2026-11-06 — Icônes typées, puis annulé (`feat/ia/vmou`)
 
-- Décidé : une icône `Svg` est typée `SvgIconName`. Règle dans [CONVENTIONS.md](CONVENTIONS.md).
+- Décidé : une icône `Svg` est typée `SvgIconName`. Règle dans [CONVENTIONS.md](../CONVENTIONS.md).
 - Fait : `EntAppDisplay.icon`, `DEFAULT_APP_ICON`, surcharges d'icônes de `myapps` et des notifications ; `getAppSvgIcon` (via `svgExists`) ; `media/resource-display` et `communities` sans cast.
 - Constaté : `EntApp.icon` n'est pas toujours un `Svg` (image du workspace, URL : ancien `resolveAppIcon`) ; il reste une référence `string`, à traiter avec `MyAppsCard` en phase 4. Le modèle ne peut pas vérifier les noms (`svgExists`) : la liste des SVG ne se charge pas sous Jest (imports ESM) ; la vérification est dans les hooks.
 - Vérifié : tsc 775 (aucune nouvelle), eslint propre, `yarn test` 418/418. **Pas testé dans l'app.**
@@ -197,7 +222,7 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ## 2026-11-06 — `EntAppImage` et `ModuleImage` (`feat/ia/vmou`)
 
-- Décidé : un composant par source du nom : `EntAppImage` (nom d'app ENT venu du serveur, `useEntAppDisplay`) et `ModuleImage` par-dessus (module connu du code, `AllModulesNames`). Règle « app ENT ou module » dans [CONVENTIONS.md](CONVENTIONS.md).
+- Décidé : un composant par source du nom : `EntAppImage` (nom d'app ENT venu du serveur, `useEntAppDisplay`) et `ModuleImage` par-dessus (module connu du code, `AllModulesNames`). Règle « app ENT ou module » dans [CONVENTIONS.md](../CONVENTIONS.md).
 - Fait : `src/framework/components/picture/ent-app-image/` (corps de l'ancien `ModuleImage`, styles déplacés) ; `module-image` réduit à `EntAppImage` + `useModuleAppName` (exporté par les hooks de `myapps`).
 - Vérifié : tsc 775 (aucune nouvelle ; les 2 erreurs préexistantes du rendu de remplacement ont suivi le code), eslint propre, `yarn test` 418/418. **Pas testé dans l'app.**
 
@@ -210,7 +235,7 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ## 2026-11-06 — Types rangés dans les fichiers de types (`feat/ia/vmou`)
 
-- Décidé : un type utile à plusieurs fichiers va dans le fichier de types de son dossier (`types.ts`, `model/index.ts`…) ; un type interne reste dans son fichier, non exporté, voire sans nom. Règle dans [CONVENTIONS.md](CONVENTIONS.md).
+- Décidé : un type utile à plusieurs fichiers va dans le fichier de types de son dossier (`types.ts`, `model/index.ts`…) ; un type interne reste dans son fichier, non exporté, voire sans nom. Règle dans [CONVENTIONS.md](../CONVENTIONS.md).
 - Fait : `src/app/module/types.ts` (`ModulesMap`) ; `src/modules/myapps/model/index.ts` (`Translate`, `AppConfig`, `MyAppsFilter`) ; `src/modules/myapps/hooks/types.ts` (`MyAppsDispatch`, `EntAppDisplay`). Restés locaux : `LoadedModules`, `ModuleWithRights`, `LabelSourceData`, `FilterAppsContext` ; dépendances de `createMyAppsSessionHooks` sans nom.
 - Vérifié : tsc 768, eslint propre, `yarn test` 418/418.
 - Ensuite : `ModulesMap` → `AllModulesMap` (comme `AllModulesArray`) ; l'ancien type objet `AllModulesMap` → `AllModulesByName`.
@@ -219,7 +244,7 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ## 2026-11-06 — Modules par nom en O(1) (`feat/ia/vmou`)
 
-- Décidé : un module se lit par son nom dans une Map, pas par `modules.find(…)`. Règle dans [CONVENTIONS.md](CONVENTIONS.md).
+- Décidé : un module se lit par son nom dans une Map, pas par `modules.find(…)`. Règle dans [CONVENTIONS.md](../CONVENTIONS.md).
 - Fait : `ModuleContext` (`src/app/module/loader.tsx`) contient `{ modules, byName }`, construits une fois ; `useModulesMap()`, `useModule(name)` ; utilisés par `useModuleAppName` (`myapps`) et `src/app/navigation-new/open-module.ts`.
 - Vérifié : tsc 768, eslint propre, `yarn test` 418/418. **Pas testé dans l'app.**
 - Prochaine étape : phase 4 de `myapps` (écran).
@@ -233,7 +258,7 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ## 2026-11-06 — Couleurs de la palette typées (`feat/ia/vmou`)
 
-- Décidé : un nom de couleur de la palette est typé `ThemeColorName` (`keyof palette.complementary` + `primary` / `secondary`), pas `string`. Règle dans [CONVENTIONS.md](CONVENTIONS.md).
+- Décidé : un nom de couleur de la palette est typé `ThemeColorName` (`keyof palette.complementary` + `primary` / `secondary`), pas `string`. Règle dans [CONVENTIONS.md](../CONVENTIONS.md).
 - Fait : `src/app/theme.ts` (`ThemeColorName`, `isThemeColorName`, `getThemeColorShades`) ; `myapps` (`EntApp.color`, `getAppColor` qui écarte une couleur inconnue, `getAppShades`) ; surcharges de `src/modules/notifications/hooks.ts`.
 - Vérifié : tsc 768 (aucune nouvelle), eslint propre, `yarn test` 418/418. **Pas testé dans l'app.**
 - Prochaine étape : phase 4 de `myapps` (écran).
@@ -256,14 +281,14 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ## 2026-11-06 — `myapps` phase 2 : chargement (`feat/ia/vmou`)
 
-- Fait : `src/modules/myapps/session.ts` (`createMyAppsSessionHooks`) : `sessionSetup` charge les apps (bloquant, écrit au `commit`), `onSessionStart` les préférences (échec → `status: 'error'`, rien d'écrit après la fin de la session). Branché dans `index.ts` (`getStore().dispatch`, `I18n.get`). `ToDo` retiré de `src/modules/auth/flows/start-session.ts`. Règle `session.ts` ajoutée à [CONVENTIONS.md](CONVENTIONS.md) (choix de Claude, à valider).
+- Fait : `src/modules/myapps/session.ts` (`createMyAppsSessionHooks`) : `sessionSetup` charge les apps (bloquant, écrit au `commit`), `onSessionStart` les préférences (échec → `status: 'error'`, rien d'écrit après la fin de la session). Branché dans `index.ts` (`getStore().dispatch`, `I18n.get`). `ToDo` retiré de `src/modules/auth/flows/start-session.ts`. Règle `session.ts` ajoutée à [CONVENTIONS.md](../CONVENTIONS.md) (choix de Claude, à valider).
 - Vérifié : tsc sans nouvelle erreur (769), eslint propre, `yarn test` 413/413. **Pas testé dans l'app.**
 - En suspens : rien n'est commité depuis la phase 0.
 - Prochaine étape : tester la connexion dans l'app (state `myapps` dans Reactotron), puis phase 3.
 
 ## 2026-11-06 — `myapps` : relecture de la phase 1 bis (`feat/ia/vmou`)
 
-- Décidé : règles du modèle regroupées par objectif (`model/display.ts`, `opening.ts`, `classification.ts`, `favorites.ts`, `onboarding.ts`) au lieu de `model/rules/` ; `filterApps` dans le modèle (`classification.ts`) ; `use-cases.ts` remplacé par `actions.ts` (actions de l'utilisateur : les thunks y passent) ; `store/actions.ts` → `store/action-creators.ts` (types d'actions et action creators Redux seuls). Règles générales mises à jour dans [CONVENTIONS.md](CONVENTIONS.md).
+- Décidé : règles du modèle regroupées par objectif (`model/display.ts`, `opening.ts`, `classification.ts`, `favorites.ts`, `onboarding.ts`) au lieu de `model/rules/` ; `filterApps` dans le modèle (`classification.ts`) ; `use-cases.ts` remplacé par `actions.ts` (actions de l'utilisateur : les thunks y passent) ; `store/actions.ts` → `store/action-creators.ts` (types d'actions et action creators Redux seuls). Règles générales mises à jour dans [CONVENTIONS.md](../CONVENTIONS.md).
 - Fait : code et tests réorganisés en conséquence (aucun changement de comportement).
 - Vérifié : tsc sans nouvelle erreur (769), eslint propre, `yarn test` 408/408 (83 pour `myapps`). **Pas testé dans l'app.**
 - En suspens : rien n'est commité depuis la phase 0.
@@ -279,7 +304,7 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ## 2026-11-06 — `myapps` : conception des données revue (`feat/ia/vmou`)
 
-- Fait : conception consolidée avec l'utilisateur et écrite dans [myapps.md](myapps.md) (§5.2 à §5.7, décisions §7, phase 1 bis en §6). Règles générales ajoutées à [CONVENTIONS.md](CONVENTIONS.md) (règles arbitraires mises en valeur, `namespace API` dans `service/`, service qui hydrate, ce qui va dans le state). Sujet transverse « changement de langue sans redémarrage » et `isExternal` ajoutés à [later.md](later.md). **Aucun code modifié.**
+- Fait : conception consolidée avec l'utilisateur et écrite dans [myapps.md](myapps.md) (§5.2 à §5.7, décisions §7, phase 1 bis en §6). Règles générales ajoutées à [CONVENTIONS.md](../CONVENTIONS.md) (règles arbitraires mises en valeur, `namespace API` dans `service/`, service qui hydrate, ce qui va dans le state). Sujet transverse « changement de langue sans redémarrage » et `isExternal` ajoutés à [later.md](later.md). **Aucun code modifié.**
 - Décidé : `EntApp` hydraté par le service et stocké ; réponse `API.EntAppResponse` ; ni favoris ni module dans l'app (combinés à la lecture) ; `AppOpeningStrategy` / `getAppOpeningStrategy` au lieu de séparer apps et connecteurs ; toutes les apps stockées, `display` gardé et filtré à l'affichage ; `model/rules/`, un fichier par règle ; `favorites` partout sauf dans l'API ; `isModuleAvailableForUser`, `useUserAvailableModules` ; langue : rien pour l'instant.
 - Constaté : le code actuel filtre sur `display` à la réception (`buildUserApps`), contrairement à l'ancien agrégat.
 - En suspens : la phase 1 n'est toujours pas commitée.
@@ -288,7 +313,7 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 ## 2026-11-06 — `myapps` phase 1 : structure revue (`feat/ia/vmou`)
 
 - Demandé à la relecture : `business.ts` mélangeait règles, utilitaires et use-cases ; `MyApp` mal nommé ; le modèle contenait le type du state Redux.
-- Fait : `model/business.ts` ne garde que les règles ; `use-cases.ts` (`buildUserApps`, ex-`aggregateApps`, `filterApps` + `MyAppsFilter`) ; `util.ts` (`normalizeString`, `toKebabCase`, `getAppTestID`) ; `service/adapter.ts` (`parsePreferences`) ; `reducer/` → `store/` avec `state.ts` (`MyAppsState`) ; format stocké de l'onboarding dans `storage.ts` (la règle prend la version vue) ; `MyApp` → `UserApp`. Règle générale « Structure d'un module » ajoutée à [CONVENTIONS.md](CONVENTIONS.md).
+- Fait : `model/business.ts` ne garde que les règles ; `use-cases.ts` (`buildUserApps`, ex-`aggregateApps`, `filterApps` + `MyAppsFilter`) ; `util.ts` (`normalizeString`, `toKebabCase`, `getAppTestID`) ; `service/adapter.ts` (`parsePreferences`) ; `reducer/` → `store/` avec `state.ts` (`MyAppsState`) ; format stocké de l'onboarding dans `storage.ts` (la règle prend la version vue) ; `MyApp` → `UserApp`. Règle générale « Structure d'un module » ajoutée à [CONVENTIONS.md](../CONVENTIONS.md).
 - Vérifié : tsc sans nouvelle erreur (769), eslint propre, `yarn test` 398/398.
 - En suspens : le nom `UserApp` est mon choix (la question a été interrompue) : à confirmer. (Remplacé par `EntApp` le 2026-11-06, entrée ci-dessus.)
 - Prochaine étape : phase 2 (chargement).
@@ -296,7 +321,7 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 ## 2026-11-04 — `myapps` phase 1 : modèle, service, reducer, storage (`feat/ia/vmou`)
 
 - Fait : `src/modules/myapps/` passe en `EntModule` avec `model/` (types + règles pures, 59 tests), `service/` (`/api/me/applications`, préférences), `reducer/` (Redux, `createSessionReducer`, thunks `refreshMyApps` / `toggleFavorite` / `saveFavorites`, 9 tests), `storage.ts` (déplacé, l'ancien devient façade). Supprimés : `store.ts`, l'ancien `service.ts`. Détail et écarts volontaires : §9 de [myapps.md](myapps.md).
-- Hors module : `configureStore` sans `preloadedState` ; reducers de modules à typer sur toute action (règle dans [CONVENTIONS.md](CONVENTIONS.md)) ; anciens sélecteurs `myapps` protégés contre le nouveau state (sinon `media/resource-display.ts` plantait).
+- Hors module : `configureStore` sans `preloadedState` ; reducers de modules à typer sur toute action (règle dans [CONVENTIONS.md](../CONVENTIONS.md)) ; anciens sélecteurs `myapps` protégés contre le nouveau state (sinon `media/resource-display.ts` plantait).
 - Vérifié : tsc sans nouvelle erreur (769 contre 776 avant la phase 0), eslint propre, `yarn test` 393/393. **Pas testé dans l'app.**
 - Prochaine étape : phase 2 (chargement).
 
@@ -323,7 +348,7 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ## 2026-11-04 — Conventions + spec `myapps` v2 (`feat/ia/vmou`)
 
-- Fait : [CONVENTIONS.md](CONVENTIONS.md) (règles pour toute la migration) ; [myapps.md](myapps.md) réécrite (v2).
+- Fait : [CONVENTIONS.md](../CONVENTIONS.md) (règles pour toute la migration) ; [myapps.md](myapps.md) réécrite (v2).
 - Décidé (règles générales) : bottom sheet `@gorhom/bottom-sheet` → écran `formSheet` (exemple `src/modules/auth/screens/switch-account.tsx`) ; `react-native-modal` → écran `transparentModal` ; signaler les cas où react-navigation ferait mieux ; ne pas traduire les noms de composants.
 - Décidé (`myapps`) : Redux conservé ; `GET /api/me/applications` remplace `/applications-list` + `/myApps/config`, préférences à part ; apps en `sessionSetup` **bloquant**, préférences en `onSessionStart` ; plus de `buildAppLookupMap` / `AllModules()` (hooks de module) ; stockage par le framework de storage et ses hooks, clés inchangées ; `isModuleAvailable` en phase 0 ; `EntModule` + `hasRight: () => true` ; ordre d'onglet 40 ; onboarding corrigé (version, une fois par session) ; délais supprimés à l'essai.
 - En suspens : forme de `GET /api/me/applications` (absente du repo) ; route d'entrée d'un module (explication + 3 propositions, recommandation : clé `entry`) ; autres questions en §8 de la fiche.

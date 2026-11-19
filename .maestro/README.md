@@ -1,6 +1,6 @@
 # Tests de fumée Maestro
 
-> Des tests lancés par les développeurs, qui prouvent un module dans l'app **avant et après** sa migration ([docs/migrations/INTENT.md](../docs/migrations/INTENT.md)). Les tests E2E complets restent ceux de l'équipe QA, sur son outillage.
+> Des tests lancés par les développeurs, qui prouvent un module dans l'app **avant et après** sa migration ([.claude/skills/migrate-module/INTENT.md](../.claude/skills/migrate-module/INTENT.md)). Les tests E2E complets restent ceux de l'équipe QA, sur son outillage.
 >
 > **État au 2026-11-19 : les flows fournis ont été écrits à partir du code, aucun n'a encore tourné.** Ce document dit comment les démarrer, les corriger, puis en écrire pour le module suivant.
 
@@ -95,7 +95,7 @@ Un flow qui passe une fois sur trois n'entre pas dans la suite : il se corrige o
 
 ## Écrire les flows d'un module à migrer
 
-**Avant de toucher au module** : c'est le premier pas de sa bascule ([docs/migrations/BASCULE.md](../docs/migrations/BASCULE.md)).
+**Avant de toucher au module** : c'est le premier pas de sa bascule ([.claude/skills/migrate-module/BASCULE.md](../.claude/skills/migrate-module/BASCULE.md)).
 
 | # | Étape | Détail |
 | --- | --- | --- |
@@ -121,7 +121,7 @@ Demande type à l'agent :
 ```
 Écris les flows Maestro du module <module>, avant sa migration.
 
-Lis sa fiche dans docs/migrations/ (comportements à conserver), le code de
+Lis sa fiche dans .claude/skills/migrate-module/journal/ (comportements à conserver), le code de
 src/framework/modules/<module>, et les flows de .maestro/flows/ pour la forme.
 
 1. Propose 5 à 8 comportements à couvrir, un par flow. Attends ma validation.

@@ -1,5 +1,5 @@
 /**
- * Computes the status of the migration to the new module system and writes docs/migrations/SUIVI.md.
+ * Computes the status of the migration to the new module system and writes .claude/skills/migrate-module/journal/SUIVI.md.
  * Read-only on `src/`. Usage: `yarn migration-status` (add `--check` to fail when legacy counters went up).
  */
 const { execSync } = require('child_process');
@@ -7,18 +7,23 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const OUTPUT = path.join(ROOT, 'docs/migrations/SUIVI.md');
-const BASELINE = path.join(ROOT, 'docs/migrations/suivi.json');
+const OUTPUT = path.join(ROOT, '.claude/skills/migrate-module/journal/SUIVI.md');
+const BASELINE = path.join(ROOT, '.claude/skills/migrate-module/journal/suivi.json');
 const FLOWS_DIR = path.join(ROOT, '.maestro/flows');
 const MODULES_DIRS = ['src/modules', 'src/framework/modules'];
 // Folders of sub-modules: each sub-folder is a module of its own
 const GROUPS = ['connectors', 'viescolaire', 'widgets'];
 const SOURCE_FILE = /\.(ts|tsx|js|jsx)$/;
+// Tests are not counted: a module would otherwise look bigger once its logic is tested
+const TEST_FILE = /\.test\.(ts|tsx|js|jsx)$/;
 
 const PATTERNS = {
   connect: /[^a-zA-Z.]connect\(/,
   legacyDeclaration: /new NavigableModule\(/,
-  legacyNavigation: /createModuleNavigator|~\/app\/navigation['/]|NativeStackScreenProps|navigation\.setOptions/,
+  legacyNavigation: /createModuleNavigator|~\/(app|framework)\/navigation['/]|NativeStackScreenProps/,
+  // `setOptions` is fine with the new header items (state-dependent buttons): only its legacy content counts
+  legacySetOptions: /navigation\.setOptions/,
+  legacySetOptionsContent: /headerRight:|headerLeft:|navBarOptions/,
   legacyScreen: /<Stack\.Screen/g,
   newDeclaration: /new (Ent|Core)Module\(/,
   newScreen: /define(Screen|Modal)\(/,
@@ -28,7 +33,7 @@ const listFiles = dir =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) return listFiles(full);
-    return SOURCE_FILE.test(entry.name) ? [full] : [];
+    return SOURCE_FILE.test(entry.name) && !TEST_FILE.test(entry.name) ? [full] : [];
   });
 
 const listModules = () =>
@@ -48,6 +53,9 @@ const listModules = () =>
 const readModule = dir => {
   const files = listFiles(path.join(ROOT, dir)).map(file => ({ content: fs.readFileSync(file, 'utf8'), file }));
   const count = pattern => files.filter(({ content }) => pattern.test(content)).length;
+  const isLegacyNavigation = content =>
+    PATTERNS.legacyNavigation.test(content) ||
+    (PATTERNS.legacySetOptions.test(content) && PATTERNS.legacySetOptionsContent.test(content));
   const imports = new Set();
   files.forEach(({ content }) => {
     for (const match of content.matchAll(/from '~\/((?:framework\/)?modules\/[^']+)'/g)) imports.add(`src/${match[1]}`);
@@ -58,7 +66,7 @@ const readModule = dir => {
     files: files.length,
     imports: [...imports],
     legacyDeclaration: count(PATTERNS.legacyDeclaration) > 0,
-    legacyNavigation: count(PATTERNS.legacyNavigation),
+    legacyNavigation: files.filter(({ content }) => isLegacyNavigation(content)).length,
     legacyScreens: files.reduce((sum, { content }) => sum + (content.match(PATTERNS.legacyScreen) ?? []).length, 0),
     lines: files.reduce((sum, { content }) => sum + content.split('\n').length, 0),
     name: dir.replace(/^src\/(framework\/)?modules\//, ''),
@@ -101,17 +109,23 @@ const moduleOf = file =>
 const rows = modules.map(module => {
   const generation = generationOf(module);
   // Legacy modules this one still imports: they are not loaded by the app
+  const isLegacyImport = file => {
+    const dir = moduleOf(file);
+    return dir && dir !== module.dir && legacyDirs.includes(dir);
+  };
   const legacyImports = module.imports
+    .filter(isLegacyImport)
     .map(moduleOf)
-    .filter(dir => dir && dir !== module.dir && legacyDirs.includes(dir))
     .map(dir => dir.replace(/^src\/(framework\/)?modules\//, ''));
+  // Importing the routes of a legacy module means navigating to it: it is not loaded. Importing its code only is allowed.
+  const importsLegacyRoutes = module.imports.some(file => isLegacyImport(file) && file.startsWith(`${moduleOf(file)}/navigation`));
   const flows = countFlows(module.name);
   const isLoaded = loaded.includes(module.dir);
   let status = '—';
   if (generation === 'ancienne') status = 'à faire';
   else if (generation === 'nouvelle') {
     if (!isLoaded) status = 'non chargé';
-    else if (module.legacyNavigation > 0 || legacyImports.length > 0) status = 'bascule incomplète';
+    else if (module.legacyNavigation > 0 || importsLegacyRoutes) status = 'bascule incomplète';
     else if (flows === 0) status = 'basculé, sans test';
     else status = 'basculé, testable';
   }
@@ -182,10 +196,10 @@ const markdown = [
   ),
   '## Lire ce tableau',
   '',
-  '- **Statut** : `à faire` (déclaré en `NavigableModule`) · `non chargé` (nouvelle déclaration, absent de `src/app/config/modules.ts`) · `bascule incomplète` (il reste de la navigation ancienne ou un import de module ancien) · `basculé, sans test` · `basculé, testable` (au moins un flow Maestro). Le statut ne dit pas que le module a été joué dans l’app : cela se note dans sa fiche.',
-  '- **Écrans anciens** : nombre de `<Stack.Screen>`. **Écrans nouveaux** : fichiers avec `defineScreen(` ou `defineModal(`.',
-  '- **Navigation ancienne** : fichiers avec `createModuleNavigator`, un import de `~/app/navigation`, `NativeStackScreenProps` ou `navigation.setOptions`.',
-  '- **Modules anciens importés** : modules encore en `NavigableModule` que ce module importe. L’app ne les charge pas : leur code s’exécute sans leur reducer ni leur initialisation.',
+  '- **Statut** : `à faire` (déclaré en `NavigableModule`) · `non chargé` (nouvelle déclaration, absent de `src/app/config/modules.ts`) · `bascule incomplète` (il reste de la navigation ancienne, ou un import des routes `navigation/` d’un module ancien) · `basculé, sans test` · `basculé, testable` (au moins un flow Maestro). Le statut ne dit pas que le module a été joué dans l’app : cela se note dans sa fiche.',
+  '- **Fichiers**, **Lignes** : fichiers source du module, tests (`*.test.*`) non compris.\n- **Écrans anciens** : nombre de `<Stack.Screen>`. **Écrans nouveaux** : fichiers avec `defineScreen(` ou `defineModal(`.',
+  '- **Navigation ancienne** : fichiers avec `createModuleNavigator`, un import de `~/app/navigation` ou de `~/framework/navigation`, `NativeStackScreenProps`, ou un `navigation.setOptions` au contenu ancien (`headerRight:`, `headerLeft:`, `navBarOptions`).',
+  '- **Modules anciens importés** : modules encore en `NavigableModule` que ce module importe. L’app ne les charge pas : leur code s’exécute sans leur reducer ni leur initialisation. Un import de code seul est permis s’il est justifié dans la fiche du module ; naviguer vers ses routes ne l’est pas.',
   '- **Notif.** : le module a un `notif-handler`, sans équivalent dans le nouveau système pour l’instant.',
   '- **Flows** : fichiers `.maestro/flows/<module>-*.yaml`.',
   '- Les modules anciens sont triés du plus petit au plus gros.',
@@ -201,7 +215,7 @@ if (process.argv.includes('--check')) {
   const regressions = Object.keys(totals).filter(key => totals[key] > baseline[key]);
   regressions.forEach(key => console.error(`${key}: ${baseline[key]} -> ${totals[key]}`));
   if (regressions.length) {
-    console.error('Legacy counters went up: new code must use the new module system (see docs/migrations/INTENT.md).');
+    console.error('Legacy counters went up: new code must use the new module system (see .claude/skills/migrate-module/INTENT.md).');
     process.exit(1);
   }
   console.log('Legacy counters did not go up.');

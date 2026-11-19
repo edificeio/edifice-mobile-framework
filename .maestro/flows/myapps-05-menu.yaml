@@ -1,7 +1,7 @@
 # Comportement visé : le menu « ⋯ » de la navbar propose gérer les favoris, l'accès par le navigateur et
 # l'interrupteur « afficher toutes les applis » (activé par défaut) ; sur le filtre Favoris il ne garde que
 # « gérer les favoris », qui ouvre la modale de gestion.
-# Fiche docs/migrations/myapps.md : §1 « menu de la navbar (home_menu) », §3.2 « Interrupteur afficher toutes les
+# Fiche .claude/skills/migrate-module/journal/myapps.md : §1 « menu de la navbar (home_menu) », §3.2 « Interrupteur afficher toutes les
 # applis », §3.3 « ManageFavoritesModalScreen », §5.8 « Navigation » (feuille puis modale, sans délai), §3.5.
 #
 # Non couvert, volontairement :

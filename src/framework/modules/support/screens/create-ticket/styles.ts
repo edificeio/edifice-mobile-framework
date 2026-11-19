@@ -2,7 +2,6 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { pageGutterSize } from '~/framework/components/page';
 
 export default StyleSheet.create({
   actionText: {
@@ -13,19 +12,24 @@ export default StyleSheet.create({
     backgroundColor: theme.ui.background.card,
     borderColor: theme.ui.border.input,
     borderRadius: 5,
-    borderWidth: 1,
+    borderWidth: UI_SIZES.border.thin,
     marginBottom: UI_SIZES.spacing.medium,
+  },
+  // Android only: the list of the category picker takes place in the page (`relative`), from the bottom of the picker (over its margin)
+  categoryDropdownListAndroid: {
+    position: 'relative',
+    top: -16,
   },
   container: {
     flexGrow: 1,
     justifyContent: 'space-between',
-    padding: pageGutterSize,
+    padding: UI_SIZES.spacing.medium,
   },
   descriptionInput: {
     backgroundColor: theme.ui.background.card,
     borderColor: theme.ui.border.input,
     borderRadius: 5,
-    borderWidth: 1,
+    borderWidth: UI_SIZES.border.thin,
     color: theme.ui.text.regular,
     height: 100,
     marginBottom: UI_SIZES.spacing.medium,
@@ -33,11 +37,15 @@ export default StyleSheet.create({
   },
   dropdownContainer: {
     borderColor: theme.palette.primary.regular,
-    borderWidth: 1,
+    borderWidth: UI_SIZES.border.thin,
     marginBottom: UI_SIZES.spacing.medium,
   },
   dropdownText: {
     color: theme.ui.text.regular,
+  },
+  // Under the lists of the pickers
+  fields: {
+    zIndex: -2,
   },
   informationText: {
     color: theme.ui.text.light,
@@ -49,11 +57,15 @@ export default StyleSheet.create({
   mandatoryText: {
     color: theme.palette.complementary.red.regular,
   },
+  // Under the list of the category picker
+  structureDropdown: {
+    zIndex: -1,
+  },
   subjectInput: {
     backgroundColor: theme.ui.background.card,
     borderColor: theme.ui.border.input,
     borderRadius: 5,
-    borderWidth: 1,
+    borderWidth: UI_SIZES.border.thin,
     color: theme.ui.text.regular,
     marginBottom: UI_SIZES.spacing.medium,
     padding: UI_SIZES.spacing.small,

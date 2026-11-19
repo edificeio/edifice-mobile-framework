@@ -1,7 +1,7 @@
 # Comportement visé : l'onboarding s'ouvre seul à la première arrivée sur Mes applis, une seule fois par session ;
 # « Plus tard » le ferme sans le marquer vu (cloche pleine) ; le parcourir jusqu'au bout le marque vu (cloche vide) ;
 # la cloche le rouvre.
-# Fiche docs/migrations/myapps.md : §3.2 « Onboarding », §4 n° 4-5 (version, une fois par session), §5.8
+# Fiche .claude/skills/migrate-module/journal/myapps.md : §3.2 « Onboarding », §4 n° 4-5 (version, une fois par session), §5.8
 # (« Onboarding automatique : au focus de myapps/home »), §3.5 (`myapps-onboarding-modal(-later|-previous|-next|-complete)`).
 #
 # N'utilise pas communs/aller-mes-applis.yaml, qui écarte l'onboarding.

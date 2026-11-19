@@ -1,48 +1,29 @@
-import { SyncedFileWithId } from '~/framework/util/fileHandler';
-import { sessionFetch } from '~/framework/util/transport';
-import { AuthActiveAccount } from '~/modules/auth/model';
+/**
+ * API of « Aide et support ». It takes and gives types of the model (see `adapter.ts`).
+ * Every call is signed with the account given (`accountFetch`): the session of the screen.
+ */
+import type { TicketAttachment, TicketDraft } from '~/framework/modules/support/model';
+import { getModuleTransport } from '~/framework/util/transport';
+import type { AuthActiveAccount } from '~/modules/auth/model';
 
-interface IBackendTicket {
-  id: number | null;
-  school_id: string;
-  status: number;
-  created: string;
-  modified: string;
-  escalation_status: number;
-  escalation_date: string | null;
-  short_desc: string;
-  owner_name: string;
-  owner: string;
-}
+import { toCreateTicketBody, toTicketId } from './adapter';
+import type { API } from './types';
+
+// Typed with the scopes of the module (`getModuleTransport`): `/support/...`
+const transport = getModuleTransport('support');
 
 export const supportService = {
   ticket: {
-    post: async (
-      session: AuthActiveAccount,
-      category: string,
-      structure: string,
-      subject: string,
-      description: string,
-      attachments?: SyncedFileWithId[],
-    ) => {
-      const api = '/support/ticket';
-      const body = JSON.stringify({
-        attachments: attachments?.map(a => ({
-          id: a.df.id,
-          name: a.filename,
-          size: a.df.filesize,
-        })),
-        category,
-        description,
-        school_id: structure,
-        subject,
-      });
-      const ticket = await sessionFetch.json<IBackendTicket>(api, {
-        body,
+    /**
+     * Creates the ticket.
+     * @returns its id, or `null` if the server gives none.
+     */
+    post: async (session: AuthActiveAccount, draft: TicketDraft, attachments?: TicketAttachment[]) => {
+      const response = await transport.accountFetch.json<API.TicketResponse>(session, '/support/ticket', {
+        body: JSON.stringify(toCreateTicketBody(draft, attachments)),
         method: 'POST',
       });
-
-      return ticket.id;
+      return toTicketId(response);
     },
   },
 };

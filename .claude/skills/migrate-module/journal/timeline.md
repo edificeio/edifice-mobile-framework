@@ -2,7 +2,7 @@
 
 > Statut : **à faire** (pas encore spécifié) — mis à jour le 2026-11-07
 
-Les règles communes à toute la migration sont dans [CONVENTIONS.md](CONVENTIONS.md) et ne sont pas répétées ici. Cette fiche ne contient pour l'instant que les contraintes connues avant la spec.
+Les règles communes à toute la migration sont dans [CONVENTIONS.md](../CONVENTIONS.md) et ne sont pas répétées ici. Cette fiche ne contient pour l'instant que les contraintes connues avant la spec.
 
 ## 1. Périmètre
 
