@@ -9,9 +9,11 @@ import { flatten, unflatten } from 'flat';
 import i18n, { TOptions } from 'i18next';
 import resourcesToBackend from 'i18next-resources-to-backend';
 import moment from 'moment';
+import 'moment/locale/de';
 import 'moment/locale/es';
 import 'moment/locale/fr';
 import 'moment/locale/it';
+import 'moment/locale/pt';
 import { initReactI18next } from 'react-i18next';
 import DeviceInfo from 'react-native-device-info';
 import * as RNLocalize from 'react-native-localize';
@@ -66,7 +68,7 @@ export namespace I18n {
   export const fallbackLng = 'en';
 
   // Supported locales
-  const supportedLanguages = ['co', 'en', 'es', 'fr', 'fr-MQ', 'it'] as const;
+  const supportedLanguages = ['co', 'de', 'en', 'es', 'fr', 'fr-MQ', 'it', 'pt'] as const;
   export type SupportedLocales = (typeof supportedLanguages)[number];
   // Primary languages only (no regional variants like fr-MQ), used for device language detection
   const primaryLanguages = supportedLanguages.filter(lang => !lang.includes('-'));
@@ -74,21 +76,25 @@ export namespace I18n {
   // Transform translations for all embeded locales
   const localResources = {
     'co': { translation: getOverridenTranslations(require('ASSETS/i18n/co.json')) },
+    'de': { translation: getOverridenTranslations(require('ASSETS/i18n/de.json')) },
     'en': { translation: getOverridenTranslations(require('ASSETS/i18n/en.json')) },
     'es': { translation: getOverridenTranslations(require('ASSETS/i18n/es.json')) },
     'fr': { translation: getOverridenTranslations(require('ASSETS/i18n/fr.json')) },
     'fr-MQ': { translation: getOverridenTranslations(require('ASSETS/i18n/fr-MQ.json')) },
     'it': { translation: getOverridenTranslations(require('ASSETS/i18n/it.json')) },
+    'pt': { translation: getOverridenTranslations(require('ASSETS/i18n/pt.json')) },
   };
 
   const momentLocales = {
     'co': 'fr',
+    'de': 'de',
     'default': fallbackLng,
     'en': 'en',
     'es': 'es',
     'fr': 'fr',
     'fr-MQ': 'fr',
     'it': 'it',
+    'pt': 'pt',
   };
 
   // Phrase stuff
@@ -174,11 +180,13 @@ export namespace I18n {
       Object.fromEntries(
         Object.entries({
           'co': 'user-lang-dropdownvalue-co',
+          'de': 'user-lang-dropdownvalue-de',
           'en': 'user-lang-dropdownvalue-en',
           'es': 'user-lang-dropdownvalue-es',
           'fr': 'user-lang-dropdownvalue-fr',
           'fr-MQ': 'user-lang-dropdownvalue-fr-mq',
           'it': 'user-lang-dropdownvalue-it',
+          'pt': 'user-lang-dropdownvalue-pt',
         }).map(([lng, i18nKey]) => [lng, get(i18nKey, { fallbackLng, lng })]),
       ),
     );
