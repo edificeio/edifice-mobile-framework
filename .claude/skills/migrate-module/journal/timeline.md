@@ -36,7 +36,7 @@ Ce que `notifications` porte déjà :
 - l'enregistrement du push (FCM) par session ;
 - `useNotificationEntApp(type, eventType)` et `useNotificationEntAppDisplay(type, eventType)` (`src/modules/notifications/hooks.ts`) : l'app d'un type de notification et son affichage (surcharges ELEA / REPORT). Ils lisent encore les définitions des types dans le redux de l'ancien `timeline` (`ToDo(timeline-migration)`).
 
-À décider pendant la spec (question d'architecture n° 1 de [STATUS.md](STATUS.md)) : où vont les définitions des types de notifications, le fil lui-même (données, chargement, composants de liste et d'élément), l'ouverture d'une notification (registre dans `notifications` ou clé de config des modules), et ce qui reste propre à `timeline` (son écran, ses widgets ?).
+À décider pendant la spec (question d'architecture n° 1 de [STATUS.md](STATUS.md)) : où vont les définitions des types de notifications, le fil lui-même (données, chargement, composants de liste et d'élément), la forme exacte de la clé de config `notifications` (décidée le 2026-11-19 : signature d'un handler, typage, repli sur le web), et ce qui reste propre à `timeline` (son écran ; les widgets sont hors de la migration).
 
 ## 6. Plan par phases
 
@@ -45,6 +45,7 @@ Ce que `notifications` porte déjà :
 ## 7. Décisions
 
 - **2026-11-07** — Les notifications sont extraites de `timeline` dans le module `notifications`, consommé par `timeline` et par le futur module `home`, qui ont tous deux un fil de notifications (§5.1).
+- **2026-11-19** — Un module déclare l'ouverture de ses notifications par une **clé de config `notifications`** (`'<TYPE>.<EVENT>': handler`), lue par le module `notifications` depuis les modules chargés : même schéma que `entries` et `fileManager`, typé, sans effet de bord à l'import (fin de `registerNotifHandlers`). Les handlers des modules basculés avant sont débranchés, puis rebranchés par cette clé. Les widgets sont hors de la migration (faits à part par l'équipe).
 
 ## 8. Questions ouvertes
 

@@ -1,6 +1,6 @@
 # Suivi calculé de la migration
 
-> Généré par `yarn migration-status` le 2026-11-19, branche `feat/ia/migration-outillage`, commit `4307c0738`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
+> Généré par `yarn migration-status` le 2026-11-19, branche `feat/ia/migration-outillage`, commit `ab17cef99`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
 
 ## En bref
 
@@ -10,7 +10,7 @@
 | Modules restant sur l'ancienne | 33 |
 | Lignes dans les modules anciens | 62526 |
 | Écrans anciens à porter (`<Stack.Screen>`) | 97 |
-| Fichiers sur l'ancienne navigation | 238 |
+| Fichiers sur l'ancienne navigation | 222 |
 | Fichiers avec `connect(` | 56 |
 
 ## Modules sur la nouvelle génération
@@ -24,7 +24,7 @@
 | `myapps` | basculé, testable | 56 | 3059 | 0 | 5 | 0 | 0 | — | — | 6 |
 | `notifications` | basculé, sans test | 2 | 65 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `user` | basculé, sans test | 2 | 53 | 0 | 1 | 0 | 0 | — | — | 0 |
-| `support` | basculé, testable | 10 | 534 | 0 | 1 | 0 | 0 | `workspace` | — | 1 |
+| `support` | basculé, testable | 10 | 535 | 0 | 1 | 0 | 0 | `workspace` | — | 1 |
 
 ## Modules sur l'ancienne génération
 
@@ -40,29 +40,29 @@
 | `connectors/peertube` | à faire | 4 | 60 | 1 | 0 | 1 | 0 | — | — | 0 |
 | `connectors/lvs` | à faire | 8 | 138 | 1 | 0 | 3 | 1 | — | — | 0 |
 | `connectors/pronote` | à faire | 7 | 253 | 2 | 0 | 2 | 0 | — | — | 0 |
-| `collaborativewall` | à faire | 15 | 302 | 2 | 0 | 5 | 0 | — | oui | 0 |
-| `scrapbook` | à faire | 16 | 391 | 2 | 0 | 4 | 0 | — | oui | 0 |
-| `nabook` | à faire | 16 | 799 | 1 | 0 | 4 | 0 | — | oui | 0 |
+| `collaborativewall` | à faire | 15 | 302 | 2 | 0 | 4 | 0 | — | oui | 0 |
+| `scrapbook` | à faire | 16 | 391 | 2 | 0 | 3 | 0 | — | oui | 0 |
+| `nabook` | à faire | 16 | 799 | 1 | 0 | 3 | 0 | — | oui | 0 |
 | `widgets/cantine` | à faire | 14 | 963 | 1 | 0 | 3 | 0 | — | — | 0 |
 | `viescolaire/edt` | à faire | 18 | 1100 | 1 | 0 | 3 | 1 | `viescolaire/dashboard` | — | 0 |
 | `widgets/screen-time` | à faire | 19 | 1195 | 1 | 0 | 3 | 0 | — | — | 0 |
 | `homework-assistance` | à faire | 31 | 1323 | 2 | 0 | 5 | 2 | — | — | 0 |
 | `viescolaire/dashboard` | à faire | 22 | 1547 | 3 | 0 | 7 | 3 | `viescolaire/competences`, `viescolaire/diary`, `viescolaire/edt`, `viescolaire/presences` | — | 0 |
-| `widgets/carnet-de-board` | à faire | 17 | 1624 | 1 | 0 | 5 | 1 | — | oui | 0 |
+| `widgets/carnet-de-board` | à faire | 17 | 1624 | 1 | 0 | 4 | 1 | — | oui | 0 |
 | `viescolaire/competences` | à faire | 31 | 1938 | 2 | 0 | 5 | 2 | `viescolaire/dashboard` | — | 0 |
-| `mediacentre` | à faire | 46 | 1993 | 3 | 0 | 8 | 3 | — | oui | 0 |
-| `news` | à faire | 44 | 2074 | 2 | 0 | 6 | 2 | — | oui | 0 |
+| `mediacentre` | à faire | 46 | 1993 | 3 | 0 | 7 | 3 | — | oui | 0 |
+| `news` | à faire | 44 | 2074 | 2 | 0 | 5 | 2 | — | oui | 0 |
 | `viescolaire/diary` | à faire | 35 | 2237 | 4 | 0 | 10 | 2 | `viescolaire/dashboard`, `viescolaire/edt` | — | 0 |
-| `schoolbook` | à faire | 20 | 2394 | 3 | 0 | 6 | 3 | — | oui | 0 |
-| `workspace` | à faire | 25 | 2398 | 2 | 0 | 6 | 2 | — | oui | 0 |
-| `homework` | à faire | 36 | 2626 | 6 | 0 | 8 | 4 | `workspace` | oui | 0 |
-| `wiki` | à faire | 73 | 2725 | 4 | 0 | 10 | 0 | — | oui | 0 |
-| `blog` | à faire | 45 | 3535 | 6 | 0 | 12 | 3 | `workspace` | oui | 0 |
-| `form` | à faire | 46 | 4249 | 2 | 0 | 6 | 2 | — | oui | 0 |
+| `schoolbook` | à faire | 20 | 2394 | 3 | 0 | 5 | 3 | — | oui | 0 |
+| `workspace` | à faire | 25 | 2398 | 2 | 0 | 5 | 2 | — | oui | 0 |
+| `homework` | à faire | 36 | 2626 | 6 | 0 | 7 | 4 | `workspace` | oui | 0 |
+| `wiki` | à faire | 73 | 2725 | 4 | 0 | 9 | 0 | — | oui | 0 |
+| `blog` | à faire | 45 | 3535 | 6 | 0 | 11 | 3 | `workspace` | oui | 0 |
+| `form` | à faire | 46 | 4249 | 2 | 0 | 5 | 2 | — | oui | 0 |
 | `user` | à faire | 74 | 4410 | 15 | 0 | 28 | 6 | `mails`, `workspace` | oui | 0 |
-| `communities` | à faire | 144 | 6146 | 7 | 0 | 17 | 0 | `wiki` | oui | 0 |
-| `viescolaire/presences` | à faire | 115 | 6374 | 6 | 0 | 16 | 6 | `viescolaire/competences`, `viescolaire/dashboard` | oui | 0 |
-| `mails` | à faire | 114 | 9363 | 5 | 0 | 16 | 3 | `user`, `workspace` | oui | 0 |
+| `communities` | à faire | 144 | 6146 | 7 | 0 | 16 | 0 | `wiki` | oui | 0 |
+| `viescolaire/presences` | à faire | 115 | 6374 | 6 | 0 | 15 | 6 | `viescolaire/competences`, `viescolaire/dashboard` | oui | 0 |
+| `mails` | à faire | 114 | 9363 | 5 | 0 | 15 | 3 | `user`, `workspace` | oui | 0 |
 
 ## Dossiers sans déclaration de module
 
@@ -75,7 +75,7 @@
 | `explorer` | — | 11 | 463 | 0 | 0 | 2 | 0 | — | — | 0 |
 | `media` | — | 7 | 32 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `splashads` | — | 7 | 229 | 0 | 0 | 2 | 0 | — | — | 0 |
-| `timeline` | — | 45 | 2598 | 5 | 0 | 8 | 2 | `user` | oui | 0 |
+| `timeline` | — | 45 | 2598 | 5 | 0 | 7 | 2 | `user` | oui | 0 |
 | `viescolaire/common` | — | 14 | 1077 | 0 | 0 | 0 | 2 | `viescolaire/dashboard`, `viescolaire/diary`, `viescolaire/edt` | — | 0 |
 
 ## Lire ce tableau
@@ -83,7 +83,7 @@
 - **Statut** : `à faire` (déclaré en `NavigableModule`) · `non chargé` (nouvelle déclaration, absent de `src/app/config/modules.ts`) · `bascule incomplète` (il reste de la navigation ancienne, ou un import des routes `navigation/` d’un module ancien) · `basculé, sans test` · `basculé, testable` (au moins un flow Maestro). Le statut ne dit pas que le module a été joué dans l’app : cela se note dans sa fiche.
 - **Fichiers**, **Lignes** : fichiers source du module, tests (`*.test.*`) non compris.
 - **Écrans anciens** : nombre de `<Stack.Screen>`. **Écrans nouveaux** : fichiers avec `defineScreen(` ou `defineModal(`.
-- **Navigation ancienne** : fichiers avec `createModuleNavigator`, un import de `~/app/navigation` ou de `~/framework/navigation`, `NativeStackScreenProps`, ou un `navigation.setOptions` au contenu ancien (`headerRight:`, `headerLeft:`, `navBarOptions`).
+- **Navigation ancienne** : fichiers avec `createModuleNavigator`, un import de `~/app/navigation` ou de `~/framework/navigation`, `NativeStackScreenProps`, ou un `navigation.setOptions` au contenu ancien (`headerRight:`, `headerLeft:`, `navBarOptions`). Les `notif-handler`, débranchés pendant la bascule, ne sont pas comptés (colonne **Notif.**).
 - **Modules anciens importés** : modules encore en `NavigableModule` que ce module importe. L’app ne les charge pas : leur code s’exécute sans leur reducer ni leur initialisation. Un import de code seul est permis s’il est justifié dans la fiche du module ; naviguer vers ses routes ne l’est pas.
 - **Notif.** : le module a un `notif-handler`, sans équivalent dans le nouveau système pour l’instant.
 - **Flows** : fichiers `.maestro/flows/<module>-*.yaml`.

@@ -13,7 +13,7 @@ Pour chaque ligne : ce qu'il y a dans le module, et le geste de [BASCULE.md](BAS
 | Où regarder | Ce qu'il faut relever | Geste |
 | --- | --- | --- |
 | `module-config.ts` | `name`, `entcoreScope`, `matchEntcoreApp`, `hasRight` (ancienne signature `matchingApps, matchingWidgets`), `displayAs` (`tabModule` / `myAppsModule`), `display*`, `storageName`, `entcoreTrackingName`, `fileManager`, `routeName` | 1, 3 |
-| `index.ts` | `NavigableModule`, ou `EntModule` d'une API intermédiaire ; `setUpNotifHandlers`, widgets ou sections branchés après `module.exports` | 2 ; notifications et widgets : arrêt |
+| `index.ts` | `NavigableModule`, ou `EntModule` d'une API intermédiaire ; `setUpNotifHandlers`, widgets ou sections branchés après `module.exports` | 2 ; notifications : 19 ; widgets : 20 |
 | `navigation/` | Noms de routes (route d'accueil = nom du module ?), params, `Stack.Group` en modale, options d'écran | 4, 5 |
 | `screens/` | `computeNavBar`, `navBarOptions`, `headerAction` de l'ancienne navigation, `NativeStackScreenProps`, `props.navigation`, composants classe, `navigation.setOptions` et son contenu, `usePreventBack`, `testID` | 6, 7, 8, 10 |
 | Tout le dossier | Imports de `~/framework/navigation/*` (`navBar`, `helper`, `hideTabBarAndroid`, `tabModules`, `modals`), `AllModules()`, `moduleConfig.*` d'un autre module, imports de `~/framework/modules/auth` | 9, 11, 14 ; `modals` : arrêt |
@@ -21,7 +21,7 @@ Pour chaque ligne : ce qu'il y a dans le module, et le geste de [BASCULE.md](BAS
 | Écrans qui lisent la session | `getSession()` / `assertSession()` dans l'écran ou son `mapStateToProps`, `sessionScreen`, `withSession` de `~/framework/modules/auth/util` | 18 |
 | `storage*` | Clés, namespaces, migrations, API de storage utilisée | 13, clés inchangées |
 | Imports d'autres modules anciens | Pour chacun : code seul (service, util, constantes, types) ou navigation / state | 16 ; navigation / state : arrêt |
-| `notif-handler.ts`, widgets (`home-widget.ts`, `home-section.ts`), intents | Types gérés, routes ouvertes | arrêt ([framework.md](framework.md)) |
+| `notif-handler.ts`, widgets (`home-widget.ts`, `home-section.ts`), intents | Types gérés, routes ouvertes | handler : 19 (débranché) ; widget : 20 (hors migration) ; intent : arrêt ([framework.md](framework.md)) |
 
 Relever aussi, pour §5 de la fiche (sans y toucher) : `connect(`, `tryAction` / `tryActionLegacy` / `handleAction`, classes, `useCallback` / `useMemo` manquants, styles en ligne ou `StyleSheet.create` hors de `styles.ts`, ce que les autres modules importent (API publique : types, hooks, utilitaires), `moment`, bottom sheets et modales (`@gorhom/bottom-sheet`, `CustomBottomSheetModal`, `BottomMenu`, `react-native-modal`, `ModalBox`), `rights.ts`, structure du dossier, erreurs `tsc` / ESLint existantes, bugs vus à la lecture, fichiers orphelins.
 

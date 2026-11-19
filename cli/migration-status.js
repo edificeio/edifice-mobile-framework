@@ -16,6 +16,9 @@ const GROUPS = ['connectors', 'viescolaire', 'widgets'];
 const SOURCE_FILE = /\.(ts|tsx|js|jsx)$/;
 // Tests are not counted: a module would otherwise look bigger once its logic is tested
 const TEST_FILE = /\.test\.(ts|tsx|js|jsx)$/;
+// A notification handler stays in a switched module, unplugged until notifications have their mechanism (BASCULE, gesture 19):
+// it is shown by the « Notif. » column, not counted as legacy navigation
+const NOTIF_HANDLER = /notif-handler\.(ts|tsx)$/;
 
 const PATTERNS = {
   connect: /[^a-zA-Z.]connect\(/,
@@ -57,16 +60,21 @@ const readModule = dir => {
     PATTERNS.legacyNavigation.test(content) ||
     (PATTERNS.legacySetOptions.test(content) && PATTERNS.legacySetOptionsContent.test(content));
   const imports = new Set();
-  files.forEach(({ content }) => {
-    for (const match of content.matchAll(/from '~\/((?:framework\/)?modules\/[^']+)'/g)) imports.add(`src/${match[1]}`);
+  const importsOutsideNotifHandler = new Set();
+  files.forEach(({ content, file }) => {
+    for (const match of content.matchAll(/from '~\/((?:framework\/)?modules\/[^']+)'/g)) {
+      imports.add(`src/${match[1]}`);
+      if (!NOTIF_HANDLER.test(file)) importsOutsideNotifHandler.add(`src/${match[1]}`);
+    }
   });
   return {
     connect: count(PATTERNS.connect),
     dir,
     files: files.length,
     imports: [...imports],
+    importsOutsideNotifHandler: [...importsOutsideNotifHandler],
     legacyDeclaration: count(PATTERNS.legacyDeclaration) > 0,
-    legacyNavigation: files.filter(({ content }) => isLegacyNavigation(content)).length,
+    legacyNavigation: files.filter(({ content, file }) => !NOTIF_HANDLER.test(file) && isLegacyNavigation(content)).length,
     legacyScreens: files.reduce((sum, { content }) => sum + (content.match(PATTERNS.legacyScreen) ?? []).length, 0),
     lines: files.reduce((sum, { content }) => sum + content.split('\n').length, 0),
     name: dir.replace(/^src\/(framework\/)?modules\//, ''),
@@ -118,7 +126,9 @@ const rows = modules.map(module => {
     .map(moduleOf)
     .map(dir => dir.replace(/^src\/(framework\/)?modules\//, ''));
   // Importing the routes of a legacy module means navigating to it: it is not loaded. Importing its code only is allowed.
-  const importsLegacyRoutes = module.imports.some(file => isLegacyImport(file) && file.startsWith(`${moduleOf(file)}/navigation`));
+  const importsLegacyRoutes = module.importsOutsideNotifHandler.some(
+    file => isLegacyImport(file) && file.startsWith(`${moduleOf(file)}/navigation`),
+  );
   const flows = countFlows(module.name);
   const isLoaded = loaded.includes(module.dir);
   let status = '—';
@@ -198,7 +208,7 @@ const markdown = [
   '',
   '- **Statut** : `à faire` (déclaré en `NavigableModule`) · `non chargé` (nouvelle déclaration, absent de `src/app/config/modules.ts`) · `bascule incomplète` (il reste de la navigation ancienne, ou un import des routes `navigation/` d’un module ancien) · `basculé, sans test` · `basculé, testable` (au moins un flow Maestro). Le statut ne dit pas que le module a été joué dans l’app : cela se note dans sa fiche.',
   '- **Fichiers**, **Lignes** : fichiers source du module, tests (`*.test.*`) non compris.\n- **Écrans anciens** : nombre de `<Stack.Screen>`. **Écrans nouveaux** : fichiers avec `defineScreen(` ou `defineModal(`.',
-  '- **Navigation ancienne** : fichiers avec `createModuleNavigator`, un import de `~/app/navigation` ou de `~/framework/navigation`, `NativeStackScreenProps`, ou un `navigation.setOptions` au contenu ancien (`headerRight:`, `headerLeft:`, `navBarOptions`).',
+  '- **Navigation ancienne** : fichiers avec `createModuleNavigator`, un import de `~/app/navigation` ou de `~/framework/navigation`, `NativeStackScreenProps`, ou un `navigation.setOptions` au contenu ancien (`headerRight:`, `headerLeft:`, `navBarOptions`). Les `notif-handler`, débranchés pendant la bascule, ne sont pas comptés (colonne **Notif.**).',
   '- **Modules anciens importés** : modules encore en `NavigableModule` que ce module importe. L’app ne les charge pas : leur code s’exécute sans leur reducer ni leur initialisation. Un import de code seul est permis s’il est justifié dans la fiche du module ; naviguer vers ses routes ne l’est pas.',
   '- **Notif.** : le module a un `notif-handler`, sans équivalent dans le nouveau système pour l’instant.',
   '- **Flows** : fichiers `.maestro/flows/<module>-*.yaml`.',
