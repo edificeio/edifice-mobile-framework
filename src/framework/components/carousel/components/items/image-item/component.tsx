@@ -1,6 +1,7 @@
 import React from 'react';
-import { ImageLoadEvent, View } from 'react-native';
+import { View } from 'react-native';
 
+import FastImage, { ImageStyle, OnLoadEvent, Source } from '@d11/react-native-fast-image';
 import {
   GestureDetector,
   useExclusiveGestures,
@@ -14,7 +15,7 @@ import { scheduleOnRN } from 'react-native-worklets';
 
 import LoaderItem from '~/framework/components/carousel/components/items/loader-item/component';
 import { PAGINATION_COMPONENT_HEIGHT } from '~/framework/components/carousel/components/pagination/styles';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 
 import styles from './styles';
 import { ImageItemProps } from './types';
@@ -65,8 +66,8 @@ const ImageItem = ({
   // Retrieve the actual size of the image (and not the container's), necessary because of resizeMode="contain"
   // onLoad provides the intrinsic size of the downloaded image (works for remote URIs, unlike Image.resolveAssetSource)
   const onImageLoad = React.useCallback(
-    (event: ImageLoadEvent) => {
-      const { height: originalHeight, width: originalWidth } = event.nativeEvent.source;
+    (event: OnLoadEvent) => {
+      const { height: originalHeight, width: originalWidth } = event.nativeEvent;
       if (!originalWidth || !originalHeight) return;
 
       // Calculate dimensions corresponding to resizeMode="contain"
@@ -244,14 +245,17 @@ const ImageItem = ({
   return (
     <View style={styles.container}>
       <GestureDetector gesture={combinedGesture}>
-        <Animated.Image
-          source={source}
-          resizeMode={'contain'}
-          style={[styles.img, animatedStyle]}
-          onError={onImageError}
-          onLoad={onImageLoad}
-          onLoadEnd={onImageLoadEnd}
-        />
+        <Animated.View style={[styles.img, animatedStyle]}>
+          <FastImage
+            source={source as Source}
+            resizeMode={FastImage.resizeMode.contain}
+            // Cast needed: FastImage's ImageStyle extends FlexStyle/ShadowStyleIOS, no longer exported by RN 0.88 types
+            style={UI_STYLES.flex1 as ImageStyle}
+            onError={onImageError}
+            onLoad={onImageLoad}
+            onLoadEnd={onImageLoadEnd}
+          />
+        </Animated.View>
       </GestureDetector>
       {isImageLoading && <LoaderItem />}
     </View>
