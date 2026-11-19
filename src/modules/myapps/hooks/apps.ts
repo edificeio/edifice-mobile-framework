@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AllModulesNames, useModule, useUserAvailableModules } from '~/app/module';
 import { useCanOpenModule, useOpenModule } from '~/app/navigation-new/open-module';
 import { openUrl } from '~/framework/util/linking';
+import type { AuthActiveAccount } from '~/modules/auth/model';
 import { useSession } from '~/modules/auth/store/accounts';
 import { refreshMyApps } from '~/modules/myapps/actions';
 import type { EntApp } from '~/modules/myapps/model';
@@ -30,11 +31,11 @@ const toModuleData = (module: ModuleLike) => ({
   name: module.name,
 });
 
-/** All the apps of the user (listed in « Mes applis » or not), their status, and how to load them again. */
+/** All the apps of the user (listed in « Mes applis » or not), their status, and how to load them again (with the session of the screen). */
 export const useEntApps = () => {
   const { data: apps, status } = useSelector(selectApps);
   const dispatch = useDispatch<MyAppsDispatch>();
-  const refresh = React.useCallback(() => dispatch(refreshMyApps()), [dispatch]);
+  const refresh = React.useCallback((session: AuthActiveAccount) => dispatch(refreshMyApps(session)), [dispatch]);
   return { apps, refresh, status };
 };
 

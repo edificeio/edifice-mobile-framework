@@ -8,19 +8,20 @@ import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 import { defineModal } from '~/app/navigation-new';
 import Toast from '~/framework/components/toast';
 import { openUrl } from '~/framework/util/linking';
-import { MyAppsMenuItem } from '~/modules/myapps/components/my-apps-menu-item/component';
+import { withSession } from '~/modules/auth/hoc';
+import type { AuthActiveAccount } from '~/modules/auth/model';
+import { MyAppsMenuItem } from '~/modules/myapps/components/my-apps-menu-item';
+import { MenuIcon, Separator, Sheet, sheetOptions } from '~/modules/myapps/components/sheet';
 import { useEntApp, useFavorites } from '~/modules/myapps/hooks';
 import { getHelpUrl } from '~/modules/myapps/model/display';
 import { I18n } from '~/util/i18n';
-
-import { MenuIcon, Separator, Sheet, sheetOptions } from './sheet';
 
 type MyAppsAppActionsParams = {
   /** `EntApp.name` of the app. */
   appName: string;
 };
 
-function MyAppsAppActionsScreen({ route }: StaticScreenProps<MyAppsAppActionsParams>) {
+function MyAppsAppActionsScreen({ route, session }: StaticScreenProps<MyAppsAppActionsParams> & { session: AuthActiveAccount }) {
   const { appName } = route.params;
   const navigation = useNavigation();
   const app = useEntApp(appName);
@@ -32,13 +33,13 @@ function MyAppsAppActionsScreen({ route }: StaticScreenProps<MyAppsAppActionsPar
   const toggleFavorite = React.useCallback(async () => {
     navigation.goBack();
     try {
-      await toggle(appName);
+      await toggle(session, appName);
       Toast.showSuccess(I18n.get('myapp-add-favorite-success-message'));
     } catch (e) {
       console.error('[MyApps] Failed to save the favorites', e);
       Toast.showError(I18n.get('myapp-add-favorite-error-message'));
     }
-  }, [appName, navigation, toggle]);
+  }, [appName, navigation, session, toggle]);
 
   const openHelp = React.useCallback(() => {
     navigation.goBack();
@@ -70,5 +71,5 @@ function MyAppsAppActionsScreen({ route }: StaticScreenProps<MyAppsAppActionsPar
 
 export default defineModal({
   options: sheetOptions,
-  screen: MyAppsAppActionsScreen,
+  screen: withSession<StaticScreenProps<MyAppsAppActionsParams>>(MyAppsAppActionsScreen),
 });

@@ -11,11 +11,12 @@ import { defineModal } from '~/app/navigation-new';
 import Toast from '~/framework/components/toast';
 import { Toggle } from '~/framework/components/toggle';
 import { openUrlAsync } from '~/framework/util/linking';
-import { MyAppsMenuItem } from '~/modules/myapps/components/my-apps-menu-item/component';
+import { MyAppsMenuItem } from '~/modules/myapps/components/my-apps-menu-item';
+import { MenuIcon, Separator, Sheet, sheetOptions } from '~/modules/myapps/components/sheet';
 import { useShowAllApps } from '~/modules/myapps/hooks';
 import { I18n } from '~/util/i18n';
 
-import { MenuIcon, Separator, Sheet, sheetOptions, sheetStyles } from './sheet';
+import { styles } from './styles';
 
 /** The portal, opened in the browser. */
 const PORTAL_PATH = '/welcome';
@@ -79,7 +80,7 @@ function MyAppsMenuScreen({ route }: StaticScreenProps<MyAppsMenuParams>) {
             label={I18n.get('myapp-bottomsheet-render-all-favorites')}
           />
           <MyAppsMenuItem
-            containerStyle={sheetStyles.infoMessageItem}
+            containerStyle={styles.infoMessageItem}
             isPressable={false}
             leftElement={<MenuIcon name="ui-infoCircle" />}
             label={I18n.get('myapp-bottomsheet-info-message')}

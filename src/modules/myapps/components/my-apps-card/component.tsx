@@ -11,9 +11,10 @@ import { BodyBoldText, BodyText } from '~/framework/components/text';
 import { Image } from '~/modules/media/components';
 import { getAppTestID } from '~/modules/myapps/util';
 
-import { useFavoriteBadgeAnimation, useStyles } from './hooks';
+import { useFavoriteBadgeAnimation } from './hooks';
+import { getCardBackgroundStyle, styles } from './styles';
 import { MyAppsCardProps } from './types';
-import { resolveAppIcon } from './utils';
+import { resolveAppIcon } from './util';
 
 const ICON_SIZE = UI_SIZES.spacing.huge;
 const FAVORITE_BADGE_SIZE = UI_SIZES.spacing.big;
@@ -25,7 +26,7 @@ const WEB_PICTOGRAM_SIZE = UI_SIZES.spacing.medium;
  */
 export const MyAppsCard = React.memo(function MyAppsCardComponent({ item, onLongPress, onPress }: MyAppsCardProps) {
   const { app, hasModule, isFavorite } = item;
-  const styles = useStyles(app.color);
+  const cardStyle = React.useMemo(() => [styles.card, getCardBackgroundStyle(app.color)], [app.color]);
   const animatedFavoriteStyle = useFavoriteBadgeAnimation(app.name, isFavorite);
 
   // The icon may fail to load (remote image): then the fallback. Back to the icon when it changes (recycled card)
@@ -66,7 +67,7 @@ export const MyAppsCard = React.memo(function MyAppsCardComponent({ item, onLong
       style={({ pressed }) => [styles.wrapper, pressed && styles.wrapperPressed]}
       testID={getAppTestID(app)}>
       <View style={styles.contentContainer}>
-        <View style={styles.card}>
+        <View style={cardStyle}>
           <Animated.View style={[styles.favoriteIcon, animatedFavoriteStyle]}>
             <Svg name="ui-favorite" width={FAVORITE_BADGE_SIZE} height={FAVORITE_BADGE_SIZE} />
           </Animated.View>

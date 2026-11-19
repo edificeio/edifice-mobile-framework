@@ -18,7 +18,7 @@
 | `audience`      | en cours                    | Seulement ce qui était dans `auth` : chargement des types de réactions à `onSessionStart` (store `src/modules/audience/store.ts`). Le reste est encore dans `framework/modules/audience` (voir modules anciens).                                                                                                              | —                      |
 | `editor`        | en cours                    | Rafraîchit le `oneSessionId` à `onSessionStart`. Pas d'écran.                                                                                                                                                                                                                                                                 | —                      |
 | `notifications` | en cours                    | Enregistre / désenregistre le push (FCM) par session. **Pas d'ouverture de notification** (reportée, voir plus bas).                                                                                                                                                                                                          | —                      |
-| `myapps`        | fait (pas testé dans l'app) | Phases 0 à 7 faites : droits / `entry` / `useOpenModule` ; modèle, service, store Redux, storage ; chargement par les hooks de session ; API publique (hooks, libellés d'onglets) ; écran, modales (menu, actions d'une app, favoris, onboarding), ouverture des apps ; ancien `framework/modules/myapps` supprimé (phase 7). | [myapps.md](myapps.md) |
+| `myapps`        | fait (pas testé dans l'app) | Phases 0 à 7 faites (harmonisé avec les règles des skills le 2026-11-19 : écrans en dossiers, `components/sheet`, session passée aux actions) : droits / `entries` / `useOpenModule` ; modèle, service, store Redux, storage ; chargement par les hooks de session ; API publique (hooks, libellés d'onglets) ; écran, modales (menu, actions d'une app, favoris, onboarding), ouverture des apps ; ancien `framework/modules/myapps` supprimé (phase 7). | [myapps.md](myapps.md) |
 | `user`          | reporté                     | Accueil provisoire (comptes + déconnexion). Migration du reste spécifiée, **reportée** (2026-11-17), plan en attente de validation. Phase 0 faite à part : `entries` (points d'entrée des modules) + `fileManager`. Préalables `debug`, `splashads`.                                                                          | [user.md](user.md)     |
 
 ## Modules anciens (`src/framework/modules/`)
@@ -131,7 +131,7 @@ Tranchées le 2026-11-04 : `isModuleAvailable` en phase 0 de `myapps` ; ordre de
 
 ### `myapps`
 
-Aucune question bloquante. Phases 0 à 7 faites (ancien module supprimé). Reste à tester les phases 4 à 6 dans l'app (et le garde « scroll to top » sur iOS 27).
+Aucune question bloquante. Phases 0 à 7 faites (ancien module supprimé), harmonisé le 2026-11-19 ([myapps.md](myapps.md) §9). Reste à tester les phases 4 à 6 dans l'app (et le garde « scroll to top » sur iOS 27), avec la recette de l'harmonisation.
 
 ## Prochaines étapes
 

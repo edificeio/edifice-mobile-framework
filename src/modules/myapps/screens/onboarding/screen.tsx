@@ -13,13 +13,12 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyBoldText } from '~/framework/components/text';
 import { useStorageJSON } from '~/framework/util/storage/hooks';
+import { MyAppsOnboardingSlide, type OnboardingSlide } from '~/modules/myapps/components/my-apps-onboarding-slide';
 import { ONBOARDING_VERSION } from '~/modules/myapps/model/onboarding';
 import { storage } from '~/modules/myapps/storage';
 import { I18n } from '~/util/i18n';
 
-import { MyAppsOnboardingSlide } from './slide';
 import { styles } from './styles';
-import type { OnboardingSlide } from './types';
 
 const TEST_ID_PREFIX = 'myapps-onboarding-modal';
 

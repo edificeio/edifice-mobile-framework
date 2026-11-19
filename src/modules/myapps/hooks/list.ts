@@ -6,6 +6,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useStorageBoolean } from '~/framework/util/storage/hooks';
+import type { AuthActiveAccount } from '~/modules/auth/model';
 import { saveFavorites, toggleFavorite } from '~/modules/myapps/actions';
 import type { ListedApp, MyAppsFilter } from '~/modules/myapps/model';
 import { filterApps, hasAppsToList, toListedApps } from '~/modules/myapps/model/classification';
@@ -15,13 +16,22 @@ import { selectApps, selectPreferences } from '~/modules/myapps/store';
 import { useAppModules } from './apps';
 import type { MyAppsDispatch } from './types';
 
-/** The favorites of the user, their status, and how to change them (each one throws if it can't be saved). */
+/**
+ * The favorites of the user, their status, and how to change them, with the session of the screen (each one throws if it can't be
+ * saved).
+ */
 export const useFavorites = () => {
   const { data, status } = useSelector(selectPreferences);
   const dispatch = useDispatch<MyAppsDispatch>();
   const favorites = React.useMemo(() => new Set(data.favorites), [data.favorites]);
-  const toggle = React.useCallback((appName: string) => dispatch(toggleFavorite(appName)), [dispatch]);
-  const save = React.useCallback((names: string[]) => dispatch(saveFavorites(names)), [dispatch]);
+  const toggle = React.useCallback(
+    (session: AuthActiveAccount, appName: string) => dispatch(toggleFavorite(session, appName)),
+    [dispatch],
+  );
+  const save = React.useCallback(
+    (session: AuthActiveAccount, names: string[]) => dispatch(saveFavorites(session, names)),
+    [dispatch],
+  );
   return { favorites, save, status, toggle };
 };
 

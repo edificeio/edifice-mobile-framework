@@ -1,7 +1,6 @@
 import { applyMiddleware, combineReducers, legacy_createStore } from 'redux';
 import { thunk } from 'redux-thunk';
 
-import { useAccountsStore } from '~/modules/auth/store/accounts';
 import type { AppsPreferences, EntApp } from '~/modules/myapps/model';
 import { myAppsService } from '~/modules/myapps/service';
 import reducer, { myAppsActions } from '~/modules/myapps/store';
@@ -35,15 +34,13 @@ describe('myapps actions', () => {
 
   beforeEach(() => {
     store = createTestStore();
-    useAccountsStore.setState(useAccountsStore.getInitialState(), true);
-    useAccountsStore.getState().setAccount(session);
   });
 
   describe('refreshMyApps', () => {
     it('loads the apps and the preferences with the session', async () => {
       service.apps.mockResolvedValue([app]);
       service.preferences.get.mockResolvedValue(preferences);
-      await expect(store.dispatch(refreshMyApps())).resolves.toBe(true);
+      await expect(store.dispatch(refreshMyApps(session))).resolves.toBe(true);
       expect(service.apps).toHaveBeenCalledWith(session);
       expect(myapps().apps).toEqual({ data: [app], status: 'loaded' });
       expect(myapps().preferences).toEqual({ data: preferences, status: 'loaded' });
@@ -53,7 +50,7 @@ describe('myapps actions', () => {
       jest.spyOn(console, 'error').mockImplementation(() => {});
       service.apps.mockResolvedValue([app]);
       service.preferences.get.mockRejectedValue(new Error('down'));
-      await expect(store.dispatch(refreshMyApps())).resolves.toBe(false);
+      await expect(store.dispatch(refreshMyApps(session))).resolves.toBe(false);
       expect(myapps().apps.status).toBe('loaded');
       expect(myapps().preferences.status).toBe('error');
     });
@@ -64,7 +61,7 @@ describe('myapps actions', () => {
       store.dispatch(myAppsActions.preferencesLoaded({ applications: [], favorites: ['A'] }));
       let resolvePut = () => {};
       service.preferences.put.mockReturnValue(new Promise<void>(resolve => (resolvePut = resolve)));
-      const saving = store.dispatch(toggleFavorite('B'));
+      const saving = store.dispatch(toggleFavorite(session, 'B'));
       await Promise.resolve();
       expect(myapps().preferences.data.favorites).toEqual(['A']);
       resolvePut();
@@ -76,14 +73,14 @@ describe('myapps actions', () => {
     it('do not change when they cannot be saved', async () => {
       store.dispatch(myAppsActions.preferencesLoaded({ applications: [], favorites: ['A'] }));
       service.preferences.put.mockRejectedValue(new Error('down'));
-      await expect(store.dispatch(saveFavorites(['C']))).rejects.toThrow('down');
+      await expect(store.dispatch(saveFavorites(session, ['C']))).rejects.toThrow('down');
       expect(myapps().preferences.data.favorites).toEqual(['A']);
     });
 
     it('are read from the server first when the state does not have them', async () => {
       service.preferences.get.mockResolvedValue({ applications: ['A', 'B'], favorites: ['A'] });
       service.preferences.put.mockResolvedValue();
-      await store.dispatch(toggleFavorite('B'));
+      await store.dispatch(toggleFavorite(session, 'B'));
       expect(service.preferences.put).toHaveBeenCalledWith(session, { applications: ['A', 'B'], favorites: ['A', 'B'] });
       expect(myapps().preferences).toEqual({ data: { applications: ['A', 'B'], favorites: ['A', 'B'] }, status: 'loaded' });
     });

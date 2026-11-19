@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { useConfirmRemove } from '~/app/navigation-new';
 import Toast from '~/framework/components/toast';
+import type { AuthActiveAccount } from '~/modules/auth/model';
 import { useFavorites, useFilteredApps } from '~/modules/myapps/hooks';
 import type { ListedApp, MyAppsFilter } from '~/modules/myapps/model';
 import { normalizeString } from '~/modules/myapps/util';
@@ -49,7 +50,7 @@ export const useFavoritesSelection = () => {
  * Saves the selection, then closes the modal: only once saved (§4 n° 6), with no delay (§4 n° 7). Closing the modal with unsaved
  * changes, by its button or by a gesture, asks for a confirmation first (§4 n° 11).
  */
-export const useSaveFavorites = (selected: ReadonlySet<string>, hasUnsavedChanges: boolean) => {
+export const useSaveFavorites = (session: AuthActiveAccount, selected: ReadonlySet<string>, hasUnsavedChanges: boolean) => {
   const navigation = useNavigation();
   const { save } = useFavorites();
   const [isSaving, setIsSaving] = React.useState(false);
@@ -70,14 +71,14 @@ export const useSaveFavorites = (selected: ReadonlySet<string>, hasUnsavedChange
   const validate = React.useCallback(async () => {
     setIsSaving(true);
     try {
-      await save([...selected]);
+      await save(session, [...selected]);
       setIsSaved(true);
     } catch (e) {
       console.error('[MyApps] Failed to save the favorites', e);
       Toast.showError(I18n.get('myapp-add-favorite-error-message'));
       setIsSaving(false);
     }
-  }, [save, selected]);
+  }, [save, selected, session]);
 
   return { isSaving, validate };
 };
