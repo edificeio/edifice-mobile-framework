@@ -41,7 +41,7 @@ Un module est une fonctionnalité isolée (blog, mails, auth, …) avec son doss
 | Enregistrement | par le framework à la connexion                      | `src/app/config/modules.ts`                                                  |
 | Écrans         | `navigation/navigator.tsx` (`createModuleNavigator`) | déclarés dans `screens` / `modals` du module (`defineScreen`, `defineModal`) |
 | Redux          | `reducer.ts` / `store.ts` + `Reducers.register`      | `redux: { reducer }` dans la config du module                                |
-| Notifications  | `notif-handler.ts`                                   | **pas encore d'équivalent** (voir §6)                                        |
+| Notifications  | `notif-handler.ts`                                   | **pas encore d'équivalent** (voir §6) ; cible décidée : clé de config `notifications` |
 | Exemples       | `blog`, `timeline`, `wiki`, …                        | `auth` (le plus complet), `media`                                            |
 
 **Pourquoi deux emplacements ?** Le dossier `src/modules/` n'existe que pour éviter les confusions. Il accueille les premiers modules convertis, **techniques**, qui centralisent la plupart des fonctionnalités du framework : ils sont **entièrement recodés**, d'où un emplacement distinct. Les modules **fonctionnels** (blog, wiki, timeline, …) seront migrés **sur place**, dans `src/framework/modules/`. Raison : d'autres équipes les modifient pendant la migration, et rester au même endroit garde les conflits git faciles à gérer.

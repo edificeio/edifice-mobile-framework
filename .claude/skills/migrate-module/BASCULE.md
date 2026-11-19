@@ -35,6 +35,8 @@
 | 16 | import du **code** d'un module ancien (service, utilitaire, constantes, types) | gardé, avec `ToDo(<module>-migration): <raison>` et une ligne dans la fiche (§2) |
 | 17 | module absent du registre | une ligne dans `src/app/config/modules.ts`, **quelle que soit la marque** : la liste des modules par marque n'existe pas encore dans le nouveau système ([later.md](journal/later.md)) |
 | 18 | écran qui lit la session : `getSession()` / `assertSession()` dans l'écran ou dans son `mapStateToProps`, `sessionScreen` (`~/framework/components/screen`), `withSession` de `~/framework/modules/auth/util` | `screen: withSession<StaticScreenProps<Params>>(Écran)` (`~/modules/auth/hoc`) dans `defineScreen` : l'écran reçoit `session` en prop, garantie, et les storages par compte (`Storage.account`) travaillent sur son compte (`AccountStorageProvider`). Avec `connect(`, la session arrive en second argument de `mapStateToProps` (`(state, { session }) => …`) au lieu de `getSession()`. Modèles : `src/framework/modules/support/screens/create-ticket/screen.tsx` (avec `connect(`), `src/app/test/amodule.tsx` (fonction) |
+| 19 | `notif-handler.ts`, branché par `setUpNotifHandlers()` en bas de l'ancien `index.ts` | **débranché** (décidé le 2026-11-19) : l'appel disparaît avec l'ancien `index.ts` ; le fichier reste tel quel, avec en tête `// ToDo(<module>-migration): unplugged until modules declare their notifications through the config key notifications`, et une ligne dans la fiche. En attendant, sur la branche, les notifications du module s'ouvrent sur le web. Rebranché avant la livraison, par la clé de config `notifications` (à concevoir avec `timeline`) |
+| 20 | widget ou section de l'accueil (`MYAPPS_WIDGET`, `home-widget`, `home-section`) | **hors de la migration** : fait à part par l'équipe (développements parallèles). Le code reste tel quel, non branché, avec un `ToDo(<module>-migration)` et une ligne dans la fiche |
 
 **Emplacement** : le module reste où il est, dans `src/framework/modules/` (ARCHITECTURE §2). Il n'est jamais déplacé vers `src/modules/`, sauf s'il y a déjà un dossier (`user`, `audience`…) : on continue là. Décidé le 2026-11-19.
 
@@ -46,7 +48,7 @@ Exemple complet : le commit de bascule de `support`, puis son alignement du 2026
 
 - Le module **navigue vers un module ancien** (ses routes, `<module>RouteNames`) ou **lit son state** : ce module n'est pas chargé par l'app. Un import de son code seul n'arrête pas (geste 16).
 - La bascule demande une **évolution du framework** (`src/app/`, `navigation-new`, `framework/util`) : elle part avant, dans un changement à part.
-- Le module a un handler de notification, un widget, un intent ou une modale globale (`~/framework/navigation/modals`) : pas d'équivalent dans le nouveau système pour l'instant ([later.md](journal/later.md)).
+- Le module utilise un intent ou une modale globale (`~/framework/navigation/modals`) : pas d'équivalent dans le nouveau système pour l'instant ([later.md](journal/later.md)). Un handler de notification ou un widget n'arrête plus la bascule (gestes 19 et 20).
 - Plus de trois fichiers touchés hors du dossier du module (les façades sont dans le module et ne comptent pas).
 - Un composant ou un hook ne marche pas dans la nouvelle navigation alors qu'il n'est pas dans les gestes : c'est un geste à ajouter, à décider avec le développeur.
 

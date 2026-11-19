@@ -74,11 +74,12 @@ Relever n'est pas corriger : pendant la bascule, on note, on ne touche pas.
 - **Le passage de Redux à zustand** : un module garde son gestionnaire d'état (exception déjà décidée : `user`).
 - Un changement d'API serveur.
 - La version suivante de react-navigation.
+- **Les widgets d'accueil** : faits à part par l'équipe, en dehors de la migration, car des développements sont en cours en parallèle.
 
 ### Ce que les deux étapes ne règlent pas
 
 - **Les dépendances entre modules anciens.** Un module basculé peut utiliser le code d'un module ancien, mais ni naviguer vers lui ni lire son état : ce module n'est pas chargé. Ces dépendances donnent l'ordre de migration : d'abord les modules dont les autres dépendent.
-- **Ce qui n'a pas encore d'équivalent dans le nouveau système** : ouverture des notifications, widgets, intents, liste des modules par marque. Ce sont des décisions de conception, listées dans [STATUS.md](journal/STATUS.md) et [later.md](journal/later.md) ; aucune vitesse d'exécution ne les remplace.
+- **Ce qui n'a pas encore d'équivalent dans le nouveau système** : ouverture des notifications, intents, liste des modules par marque. Ce sont des chantiers de conception, listés dans [STATUS.md](journal/STATUS.md) et [later.md](journal/later.md) ; aucune vitesse d'exécution ne les remplace. Pour ne pas bloquer les bascules, les gestionnaires de notifications restent débranchés jusqu'à ce que leur mécanisme existe, et sont rebranchés avant la livraison.
 - **Le test complet d'un module isolé.** Une partie d'un module ne se joue parfois dans l'app qu'une fois d'autres modules migrés (ex. « Mes applis » ouvre des apps portées par des modules pas encore basculés).
 - **Le temps humain.** Le coût d'un module est dans les décisions, la relecture et le test dans l'app, pas dans l'écriture.
 
