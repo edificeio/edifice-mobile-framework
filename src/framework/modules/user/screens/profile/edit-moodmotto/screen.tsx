@@ -4,6 +4,7 @@ import { Alert, Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { I18n } from '~/app/i18n';
+import theme, { MoodName } from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
@@ -15,7 +16,6 @@ import usePreventBack from '~/framework/hooks/prevent-back';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import appConf from '~/framework/util/appConf';
 
 import styles from './styles';
 import type { UserEditMoodMottoScreenProps } from './types';
@@ -45,7 +45,7 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
 
   const scrollViewRef = React.useRef<ScrollView>(null);
 
-  const moods = ['default', 'happy', 'proud', 'dreamy', 'love', 'tired', 'angry', 'worried', 'sick', 'joker', 'sad'];
+  const moods: MoodName[] = ['default', 'happy', 'proud', 'dreamy', 'love', 'tired', 'angry', 'worried', 'sick', 'joker', 'sad'];
 
   const widthMood = React.useMemo(() => (UI_SIZES.screen.width - 2 * UI_SIZES.spacing.medium - 3 * UI_SIZES.spacing.small) / 4, []);
 
@@ -86,14 +86,13 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
     alertAlreadyShownRef.current = true;
   };
 
-  const renderMoodItem = moodValue => {
-    const degre = appConf.is1d ? '1d' : '2d';
+  const renderMoodItem = (moodValue: MoodName) => {
     return (
       <TouchableOpacity
         style={[styles.mood, { width: widthMood }, moodValue === mood ? styles.moodActive : null]}
         onPress={() => setMood(moodValue)}>
-        <Image source={renderMoodPicture[degre][moodValue]} style={styles.moodPicture} />
-        <CaptionText>{I18n.get(`user-profile-mood-${moodValue}-${degre}`).toLowerCase()}</CaptionText>
+        <Image source={renderMoodPicture[theme.level][moodValue]} style={styles.moodPicture} />
+        <CaptionText>{I18n.get(theme.moods[moodValue].label).toLowerCase()}</CaptionText>
       </TouchableOpacity>
     );
   };

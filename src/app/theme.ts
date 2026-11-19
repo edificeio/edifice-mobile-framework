@@ -89,9 +89,12 @@ export const THEME_LEVEL = {
 
 export type ThemeLevel = ValueOf<typeof THEME_LEVEL>;
 
+export type MoodName = 'angry' | 'default' | 'dreamy' | 'happy' | 'joker' | 'love' | 'proud' | 'sad' | 'sick' | 'tired' | 'worried';
+
 export interface ITheme {
   // Theme identity, declared by the override
   level: ThemeLevel;
+  is1D: boolean;
   displayName: string;
   // Color palette used globally
   palette: {
@@ -238,6 +241,7 @@ export interface ITheme {
     };
   };
   media: { [key in MediaType | 'default']: IntentIcon };
+  moods: Record<MoodName, { label: string; notification: string }>;
   // Legacy values
   legacy: {
     neutral: {
@@ -251,13 +255,36 @@ export interface ITheme {
   };
 }
 
-type ThemeInitializer = Omit<ITheme, 'ui' | 'color' | 'media'> & {
+type ThemeInitializer = Omit<ITheme, 'ui' | 'color' | 'media' | 'moods' | 'is1D'> & {
   init(): ITheme;
+};
+
+type MoodKeySuffix = '1d' | '2d';
+
+const moodsI18nKeys = (suffix: MoodKeySuffix): ITheme['moods'] => ({
+  angry: { label: `user-profile-mood-angry-${suffix}`, notification: `timeline-notiftype-mood-angry-${suffix}` },
+  default: { label: `user-profile-mood-default-${suffix}`, notification: `timeline-notiftype-mood-default-${suffix}` },
+  dreamy: { label: `user-profile-mood-dreamy-${suffix}`, notification: `timeline-notiftype-mood-dreamy-${suffix}` },
+  happy: { label: `user-profile-mood-happy-${suffix}`, notification: `timeline-notiftype-mood-happy-${suffix}` },
+  joker: { label: `user-profile-mood-joker-${suffix}`, notification: `timeline-notiftype-mood-joker-${suffix}` },
+  love: { label: `user-profile-mood-love-${suffix}`, notification: `timeline-notiftype-mood-love-${suffix}` },
+  proud: { label: `user-profile-mood-proud-${suffix}`, notification: `timeline-notiftype-mood-proud-${suffix}` },
+  sad: { label: `user-profile-mood-sad-${suffix}`, notification: `timeline-notiftype-mood-sad-${suffix}` },
+  sick: { label: `user-profile-mood-sick-${suffix}`, notification: `timeline-notiftype-mood-sick-${suffix}` },
+  tired: { label: `user-profile-mood-tired-${suffix}`, notification: `timeline-notiftype-mood-tired-${suffix}` },
+  worried: { label: `user-profile-mood-worried-${suffix}`, notification: `timeline-notiftype-mood-worried-${suffix}` },
+});
+
+const MOODS: Record<ThemeLevel, ITheme['moods']> = {
+  [THEME_LEVEL.FIRST_DEGREE]: moodsI18nKeys('1d'),
+  [THEME_LEVEL.SECOND_DEGREE]: moodsI18nKeys('2d'),
 };
 
 export const defaultTheme: ThemeInitializer = {
   displayName: 'user-theme-displayname-2d',
   init() {
+    (this as Partial<ITheme>).is1D = this.level === THEME_LEVEL.FIRST_DEGREE;
+    (this as Partial<ITheme>).moods = MOODS[this.level];
     (this as Partial<ITheme>).media = {
       attachment: { name: 'ui-attachment', type: 'Svg' },
       audio: { name: 'ui-audio', type: 'Svg' },

@@ -1,3 +1,5 @@
+import { THEME_LEVEL } from '~/app/theme';
+
 import UserEditMoodMottoScreen, { computeNavBar } from './screen';
 import { UserEditMoodMottoScreenNavParams } from './types';
 
@@ -6,7 +8,7 @@ export { computeNavBar };
 export type { UserEditMoodMottoScreenNavParams };
 
 export const renderMoodPicture = {
-  '1d': {
+  [THEME_LEVEL.FIRST_DEGREE]: {
     angry: require('ASSETS/images/moods/1d/angry.png'),
     default: require('ASSETS/images/moods/1d/none.png'),
     dreamy: require('ASSETS/images/moods/1d/dreamy.png'),
@@ -19,7 +21,7 @@ export const renderMoodPicture = {
     tired: require('ASSETS/images/moods/1d/tired.png'),
     worried: require('ASSETS/images/moods/1d/worried.png'),
   },
-  '2d': {
+  [THEME_LEVEL.SECOND_DEGREE]: {
     angry: require('ASSETS/images/moods/2d/angry.png'),
     default: require('ASSETS/images/moods/2d/none.png'),
     dreamy: require('ASSETS/images/moods/2d/dreamy.png'),

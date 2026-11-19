@@ -3,16 +3,15 @@ import { TouchableOpacity, View } from 'react-native';
 
 import moment, { Moment } from 'moment';
 
-import styles from './styles';
-import type { CallCardProps, CallCardStyle } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyText, HeadingSText, NestedText } from '~/framework/components/text';
 import { CallState } from '~/framework/modules/viescolaire/presences/model';
-import appConf from '~/framework/util/appConf';
+
+import styles from './styles';
+import type { CallCardProps, CallCardStyle } from './types';
 
 export default class CallCard extends React.PureComponent<CallCardProps> {
   private getStatusStyle(): CallCardStyle {
@@ -63,7 +62,7 @@ export default class CallCard extends React.PureComponent<CallCardProps> {
   }
 
   private getHoursLabel(startDate: Moment, endDate: Moment): string {
-    if (appConf.is1d) {
+    if (theme.is1D) {
       return I18n.get(startDate.get('h') < 12 ? 'presences-calllist-callcard-morning' : 'presences-calllist-callcard-afternoon');
     } else {
       return `${startDate.format('LT')} - ${endDate.format('LT')}`;
@@ -83,12 +82,12 @@ export default class CallCard extends React.PureComponent<CallCardProps> {
           <View style={styles.rowContainer}>
             <Svg name="ui-clock" width={22} height={22} fill={textColor} />
             <BodyText numberOfLines={1} style={[UI_STYLES.flexShrink1, { color: textColor }]}>
-              {appConf.is1d ? classLabel : hoursLabel}
+              {theme.is1D ? classLabel : hoursLabel}
               {roomLabel ? <NestedText style={styles.roomText}>{`  -  ${roomLabel}`}</NestedText> : null}
             </BodyText>
           </View>
           <HeadingSText numberOfLines={1} style={{ color: textColor }}>
-            {appConf.is1d ? hoursLabel : classLabel}
+            {theme.is1D ? hoursLabel : classLabel}
           </HeadingSText>
         </View>
         {showStatus ? (

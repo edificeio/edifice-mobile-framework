@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
@@ -32,7 +33,6 @@ import moduleConfig from '~/framework/modules/viescolaire/presences/module-confi
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import appConf from '~/framework/util/appConf';
 import { subtractTime, today } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -241,7 +241,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
           keyExtractor={item => item.callId?.toString() ?? item.id + item.startDate.format()}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListHeaderComponent={
-            appConf.is2d && courses.length ? <BodyBoldText>{I18n.get('presences-calllist-heading')}</BodyBoldText> : null
+            !theme.is1D && courses.length ? <BodyBoldText>{I18n.get('presences-calllist-heading')}</BodyBoldText> : null
           }
           ListEmptyComponent={
             loadingState === AsyncPagedLoadingState.FETCH_NEXT ? (

@@ -4,9 +4,6 @@ import { ColorValue, FlatList, View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 
-import styles from './styles';
-import type { PresencesEventListScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/empty-screens';
@@ -22,8 +19,10 @@ import {
 } from '~/framework/modules/viescolaire/presences/model';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import appConf from '~/framework/util/appConf';
 import { isEmpty } from '~/framework/util/object';
+
+import styles from './styles';
+import type { PresencesEventListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -41,7 +40,7 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
     const isSingleDay = startDate.isSame(endDate, 'day');
     const format = moment().isSame(startDate, 'year') ? 'D MMMM' : 'D MMM YYYY';
     const time = isSingleDay
-      ? appConf.is1d
+      ? theme.is1D
         ? I18n.get(startDate.get('hour') < 12 ? 'presences-statistics-card-morning' : 'presences-statistics-card-afternoon')
         : startDate.format('H[h]mm') + ' - ' + endDate.format('H[h]mm')
       : null;

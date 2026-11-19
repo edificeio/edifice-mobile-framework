@@ -2,9 +2,8 @@ import * as React from 'react';
 
 import { Moment } from 'moment';
 
-import styles from './styles';
-
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import { BodyText, CaptionBoldText, NestedBoldText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
 import HistoryEventCard from '~/framework/modules/viescolaire/presences/components/history-event-card';
@@ -16,12 +15,13 @@ import {
   Incident,
   Punishment,
 } from '~/framework/modules/viescolaire/presences/model';
-import appConf from '~/framework/util/appConf';
+
+import styles from './styles';
 
 const formatAbsenceDates = (startDate: Moment, endDate: Moment): string => {
   if (!endDate.isSame(startDate, 'day')) {
     return I18n.get('presences-history-eventcard-fromdate', { end: endDate.format('D MMMM'), start: startDate.format('D') });
-  } else if (appConf.is1d) {
+  } else if (theme.is1D) {
     const timeLabel = I18n.get(
       startDate.get('hour') < 12 ? 'presences-history-eventcard-morning' : 'presences-history-eventcard-afternoon',
     );
@@ -40,13 +40,13 @@ export const AbsenceCard = ({ event }: { event: CommonEvent }) => {
   const getEventLabel = () => {
     switch (event.type) {
       case EventType.NO_REASON:
-        return I18n.get(appConf.is1d ? 'presences-history-eventcard-noreason-1d' : 'presences-history-eventcard-noreason-2d');
+        return I18n.get(theme.is1D ? 'presences-history-eventcard-noreason-1d' : 'presences-history-eventcard-noreason-2d');
       case EventType.REGULARIZED:
-        return I18n.get(appConf.is1d ? 'presences-history-eventcard-regularized-1d' : 'presences-history-eventcard-regularized-2d');
+        return I18n.get(theme.is1D ? 'presences-history-eventcard-regularized-1d' : 'presences-history-eventcard-regularized-2d');
       case EventType.UNREGULARIZED:
       default:
         return I18n.get(
-          appConf.is1d ? 'presences-history-eventcard-unregularized-1d' : 'presences-history-eventcard-unregularized-2d',
+          theme.is1D ? 'presences-history-eventcard-unregularized-1d' : 'presences-history-eventcard-unregularized-2d',
         );
     }
   };
