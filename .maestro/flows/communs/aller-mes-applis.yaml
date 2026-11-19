@@ -1,0 +1,28 @@
+# Sous-flow : ouvrir l'onglet Mes applis et écarter l'onboarding automatique.
+# Après un clearState, l'onboarding n'a jamais été vu : il s'ouvre seul à la première arrivée sur l'écran
+# (fiche §3.2 « Onboarding »). « Plus tard » le ferme SANS le marquer comme vu : la cloche reste `myapps-navbar-notif`.
+# Rangé dans un sous-dossier : `maestro test flows/` ne lance que les fichiers du premier niveau.
+appId: ${APP_ID}
+---
+- tapOn:
+    id: "tabbar-myapps"
+
+# L'onboarding arrive après une animation : on l'attend (sans échouer s'il ne vient pas), puis on le ferme.
+- extendedWaitUntil:
+    visible:
+      id: "myapps-onboarding-modal-later"
+    timeout: 8000
+    optional: true
+- runFlow:
+    when:
+      visible:
+        id: "myapps-onboarding-modal-later"
+    commands:
+      - tapOn:
+          id: "myapps-onboarding-modal-later"
+
+# La liste est là : la barre de filtres n'est rendue que s'il y a des applis à afficher.
+- extendedWaitUntil:
+    visible:
+      id: "myapps-filter-all"
+    timeout: 15000

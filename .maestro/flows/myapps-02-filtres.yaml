@@ -1,0 +1,74 @@
+# Comportement visé : les six filtres (Tout, Favoris, Communiquer, Produire, Organiser, Autres services) se
+# sélectionnent tour à tour, la barre de filtres reste en place et l'écran vide global n'apparaît jamais ; un filtre
+# sans résultat montre SON écran vide (favoris / autre), pas celui de l'écran.
+# Fiche docs/migrations/myapps.md : §3.2 « Filtres », §1 « Écrans vides distincts », §3.5 (testID `myapps-filter-*`,
+# `myapps-empty-{favorites,other}`).
+#
+# Le contenu de chaque filtre dépend du compte : l'oracle est la capture par filtre, comparée entre générations.
+# La recherche n'est PAS couverte : la loupe n'a de testID dans aucune génération (voir selecteurs.md).
+appId: ${APP_ID}
+tags:
+  - myapps
+---
+- runFlow: 00-connexion.yaml
+- runFlow: communs/aller-mes-applis.yaml
+
+# Favoris. Un compte sans favori montre l'écran vide des favoris (optionnel : dépend du compte).
+- tapOn:
+    id: "myapps-filter-favorites"
+- assertNotVisible:
+    id: "myapps-empty-screen"
+- assertVisible:
+    id: "myapps-empty-favorites"
+    optional: true
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "myapps-02-filtre-favoris"
+
+# Chaque appui centre le filtre choisi dans la barre horizontale (scrollToItem), ce qui amène le suivant à l'écran.
+- tapOn:
+    id: "myapps-filter-communication"
+- assertNotVisible:
+    id: "myapps-empty-screen"
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "myapps-02-filtre-communication"
+
+- tapOn:
+    id: "myapps-filter-pedagogie"
+- assertNotVisible:
+    id: "myapps-empty-screen"
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "myapps-02-filtre-pedagogie"
+
+- tapOn:
+    id: "myapps-filter-organisation"
+- assertNotVisible:
+    id: "myapps-empty-screen"
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "myapps-02-filtre-organisation"
+
+- tapOn:
+    id: "myapps-filter-other-services"
+- assertNotVisible:
+    id: "myapps-empty-screen"
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "myapps-02-filtre-autres-services"
+
+# Retour à « Tout » : on ramène la barre de filtres à son début, puis on vérifie qu'une carte est de nouveau là.
+- swipe:
+    from:
+      id: "myapps-filter-organisation"
+    direction: RIGHT
+- tapOn:
+    id: "myapps-filter-all"
+- assertVisible:
+    id: "myapps-(?!filter-|navbar-|empty-|onboarding-|menu-|all-|toggle-|app-info$|favorites-validate$).+"

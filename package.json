@@ -23,6 +23,7 @@
     "check-patches": "npx patch-package",
     "clean": "ccache --clear && rm -r -f ./android/app/.cxx && rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./android/app/release && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && bundle install && npm cache clean --force && yarn install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && rm -rf .xcode.env.local && cd .. && node cli/override.js reset-cache",
     "depcheck": "npx depcheck",
+    "e2e": "maestro test -e APP_ID=$APP_ID -e PLATFORM_NAME=$PLATFORM_NAME -e LOGIN=$LOGIN -e PASSWORD=$PASSWORD .maestro/flows",
     "i18n-diff": "node cli/i18n.js diff",
     "i18n-dynamic": "grep --recursive \"I18n.get(\\`\" ./src",
     "i18n-unused": "node cli/i18n.js unused",

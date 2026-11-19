@@ -90,5 +90,9 @@ vendor
 # VS Code
 .vscode/
 
+# Maestro (smoke tests) : screenshots show an account
+.maestro/captures/
+.maestro/references/
+
 # Pre-review reports, waiting for reviewer approval (see .claude/skills/pre-review)
 docs/reviews/
