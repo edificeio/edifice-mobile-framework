@@ -2,13 +2,18 @@
 
 Suivi de la migration de l'ancienne génération de code (modules `NavigableModule`, navigation dynamique, redux) vers la nouvelle (`CoreModule` / `EntModule`, navigation statique, zustand). Le contexte technique est dans [ARCHITECTURE.md](../ARCHITECTURE.md).
 
+**À lire en premier : [INTENT.md](INTENT.md)** (pourquoi on migre, ce qui est dans la migration, comment on la mène, quand elle est finie).
+
 Ce dossier sert de **mémoire partagée entre les sessions** (humaines ou Claude) : une session qui reprend le sujet doit pouvoir savoir où on en est sans relire l'historique git.
 
 ## Fichiers
 
 | Fichier                          | Contenu                                                                           |
 | -------------------------------- | --------------------------------------------------------------------------------- |
+| [INTENT.md](INTENT.md)           | Intention de la migration : contexte, périmètre, règles de conduite, définition de « terminé » |
+| [SUIVI.md](SUIVI.md)             | Suivi **calculé** par `yarn migration-status` : compteurs par module (ne pas modifier à la main) |
 | [STATUS.md](STATUS.md)           | Tableau de bord : état de chaque module et chantier, prochaines étapes            |
+| [BASCULE.md](BASCULE.md)         | Patron de la bascule d'un module (étape 1 d'INTENT) : gestes, conditions d'arrêt, vérification |
 | [JOURNAL.md](JOURNAL.md)         | Journal daté des sessions (ajout en tête, jamais réécrit)                         |
 | [CONVENTIONS.md](CONVENTIONS.md) | Règles valables pour toute la migration (portage, UI, nommage, données)           |
 | [later.md](later.md)             | Plus tard : sujets reportés et décisions à revoir                                 |
@@ -18,7 +23,9 @@ Ce dossier sert de **mémoire partagée entre les sessions** (humaines ou Claude
 | [user.md](user.md)               | Fiche de `user` : plan validé en attente, `entries` (points d'entrée des modules) |
 | [timeline.md](timeline.md)       | Fiche de `timeline` (pas encore spécifiée) : découpage avec `notifications`       |
 | [wiki.md](wiki.md)               | Fiche de `wiki` : spécifiée, en attente des préalables `explorer` et `audience`   |
+| [support.md](support.md)         | Fiche de `support` : premier module passé par la bascule seule, pas joué dans l'app |
 | [\_template.md](_template.md)    | Gabarit d'une fiche de module                                                     |
+| [\_template-bascule.md](_template-bascule.md) | Gabarit court de l'intention d'un module pour une bascule seule |
 
 ## Protocole d'une session
 
@@ -39,7 +46,8 @@ Pour migrer un module avec Claude Code : `/migrate-module <chemin du module>` (s
 
 1. Ajouter une entrée en tête de [JOURNAL.md](JOURNAL.md) : fait, décidé, en suspens, prochaine étape.
 2. Mettre à jour la ligne du module dans [STATUS.md](STATUS.md) et la section « Avancement » de sa fiche.
-3. Laisser des marqueurs `ToDo(<module>-migration): …` dans le code pour ce qui est volontairement reporté : `grep -rn "migration)" src` les retrouve.
+3. Relancer `yarn migration-status` et commiter [SUIVI.md](SUIVI.md) avec le reste.
+4. Laisser des marqueurs `ToDo(<module>-migration): …` dans le code pour ce qui est volontairement reporté : `grep -rn "migration)" src` les retrouve.
 
 ## Conventions de rédaction
 
