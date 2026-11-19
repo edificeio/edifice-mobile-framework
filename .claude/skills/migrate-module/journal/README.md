@@ -27,7 +27,7 @@ Suivi, dans ce dossier :
 | [later.md](later.md) | Plus tard : sujets reportés et décisions à revoir |
 | [\_template-bascule.md](_template-bascule.md) | Gabarit de la fiche d'un module : bascule, puis assainissement (§9) |
 | [\_template.md](_template.md) | Gabarit long, pour une réécriture complète décidée en assainissement |
-| [auth.md](auth.md) | Fiche du module `auth` (fait, reste à faire, décisions) |
+| [auth.md](auth.md) | Fiche du module `auth` (fait, reste à faire, décisions, assainissement) |
 | [media.md](media.md) | Fiche du module `media` |
 | [myapps.md](myapps.md) | Fiche de `myapps` (réécrit dans `src/modules/myapps`) |
 | [user.md](user.md) | Fiche de `user` : plan validé en attente, `entries` (points d'entrée des modules) |

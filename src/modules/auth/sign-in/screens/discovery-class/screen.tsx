@@ -9,8 +9,8 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingMText, NestedBoldText, SmallText } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
-import { Image } from '~/framework/util/media-deprecated';
 import { Trackers } from '~/framework/util/tracker';
+import { Image } from '~/modules/media/components';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';

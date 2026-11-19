@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { ListRenderItemInfo, FlatList as RNFlatList, TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
-import { UserListItemProps, UserListProps } from './types';
-
 import { SingleAvatar } from '~/framework/components/avatar';
 import { Size } from '~/framework/components/avatar/types';
 import HorizontalList, { HorizontalListProps } from '~/framework/components/list/horizontal';
-import { SmallText } from '~/framework/components/text';
-import { AccountTypeText } from '~/framework/components/text/account-type';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { DisplayUserPublic, DisplayUserPublicWithType } from '~/framework/modules/auth/model';
+import { AccountTypeText } from '~/modules/auth/components';
+
+import styles from './styles';
+import { UserListItemProps, UserListProps } from './types';
 
 export const DISPLAY_NAME_NUMBER_OF_LINES = 2;
 
@@ -29,7 +29,7 @@ export const UserListItemDetailsWithType = <ItemT extends DisplayUserPublicWithT
       <SmallText style={styles.itemText} numberOfLines={DISPLAY_NAME_NUMBER_OF_LINES}>
         {item.displayName}
       </SmallText>
-      <AccountTypeText type={item.type} style={styles.itemText} />
+      <AccountTypeText type={item.type} style={styles.itemText} TextComponent={SmallBoldText} />
     </>
   );
 };

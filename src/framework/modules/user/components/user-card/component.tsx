@@ -7,12 +7,12 @@ import { cameraActionFm, galleryActionFm } from '~/framework/components/menus/ac
 import { MenuPickerActionFmProps } from '~/framework/components/menus/actions/types';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { HeadingXSText, SmallBoldText } from '~/framework/components/text';
-import { i18nAccountTypes } from '~/framework/components/text/account-type';
 import Toast from '~/framework/components/toast';
 import { mailsService } from '~/framework/modules/mails/service';
 import { isServiceMethodAvailable } from '~/framework/modules/mails/util';
 import moduleConfig from '~/framework/modules/user/module-config';
 import { LocalFile } from '~/framework/util/fileHandler/models';
+import { i18nAccountTypes } from '~/modules/auth/components';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';

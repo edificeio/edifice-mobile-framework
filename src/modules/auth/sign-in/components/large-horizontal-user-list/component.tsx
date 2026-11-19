@@ -6,9 +6,9 @@ import { SingleAvatarProps } from '~/framework/components/avatar/types';
 import { UI_SIZES } from '~/framework/components/constants';
 import { DISPLAY_NAME_NUMBER_OF_LINES, UserList, UserListItemDetails } from '~/framework/components/list/user-horizontal/component';
 import { UserListItemProps, UserListProps } from '~/framework/components/list/user-horizontal/types';
-import { SmallText } from '~/framework/components/text';
-import { AccountTypeText } from '~/framework/components/text/account-type';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
+import { AccountTypeText } from '~/modules/auth/components/account-type-text';
 import type { DisplayUserPublic, DisplayUserPublicWithType } from '~/modules/auth/model';
 
 import styles from './styles';
@@ -22,7 +22,7 @@ export const LargeHorizontalUserListItemDetails = <ItemT extends DisplayUserPubl
       <SmallText style={styles.accountItemDetailsText} numberOfLines={DISPLAY_NAME_NUMBER_OF_LINES}>
         {item.displayName}
       </SmallText>
-      <AccountTypeText type={item.type} style={styles.accountItemDetailsText} />
+      <AccountTypeText type={item.type} style={styles.accountItemDetailsText} TextComponent={SmallBoldText} />
     </View>
   );
 };

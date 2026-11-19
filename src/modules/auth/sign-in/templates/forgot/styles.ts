@@ -73,9 +73,7 @@ export default StyleSheet.create({
   },
   page: {
     backgroundColor: theme.palette.grey.white,
-    display: 'flex',
-    flexDirection: 'column',
-    paddingBottom: -UI_SIZES.elements.tabbarHeight,
+    flex: 1,
     paddingHorizontal: UI_SIZES.spacing.big,
   },
   platform: {

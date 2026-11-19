@@ -1,8 +1,4 @@
-import type {
-  IEntcoreEmailValidationState,
-  IEntcoreMFAValidationState,
-  IEntcoreMobileValidationState,
-} from '~/modules/auth/service/types';
+import type { IEntcoreEmailValidationState, IEntcoreMFAValidationState, IEntcoreMobileValidationState } from '~/modules/auth/model';
 
 /**
  * What the code is for. It decides the picture of the screen (an envelope, a phone, or an animated lock) and when `onVerified`

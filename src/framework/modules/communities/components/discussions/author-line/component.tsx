@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { AccountTypeText } from '~/framework/components/text/account-type';
+import { AccountTypeText } from '~/modules/auth/components';
 
 import styles from './styles';
 import { AuthorLineProps } from './types';
@@ -18,7 +18,7 @@ const AuthorLine = ({ bold = true, name, profile, style }: Readonly<AuthorLinePr
         {name}
       </AuthorName>
       <SmallText style={styles.separator}>{SEPARATOR}</SmallText>
-      <AccountTypeText style={styles.profile} type={profile} />
+      <AccountTypeText style={styles.profile} type={profile} TextComponent={SmallBoldText} />
     </View>
   );
 };

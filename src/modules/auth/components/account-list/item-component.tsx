@@ -5,9 +5,9 @@ import theme from '~/app/theme';
 import { SingleAvatar } from '~/framework/components/avatar';
 import IconButton from '~/framework/components/buttons/icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { i18nAccountTypes } from '~/framework/components/text/account-type';
 import type { AccountListItemProps } from '~/modules/auth/components/account-list/item-types';
 import styles from '~/modules/auth/components/account-list/styles';
+import { i18nAccountTypes } from '~/modules/auth/components/account-type-text';
 import { AuthLoggedAccount, AuthSavedAccount } from '~/modules/auth/model';
 import { I18n } from '~/util/i18n';
 

@@ -3,6 +3,7 @@ import { Keyboard, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { useIsFocused } from '@react-navigation/native';
 
+import { useConfirmRemove } from '~/app/navigation-new';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -11,7 +12,6 @@ import { Picture, Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/prevent-back';
 import { isEmpty } from '~/framework/util/object';
 import { ValidatorBuilder } from '~/util/form';
 import { I18n } from '~/util/i18n';
@@ -73,8 +73,7 @@ export const VerifyEmailScreenTemplate = React.memo(function ({
     }
   }, [onRefuse]);
 
-  usePreventBack({
-    showAlert: confirmLeaveWhenEdited && !isEmailEmpty && isScreenFocused,
+  useConfirmRemove(confirmLeaveWhenEdited && !isEmailEmpty && isScreenFocused, {
     text: I18n.get('auth-change-email-edit-alert-message'),
     title: I18n.get('auth-change-email-edit-alert-title'),
   });

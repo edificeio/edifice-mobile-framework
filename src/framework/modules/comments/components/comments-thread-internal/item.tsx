@@ -7,9 +7,9 @@ import { SingleAvatar } from '~/framework/components/avatar';
 import { GhostButton, TerciaryButton } from '~/framework/components/button';
 import RichEditorNativeViewer from '~/framework/components/inputs/rich-text/native-viewer';
 import { CaptionItalicText, SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
-import { AccountTypeText } from '~/framework/modules/auth/components/account-type-text';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { TemporalTimeText } from '~/framework/util/date';
+import { AccountTypeText } from '~/modules/auth/components';
 import { I18n } from '~/util/i18n';
 
 import { CommentsThreadContext } from './context';

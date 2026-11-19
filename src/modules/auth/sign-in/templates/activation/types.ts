@@ -2,8 +2,6 @@ import type { Platform } from '~/framework/util/appConf';
 import type { IActivationPayload, LegalUrls, PlatformAuthContext } from '~/modules/auth/model';
 
 export type IFields = 'login' | 'password' | 'confirmPassword' | 'phone' | 'mail';
-export type MobileState = 'MOBILE_FORMAT_INVALID' | 'PRISTINE' | 'STALE';
-export type EmailState = 'EMAIL_FORMAT_INVALID' | 'PRISTINE';
 
 export interface SignInActivationScreenTemplateState extends IActivationPayload {
   typing: boolean;

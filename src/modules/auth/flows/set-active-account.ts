@@ -1,8 +1,8 @@
 import { runAccountStorageMigrations } from '~/framework/util/storage/migrations';
 import { runSetupCommits, type SessionLifecycle } from '~/modules/auth/lifecycle';
+import type { SignInResult } from '~/modules/auth/model';
 import { MAX_ACCOUNTS } from '~/modules/auth/model/business';
 import { AccountError, AccountErrorCode } from '~/modules/auth/model/error';
-import type { SignInResult } from '~/modules/auth/service/types';
 import { useSignInStore } from '~/modules/auth/sign-in/store';
 import { getSession, useAccountsStore } from '~/modules/auth/store/accounts';
 import { usePlatformContextStore } from '~/modules/auth/store/platform-context';

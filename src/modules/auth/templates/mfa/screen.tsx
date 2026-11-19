@@ -79,18 +79,21 @@ export const MFAScreenTemplate = React.memo(function ({
 
   const feedback = codeState in texts.feedback ? texts.feedback[codeState as keyof PageTexts['feedback']] : '';
 
+  // Timers of the screen, cleared when it unmounts (no state update after that).
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => {
+    const timers = timersRef.current;
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
   const setResendTimer = () => {
     setIsResendDisabled(true);
-    setTimeout(() => {
-      setIsResendDisabled(false);
-    }, CODE_RESEND_DELAY);
+    timersRef.current.push(setTimeout(() => setIsResendDisabled(false), CODE_RESEND_DELAY));
   };
 
   const setVerifyTimer = () => {
     setIsVerifyingEnabled(true);
-    setTimeout(() => {
-      setIsVerifyingEnabled(false);
-    }, CODE_VALIDATION_DELAY);
+    timersRef.current.push(setTimeout(() => setIsVerifyingEnabled(false), CODE_VALIDATION_DELAY));
   };
 
   const startAnimation = (state: CodeState) => {
@@ -167,10 +170,10 @@ export const MFAScreenTemplate = React.memo(function ({
     }
   }, [onVerified]);
 
-  // For kind `mfa` (no delay), the same is done once the success animation ends.
+  // For kind `mfa`, the redirection is done once the success animation ends (email and mobile: after a delay, see below).
   const onAnimationFinish = useCallback(() => {
-    if (isCodeCorrect) redirectEmailOrMobileMFA();
-  }, [isCodeCorrect, redirectEmailOrMobileMFA]);
+    if (isCodeCorrect && !isEmailOrMobileMFA) redirectEmailOrMobileMFA();
+  }, [isCodeCorrect, isEmailOrMobileMFA, redirectEmailOrMobileMFA]);
 
   useEffect(() => setResendTimer(), []);
 
@@ -179,7 +182,8 @@ export const MFAScreenTemplate = React.memo(function ({
       if (isCodeStateUnknown) {
         Toast.showError(I18n.get('auth-mfa-error-text'));
       } else if (isCodeCorrect && isEmailOrMobileMFA) {
-        setTimeout(() => redirectEmailOrMobileMFA(), CODE_REDIRECTION_DELAY);
+        const timer = setTimeout(() => redirectEmailOrMobileMFA(), CODE_REDIRECTION_DELAY);
+        return () => clearTimeout(timer);
       }
     }
   }, [isCodeCorrect, isCodeStateUnknown, isEmailOrMobileMFA, isVerifyingActive, redirectEmailOrMobileMFA]);
