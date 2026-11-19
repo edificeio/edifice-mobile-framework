@@ -1,6 +1,6 @@
 # Bascule : `support`
 
-> Statut : **basculé, pas joué dans l'app** — mis à jour le 2026-11-19
+> Statut : **basculé, ouverture jouée dans l'app (Android)** — mis à jour le 2026-11-19
 >
 > Premier module passé par la bascule seule (étape 1 d'[INTENT.md](INTENT.md)), pour éprouver le patron [BASCULE.md](BASCULE.md). Fait par un agent sans développeur pour répondre : chaque décision ci-dessous est un choix par défaut à valider.
 
@@ -19,11 +19,13 @@ Un écran : créer un ticket d'assistance (catégorie, établissement, sujet, de
 
 ## 3. Comportements à conserver
 
-Aucun flow Maestro n'existe encore pour ce module : ils sont à écrire sur l'ancienne génération (voir [.maestro/README.md](../../.maestro/README.md)). Le module n'a aucun `testID` : il faut en ajouter.
+Le comportement n° 1 a son flow, sans `testID` ajouté : carte `myapps-aide-et-support` (libellé affiché « Assistance ENT »), `header-title` avec le texte « Assistance ENT » (fragile : langue), retour par `BackButton|header-back` (les deux générations). Le 2026-11-19, sur Android (Pixel 6a, build Debug de la nouvelle génération, compte de recette) : vert deux fois de suite, rouge quand `support` est retiré de `src/app/config/modules.ts` (l'appli part alors dans le navigateur). Pas joué sur l'ancienne génération : pas de build de référence sur l'appareil.
+
+Les comportements 2 à 6 demandent des `testID` dans le formulaire, qui n'en a aucun (voir [.maestro/README.md](../../.maestro/README.md)).
 
 | # | Comportement | Flow | Passe sur l'ancienne | Passe après |
 | --- | --- | --- | :---: | :---: |
-| 1 | « Aide et support » s'ouvre dans l'app depuis « Mes applis », avec son titre et un bouton retour | à écrire | — | — |
+| 1 | « Aide et support » s'ouvre dans l'app depuis « Mes applis », avec son titre et un bouton retour | [`support-01-ouverture.yaml`](../../.maestro/flows/support-01-ouverture.yaml) | non joué | ✅ Android |
 | 2 | La liste des catégories est remplie ; le second sélecteur n'apparaît que sur un compte multi-établissements | à écrire | — | — |
 | 3 | Sujet saisi puis retour : alerte de confirmation ; « continuer » reste, « quitter » sort | à écrire | — | — |
 | 4 | Ajout d'une pièce jointe par chaque source, puis retrait | à écrire | — | — |
@@ -51,7 +53,8 @@ Vu et non touché :
 - `usePreventBack` (déprécié) vers `useConfirmRemove` ;
 - `rights.ts` vers `hasRight` de la configuration du module ;
 - la structure cible `model/`, `store/`, `service/api.ts` ;
-- le titre et le texte identiques dans l'alerte de sortie.
+- le titre et le texte identiques dans l'alerte de sortie ;
+- vu dans l'app le 2026-11-19 : la première catégorie proposée est `admin.title`, nom d'appli non traduit repris tel quel par le libellé de repli (`screen.tsx`, `mapStateToProps`) ; à comparer avec l'ancienne génération.
 
 ## 6. Décisions
 
@@ -79,8 +82,8 @@ Prises par défaut le 2026-11-18, à valider :
 | `tsc`, total du dépôt (2026-11-18, commit `e16838317`) | 777 | 777, identiques fichier par fichier |
 | ESLint sur le dossier | 6 erreurs, 3 avertissements | 3 erreurs, 3 avertissements, aucune nouvelle |
 | Jest | 431 | 431 ; aucun test ne couvre ce module |
-| Flows Maestro | aucun | aucun |
-| Parcours joué dans l'app | — | **non** |
+| Flows Maestro | aucun | `support-01` vert sur Android (2026-11-19) ; ancienne génération non jouée |
+| Parcours joué dans l'app | — | ouverture et retour seulement, par Maestro, sur Android ; formulaire et envoi **non** |
 
 Mesures du 2026-11-18, prises quand le module avait été déplacé dans `src/modules/support`. Il a été remis sur place le 2026-11-19 (chemins d'import seulement) ; remesuré sur le commit `2b57860e1` : les 5 mêmes erreurs `tsc` dans le module, ESLint 3 erreurs et 3 avertissements. Le total `tsc` du dépôt y est de 781, sans mesure d'avant sur ce commit.
 

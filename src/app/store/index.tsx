@@ -7,7 +7,6 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, compose, legacy_createStore as createStore, Store, StoreEnhancer } from 'redux';
 import { thunk, ThunkDispatch } from 'redux-thunk';
 
-import monitorReducerEnhancer from './monitor';
 import { reducer as startupReducer } from './startup';
 import { useModuleReducers } from '../module/hooks';
 import { AllModulesActions, AllModulesReducers, AllModulesState } from '../module/types';
@@ -31,7 +30,7 @@ export default function configureStore(reducers: AllModulesReducers) {
   const middlewares = [thunk];
   const middlewareEnhancer = applyMiddleware(...middlewares);
 
-  const enhancers = __DEV__ ? [middlewareEnhancer, monitorReducerEnhancer] : [middlewareEnhancer];
+  const enhancers = [middlewareEnhancer];
   const composedEnhancers: StoreEnhancer = compose(...enhancers);
 
   const rootReducer = combineReducers(reducers);

@@ -1,0 +1,45 @@
+# Comportement visé : « Assistance ENT » (appli ENT « Aide et support ») s'ouvre DANS l'app depuis « Mes applis »,
+# avec son titre ; le bouton retour ramène à « Mes applis ».
+# Fiche docs/migrations/support.md : §3 n° 1.
+#
+# Le contenu du formulaire n'est pas vérifié : l'écran n'a aucun testID (fiche §3). Un module non chargé ne s'ouvre
+# pas dans l'app (l'appli part dans le navigateur, avec une alerte de confirmation) : le titre attendu n'apparaît pas.
+appId: ${APP_ID}
+tags:
+  - support
+---
+- runFlow: 00-connexion.yaml
+- runFlow: communs/aller-mes-applis.yaml
+
+# La carte porte le `name` de l'appli ENT (« Aide et support »), pas son libellé affiché (« Assistance ENT »).
+- scrollUntilVisible:
+    element:
+      id: "myapps-aide-et-support"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "myapps-aide-et-support"
+
+# Titre de l'écran (texte français, fragile) : `header-title` seul ne distingue pas l'écran, tous les écrans en ont un.
+- extendedWaitUntil:
+    visible:
+      id: "header-title"
+      text: "Assistance ENT"
+    timeout: 15000
+- assertNotVisible:
+    id: "myapps-filter-all"
+- runFlow:
+    file: communs/capture.yaml
+    env:
+      NOM: "support-01-ecran"
+
+# Formulaire vide : le retour ne demande pas de confirmation. `BackButton` sur la nouvelle génération,
+# `header-back` sur l'ancienne (selecteurs.md §2).
+- tapOn:
+    id: "BackButton|header-back"
+- extendedWaitUntil:
+    visible:
+      id: "myapps-filter-all"
+    timeout: 10000
+- assertVisible:
+    id: "myapps-aide-et-support"
