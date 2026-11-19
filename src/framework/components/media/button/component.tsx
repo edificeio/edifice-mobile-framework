@@ -4,20 +4,20 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
-import { IPlayerProps } from './types';
-
 import { I18n } from '~/app/i18n';
+import { navigationRef } from '~/app/navigation';
 import theme from '~/app/theme';
+import { convertPlayableSourceToFileMedia } from '~/framework/components/carousel/utils/adapter';
 import { getScaleHeight, getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
 import MediaIcon from '~/framework/components/media/icon';
-import { openMediaPlayer } from '~/framework/components/media/player';
-import { MediaPlayerParams } from '~/framework/components/media/player/types';
 import { Svg } from '~/framework/components/picture';
 import { SmallItalicText } from '~/framework/components/text';
 import { MediaType } from '~/framework/modules/media';
 import { Image } from '~/framework/util/media-deprecated';
 import { sessionURISource } from '~/framework/util/transport';
+
+import styles from './styles';
+import { IPlayerProps } from './types';
 
 const iconSizeAudio = getScaleImageSize(20);
 const iconSizeVideo = getScaleImageSize(24);
@@ -43,11 +43,9 @@ const MediaButton = (props: IPlayerProps) => {
   };
 
   const showMediaPlayer = () => {
-    openMediaPlayer({
-      referer: props.referer,
-      source: sessionURISource(props.source),
-      type: props.type,
-    } as MediaPlayerParams);
+    navigationRef.navigate('media/carousel', {
+      media: [convertPlayableSourceToFileMedia(sessionURISource(props.source), props.type)],
+    });
   };
 
   const getPreviewVideo = () => {
