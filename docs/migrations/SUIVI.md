@@ -1,6 +1,6 @@
 # Suivi calculé de la migration
 
-> Généré par `yarn migration-status` le 2026-11-19, branche `feat/ia/migration-outillage`, commit `f9e168cb2`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
+> Généré par `yarn migration-status` le 2026-11-19, branche `feat/ia/migration-outillage`, commit `b9f623755`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
 
 ## En bref
 
@@ -24,7 +24,7 @@
 | `myapps` | bascule incomplète | 66 | 3758 | 0 | 5 | 1 | 0 | — | — | 6 |
 | `notifications` | basculé, sans test | 2 | 65 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `user` | basculé, sans test | 2 | 53 | 0 | 1 | 0 | 0 | — | — | 0 |
-| `support` | bascule incomplète | 9 | 479 | 0 | 1 | 0 | 1 | `workspace` | — | 0 |
+| `support` | bascule incomplète | 9 | 479 | 0 | 1 | 0 | 1 | `workspace` | — | 1 |
 
 ## Modules sur l'ancienne génération
 

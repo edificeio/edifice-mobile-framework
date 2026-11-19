@@ -59,7 +59,9 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
       }
       const ticketId = await props.postTicket(category, structure, subject, description, uploadedAttachments);
       navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.get('support-createticket-successmessage', { id: ticketId }));
+      Toast.showSuccess(I18n.get('support-createticket-successmessage', { id: ticketId }), {
+        testID: 'support-createticket-toast-success',
+      });
     } catch {
       setSending(false);
       Toast.showError(I18n.get('support-createticket-errormessage'));
@@ -84,7 +86,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
 
     const attachOpts = { callback: (file: LocalFile | LocalFile[]) => addAttachment(file as LocalFile[]) };
     return hasTicketCreationRights ? (
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.container} testID="support-createticket-form">
         <View>
           <BodyBoldText style={styles.titleText}>{I18n.get('support-createticket-reportincident')}</BodyBoldText>
           <SmallText style={styles.informationText}>{I18n.get('support-createticket-mobileonly')}</SmallText>
@@ -99,6 +101,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             dropDownContainerStyle={[styles.dropdownContainer, Platform.OS === 'android' && { position: 'relative', top: -16 }]}
             textStyle={styles.dropdownText}
             listMode="SCROLLVIEW"
+            testID="support-createticket-category"
           />
           {structures.length > 1 ? (
             <DropDownPicker
@@ -113,6 +116,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
               dropDownContainerStyle={styles.dropdownContainer}
               textStyle={styles.dropdownText}
               listMode="SCROLLVIEW"
+              testID="support-createticket-structure"
             />
           ) : null}
           <View style={{ zIndex: -2 }}>
@@ -120,7 +124,12 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
               {I18n.get('support-createticket-subject')}
               <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
             </SmallBoldText>
-            <TextInput value={subject} onChangeText={text => setSubject(text)} style={styles.subjectInput} />
+            <TextInput
+              value={subject}
+              onChangeText={text => setSubject(text)}
+              style={styles.subjectInput}
+              testID="support-createticket-subject"
+            />
             <SmallBoldText style={styles.inputLabelText}>
               {I18n.get('support-createticket-description')}
               <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
@@ -131,12 +140,15 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
               multiline
               textAlignVertical="top"
               style={styles.descriptionInput}
+              testID="support-createticket-description"
             />
             <View style={styles.attachmentsContainer}>
               <BottomMenu
                 title={I18n.get('support-createticket-addfiles')}
                 actions={fns.map(fn => fn('support', 'attachments', attachOpts))}>
-                <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
+                <View
+                  style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}
+                  testID="support-createticket-addfiles">
                   <SmallActionText style={styles.actionText}>{I18n.get('support-createticket-addfiles')}</SmallActionText>
                   <Svg name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
                 </View>
@@ -157,10 +169,15 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
           action={sendTicket}
           disabled={isActionDisabled}
           loading={isSending}
+          testID="support-createticket-send"
         />
       </ScrollView>
     ) : (
-      <EmptyScreen svgImage="empty-support" title={I18n.get('support-createticket-emptyscreen-title')} />
+      <EmptyScreen
+        svgImage="empty-support"
+        title={I18n.get('support-createticket-emptyscreen-title')}
+        testID="support-createticket-empty"
+      />
     );
   };
 
