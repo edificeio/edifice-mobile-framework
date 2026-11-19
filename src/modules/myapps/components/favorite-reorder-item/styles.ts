@@ -1,7 +1,8 @@
 import { StyleSheet, ViewStyle } from 'react-native';
 
-import theme from '~/app/theme';
+import theme, { type ThemeColorName } from '~/app/theme';
 import { UI_SIZES, UI_STYLES, UI_VALUES } from '~/framework/components/constants';
+import { getRegularColor } from '~/modules/myapps/components/my-apps-card';
 
 export const APP_ICON_SIZE = UI_SIZES.elements.icon.small;
 
@@ -77,4 +78,10 @@ export const styles = StyleSheet.create({
 export const getItemStyle = (isActive: boolean, isPlaceholder: boolean) => {
   if (isPlaceholder) return styles.itemPlaceholder;
   return isActive ? styles.itemActive : styles.item;
+};
+
+/** @param color the color of the app: the background of its icon. None without color: the grey one of `iconContainer` stays. */
+export const getIconBackgroundStyle = (color?: ThemeColorName) => {
+  const backgroundColor = getRegularColor(color);
+  return backgroundColor ? { backgroundColor } : undefined;
 };

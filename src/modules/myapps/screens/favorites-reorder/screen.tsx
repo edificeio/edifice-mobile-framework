@@ -12,7 +12,9 @@ import { defineModal, headerAction, headerRightActions } from '~/app/navigation-
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import Feedback from '~/framework/util/feedback/feedback';
-import { FavoriteReorderItem } from '~/modules/myapps/components/favorite-reorder-item/component';
+import { withSession } from '~/modules/auth/hoc';
+import type { AuthActiveAccount } from '~/modules/auth/model';
+import { FavoriteReorderItem } from '~/modules/myapps/components/favorite-reorder-item';
 import type { ListedApp } from '~/modules/myapps/model';
 import { I18n } from '~/util/i18n';
 
@@ -45,10 +47,10 @@ const renderPlaceholder = ({ item }: { item: ListedApp }) => (
   </View>
 );
 
-function MyAppsFavoritesReorderScreen({}: StaticScreenProps<undefined>) {
+function MyAppsFavoritesReorderScreen({ session }: StaticScreenProps<undefined> & { session: AuthActiveAccount }) {
   const navigation = useNavigation();
   const { draftOrder, hasOrderChanged, onDragEnd, reorderCount } = useFavoritesOrder();
-  const { isSaving, save } = useSaveFavoritesOrder(draftOrder, hasOrderChanged);
+  const { isSaving, save } = useSaveFavoritesOrder(session, draftOrder, hasOrderChanged);
 
   // New keys after each reorder, so that the list mounts new rows. The list keeps each moved row shifted until the
   // row reports its new layout: on Android, that comes one frame after the new order is drawn, and the moved rows
@@ -98,5 +100,5 @@ export default defineModal({
     statusBarStyle: 'dark',
     title: I18n.get('myapp-reorderfavorites-title'),
   }),
-  screen: MyAppsFavoritesReorderScreen,
+  screen: withSession<StaticScreenProps<undefined>>(MyAppsFavoritesReorderScreen),
 });

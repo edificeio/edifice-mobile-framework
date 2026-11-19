@@ -5,12 +5,12 @@ import { FlashList, FlashListProps, ListRenderItem } from '@shopify/flash-list';
 
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { SmallBoldText } from '~/framework/components/text';
-import { MyAppsCard } from '~/modules/myapps/components/my-apps-card/component';
+import { MyAppsCard } from '~/modules/myapps/components/my-apps-card';
 import { I18n } from '~/util/i18n';
 
 import { styles } from './styles';
 import { MyAppsListItem, MyAppsListProps } from './types';
-import { buildAllAppsCategoryList, buildAppItem, isSeparator } from './utils';
+import { buildAllAppsCategoryList, buildAppItem, isSeparator } from './util';
 
 const NUM_COLUMNS = 2;
 

@@ -10,8 +10,9 @@ import { defineModal, headerAction, headerCustom, headerRightActions } from '~/a
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import SearchBar from '~/framework/components/search-bar';
-import { MyAppsList } from '~/modules/myapps/components/my-apps-list/component';
-import { EMPTY_SCREEN_CONFIG } from '~/modules/myapps/components/my-apps-list/utils';
+import { withSession } from '~/modules/auth/hoc';
+import type { AuthActiveAccount } from '~/modules/auth/model';
+import { EMPTY_SCREEN_CONFIG, MyAppsList } from '~/modules/myapps/components/my-apps-list';
 import type { ListedApp } from '~/modules/myapps/model';
 import { I18n } from '~/util/i18n';
 
@@ -22,11 +23,11 @@ import { styles } from './styles';
 const savingIndicator = () =>
   headerCustom(<ActivityIndicator size={UI_SIZES.elements.navbarIconSize} color={theme.palette.grey.black} />);
 
-function MyAppsFavoritesScreen({}: StaticScreenProps<undefined>) {
+function MyAppsFavoritesScreen({ session }: StaticScreenProps<undefined> & { session: AuthActiveAccount }) {
   const navigation = useNavigation();
   const [searchFocused, setSearchFocused] = React.useState(false);
   const { apps, hasUnsavedChanges, query, selected, setQuery, toggle } = useFavoritesSelection();
-  const { isSaving, validate } = useSaveFavorites(selected, hasUnsavedChanges);
+  const { isSaving, validate } = useSaveFavorites(session, selected, hasUnsavedChanges);
 
   // The button depends on the selection, a state of the screen: set by the screen, as react-navigation advises for such buttons
   React.useLayoutEffect(() => {
@@ -72,8 +73,8 @@ export default defineModal({
     headerShadowVisible: false,
     headerStyle: { backgroundColor: theme.ui.background.card?.toString() },
     headerTintColor: theme.ui.text.regular?.toString(),
-    headerTitle: '',
+    headerTitle: () => '', // No title: `title: ''` would show the name of the route (CONVENTIONS « UI »)
     statusBarStyle: 'dark',
   }),
-  screen: MyAppsFavoritesScreen,
+  screen: withSession<StaticScreenProps<undefined>>(MyAppsFavoritesScreen),
 });

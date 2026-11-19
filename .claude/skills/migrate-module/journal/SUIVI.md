@@ -1,6 +1,6 @@
 # Suivi calculé de la migration
 
-> Généré par `yarn migration-status` le 2026-11-19, branche `feat/ia/migration-outillage`, commit `ddc002c55`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
+> Généré par `yarn migration-status` le 2026-11-19, branche `feat/ia/migration-outillage`, commit `e526a6cf0`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
 
 ## En bref
 
@@ -18,10 +18,10 @@
 | Module | Statut | Fichiers | Lignes | Écrans anciens | Écrans nouveaux | Navigation ancienne | `connect(` | Modules anciens importés | Notif. | Flows |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | :---: | ---: |
 | `audience` | basculé, sans test | 2 | 48 | 0 | 0 | 0 | 0 | — | — | 0 |
-| `auth` | bascule incomplète | 169 | 9939 | 0 | 22 | 1 | 0 | — | — | 0 |
+| `auth` | bascule incomplète | 169 | 9932 | 0 | 22 | 1 | 0 | — | — | 0 |
 | `editor` | basculé, sans test | 1 | 18 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `media` | bascule incomplète | 63 | 3541 | 0 | 2 | 1 | 0 | — | — | 0 |
-| `myapps` | basculé, testable | 56 | 3059 | 0 | 5 | 0 | 0 | — | — | 6 |
+| `myapps` | basculé, testable | 73 | 3134 | 0 | 5 | 0 | 0 | — | — | 6 |
 | `notifications` | basculé, sans test | 2 | 65 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `user` | basculé, sans test | 2 | 53 | 0 | 1 | 0 | 0 | — | — | 0 |
 | `support` | basculé, testable | 10 | 535 | 0 | 1 | 0 | 0 | `workspace` | — | 1 |

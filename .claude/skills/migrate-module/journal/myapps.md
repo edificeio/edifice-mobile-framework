@@ -1,6 +1,8 @@
 # Migration : `myapps`
 
-> Statut : **en cours** (spec v2 validée le 2026-11-04 ; phases 0 à 4 faites) — mise à jour le 2026-11-06
+> Statut : **fait** (phases 0 à 7 faites le 2026-11-10 ; harmonisé avec les règles des skills le 2026-11-19 ; pas testé dans l'app) — mise à jour le 2026-11-19
+>
+> Ancienne fiche longue (statuts `spec` · `en cours` · `fait` · `nettoyé`, voir [README.md](README.md)). §2 décrit l'ancien module, **supprimé** en phase 7 ; les décisions et l'avancement d'avant le 2026-11-17 parlent d'`entry` / `tab.route`, remplacés par `entries` (§9, 2026-11-17).
 
 Les règles communes à toute la migration sont dans [CONVENTIONS.md](../CONVENTIONS.md) et ne sont pas répétées ici.
 
@@ -209,13 +211,14 @@ src/modules/myapps/
 │   └── selectors.ts
 ├── storage.ts                  Storage.account `myapps` (clés inchangées) + format de l'onboarding stocké
 ├── hooks/                      API publique (§5.5) : apps.ts (apps, modules, libellés d'onglets), display.ts (affichage d'une app), list.ts (favoris, filtres)
-├── screens/
-│   ├── home/                   MyAppsHomeScreen (defineScreen)
-│   ├── menu.tsx                formSheet (ex-sheet `home_menu`)
-│   ├── app-actions.tsx         formSheet (ex-sheet `app_actions`)
-│   ├── favorites/              ManageFavoritesModalScreen (defineModal)
+├── screens/                    Un dossier par écran : screen.tsx (defineScreen / defineModal) + index.ts qui réexporte, styles.ts, hooks.ts
+│   ├── home/                   MyAppsHomeScreen (defineScreen, withSession), header.tsx
+│   ├── menu/                   formSheet (ex-sheet `home_menu`)
+│   ├── app-actions/            formSheet (ex-sheet `app_actions`, withSession)
+│   ├── favorites/              MyAppsFavoritesScreen (defineModal, withSession)
 │   └── onboarding/             MyAppsOnboardingModal (transparentModal)
-└── components/                 MyAppsCard, MyAppsList, MyAppsFilters, MyAppsFilterCell, MyAppsMenuItem
+└── components/                 Un dossier par composant (component.tsx, styles.ts, types.ts, index.ts) : MyAppsCard, MyAppsList,
+                                MyAppsFilters, MyAppsFilterCell, MyAppsMenuItem, MyAppsOnboardingSlide, Sheet (contenu commun des sheets)
 ```
 
 `src/modules/myapps` existe déjà et reste là (pas de migration « sur place » dans `framework/modules`).
@@ -470,6 +473,8 @@ Plus de façade pour les autres modules (relecture du 2026-11-06) : ils passent 
   - `use-cases.ts` disparaît. **`actions.ts`** (racine du module) regroupe les actions déclenchées par l'utilisateur : les thunks `refreshMyApps`, `toggleFavorite`, `saveFavorites` y passent ; plus tard, ouvrir une app ;
   - `store/` ne garde que la plomberie Redux ; ses types d'actions et action creators passent dans `store/action-creators.ts` (ex-`store/actions.ts`), pour ne pas confondre avec `actions.ts` et rester proche de la terminologie Redux.
 
+- **2026-11-19** (utilisateur) — Harmonisation avec les règles des skills, mêmes décisions que pour `auth` ([auth.md](auth.md) §6) : écrans en dossiers (`screen.tsx` + `index.ts`) ; **`Sheet` n'est pas un template** mais un composant du module (`components/sheet/`), `menu` et `app-actions` ont leur dossier (règle générale dans [CONVENTIONS.md](../CONVENTIONS.md) « Dossier d'un écran ») ; actions qui reçoivent la session ; `index.ts` dans chaque composant ; styles statiques dans `styles.ts` ; `headerTitle: () => ''` ; erreurs `tsc` / ESLint non traitées ; marqueurs `ToDo` laissés.
+
 ## 8. Questions ouvertes
 
 Aucune question bloquante. Ce qui est remis à plus tard est dans [later.md](later.md).
@@ -623,3 +628,12 @@ Aucune question bloquante. Ce qui est remis à plus tard est dans [later.md](lat
 - 2026-11-11 : **recherche de `MyAppsFilters`** (sujet de [later.md](later.md) tranché par l'utilisateur) : on garde la recherche animée faite main, conforme au design fourni ; pas de `headerSearchBarOptions`. Aucun changement de code. §4 n° 13 clos.
 - 2026-11-11 : **détails de `GET /api/me/applications`** (sujet de [later.md](later.md) tranché par l'utilisateur) : on ne change rien. Détection des bibliothèques par l'adresse (`library.edifice.io`, sans catégorie), `libraries` et `isExternal` ignorés, pas de repli sur `/applications-list` + `/myApps/config` : c'est le comportement du client web, voulu à l'identique. Aucun changement de comportement ; les commentaires de `classification.ts` (`ToDo` retiré) et `service/types.ts` le disent.
 - 2026-11-17 : **`entry` et `tab` remplacés par `entries`** (évolution du framework décidée pour `user`, [user.md](user.md) §5.3) : `entries: { myApps: { route: 'myapps/home' }, tab: { route: 'myapps/home', … } }`, `hasEntry` lit `entries.myApps`. Aucun changement de comportement. Le §5 est à jour ; les décisions et l'avancement plus anciens parlent encore d'`entry`.
+- 2026-11-19 : **harmonisation avec les règles des skills** (revue face à `/migrate-module` et `/sanitize-module`, décisions de l'utilisateur, non commité).
+  - Écrans : `screens/<écran>/screen.tsx` + `index.ts` qui réexporte (`home`, `favorites`, `onboarding`, et `menu`, `app-actions` passés de fichiers à dossiers). `menu` a son `styles.ts` (`infoMessageItem`).
+  - `screens/sheet.tsx` → `components/sheet/` (`component.tsx` : `Sheet`, `MenuIcon`, `Separator` ; `styles.ts` ; `options.ts` : `sheetOptions` ; `index.ts`). `screens/onboarding/slide.tsx` et `types.ts` → `components/my-apps-onboarding-slide/` (styles de la slide séparés de ceux de l'écran).
+  - Composants : un `index.ts` par dossier (export nommé + par défaut + types), importés par leur dossier, plus par `…/component` ; `utils.ts` → `util.ts` (`my-apps-card`, `my-apps-list`) ; styles de `MyAppsCard` sortis de `useStyles` (`hooks.ts`) vers `styles.ts`, le fond de la carte par `getCardBackgroundStyle(color)`.
+  - Session : `refreshMyApps(session)`, `toggleFavorite(session, appName)`, `saveFavorites(session, names)` ; les callbacks de `useEntApps().refresh`, `useFavorites().toggle` / `.save` la reçoivent ; `home`, `app-actions`, `favorites` sont sous `withSession`. Le test des actions n'utilise plus le store d'auth.
+  - `myapps/favorites` : `headerTitle: () => ''` (exception de CONVENTIONS « UI »).
+  - Non traité (décidé) : ESLint, `I18n` importé sans être utilisé dans `service/index.ts` (sujet `erreurs`) ; les deux `ToDo(myapps-migration)` d'`accessibilityLabel` de `screens/home/header.tsx`.
+  - Vérifié : `tsc` 770, identiques par fichier et par code (aucune erreur dans le module) ; ESLint du module : 1 erreur, préexistante ; Jest 447/447 ; `testID` inchangés ; `yarn migration-status --check` vert. **Pas testé dans l'app.**
+  - Recette : flows Maestro `myapps-01` à `myapps-06` ; à la main : tirer pour rafraîchir et « réessayer » de l'écran vide ; appui long → ajouter / retirer un favori (toast) ; menu « ⋯ » → gérer les favoris, enregistrer, quitter avec des modifications (confirmation) ; fond coloré des cartes ; onboarding (slides, animations).

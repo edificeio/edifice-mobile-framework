@@ -9,7 +9,7 @@ import { Svg } from '~/framework/components/picture';
 import SearchBar from '~/framework/components/search-bar';
 import { SearchBarHandle } from '~/framework/components/search-bar/types';
 import { SmallActionText } from '~/framework/components/text';
-import { MyAppsFilterCell } from '~/modules/myapps/components/my-apps-filter-cell/component';
+import { MyAppsFilterCell } from '~/modules/myapps/components/my-apps-filter-cell';
 import { I18n } from '~/util/i18n';
 
 import { isSameFilter, MY_APPS_FILTERS, MyAppsFilterItem } from './filter-config';

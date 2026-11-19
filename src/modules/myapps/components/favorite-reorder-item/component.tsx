@@ -8,12 +8,11 @@ import { genericHitSlop } from '~/framework/components/constants';
 import { Svg, SvgProps } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { Image } from '~/modules/media/components';
-import type { AppIcon } from '~/modules/myapps/components/my-apps-card/types';
-import { getRegularColor, resolveAppIcon } from '~/modules/myapps/components/my-apps-card/utils';
+import { type AppIcon, resolveAppIcon } from '~/modules/myapps/components/my-apps-card';
 import type { EntApp } from '~/modules/myapps/model';
 import { getAppTestID } from '~/modules/myapps/util';
 
-import { APP_ICON_SIZE, getItemStyle, styles } from './styles';
+import { APP_ICON_SIZE, getIconBackgroundStyle, getItemStyle, styles } from './styles';
 
 interface FavoriteReorderItemProps {
   app: EntApp;
@@ -52,13 +51,9 @@ export const FavoriteReorderItem = React.memo(function FavoriteReorderItemCompon
   const [hasIconError, setHasIconError] = React.useState(false);
 
   const appIcon = React.useMemo(() => resolveAppIcon(app.icon), [app.icon]);
-  const appColor = getRegularColor(app.color);
-  const iconContainerStyle = React.useMemo(
-    () => (appColor ? [styles.iconContainer, { backgroundColor: appColor }] : styles.iconContainer),
-    [appColor],
-  );
+  const iconContainerStyle = React.useMemo(() => [styles.iconContainer, getIconBackgroundStyle(app.color)], [app.color]);
   // White on the color of the app, black without one
-  const iconFill = appColor ? theme.palette.grey.white : theme.palette.grey.black;
+  const iconFill = app.color ? theme.palette.grey.white : theme.palette.grey.black;
 
   const onIconError = React.useCallback(() => setHasIconError(true), []);
 

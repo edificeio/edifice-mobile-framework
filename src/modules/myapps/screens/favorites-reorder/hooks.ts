@@ -5,6 +5,7 @@ import type { DragEndParams } from 'react-native-draggable-flatlist';
 
 import { useConfirmRemove } from '~/app/navigation-new';
 import Toast from '~/framework/components/toast';
+import type { AuthActiveAccount } from '~/modules/auth/model';
 import { useFavorites, useFilteredApps } from '~/modules/myapps/hooks';
 import type { ListedApp, MyAppsFilter } from '~/modules/myapps/model';
 import { I18n } from '~/util/i18n';
@@ -35,7 +36,7 @@ export const useFavoritesOrder = () => {
  * Saves the order, then closes the modal: only once saved, as the modal of the favorites. Closing the modal with an unsaved order, by
  * its button or by a gesture, asks for a confirmation first.
  */
-export const useSaveFavoritesOrder = (draftOrder: ListedApp[], hasOrderChanged: boolean) => {
+export const useSaveFavoritesOrder = (session: AuthActiveAccount, draftOrder: ListedApp[], hasOrderChanged: boolean) => {
   const navigation = useNavigation();
   const { reorder } = useFavorites();
   const [isSaving, setIsSaving] = React.useState(false);
@@ -54,16 +55,17 @@ export const useSaveFavoritesOrder = (draftOrder: ListedApp[], hasOrderChanged: 
   }, [isSaved, navigation]);
 
   const save = React.useCallback(async () => {
+    const orderedNames = draftOrder.map(item => item.app.name);
     setIsSaving(true);
     try {
-      await reorder(draftOrder.map(item => item.app.name));
+      await reorder(session, orderedNames);
       setIsSaved(true);
     } catch (e) {
       console.error('[MyApps] Failed to save the order of the favorites', e);
       Toast.showError(I18n.get('myapp-add-favorite-error-message'));
       setIsSaving(false);
     }
-  }, [draftOrder, reorder]);
+  }, [draftOrder, reorder, session]);
 
   return { isSaving, save };
 };

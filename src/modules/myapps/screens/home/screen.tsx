@@ -10,10 +10,10 @@ import { FlashListRef } from '@shopify/flash-list';
 import { defineScreen } from '~/app/navigation-new';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import Feedback from '~/framework/util/feedback/feedback';
-import { MyAppsFilters } from '~/modules/myapps/components/my-apps-filters/component';
-import { MyAppsList } from '~/modules/myapps/components/my-apps-list/component';
-import type { MyAppsListItem } from '~/modules/myapps/components/my-apps-list/types';
-import { EMPTY_SCREEN_CONFIG } from '~/modules/myapps/components/my-apps-list/utils';
+import { withSession } from '~/modules/auth/hoc';
+import type { AuthActiveAccount } from '~/modules/auth/model';
+import { MyAppsFilters } from '~/modules/myapps/components/my-apps-filters';
+import { EMPTY_SCREEN_CONFIG, MyAppsList, type MyAppsListItem } from '~/modules/myapps/components/my-apps-list';
 import { useEntApps, useFavorites, useFilteredApps, useHasAppsToList, useOpenApp } from '~/modules/myapps/hooks';
 import type { ListedApp, MyAppsFilter } from '~/modules/myapps/model';
 import { Loading } from '~/ui/Loading';
@@ -33,7 +33,7 @@ const ALL_APPS: MyAppsFilter = { type: 'all' };
 const getEmptyScreenConfig = (filter: MyAppsFilter) =>
   filter.type === 'favorites' || filter.type === 'search' ? EMPTY_SCREEN_CONFIG[filter.type] : EMPTY_SCREEN_CONFIG.other;
 
-function MyAppsHomeScreen({ route }: StaticScreenProps<MyAppsHomeParams | undefined>) {
+function MyAppsHomeScreen({ route, session }: StaticScreenProps<MyAppsHomeParams | undefined> & { session: AuthActiveAccount }) {
   const navigation = useNavigation();
   // In the params: the buttons of the header read it (the menu depends on it)
   const filter = route.params?.filter ?? ALL_APPS;
@@ -49,11 +49,11 @@ function MyAppsHomeScreen({ route }: StaticScreenProps<MyAppsHomeParams | undefi
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     try {
-      await refresh();
+      await refresh(session);
     } finally {
       setRefreshing(false);
     }
-  }, [refresh]);
+  }, [refresh, session]);
 
   // Back to the top of the list when its tab is pressed again (§4 n° 10)
   const listRef = React.useRef<FlashListRef<MyAppsListItem>>(null);
@@ -116,5 +116,5 @@ export default defineScreen({
     title: I18n.get('myapp-appname'),
     ...homeHeaderActions(route.params?.filter),
   }),
-  screen: MyAppsHomeScreen,
+  screen: withSession<StaticScreenProps<MyAppsHomeParams | undefined>>(MyAppsHomeScreen),
 });
