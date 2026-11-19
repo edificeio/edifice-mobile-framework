@@ -12,6 +12,14 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-19 — Intention, suivi calculé, tests Maestro, bascule de `support` (`feat/ia/migration-outillage`)
+
+- Fait : [INTENT.md](INTENT.md) (contexte, migration en deux étapes, règles de conduite, définition de « terminé ») ; [BASCULE.md](BASCULE.md) (patron de l'étape 1) et [\_template-bascule.md](_template-bascule.md) ; `yarn migration-status` (`cli/migration-status.js`) qui génère [SUIVI.md](SUIVI.md) et `suivi.json`, avec `--check` qui échoue si un compteur de l'ancienne génération augmente ; suite Maestro dans `.maestro/` (connexion, six flows `myapps`, guide), script `yarn e2e` ; bascule de `support` sur place ([support.md](support.md)) : 11 fichiers, +47 / −79.
+- Décidé : rien. Tout ce qui est écrit ici est une proposition à relire ; les choix pris pour `support` sont des choix par défaut ([support.md](support.md) §6).
+- Vérifié : `yarn migration-status` (8 modules sur 41 sur la nouvelle génération, 97 écrans anciens) ; `tsc`, ESLint et Jest sur `support` le 2026-11-18, avant sa remise sur place. **Pas testé dans l'app. Aucun flow Maestro n'a tourné.**
+- En suspens : `support` importe l'ancien `workspace` pour l'envoi des pièces jointes (aussi importé par `blog`, `homework`, `mails`, `user`) ; `support` n'a aucun `testID` ; trois `testID` ont changé avec la migration (`header-back` → `BackButton`, `network-welcome-version` → `network-welcome-subtitle`, `network-version-number` disparu), à l'encontre de la règle « `testID` inchangés ».
+- Prochaine étape : faire passer `.maestro/flows/00-connexion.yaml` puis `myapps-01-liste.yaml` sur un build de l'ancienne génération ([.maestro/README.md](../../.maestro/README.md)) ; jouer `support` dans l'app ; trancher les questions ouvertes de [support.md](support.md).
+
 ## 2026-11-18 — Révision de la cible d'`explorer` (`feat/navigation`)
 
 - Fait : [explorer.md](explorer.md) §1, §3, §4 n° 4 et 10, §5, §6 (phases 2 à 4), §7 ; [wiki.md](wiki.md) §5.1, §5.2, §7. Aucun code modifié.

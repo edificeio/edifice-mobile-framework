@@ -30,6 +30,7 @@
     "ios": "react-native run-ios",
     "lint-all": "eslint .",
     "lint-fix": "eslint . --fix",
+    "migration-status": "node cli/migration-status.js",
     "override": "node cli/override.js -l",
     "override-local": "node cli/override.js --local -l",
     "override-silent": "node cli/override.js -v --no-i $CONFIG_TO",
