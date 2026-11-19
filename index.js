@@ -7,8 +7,6 @@ Log.init();
 if (__DEV__) {
   globalThis.RNFBDebug = true;
   require('./src/app/debug/promise-rejections').trackPromiseRejections();
-  require('./src/app/reactotron.ts');
-  console.debug('Reactotron initialized');
 }
 
 // Add URLSearchParams polyfill as it is not implemented in React Native.
