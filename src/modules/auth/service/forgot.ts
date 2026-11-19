@@ -1,8 +1,8 @@
 import appConf from '~/framework/util/appConf';
 import { platformFetch } from '~/framework/util/transport';
-import type { ForgotMode } from '~/modules/auth/model';
+import type { ForgotMode, ForgotResponse } from '~/modules/auth/model';
 
-import type { ForgotResponse } from './types';
+import type { API } from './types';
 
 /**
  * Asks the platform to send a mail to reset the password, or to remind the login id.
@@ -32,7 +32,7 @@ export async function forgot<Mode extends ForgotMode>(
     method: 'POST',
   });
   const resStatus = res.status;
-  const resJson = await res.json();
+  const resJson: API.ForgotResponse = await res.json();
   const ok = resStatus >= 200 && resStatus < 300;
   return { ...resJson, ok };
 }

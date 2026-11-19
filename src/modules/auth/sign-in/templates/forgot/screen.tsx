@@ -2,20 +2,21 @@ import * as React from 'react';
 import { TextInput as RNTextInput, View } from 'react-native';
 
 import DropDownPicker from 'react-native-dropdown-picker';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import PrimaryButton from '~/framework/components/buttons/primary';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import TextInput from '~/framework/components/inputs/text';
-import { KeyboardPageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Svg } from '~/framework/components/picture';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 import { containsKey } from '~/framework/util/object';
-import type { ForgotResponse } from '~/modules/auth/service/types';
+import type { ForgotResponse } from '~/modules/auth/model';
 import { useSignInNavigation } from '~/modules/auth/sign-in/navigation';
 import { ValidatorBuilder } from '~/util/form';
 import { I18n } from '~/util/i18n';
@@ -323,8 +324,15 @@ export const SignInForgotScreenTemplate = React.memo(function ({
     [isError, isSuccess, editing],
   );
 
+  const { bottom } = useSafeAreaInsets();
+
   return (
-    <KeyboardPageView scrollable safeArea style={styles.page}>
+    <KeyboardAwareScrollView
+      style={UI_STYLES.flex1}
+      contentContainerStyle={React.useMemo(() => [styles.page, { paddingBottom: bottom }], [bottom])}
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+      keyboardShouldPersistTaps="handled">
       <View style={styles.infos}>
         {renderPlatform()}
         {renderInstructions()}
@@ -337,6 +345,6 @@ export const SignInForgotScreenTemplate = React.memo(function ({
         {renderButtons()}
         {renderNoMatchError()}
       </View>
-    </KeyboardPageView>
+    </KeyboardAwareScrollView>
   );
 });

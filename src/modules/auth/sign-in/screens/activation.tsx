@@ -5,10 +5,10 @@ import type { StaticScreenProps } from '@react-navigation/native';
 import { defineScreen } from '~/app/navigation-new';
 import type { Platform } from '~/framework/util/appConf';
 import type { AuthCredentials } from '~/modules/auth/model';
+import { useSignIn } from '~/modules/auth/sign-in/hooks';
 import SignInActivationScreenTemplate, {
   type SignInActivationScreenTemplateProps,
 } from '~/modules/auth/sign-in/templates/activation';
-import { useSignIn } from '~/modules/auth/sign-in/use-sign-in';
 import { useOpenMedia } from '~/modules/media/hooks';
 import { I18n } from '~/util/i18n';
 

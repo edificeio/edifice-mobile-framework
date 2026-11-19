@@ -1,7 +1,7 @@
 import { getModuleTransport } from '~/framework/util/transport';
 import { AuthLoggedAccount, AuthRequirement } from '~/modules/auth/model';
 
-import type { IUserRequirements } from './types';
+import type { API } from './types';
 
 // Typed with the scopes of the module (see `getModuleTransport`)
 const { tokenFetch } = getModuleTransport('auth');
@@ -22,7 +22,7 @@ export const requirements = {
    * @param userRequirements get userRequirements from `fetchUserRequirements()`
    * @returns the first flag encountered (until there is none).
    */
-  getNextNeeded: (userRequirements: IUserRequirements) => {
+  getNextNeeded: (userRequirements: API.UserRequirementsResponse) => {
     // Note : MUST_CHANGE_PASSWORD need to be first, otherwise the other cases will not work and will be http 302.
     if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
     if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
@@ -31,7 +31,7 @@ export const requirements = {
     if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
   },
   getState: async ({ tokens }: Pick<AuthLoggedAccount, 'tokens'>) =>
-    tokenFetch.json<IUserRequirements>(tokens, '/auth/user/requirements'),
+    tokenFetch.json<API.UserRequirementsResponse>(tokens, '/auth/user/requirements'),
 };
 
 /** Tells the platform that the user accepted the (new) terms of use. */

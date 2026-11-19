@@ -11,6 +11,7 @@ import PhoneInput, {
   isValidNumber,
 } from 'react-native-phone-number-input';
 
+import { useConfirmRemove } from '~/app/navigation-new';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -20,7 +21,6 @@ import { Picture, Svg } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/prevent-back';
 import { isEmpty } from '~/framework/util/object';
 import { I18n } from '~/util/i18n';
 
@@ -125,8 +125,7 @@ export const VerifyMobileScreenTemplate = React.memo(function ({
     }
   }, [onRefuse]);
 
-  usePreventBack({
-    showAlert: confirmLeaveWhenEdited && !isMobileEmpty && mobileState !== 'PRISTINE' && isScreenFocused,
+  useConfirmRemove(confirmLeaveWhenEdited && !isMobileEmpty && mobileState !== 'PRISTINE' && isScreenFocused, {
     text: I18n.get('auth-change-mobile-edit-alert-message'),
     title: I18n.get('auth-change-mobile-edit-alert-title'),
   });

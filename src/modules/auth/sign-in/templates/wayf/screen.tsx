@@ -18,7 +18,6 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
-import { toURISource } from '~/framework/modules/media';
 import appConf from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
@@ -28,6 +27,7 @@ import { deviceURISource } from '~/framework/util/transport';
 import { FetchErrorCode } from '~/framework/util/transport/error';
 import { AccountErrorCode } from '~/modules/auth/model/error';
 import { trackingWayfEvents } from '~/modules/auth/tracking';
+import { toURISource } from '~/modules/media/util';
 import { Loading } from '~/ui/Loading';
 import { I18n } from '~/util/i18n';
 

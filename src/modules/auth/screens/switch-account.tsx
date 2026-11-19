@@ -4,8 +4,8 @@ import { StaticScreenProps, useNavigation } from '@react-navigation/native';
 
 import { defineModal } from '~/app/navigation-new';
 import { useAuthFlows } from '~/modules/auth/flows';
-import { useRemoveAccountHandler } from '~/modules/auth/hooks/remove-account';
 import type { AuthActiveAccount, AuthSavedAccount } from '~/modules/auth/model';
+import { useRemoveAccountHandler } from '~/modules/auth/screens/hooks';
 import { getActiveAccount } from '~/modules/auth/store/accounts';
 import AccountListSheetScreenTemplate, { accountListSheetOptions } from '~/modules/auth/templates/account-list-sheet';
 import { trackingAccountEvents } from '~/modules/auth/tracking';

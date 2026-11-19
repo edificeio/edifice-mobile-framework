@@ -9,6 +9,7 @@ import {
   AuthRequirement,
   AuthSavedLoggedInAccount,
   InitialAuthenticationMethod,
+  SignInResult,
 } from '~/modules/auth/model';
 
 import { activateAccount } from './activation';
@@ -18,7 +19,6 @@ import { forgot } from './forgot';
 import { platformConfig } from './platform';
 import { requirements, requirementsThatNeedLegalUrls, revalidateTerms } from './requirements';
 import { getOneSessionId, getQueryParamToken, getToken } from './token';
-import type { SignInResult } from './types';
 import * as userinfo from './userinfo';
 import { emailValidation, mfaValidation, mobileValidation } from './validation';
 

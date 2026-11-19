@@ -10,9 +10,9 @@ import {
   type IActivationError,
   type IActivationPayload,
   type IChangePasswordPayload,
+  SignInResult,
 } from '~/modules/auth/model';
 import service from '~/modules/auth/service';
-import type { SignInResult } from '~/modules/auth/service/types';
 import { useSignInStore } from '~/modules/auth/sign-in/store';
 import { getPlatformContext } from '~/modules/auth/store/platform-context';
 import track, { withTracking } from '~/modules/auth/tracking';

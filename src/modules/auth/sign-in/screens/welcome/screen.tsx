@@ -10,10 +10,10 @@ import { defineScreen } from '~/app/navigation-new';
 import { ButtonGroup, PrimaryButton, SecondaryButton } from '~/framework/components/button';
 import { UI_STYLES } from '~/framework/components/constants';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
-import { Image } from '~/framework/modules/media/components';
 import appConf from '~/framework/util/appConf';
 import { openUrl } from '~/framework/util/linking';
 import { getRouteForOnboarding, useSignInNavigation } from '~/modules/auth/sign-in/navigation';
+import { Image } from '~/modules/media/components';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';

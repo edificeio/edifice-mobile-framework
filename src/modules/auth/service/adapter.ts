@@ -18,13 +18,7 @@ import {
   UserChildren,
 } from '~/modules/auth/model';
 
-import {
-  AccountTypeBackend,
-  IUserInfoBackend,
-  UserPersonDataBackend,
-  UserPersonDataStructureWithClasses,
-  UserPrivateData,
-} from './types';
+import { API } from './types';
 
 export function formatSession(
   tokens: (AuthActiveAccount | AuthSavedLoggedInAccount)['tokens'],
@@ -32,10 +26,10 @@ export function formatSession(
   logTimestamp: number,
   platform: Platform,
   loginUsed: string | undefined,
-  userinfo: IUserInfoBackend,
+  userinfo: API.IUserInfoBackend,
   method?: InitialAuthenticationMethod,
-  userPrivateData?: UserPrivateData,
-  userPublicInfo?: UserPersonDataBackend,
+  userPrivateData?: API.UserPrivateData,
+  userPublicInfo?: API.UserPersonDataBackend,
   rememberMe?: boolean,
 ): AuthActiveAccount {
   if (
@@ -112,7 +106,7 @@ export function formatSession(
 
 export function formatStructuresWithClasses(
   structureNodes?: StructureNode[],
-  structuresWithClasses?: UserPersonDataStructureWithClasses[],
+  structuresWithClasses?: API.UserPersonDataStructureWithClasses[],
 ) {
   return structureNodes?.map(structure => ({
     ...structure,
@@ -120,17 +114,17 @@ export function formatStructuresWithClasses(
   }));
 }
 
-export function parseAccountType(type: AccountTypeBackend): AccountType {
+export function parseAccountType(type: API.AccountTypeBackend): AccountType {
   switch (type) {
-    case AccountTypeBackend.Guest:
+    case API.AccountTypeBackend.Guest:
       return AccountType.Guest;
-    case AccountTypeBackend.Personnel:
+    case API.AccountTypeBackend.Personnel:
       return AccountType.Personnel;
-    case AccountTypeBackend.Relative:
+    case API.AccountTypeBackend.Relative:
       return AccountType.Relative;
-    case AccountTypeBackend.Student:
+    case API.AccountTypeBackend.Student:
       return AccountType.Student;
-    case AccountTypeBackend.Teacher:
+    case API.AccountTypeBackend.Teacher:
       return AccountType.Teacher;
   }
 }

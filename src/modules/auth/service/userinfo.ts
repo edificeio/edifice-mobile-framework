@@ -3,7 +3,7 @@ import { getModuleTransport } from '~/framework/util/transport';
 import { AuthLoggedAccount, AuthRequirement } from '~/modules/auth/model';
 import { AccountError, AccountErrorCode } from '~/modules/auth/model/error';
 
-import { AccountTypeBackend, IUserInfoBackend, UserPersonDataBackend, UserPrivateData } from './types';
+import { API } from './types';
 
 // Typed with the scopes of the module (see `getModuleTransport`)
 const { tokenFetch } = getModuleTransport('auth');
@@ -21,7 +21,7 @@ export async function fetchUserInfo({ tokens }: Pick<AuthLoggedAccount, 'tokens'
     if (userinfo.appsNames.includes('Cahier de texte')) userinfo.appsNames.push('Homeworks');
     if (userinfo.appsNames.includes('Espace documentaire')) userinfo.appsNames.push('Workspace');
     if (userinfo.appsNames.includes('Actualites')) userinfo.appsNames.push('News');
-    return userinfo as IUserInfoBackend;
+    return userinfo as API.IUserInfoBackend;
   } catch (e) {
     if (e instanceof Error.ErrorWithType) throw e;
     else throw new global.Error('Failed to fetch user info', { cause: e });
@@ -34,7 +34,7 @@ export async function fetchUserInfo({ tokens }: Pick<AuthLoggedAccount, 'tokens'
  *        These corner-cases are managed in dedicated functions.
  * @param userInfo get userInfo from `fetchUserInfo()`
  */
-export function assertNotPredeleted(userinfo: IUserInfoBackend) {
+export function assertNotPredeleted(userinfo: API.IUserInfoBackend) {
   if (userinfo.deletePending) {
     throw new AccountError(AccountErrorCode.ACCOUNT_INELIGIBLE_PRE_DELETED, 'User is predeleted');
   }
@@ -51,7 +51,7 @@ export const getUserData = async (tokens: Pick<AuthLoggedAccount, 'tokens'>, req
   return { privateInfos: infos, publicInfos: { userData: userdata, userPublicInfo } };
 };
 
-export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, { tokens }: Pick<AuthLoggedAccount, 'tokens'>) {
+export async function fetchUserPublicInfo(userinfo: API.IUserInfoBackend, { tokens }: Pick<AuthLoggedAccount, 'tokens'>) {
   try {
     if (!userinfo.userId) {
       throw new global.Error('fetchUserPublicInfo : User id has not being returned by the server');
@@ -64,8 +64,8 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, { tokens }
     const userPublicInfo = await tokenFetch.json<any>(tokens, `/userbook/api/person?id=${userinfo.userId}`);
 
     // We fetch children information only for relative users
-    const childrenStructure: UserPrivateData['childrenStructure'] =
-      userinfo.type === AccountTypeBackend.Relative
+    const childrenStructure: API.UserPrivateData['childrenStructure'] =
+      userinfo.type === API.AccountTypeBackend.Relative
         ? await (tokenFetch.json<any>(tokens, `/directory/user/${userinfo.userId}/children`) as any)
         : undefined;
     if (childrenStructure) {
@@ -73,13 +73,13 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, { tokens }
     }
 
     // We enforce undefined parents for non-student users becase backend populates this with null data
-    if (userinfo.type !== AccountTypeBackend.Student) {
+    if (userinfo.type !== API.AccountTypeBackend.Student) {
       userdata.parents = undefined;
     }
 
     return { userdata, userPublicInfo: userPublicInfo.result?.[0] } as {
-      userdata?: UserPrivateData;
-      userPublicInfo?: UserPersonDataBackend;
+      userdata?: API.UserPrivateData;
+      userPublicInfo?: API.UserPersonDataBackend;
     };
   } catch (e) {
     if (e instanceof Error.ErrorWithType) throw e;

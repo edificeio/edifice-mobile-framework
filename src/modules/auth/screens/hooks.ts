@@ -9,7 +9,7 @@ import { I18n } from '~/util/i18n';
 /**
  * What a screen that lists the accounts does when the user asks to remove one: it asks to confirm (`confirmRemoveAccount`), removes
  * the account, then tells the user it is done.
- * Not exported by `hooks/index.ts`: it is for the screens of the module only.
+ * Internal: for the screens of the module only (not part of the public API `hooks/`).
  * @param onConfirm Called once the user confirmed, before the removal (tracking...). Must be a stable reference.
  * @returns `onDelete` of the accounts lists. Errors are only logged.
  */

@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import PrimaryButton from '~/framework/components/buttons/primary';
+import { UI_STYLES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import PasswordInput from '~/framework/components/inputs/password';
 import TextInput from '~/framework/components/inputs/text';
-import { KeyboardPageView } from '~/framework/components/page';
+import { KeyboardAvoidingView } from '~/framework/components/keyboard';
 import { Svg } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
@@ -107,112 +108,121 @@ const ChangePasswordScreen = (props: AuthChangePasswordScreenProps) => {
   }, []);
 
   return (
-    <KeyboardPageView scrollable safeArea={false}>
-      <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.page}>
-        <Pressable onPress={onFormBlur} style={styles.pressable}>
-          {FormHeaderComponent ? (
-            <View style={styles.formHeader}>
-              {React.isValidElement(FormHeaderComponent) ? FormHeaderComponent : <FormHeaderComponent />}
-            </View>
-          ) : null}
-          {passwordRules}
-          <InputContainer
-            label={{
-              icon: prefillType === 'password' ? 'ui-lock' : 'ui-user',
-              testID: 'change-password-actual-label',
-              text:
-                prefillType === 'password' ? I18n.get('auth-changepassword-password-old') : I18n.get('auth-changepassword-login'),
-            }}
-            input={
-              prefillType === 'password' ? (
-                <PasswordInput
-                  placeholder={I18n.get('auth-changepassword-placeholder')}
-                  showStatusIcon
-                  showError={formModel.showOldPasswordError(oldPassword)}
-                  value={oldPassword}
-                  onChangeText={formModel.oldPassword.changeCallback(onChange('oldPassword'))}
-                  annotation=" "
-                  disabled={prefillLock}
-                  ref={inputOldPassword}
-                  onSubmitEditing={() => inputNewPassword.current?.focus()}
-                  returnKeyType="next"
-                  testID="change-password-actual-field"
-                  testIDToggle="change-password-actual-see"
-                />
-              ) : (
-                <TextInput
-                  ref={inputOldPassword}
-                  onChangeText={formModel.oldPassword.changeCallback(onChange('oldPassword'))}
-                  value={oldPassword}
-                  keyboardType="email-address"
-                  disabled={prefillLock}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  spellCheck={false}
-                  testID="login-identifier"
-                  onSubmitEditing={() => inputNewPassword.current?.focus()}
-                  returnKeyType="next"
-                  annotation=" "
-                />
-              )
-            }
-          />
-          <InputContainer
-            style={styles.inputNewPassword}
-            label={{
-              icon: 'ui-lock',
-              testID: 'change-password-new-label',
-              text: I18n.get('auth-changepassword-password-new'),
-            }}
-            input={
-              <PasswordInput
-                placeholder={I18n.get('auth-changepassword-placeholder')}
-                showStatusIcon
-                showError={formModel.showNewPasswordError(newPassword)}
-                value={newPassword}
-                onChangeText={formModel.newPassword.changeCallback(onChange('newPassword'))}
-                annotation={formModel.showNewPasswordError(newPassword) ? errorText : ' '}
-                ref={inputNewPassword}
-                onSubmitEditing={() => inputConfirmPassword.current?.focus()}
-                returnKeyType="next"
-                testID="change-password-new-field"
-                testIDToggle="change-password-new-see"
-                testIDCaption="change-password-new-error"
+    <KeyboardAvoidingView>
+      <ScrollView
+        style={UI_STYLES.flex1}
+        contentContainerStyle={UI_STYLES.flexGrow1}
+        alwaysBounceVertical={false}
+        overScrollMode="never"
+        keyboardShouldPersistTaps="handled">
+        <View style={UI_STYLES.flex1}>
+          <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.page}>
+            <Pressable onPress={onFormBlur} style={styles.pressable}>
+              {FormHeaderComponent ? (
+                <View style={styles.formHeader}>
+                  {React.isValidElement(FormHeaderComponent) ? FormHeaderComponent : <FormHeaderComponent />}
+                </View>
+              ) : null}
+              {passwordRules}
+              <InputContainer
+                label={{
+                  icon: prefillType === 'password' ? 'ui-lock' : 'ui-user',
+                  testID: 'change-password-actual-label',
+                  text:
+                    prefillType === 'password'
+                      ? I18n.get('auth-changepassword-password-old')
+                      : I18n.get('auth-changepassword-login'),
+                }}
+                input={
+                  prefillType === 'password' ? (
+                    <PasswordInput
+                      placeholder={I18n.get('auth-changepassword-placeholder')}
+                      showStatusIcon
+                      showError={formModel.showOldPasswordError(oldPassword)}
+                      value={oldPassword}
+                      onChangeText={formModel.oldPassword.changeCallback(onChange('oldPassword'))}
+                      annotation=" "
+                      disabled={prefillLock}
+                      ref={inputOldPassword}
+                      onSubmitEditing={() => inputNewPassword.current?.focus()}
+                      returnKeyType="next"
+                      testID="change-password-actual-field"
+                      testIDToggle="change-password-actual-see"
+                    />
+                  ) : (
+                    <TextInput
+                      ref={inputOldPassword}
+                      onChangeText={formModel.oldPassword.changeCallback(onChange('oldPassword'))}
+                      value={oldPassword}
+                      keyboardType="email-address"
+                      disabled={prefillLock}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      spellCheck={false}
+                      testID="login-identifier"
+                      onSubmitEditing={() => inputNewPassword.current?.focus()}
+                      returnKeyType="next"
+                      annotation=" "
+                    />
+                  )
+                }
               />
-            }
-          />
-          <InputContainer
-            label={{
-              icon: 'ui-lock',
-              testID: 'change-password-confirmed-label',
-              text: I18n.get('auth-changepassword-password-new-confirm'),
-            }}
-            input={
-              <PasswordInput
-                placeholder={I18n.get('auth-changepassword-placeholder')}
-                showStatusIcon
-                showError={formModel.showPasswordConfirmError(confirm)}
-                value={confirm}
-                onChangeText={formModel.confirm.changeCallback(onChange('confirm'))}
-                annotation={formModel.showPasswordConfirmError(confirm) ? errorText : ' '}
-                ref={inputConfirmPassword}
-                returnKeyType="send"
-                onSubmitEditing={isNotValid ? () => {} : () => doSubmit()}
-                testID="change-password-confirmed-field"
-                testIDToggle="change-password-confirmed-see"
-                testIDCaption="change-password-confirmed-error"
+              <InputContainer
+                style={styles.inputNewPassword}
+                label={{
+                  icon: 'ui-lock',
+                  testID: 'change-password-new-label',
+                  text: I18n.get('auth-changepassword-password-new'),
+                }}
+                input={
+                  <PasswordInput
+                    placeholder={I18n.get('auth-changepassword-placeholder')}
+                    showStatusIcon
+                    showError={formModel.showNewPasswordError(newPassword)}
+                    value={newPassword}
+                    onChangeText={formModel.newPassword.changeCallback(onChange('newPassword'))}
+                    annotation={formModel.showNewPasswordError(newPassword) ? errorText : ' '}
+                    ref={inputNewPassword}
+                    onSubmitEditing={() => inputConfirmPassword.current?.focus()}
+                    returnKeyType="next"
+                    testID="change-password-new-field"
+                    testIDToggle="change-password-new-see"
+                    testIDCaption="change-password-new-error"
+                  />
+                }
               />
-            }
-          />
-          <View style={styles.buttons}>
-            <PrimaryButton
-              action={doSubmit}
-              disabled={isNotValid}
-              text={I18n.get('common-save')}
-              loading={isSubmitLoading}
-              testID="change-password"
-            />
-            {/*{props.route.params.forceChange ? (
+              <InputContainer
+                label={{
+                  icon: 'ui-lock',
+                  testID: 'change-password-confirmed-label',
+                  text: I18n.get('auth-changepassword-password-new-confirm'),
+                }}
+                input={
+                  <PasswordInput
+                    placeholder={I18n.get('auth-changepassword-placeholder')}
+                    showStatusIcon
+                    showError={formModel.showPasswordConfirmError(confirm)}
+                    value={confirm}
+                    onChangeText={formModel.confirm.changeCallback(onChange('confirm'))}
+                    annotation={formModel.showPasswordConfirmError(confirm) ? errorText : ' '}
+                    ref={inputConfirmPassword}
+                    returnKeyType="send"
+                    onSubmitEditing={isNotValid ? () => {} : () => doSubmit()}
+                    testID="change-password-confirmed-field"
+                    testIDToggle="change-password-confirmed-see"
+                    testIDCaption="change-password-confirmed-error"
+                  />
+                }
+              />
+              <View style={styles.buttons}>
+                <PrimaryButton
+                  action={doSubmit}
+                  disabled={isNotValid}
+                  text={I18n.get('common-save')}
+                  loading={isSubmitLoading}
+                  testID="change-password"
+                />
+                {/*{props.route.params.forceChange ? (
             <DefaultButton
               text={I18n.get('user-revalidateterms-refuseanddisconnect')}
               contentColor={theme.palette.status.failure.regular}
@@ -220,15 +230,17 @@ const ChangePasswordScreen = (props: AuthChangePasswordScreenProps) => {
               action={doRefuseTerms}
             />
           ) : null}*/}
-          </View>
-          {FormFooterComponent ? (
-            <View style={styles.formFooter}>
-              {React.isValidElement(FormFooterComponent) ? FormFooterComponent : <FormFooterComponent />}
-            </View>
-          ) : null}
-        </Pressable>
-      </SafeAreaView>
-    </KeyboardPageView>
+              </View>
+              {FormFooterComponent ? (
+                <View style={styles.formFooter}>
+                  {React.isValidElement(FormFooterComponent) ? FormFooterComponent : <FormFooterComponent />}
+                </View>
+              ) : null}
+            </Pressable>
+          </SafeAreaView>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

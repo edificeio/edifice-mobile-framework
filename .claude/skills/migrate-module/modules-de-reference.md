@@ -13,7 +13,7 @@ Modules **relus en détail par un développeur**, à imiter. Seuls ceux de ces t
 | Module | Emplacement | Type | Terminé le | À imiter pour | Fiche |
 | --- | --- | --- | --- | --- | --- |
 | `myapps` | `src/modules/myapps` | `EntModule` | 2026-11-10 | **Le modèle par défaut d'un module fonctionnel.** Structure (`model/` par objectif, `actions.ts`, `service/` avec `types.ts` + `adapter.ts`, `store/` Redux `createSessionReducer`, `storage.ts`, `session.ts`), API publique `hooks/`, écran avec header par options (`screens/home/`), sheets `formSheet` (`screens/menu.tsx`, `screens/app-actions.tsx`, `screens/sheet.tsx`), `useConfirmRemove` et `setOptions` avec les nouveaux items (`screens/favorites/`), tests colocalisés. | [myapps.md](journal/myapps.md) |
-| `auth` | `src/modules/auth` | `CoreModule` | 2026-10-27 | Module **réécrit** : façades `@deprecated` aux anciens chemins (`src/framework/modules/auth`), API publique en trois dossiers (`hooks/`, `hoc/`, `components/`), gabarits réutilisables (`templates/`), cycle de session. | [auth.md](journal/auth.md) |
+| `auth` | `src/modules/auth` | `CoreModule` | 2026-10-27 (assaini en partie le 2026-11-19) | Module **réécrit** : façades `@deprecated` aux anciens chemins (`src/framework/modules/auth`), API publique en trois dossiers (`hooks/`, `hoc/`, `components/`), gabarits réutilisables (`templates/`), cycle de session ; `service/types.ts` avec des alias vers le modèle (format identique). **Pas** pour : ses classes (`wayf`, `activation`), `moment`, `model/business.ts` qui lit le store (fiche §5). | [auth.md](journal/auth.md) |
 
 Remarques :
 

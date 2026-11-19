@@ -7,7 +7,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { BodyText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
-import { Image } from '~/framework/util/media-deprecated';
+import { Image } from '~/modules/media/components';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';

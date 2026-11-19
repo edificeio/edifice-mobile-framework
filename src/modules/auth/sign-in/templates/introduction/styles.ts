@@ -15,6 +15,7 @@ export default StyleSheet.create({
     textAlign: 'center',
   },
   page: {
+    flex: 1,
     paddingHorizontal: UI_SIZES.spacing.large,
     paddingVertical: UI_SIZES.spacing.big,
   },

@@ -4,10 +4,10 @@ import { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
 import { Platform } from '~/framework/util/appConf';
+import { useSignIn } from '~/modules/auth/sign-in/hooks';
 import SignInCredentialsScreenTemplate, {
   SignInCredentialsScreenTemplateProps,
 } from '~/modules/auth/sign-in/templates/credentials';
-import { useSignIn } from '~/modules/auth/sign-in/use-sign-in';
 import { I18n } from '~/util/i18n';
 
 const SignInCredentialsScreen = React.memo(function ({

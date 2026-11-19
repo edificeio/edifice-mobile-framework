@@ -4,9 +4,9 @@ import { StaticScreenProps } from '@react-navigation/native';
 
 import { defineScreen } from '~/app/navigation-new';
 import { useAuthFlows } from '~/modules/auth/flows';
+import type { SignInResult } from '~/modules/auth/model';
 import { AuthNavigationWrapper } from '~/modules/auth/navigation/navigation-container';
 import { useLoadAccountNavigationState } from '~/modules/auth/navigation/sign-in-navigation-state';
-import type { SignInResult } from '~/modules/auth/service/types';
 import { useAccountsStore } from '~/modules/auth/store/accounts';
 
 /**
