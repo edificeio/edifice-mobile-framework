@@ -11,5 +11,6 @@ export default [
   import('~/modules/media'),
   import('~/modules/myapps'),
   import('~/modules/notifications'),
+  import('~/framework/modules/support'),
   import('~/modules/user'),
 ] as const;

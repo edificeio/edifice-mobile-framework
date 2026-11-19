@@ -1,4 +1,4 @@
-import SupportCreateTicketScreen, { computeNavBar } from './screen';
+import SupportCreateTicketScreen from './screen';
 import {
   ISupportCreateTicketScreenDataProps,
   ISupportCreateTicketScreenEventProps,
@@ -7,4 +7,3 @@ import {
 
 export { ISupportCreateTicketScreenDataProps, ISupportCreateTicketScreenEventProps, ISupportCreateTicketScreenProps };
 export default SupportCreateTicketScreen;
-export { computeNavBar };
