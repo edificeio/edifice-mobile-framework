@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: pr-355-own-notifications
+expected_outcome: |
+  Rapport de pré-review en français d'une grosse PR (36 fichiers, notifications envoyées), classé par gravité, avec fichier:ligne et règle citée, qui relève le titre hors format et liste ce qui n'a pas été vérifié, écrit dans docs/reviews/, sans modifier le code ni poster sur la PR.

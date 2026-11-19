@@ -84,3 +84,6 @@ vendor
 
 # VS Code
 .vscode/
+
+# Pre-review reports, waiting for reviewer approval (see .claude/skills/pre-review)
+docs/reviews/

@@ -44,6 +44,7 @@ Commitlint et husky sont désactivés (`.husky/*-todo`) : rien ne vérifie le me
 - **Écran** : pareil avec `screen.tsx`. Types regroupés en namespace (`NavParams`, `NavigationProps`, `AllProps`), options exportées en `<Nom>ScreenOptions`. Ex. `communities/screens/list`.
 - **`index.ts`** : `export { default } from './component';` + `export type { … } from './types';`. Jamais `import` puis `export default` (la plupart des `index.ts` de communities le font encore).
 - **Imports** : alias `~/` et `ASSETS/`, jamais `../../`. `./` seulement pour le dossier courant, après les `~/`. `Text` et `Image` viennent de `~/framework/components/text` et `picture`, pas de `react-native`.
+- **`index.ts`** : `export { default } from './component';` + `export type { … } from './types';`. Jamais `import` puis `export default` (la plupart des `index.ts` de communities le font encore). Cette forme répond à Sonar S7763 (« Use `export…from` to re-export ») et prime sur l'ancienne convention Confluence. Export nommé en plus du défaut : `export { default, default as Nom } from './component';`.
 
 ## 4. Nommage
 
@@ -53,11 +54,13 @@ Commitlint et husky sont désactivés (`.husky/*-todo`) : rien ne vérifie le me
 - Vérifier qu'un nom n'est pas déjà pris dans le module.
 - Setter : `[name, setName]`. Pas de prop métier nommée comme une prop React (`style` → `variant`).
 - Le `name` d'un registre et les clés backend ne sont jamais des clés i18n.
-- Pas d'abstraction sans deux usages réels (générique à un seul type, alias qui n'ajoute rien : à retirer).
+- Pas d'abstraction sans deux usages réels (générique à un seul type, alias qui n'ajoute rien : à retirer). Pas de fonction qui ne fait que retourner un objet statique : déclarer l'objet là où il sert.
+- Une fonction qui **retourne** une action (navigation, Redux) ne porte pas le verbe de l'action : elle ne navigue pas elle-même. `getBlogPostsActions`, pas `goToBlogPosts`.
 
 ## 5. UI
 
-- `theme.palette.*`, `UI_SIZES.*` (ne pas redéfinir une valeur qui y existe), `getScaleWidth()` pour toute autre dimension.
+- `theme.palette.*`, `UI_SIZES.*` (ne pas redéfinir une valeur qui y existe), `getScaleWidth()` pour toute autre dimension. Pas de nombre magique : une valeur hors `UI_SIZES` est une constante nommée, justifiée par la maquette.
+- Code couleur propre à un module : directement dans `theme.palette.<module>`, sans étage sémantique supplémentaire dans `theme.ui`.
 - Zones de clic ≥ 48 × 48, espacées de 8 : `UI_STYLES.clickZone`.
 - `testID` en kebab-case sur les éléments interactifs (`header-back`, `tabbar-communities`).
 - Styles conditionnels en nombre fini nommés au niveau du module : `style={selectable ? TAB_STYLE : styles.item}`, pas `[a, cond && b]`.
@@ -65,7 +68,9 @@ Commitlint et husky sont désactivés (`.husky/*-todo`) : rien ne vérifie le me
 
 ## 6. React et TypeScript
 
-- Composants fonctionnels + hooks, pas de nouvelle classe.
+- Composants fonctionnels + hooks, pas de nouvelle classe. JSX plutôt que `React.createElement` (renommer le fichier en `.tsx`).
+- Tout composant (pas seulement un écran) qui dépend d'une session active est wrappé avec `withSession` (`~/framework/modules/auth/util`).
+- Réinitialiser l'état quand une prop change : sous-composant avec `key={prop}`, pas de `useEffect` de remise à zéro ([doc React](https://react.dev/learn/you-might-not-need-an-effect#resetting-all-state-when-a-prop-changes)).
 - Pas de composant défini dans un composant (Sonar S6478), pas de fonction fléchée dans le JSX, pas de ternaire imbriqué.
 - `useMemo` / `useCallback` si l'identité est observée ou le calcul mesuré coûteux. `useMemo(…, [])` = constante à sortir du composant. `React.memo` pour un composant rendu souvent aux props stables.
 - Dépendances de hooks granulaires (`item.id` plutôt que `item`). Aucun hook après un `return` anticipé.
@@ -74,26 +79,52 @@ Commitlint et husky sont désactivés (`.husky/*-todo`) : rien ne vérifie le me
 - `===`, `?.`, enums en chaînes (`APPLE = 'Apple'`), jamais `any`, `void` si rien n'est retourné, `6_000_000_000`.
 - Type de retour explicite sur les fonctions exportées de `service/` et `util/` (API publique d'un module) ; ailleurs, laisser TypeScript l'inférer.
 - Tableaux : la lisibilité d'abord (`map`, `filter`). `for...of` seulement sur un gros tableau ou du code appelé souvent (rendu de liste, boucle).
+- Un seul parcours quand c'est possible : `some()` / `find()` plutôt que `filter()` suivi d'un test ; `reduce` (O(N)) plutôt que trier (O(N log N)) pour n'extraire qu'un élément.
+- Dates : `Temporal` (`@js-temporal/polyfill`) dans le nouveau code, plus de `moment`. Pas de format maison : `Temporal.PlainDate` fournit l'ISO.
 - `Promise.all` pour ce qui peut être parallèle.
-- Retirer ses `console.log` avant de pousser : rien ne les retire automatiquement.
+- Retirer ses `console.log` avant de pousser : rien ne les retire automatiquement. Idem pour les props, fonctions et exports inutilisés.
 
-## 7. Commentaires
+## 7. Données, réseau et modules
+
+- Donnée partagée entre plusieurs écrans, ou mise en cache : **store Redux du module**, jamais un state dupliqué dans chaque composant ni une variable globale.
+- Lors de l'utilisation de Redux, s'assurer du respect des bonnes pratiques https://redux.js.org/style-guide/
+- Un écran atteignable directement (notification, lien, autre onglet) charge lui-même la donnée absente du store, sans supposer qu'un écran précédent l'a chargée.
+- `sessionFetch` préfixe l'URL de la plateforme, lève une `HTTPError` si le statut n'est pas ok, et `sessionFetch.json<T>()` parse la réponse : ne pas le refaire à la main.
+- Pas d'appel par élément d'une liste (N+1) : vérifier si l'API fournit l'info en un appel, sinon le signaler au back. `Promise.all` parallélise mais ne réduit pas le nombre d'appels.
+- Un module ne référence pas un autre module en dur (ex. `Timeline` dans Blog) : remonter la décision d'un cran dans la navigation.
+- Un helper générique retourne `undefined` plutôt qu'un repli sur un module précis ; c'est l'appelant qui choisit sa valeur par défaut.
+
+## 8. Commentaires
 
 En anglais, concis. Ils expliquent le **pourquoi** (maquette, contournement, décision écartée), jamais une paraphrase. Supprimer un commentaire devenu faux.
 
-## 8. i18n
+## 9. i18n
 
 - Pas de texte en dur : `I18n.get('<clé>')`.
 - Clés `module-screen-key`, en anglais, minuscules, mots composés sans tiret, une clé par écran : `blog-createpost-confirm-unsaved`.
 - Nouvelles clés en FR uniquement. Ne pas modifier une valeur existante : l'inventorier (clé, valeur, changement) pour l'équipe.
 - Vérifier avec `yarn i18n-unused` et `yarn i18n-diff`.
 
-## 9. Avant de pousser
+## 10. Avant de pousser
 
 - Tester iOS **et** Android (simulateur à défaut d'appareil), petit et grand écran pour l'UI.
 - Formulaires sur appareil physique : champ et saisie visibles clavier ouvert, « Suivant » passe au champ suivant.
 - Perf : `why-did-you-render` (ligne à décommenter dans `wdyr.js`) et `console.time()`, jamais commités.
 - Revue : avant de créer un composant ou une logique, vérifier l'existant (composants partagés, utilitaires du framework) ; sinon justifier dans la PR.
+- SonarQube : après génération d'une pull request, traiter les issues rouges **et** jaunes (sauf les TODO) avant de demander la review.
+
+## 11. Pièges propres à l'app
+
+Erreurs que le lint ne voit pas et qui cassent en production. À vérifier dans le code (pas seulement dans le diff) avant de pousser comme en revue.
+
+- **Réseau** : pas de `fetch` direct dans un écran ou un composant ; passer par `src/framework/util/transport` et le `service/` du module (`sessionFetch`, §7).
+- **Droits et profils** : une fonctionnalité, un bouton ou un écran ne s'affiche qu'après vérification des droits (`rights.ts` du module, `resourceRights.ts`) et du profil (élève, parent, enseignant). Se demander : que voit un élève ? un parent sans enfant rattaché ?
+- **Session** : ne pas lire ni stocker le token, ni appeler une API hors de la session gérée par `src/framework/util/oauth2.ts` et le module `auth` (refresh, expiration, déconnexion). Composant dépendant de la session : `withSession` (§6).
+- **i18n** : toute clé utilisée existe dans `assets/i18n/fr.json` ; une valeur existante modifiée est inventoriée pour l'équipe (§9).
+- **Dépendances** : versions exactes, dépendance de dev quand c'est possible (`.claude/rules/PACKAGE.md`) ; une nouvelle dépendance (JS, Pod, Gradle) est annoncée dans la description de la PR.
+- **Natif** : toute modification sous `ios/` ou `android/` est signalée dans la PR, avec son impact sur les overrides (`.claude/rules/NATIVE.md`).
+- **Modèle** : ne pas calquer le module `blog` ni un ancien fichier en camelCase ; `communities` est la référence (§3, `CLAUDE.md` §5).
+- **Robustesse** : erreur réseau gérée (état d'erreur, promesse catchée), état de chargement présent ; ni `0 && <X />` (§6), ni liste longue en `ScrollView` (§5).
 
 ## Suivis
 

@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: pr-353-blog-pinned-post
+expected_outcome: |
+  Rapport de pré-review en français de la PR 353 (blog, post épinglé), classé bloquant / à corriger / suggestion, chaque écart avec fichier:ligne et règle citée, écrit dans docs/reviews/, sans modifier le code ni poster sur la PR. Relève le titre sans virgule après le ticket et la branche sans ticket.

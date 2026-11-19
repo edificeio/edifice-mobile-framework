@@ -1,0 +1,8 @@
+---
+tags: [skill-creator]
+max_turns: 40
+timeout_seconds: 900
+allowed_tools: [Read, Glob, Grep, Skill, Bash, Write]
+---
+
+Pré-review de https://github.com/edificeio/edifice-mobile-framework/pull/355
