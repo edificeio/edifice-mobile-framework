@@ -10,7 +10,7 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
+import theme, { MoodName } from '~/app/theme';
 import { TerciaryButton } from '~/framework/components/button';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
@@ -38,7 +38,6 @@ import { renderMoodPicture } from '~/framework/modules/user/screens/profile/edit
 import { userService } from '~/framework/modules/user/service';
 import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import appConf from '~/framework/util/appConf';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { formatSource, Image } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
@@ -432,7 +431,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   const renderMoodMotto = () => {
     if (isMyProfile && !getShowMottoMoodRight(props.session!)) return;
     if ((isEmpty(userInfo?.mood) || userInfo?.mood === 'default') && isEmpty(userInfo?.motto) && !isMyProfile) return;
-    const degre = appConf.is1d ? '1d' : '2d';
+    const moodName = mood && Object.keys(theme.moods).includes(mood) ? (mood as MoodName) : 'default';
     return (
       <View style={styles.bloc}>
         <View style={styles.blocTitle}>
@@ -455,9 +454,9 @@ const UserProfileScreen = (props: ProfilePageProps) => {
         </View>
         <View style={styles.moodMotto}>
           <View style={styles.mood}>
-            <Image source={renderMoodPicture[degre][mood ?? 'none']} style={styles.moodPicture} />
+            <Image source={renderMoodPicture[theme.level][moodName]} style={styles.moodPicture} />
             <SmallText style={isEmpty(mood) || mood === 'default' ? styles.textEmpty : {}}>
-              {I18n.get(`user-profile-mood-${mood ?? 'none'}-${degre}`)}
+              {I18n.get(theme.moods[moodName].label)}
             </SmallText>
           </View>
           {isEmpty(motto) ? (
@@ -539,12 +538,12 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     return (
       <ScrollView style={styles.page}>
         {renderUserCard()}
-        {appConf.is1d ? renderMoodMotto() : null}
+        {theme.is1D ? renderMoodMotto() : null}
         {renderFamily()}
         {renderStructures()}
         {renderPersonnalInfos()}
         {renderAbout()}
-        {appConf.is2d ? renderMoodMotto() : null}
+        {theme.is1D ? null : renderMoodMotto()}
         {renderHobbies()}
       </ScrollView>
     );

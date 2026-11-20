@@ -7,12 +7,12 @@ import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import theme, { MoodName } from '~/app/theme';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { useNotificationBadge } from '~/framework/modules/myapps/hooks';
-import appConf from '~/framework/util/appConf';
 import {
   getAsNamedResourceNotification,
   getAsSenderNotification,
@@ -28,7 +28,6 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
   const sender = notification && getAsSenderNotification(notification)?.sender;
   const resource =
     notification && (getAsNamedResourceNotification(notification)?.resource as Partial<INamedResourceNotification['resource']>);
-  const degre = appConf.is1d ? '1d' : '2d';
 
   let formattedMessage = message;
   if (message) {
@@ -45,7 +44,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
       formattedMessage = `<a>${notification.backupData.params.username}</a> ${I18n.get('timeline-notiftype-motto')}`;
     if (notification.type === 'USERBOOK_MOOD')
       formattedMessage = `<a>${notification.backupData.params.username}</a> ${I18n.get(
-        `timeline-notiftype-mood-${notification.backupData.params.moodImg}-${degre}`,
+        (theme.moods[notification.backupData.params.moodImg as MoodName] ?? theme.moods.default).notification,
       )}`;
   }
 
