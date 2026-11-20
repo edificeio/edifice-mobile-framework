@@ -66,35 +66,22 @@ export default function SwipeableList<ItemT>({
 
   const onSwipeActive = React.useCallback((active: boolean) => onSwipeActiveChange?.(active), [onSwipeActiveChange]);
 
+  // the open row is read at tap time, so that opening a row does not render the others again.
+  const hasOpenRow = React.useCallback(() => openRowKey.current !== null, []);
+
+  const closeOpenRow = React.useCallback(() => {
+    if (openRowKey.current) closeRow(openRowKey.current);
+  }, [closeRow]);
+
   const onListScrollBeginDrag = React.useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (openRowKey.current) closeRow(openRowKey.current);
+      closeOpenRow();
       onScrollBeginDrag?.(event);
     },
-    [closeRow, onScrollBeginDrag],
+    [closeOpenRow, onScrollBeginDrag],
   );
 
-  useFocusEffect(
-    React.useCallback(
-      () => () => {
-        if (openRowKey.current) closeRow(openRowKey.current);
-      },
-      [closeRow],
-    ),
-  );
-
-  // a tap first puts back the row left open, wherever it lands, and opens nothing.
-  // the open row is read at tap time, so that opening a row does not render the others again.
-  const guardPress = React.useCallback(
-    (onPress?: () => void) => {
-      if (!onPress) return undefined;
-      return () => {
-        if (openRowKey.current) closeRow(openRowKey.current);
-        else onPress();
-      };
-    },
-    [closeRow],
-  );
+  useFocusEffect(React.useCallback(() => closeOpenRow, [closeOpenRow]));
 
   const renderRow = React.useCallback(
     ({ index, item }: ListRenderItemInfo<ItemT>) => {
@@ -106,9 +93,10 @@ export default function SwipeableList<ItemT>({
           item={item}
           isRowOpened={openRowId === id}
           getSwipeActions={getSwipeActions}
-          guardPress={guardPress}
+          hasOpenRow={hasOpenRow}
           renderItem={renderItem}
           onClose={onRowClose}
+          onCloseOpenRow={closeOpenRow}
           onOpen={onRowOpen}
           onRef={setRowRef}
           onSwipeActive={onSwipeActive}
@@ -117,8 +105,9 @@ export default function SwipeableList<ItemT>({
       );
     },
     [
+      closeOpenRow,
       getSwipeActions,
-      guardPress,
+      hasOpenRow,
       keyExtractor,
       onRowClose,
       onRowOpen,
