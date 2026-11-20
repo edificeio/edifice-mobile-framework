@@ -1,23 +1,33 @@
 import * as React from 'react';
-import { ListRenderItemInfo, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import { NativeScrollEvent, NativeSyntheticEvent, View } from 'react-native';
 
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useScrollToTop } from '@react-navigation/native';
+import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
 
-import FlatList from '~/framework/components/list/flat-list';
 import { SwipeRow } from '~/framework/components/list/swipeable/row';
 
+import styles from './styles';
 import { SwipeableListProps } from './types';
 
 export default function SwipeableList<ItemT>({
   extraData,
   getSwipeActions,
   keyExtractor,
+  ListFooterComponent,
   onScrollBeginDrag,
   onSwipeActiveChange,
   renderItem,
   ...listProps
 }: Readonly<SwipeableListProps<ItemT>>) {
+  const listRef = React.useRef<FlashListRef<ItemT>>(null);
+
+  const scrollToTopRef = React.useRef({ scrollToTop: () => listRef.current?.scrollToOffset({ animated: false, offset: 0 }) });
+  useScrollToTop(scrollToTopRef);
+
+  // the last row stays above the bottom of the screen.
+  const footer = React.useMemo(() => <View style={styles.footer}>{ListFooterComponent}</View>, [ListFooterComponent]);
+
   const rowRefs = React.useRef<Record<string, SwipeableMethods | null>>({});
   const openRowKey = React.useRef<string | null>(null);
   const [openRowId, setOpenRowId] = React.useState<string | null>(null);
@@ -123,9 +133,11 @@ export default function SwipeableList<ItemT>({
   const listExtraData = React.useMemo(() => [openRowId, extraData], [extraData, openRowId]);
 
   return (
-    <FlatList
+    <FlashList
       {...listProps}
+      ref={listRef}
       extraData={listExtraData}
+      ListFooterComponent={footer}
       keyExtractor={keyExtractor}
       renderItem={renderRow}
       onScrollBeginDrag={onListScrollBeginDrag}

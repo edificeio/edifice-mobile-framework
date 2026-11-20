@@ -33,6 +33,11 @@ function SwipeRow<ItemT>({
 }: Readonly<SwipeRowProps<ItemT>>) {
   const swipeable = React.useRef<SwipeableMethods | null>(null);
 
+  // a recycled row starts closed.
+  React.useLayoutEffect(() => {
+    swipeable.current?.reset();
+  }, [id]);
+
   const setRef = React.useCallback(
     (ref: SwipeableMethods | null) => {
       swipeable.current = ref;
