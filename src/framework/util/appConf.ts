@@ -93,7 +93,6 @@ export class Platform {
 export interface IAppConfDeclaration {
   debugEnabled?: boolean;
   i18nOTA?: boolean;
-  level?: '1d' | '2d';
   matomo: {
     url: string;
     siteId: number;
@@ -132,7 +131,6 @@ export interface IAppConfDeclaration {
 export class AppConf {
   debugEnabled = false;
   i18nOTA = false;
-  level: '1d' | '2d' = '2d'; // 2d by default
   matomo: { url: string; siteId: number };
 
   onboarding: {
@@ -204,14 +202,6 @@ export class AppConf {
     return this.i18nOTA;
   }
 
-  get is1d() {
-    return this.level === '1d';
-  }
-
-  get is2d() {
-    return this.level === '2d';
-  }
-
   get isDevOrAlpha() {
     return __DEV__ || AppInfo.build.isAlpha;
   }
@@ -245,7 +235,6 @@ export class AppConf {
   constructor(opts: IAppConfDeclaration) {
     this.debugEnabled = opts?.debugEnabled ?? true;
     this.i18nOTA = opts?.i18nOTA || false;
-    if (opts.level) this.level = opts.level;
     this.matomo = opts.matomo;
     const onboarding: Partial<AppConf['onboarding']> = {};
     if (opts.onboarding?.showDiscoverLink) {

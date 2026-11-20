@@ -1,32 +1,31 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
-import { ITimelineNotificationProps } from './types';
-
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_STYLES } from '~/framework/components/constants';
 import { SmallItalicText, SmallText } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timeline/components/notification-top-info';
 import { renderMoodPicture } from '~/framework/modules/user/screens/profile/edit-moodmotto';
-import appConf from '~/framework/util/appConf';
 import { renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { Image } from '~/framework/util/media-deprecated';
 import { getAsEnrichedNotification, getAsResourceUriNotification } from '~/framework/util/notifications';
 import { ArticleContainer } from '~/ui/ContainerContent';
 
+import styles from './styles';
+import { ITimelineNotificationProps } from './types';
+
 export function TimelineNotification(props: ITimelineNotificationProps) {
   const { notification, notificationAction } = props;
 
   const renderMoodNotif = React.useMemo(() => {
-    const degre = appConf.is1d ? '1d' : '2d';
     return (
       <View style={styles.notifMood}>
         <View style={styles.flex1}>
           <NotificationTopInfo notification={notification} />
         </View>
-        <Image source={renderMoodPicture[degre][notification.backupData.params.moodImg]} style={styles.moodPicture} />
+        <Image source={renderMoodPicture[theme.level][notification.backupData.params.moodImg]} style={styles.moodPicture} />
       </View>
     );
     // Since notifications are immutable, we can memoize them only by id safely.

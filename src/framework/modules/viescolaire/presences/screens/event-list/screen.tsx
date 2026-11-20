@@ -4,9 +4,6 @@ import { ColorValue, FlatList, View } from 'react-native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 
-import styles from './styles';
-import type { PresencesEventListScreenPrivateProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/empty-screens';
@@ -22,8 +19,10 @@ import {
 } from '~/framework/modules/viescolaire/presences/model';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import appConf from '~/framework/util/appConf';
 import { isEmpty } from '~/framework/util/object';
+
+import styles from './styles';
+import type { PresencesEventListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -36,16 +35,20 @@ export const computeNavBar = ({
   }),
 });
 
+const getEventTimeLabel = (startDate: Moment, endDate: Moment): string => {
+  if (theme.is1D) {
+    return I18n.get(startDate.get('hour') < 12 ? 'presences-statistics-card-morning' : 'presences-statistics-card-afternoon');
+  }
+  return startDate.format('H[h]mm') + ' - ' + endDate.format('H[h]mm');
+};
+
 const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) => {
   const renderEvent = (color: ColorValue, startDate: Moment, endDate: Moment, isLatenessOrDeparture?: boolean) => {
     const isSingleDay = startDate.isSame(endDate, 'day');
     const format = moment().isSame(startDate, 'year') ? 'D MMMM' : 'D MMM YYYY';
-    const time = isSingleDay
-      ? appConf.is1d
-        ? I18n.get(startDate.get('hour') < 12 ? 'presences-statistics-card-morning' : 'presences-statistics-card-afternoon')
-        : startDate.format('H[h]mm') + ' - ' + endDate.format('H[h]mm')
-      : null;
+    const time = isSingleDay ? getEventTimeLabel(startDate, endDate) : null;
     const duration = endDate.diff(startDate, 'minutes');
+    const detail = isLatenessOrDeparture ? I18n.get('presences-history-eventcard-lateness-duration', { duration }) : time;
 
     return (
       <View style={styles.eventContainer}>
@@ -56,11 +59,7 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
               ? startDate.format(format)
               : I18n.get('presences-statistics-card-dates', { end: endDate.format(format), start: startDate.format('D') })}
           </NestedBoldText>
-          {isLatenessOrDeparture
-            ? ` (${I18n.get('presences-history-eventcard-lateness-duration', { duration })})`
-            : time
-              ? ` (${time})`
-              : null}
+          {detail ? ` (${detail})` : null}
         </SmallText>
       </View>
     );

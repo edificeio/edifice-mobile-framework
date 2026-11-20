@@ -2,10 +2,8 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
-import appConf from '~/framework/util/appConf';
 
 const SIZE_MOOD_PICTURE = getScaleWidth(48);
-const WIDTH_MOOD_BOX = appConf.is1d ? getScaleWidth(125) : getScaleWidth(115);
 
 export default StyleSheet.create({
   bloc: {
@@ -49,7 +47,7 @@ export default StyleSheet.create({
     marginRight: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
-    width: WIDTH_MOOD_BOX,
+    width: getScaleWidth(125),
   },
   moodMotto: {
     alignItems: 'center',
