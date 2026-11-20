@@ -4,7 +4,7 @@ import { StatusBar, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } f
 import NativeModal from 'react-native-modal';
 
 import theme from '~/app/theme';
-import { useRegisterModalClose } from '~/framework/navigation/modals/modal-dismissal';
+import { useRegisterOpenModal } from '~/framework/hooks/modal';
 
 import { UI_SIZES } from './constants';
 import { Picture } from './picture';
@@ -58,7 +58,7 @@ export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(
     const doDismissModal = React.useCallback(() => setShowModal(false), []);
     const doShowModal = React.useCallback(() => setShowModal(true), []);
     React.useImperativeHandle(ref, () => ({ doDismissModal, doShowModal }));
-    useRegisterModalClose(showModal, doDismissModal);
+    useRegisterOpenModal(showModal, doDismissModal);
 
     return (
       <NativeModal
