@@ -3,6 +3,7 @@
  */
 import { ThunkDispatch } from 'redux-thunk';
 
+import type { AppDispatch } from '~/app/store';
 import moduleConfig from '~/framework/modules/home/module-config';
 import { TimelineState } from '~/framework/modules/home/reducer';
 import { actions as flashMessagesActions } from '~/framework/modules/home/reducer/flash-messages';
@@ -96,8 +97,8 @@ export const loadNotificationsPageAction =
  */
 export const loadAuthorizedNotificationTypesAction =
   () =>
-  async (dispatch: ThunkDispatch<any, any, any>): Promise<string[]> => {
-    const state = (await dispatch($prepareNotificationsAction())) as unknown as TimelineState; // TS BUG: await is needed here
+  async (dispatch: AppDispatch): Promise<string[]> => {
+    const state = await dispatch($prepareNotificationsAction());
     return state.notifDefinitions.notifFilters.data.map(filter => filter.type);
   };
 

@@ -24,10 +24,10 @@ import PushNotifsTopicsListScreen, {
   computeNavBar as pushNotifsTopicsListNavBar,
 } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
 import UserSentNotificationFiltersScreen, {
-  computeNavBar as sentNotificationFiltersNavBar,
+  UserSentNotificationFiltersScreenOptions,
 } from '~/framework/modules/user/screens/sent-notification-filters';
 import UserSentNotificationsScreen, {
-  computeNavBar as sentNotificationsNavBar,
+  UserSentNotificationsScreenOptions,
 } from '~/framework/modules/user/screens/sent-notifications';
 import UserThemeScreen, { computeNavBar as themeNavBar } from '~/framework/modules/user/screens/theme';
 import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework/modules/user/screens/who-are-we';
@@ -52,7 +52,7 @@ export default () =>
       <Stack.Screen
         name={userRouteNames.sentNotifications}
         component={UserSentNotificationsScreen}
-        options={sentNotificationsNavBar}
+        options={UserSentNotificationsScreenOptions}
         initialParams={{}}
       />
       <Stack.Screen
@@ -100,7 +100,7 @@ export default () =>
         <Stack.Screen
           name={userRouteNames.sentNotificationsFilters}
           component={UserSentNotificationFiltersScreen}
-          options={sentNotificationFiltersNavBar}
+          options={UserSentNotificationFiltersScreenOptions}
           initialParams={{}}
         />
       </Stack.Group>

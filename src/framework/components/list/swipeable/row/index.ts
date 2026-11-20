@@ -1,5 +1,2 @@
-import SwipeRow from './component';
-
-export { SwipeRow };
+export { default, default as SwipeRow } from './component';
 export type { SwipeRowAction, SwipeRowProps } from './types';
-export default SwipeRow;

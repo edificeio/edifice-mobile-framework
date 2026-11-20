@@ -1,4 +1,2 @@
-import UserSentNotificationFiltersScreen from './screen';
-
-export default UserSentNotificationFiltersScreen;
-export { computeNavBar } from './screen';
+export { default, UserSentNotificationFiltersScreenOptions } from './screen';
+export type { UserSentNotificationFiltersScreen } from './types';

@@ -64,7 +64,7 @@ export const notificationsService = {
     await sessionFetch.json(api, { method: 'DELETE' });
   },
 
-  page: (page: number, filters: string[], apiVersion: string = NOTIFICATIONS_DEFAULT_VERSION) =>
+  page: (page: number, filters: string[], apiVersion: string = NOTIFICATIONS_DEFAULT_VERSION): Promise<ITimelineNotification[]> =>
     fetchNotificationsPage('page', { page, type: filters }, { Accept: `application/json;version=${apiVersion}` }),
 
   report: async (id: string) => {
@@ -73,7 +73,7 @@ export const notificationsService = {
     return sessionFetch.json(api, { method });
   },
 
-  sentPage: (page: number, filters: readonly string[]) =>
+  sentPage: (page: number, filters: readonly string[]): Promise<ITimelineNotification[]> =>
     fetchNotificationsPage('sentPage', { _: Date.now(), mine: 1, page, type: filters }),
 };
 

@@ -27,12 +27,12 @@ import type { ITimelineNotification } from '~/framework/util/notifications';
 import { defaultNotificationActionStack, handleNotificationAction } from '~/framework/util/notifications/routing';
 
 import styles from './styles';
-import type { UserSentNotificationsScreenPrivateProps } from './types';
+import type { UserSentNotificationsScreen } from './types';
 
 // the server sends pages of 25: a shorter page is the last one.
 const PAGE_SIZE = 25;
 
-export const computeNavBar = screenOptions(() => ({
+export const UserSentNotificationsScreenOptions = screenOptions(() => ({
   title: I18n.get('user-sentnotifications-title'),
 }));
 
@@ -47,7 +47,7 @@ const renderHeaderActions = (onPressInfo: () => void, onPressFilter: () => void)
   />
 );
 
-export default function UserSentNotificationsScreen({ navigation }: Readonly<UserSentNotificationsScreenPrivateProps>) {
+export default function UserSentNotificationsScreen({ navigation }: Readonly<UserSentNotificationsScreen.AllProps>) {
   const dispatch = useDispatch<AppDispatch>();
 
   const [notifications, setNotifications] = React.useState<ITimelineNotification[]>([]);

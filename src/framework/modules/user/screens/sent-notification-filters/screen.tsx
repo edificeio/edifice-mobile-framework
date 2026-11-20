@@ -17,7 +17,7 @@ import { setSentNotificationFiltersAction } from '~/framework/modules/user/actio
 import { userSelectors } from '~/framework/modules/user/reducer';
 import { getSentNotificationFilters } from '~/framework/modules/user/storage';
 
-import type { UserSentNotificationFiltersScreenPrivateProps } from './types';
+import type { UserSentNotificationFiltersScreen } from './types';
 
 const LABELS_I18N = {
   description: 'user-sentnotifications-filters-description',
@@ -27,12 +27,12 @@ const LABELS_I18N = {
   selectedCount: 'timeline-filters-selected',
 };
 
-export const computeNavBar = modalScreenOptions('fullScreenModal', () => ({
+export const UserSentNotificationFiltersScreenOptions = modalScreenOptions('fullScreenModal', () => ({
   headerRight: saveFiltersAction(true),
   title: I18n.get('timeline-filters-title'),
 }));
 
-export default function UserSentNotificationFiltersScreen({ navigation }: Readonly<UserSentNotificationFiltersScreenPrivateProps>) {
+export default function UserSentNotificationFiltersScreen({ navigation }: Readonly<UserSentNotificationFiltersScreen.AllProps>) {
   const availableFilters = useSelector(state => moduleConfig.getState(state).notifDefinitions.notifFilters.data);
   const appsByName = useSelector(selectAggregatedApps);
   const notifTypes = useSelector(registeredNotificationTypesData);
