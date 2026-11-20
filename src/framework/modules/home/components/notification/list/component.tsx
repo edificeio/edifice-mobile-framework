@@ -41,8 +41,8 @@ const NotificationList = ({
   const shownNotifications = React.useMemo(() => notifications.filter(item => !item.deleted), [notifications]);
 
   const renderItem = React.useCallback(
-    ({ guardPress, item }: SwipeableListRenderItemInfo<ITimelineNotification>) => {
-      const onPress = guardPress(canOpenNotification(item) ? () => onPressItem(item) : undefined);
+    ({ item }: SwipeableListRenderItemInfo<ITimelineNotification>) => {
+      const onPress = canOpenNotification(item) ? () => onPressItem(item) : undefined;
       if (isUserbookNotification(item)) return <UserbookNotificationCard notification={item} onPress={onPress} />;
       return <NotificationCard notification={item} onPress={onPress} />;
     },

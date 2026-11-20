@@ -19,12 +19,13 @@ const NO_ACTIONS: readonly SwipeRowAction[] = [];
 
 function SwipeRow<ItemT>({
   getSwipeActions,
-  guardPress,
+  hasOpenRow,
   id,
   index,
   isRowOpened,
   item,
   onClose,
+  onCloseOpenRow,
   onOpen,
   onRef,
   onSwipeActive,
@@ -70,7 +71,7 @@ function SwipeRow<ItemT>({
     [getSwipeActions, item],
   );
 
-  const content = React.useMemo(() => renderItem({ guardPress, index, item }), [guardPress, index, item, renderItem]);
+  const content = React.useMemo(() => renderItem({ index, item }), [index, item, renderItem]);
 
   const renderRightActions = React.useCallback(
     (progress: SharedValue<number>) => (
@@ -92,7 +93,13 @@ function SwipeRow<ItemT>({
     [actions],
   );
 
-  const row = <View style={styles.row}>{content}</View>;
+  // a tap first puts back the row left open, wherever it lands, and opens nothing.
+  // the swipe actions sit outside this view, so they still get their taps.
+  const row = (
+    <View style={styles.row} onStartShouldSetResponderCapture={hasOpenRow} onResponderRelease={onCloseOpenRow}>
+      {content}
+    </View>
+  );
 
   // a row without actions stays a plain view, so nothing catches the taps.
   if (!actions.length) return row;

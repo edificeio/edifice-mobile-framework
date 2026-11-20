@@ -18,12 +18,13 @@ export interface SwipeRowAction {
 // the row builds its own content and actions, so that its props stay the same while another row opens.
 export interface SwipeRowProps<ItemT> {
   getSwipeActions?: (item: ItemT) => readonly SwipeRowAction[];
-  guardPress: SwipeableListRenderItemInfo<ItemT>['guardPress'];
+  hasOpenRow: () => boolean;
   id: string;
   index: number;
   isRowOpened: boolean;
   item: ItemT;
   onClose: (id: string) => void;
+  onCloseOpenRow: () => void;
   onOpen: (id: string) => void;
   onRef: (id: string, row: SwipeableMethods | null) => void;
   onSwipeActive: (active: boolean) => void;
