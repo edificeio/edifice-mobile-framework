@@ -4,7 +4,8 @@ import { AppsInfo } from '~/framework/modules/myapps/types.ts';
 export const getTranslatedAppLabel = (value?: string | null): string | undefined => {
   if (!value) return undefined;
 
-  const key = `myapps-app-${value}`;
+  // i18n keys never contain dots, but some backend values do
+  const key = `myapps-app-${value.replaceAll('.', '-')}`;
   const translated = I18n.get(key);
   return translated !== key ? translated : undefined;
 };

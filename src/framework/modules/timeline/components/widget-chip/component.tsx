@@ -3,13 +3,14 @@ import { FlatList, Pressable, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import { CaptionBoldText, SmallBoldText } from '~/framework/components/text';
+import { getTranslatedAppLabel } from '~/framework/modules/myapps/utils/app-i18n';
 import styles from '~/framework/modules/timeline/components/widget-chip/styles';
 import { IWidgetChipProps, IWidgetChipsContainerProps } from '~/framework/modules/timeline/components/widget-chip/types';
 import { AnyNavigableModule, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 function WidgetChipItem(props: IWidgetChipProps) {
   const { entcoreWidget, onPress, testID, widget } = props;
-  const label = entcoreWidget ? I18n.get(`myapps-app-${entcoreWidget.name}`) : widget.config.name;
+  const label = getTranslatedAppLabel(entcoreWidget?.name) ?? widget.config.name;
   return (
     <Pressable onPress={onPress} style={styles.chipButton} testID={testID}>
       <SmallBoldText style={styles.chipsText}>{label}</SmallBoldText>
