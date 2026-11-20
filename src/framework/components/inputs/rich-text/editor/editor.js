@@ -173,8 +173,8 @@ function createHTML(options = {}) {
         ul, ol {list-style-position: outside; }
         li p {margin: 0; padding: 0;}
         .conversation-history > div {margin-left: 10px; padding-left: 10px; border-left: 1px ridge #C7C7C7;}
-        #content>p:first-child { margin-block-start: 0;}
-        #content>p:last-child { margin-block-end: 0;}
+        .pell-content p { margin: 0; }
+        .pell-content p:empty::before { content: "\\200B"; }
         mark[data-color="transparent"] { background-color: transparent; }
     </style>
 

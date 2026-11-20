@@ -6022,9 +6022,6 @@ __metadata:
     react-native-worklets: "npm:0.9.2"
     react-redux: "npm:9.3.0"
     react-test-renderer: "npm:19.2.3"
-    reactotron-react-native: "npm:5.2.0"
-    reactotron-react-native-mmkv: "npm:0.2.9"
-    reactotron-redux: "npm:3.2.1"
     redux: "npm:5.0.1"
     redux-thunk: "npm:3.1.0"
     rn-material-ui-textfield: "npm:1.0.9"
@@ -12309,13 +12306,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"microdiff@npm:^1.5.0":
-  version: 1.6.0
-  resolution: "microdiff@npm:1.6.0"
-  checksum: 10/be75b3e5150046bd784fe506276ec1f94cc9ded7f35c6b5fbbfe0afbe7376d6d8db5a12cd54957b3e672a4a6da4e16e83ec7fc2a703751a16742e2d7b8667133
-  languageName: node
-  linkType: hard
-
 "micromatch@npm:^4.0.2, micromatch@npm:^4.0.4, micromatch@npm:^4.0.8":
   version: 4.0.8
   resolution: "micromatch@npm:4.0.8"
@@ -12480,13 +12470,6 @@ __metadata:
   dependencies:
     minipass: "npm:^7.1.2"
   checksum: 10/f47365cc2cb7f078cbe7e046eb52655e2e7e97f8c0a9a674f4da60d94fb0624edfcec9b5db32e8ba5a99a5f036f595680ae6fe02a262beaa73026e505cc52f99
-  languageName: node
-  linkType: hard
-
-"mitt@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "mitt@npm:3.0.1"
-  checksum: 10/287c70d8e73ffc25624261a4989c783768aed95ecb60900f051d180cf83e311e3e59865bfd6e9d029cdb149dc20ba2f128a805e9429c5c4ce33b1416c65bbd14
   languageName: node
   linkType: hard
 
@@ -14464,57 +14447,6 @@ __metadata:
   version: 19.2.3
   resolution: "react@npm:19.2.3"
   checksum: 10/d16b7f35c0d35a56f63d9d1693819762e4abc479c57dd6310298920bed3820fcec7e17a99d44983416d8f5049143ea45b8005d3ab8324bae8973224400502b08
-  languageName: node
-  linkType: hard
-
-"reactotron-core-client@npm:2.10.0":
-  version: 2.10.0
-  resolution: "reactotron-core-client@npm:2.10.0"
-  dependencies:
-    reactotron-core-contract: "npm:0.4.0"
-  checksum: 10/cac22b8eb74da713f6219dad5921f51ab6b2185bc7fdcd7501e8ea3b8bc32561c5f96fede6ff601857929518239c783e747c8500f9e4b552e322d3405daa433d
-  languageName: node
-  linkType: hard
-
-"reactotron-core-contract@npm:0.4.0":
-  version: 0.4.0
-  resolution: "reactotron-core-contract@npm:0.4.0"
-  checksum: 10/9e16fa54bb22ebca3c2e899827f85cbefef7e256b5c863bd5b25f1d2a3ad6fb3789bb189df9fd1203607218d1c5f41e82a04639f930250ef441837e14893208e
-  languageName: node
-  linkType: hard
-
-"reactotron-react-native-mmkv@npm:0.2.9":
-  version: 0.2.9
-  resolution: "reactotron-react-native-mmkv@npm:0.2.9"
-  peerDependencies:
-    react-native-mmkv: "*"
-    reactotron-core-client: "*"
-  checksum: 10/5ad1b450c513a9945f7eb0a57bc5069a1e4a3c8e1ae73690503f48fca0a87c2a3c260c24f070b21a9d6d4a942c443a5f02cee5a9828fa4d63a666aad5cb4a694
-  languageName: node
-  linkType: hard
-
-"reactotron-react-native@npm:5.2.0":
-  version: 5.2.0
-  resolution: "reactotron-react-native@npm:5.2.0"
-  dependencies:
-    mitt: "npm:^3.0.1"
-    reactotron-core-client: "npm:2.10.0"
-    reactotron-core-contract: "npm:0.4.0"
-  peerDependencies:
-    react-native: ">=0.40.0"
-  checksum: 10/e79fac4b115b1f911710c0d755629bce7c8d366b8af121614ec1ae24eeeb1d4413c85d7fc7918f50a9c780bae351ffcf627edef053e842cf97c38766ab7eb0d5
-  languageName: node
-  linkType: hard
-
-"reactotron-redux@npm:3.2.1":
-  version: 3.2.1
-  resolution: "reactotron-redux@npm:3.2.1"
-  dependencies:
-    microdiff: "npm:^1.5.0"
-  peerDependencies:
-    reactotron-core-client: "*"
-    redux: ">=4.0.0"
-  checksum: 10/913f8c811a719a796b303352a7a400c427ef4bbe9022574414322e14cb3398a211eca36fa89e44f287a89391316a3606f066d9275b692f9efc3d5459b59c6c74
   languageName: node
   linkType: hard
 

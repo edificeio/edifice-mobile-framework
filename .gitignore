@@ -16,6 +16,11 @@ buck-out/
 *.keystore
 !debug.keystore
 
+# Claude Code
+.claude/
+CLAUDE.md
+claude.md
+
 # Fastlane
 **/fastlane/report.xml
 **/fastlane/Preview.html
@@ -84,3 +89,6 @@ vendor
 
 # VS Code
 .vscode/
+
+# Pre-review reports, waiting for reviewer approval (see .claude/skills/pre-review)
+docs/reviews/
