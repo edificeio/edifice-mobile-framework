@@ -1,0 +1,52 @@
+diff --git a/node_modules/@shopify/flash-list/dist/recyclerview/hooks/useRecyclerViewController.js b/node_modules/@shopify/flash-list/dist/recyclerview/hooks/useRecyclerViewController.js
+index 08724d1..0542c70 100644
+--- a/node_modules/@shopify/flash-list/dist/recyclerview/hooks/useRecyclerViewController.js
++++ b/node_modules/@shopify/flash-list/dist/recyclerview/hooks/useRecyclerViewController.js
+@@ -103,13 +103,12 @@ export function useRecyclerViewController(recyclerViewManager, ref, scrollViewRe
+                 //    engaged window. ignoreScrollEvents stays true for 100ms
+                 //    after each correction, giving subsequent layout passes a
+                 //    chance to refine the scroll position.
++                // 3. (patch) The anchor left the engaged window after a large size change above it.
+                 const currentIndexOfFirstVisibleItem = (_a = recyclerViewManager
+                     .getEngagedIndices()
+                     .findValue((index) => recyclerViewManager.getDataKey(index) ===
+-                    firstVisibleItemKey.current)) !== null && _a !== void 0 ? _a : (hasDataChanged || recyclerViewManager.ignoreScrollEvents
+-                    ? data === null || data === void 0 ? void 0 : data.findIndex((item, index) => recyclerViewManager.getDataKey(index) ===
+-                        firstVisibleItemKey.current)
+-                    : undefined);
++                    firstVisibleItemKey.current)) !== null && _a !== void 0 ? _a : (data === null || data === void 0 ? void 0 : data.findIndex((item, index) => recyclerViewManager.getDataKey(index) ===
++                    firstVisibleItemKey.current));
+                 if (currentIndexOfFirstVisibleItem !== undefined &&
+                     currentIndexOfFirstVisibleItem >= 0) {
+                     // Calculate the difference in position and apply the offset
+diff --git a/node_modules/@shopify/flash-list/src/recyclerview/hooks/useRecyclerViewController.tsx b/node_modules/@shopify/flash-list/src/recyclerview/hooks/useRecyclerViewController.tsx
+index 3689830..7458f8c 100644
+--- a/node_modules/@shopify/flash-list/src/recyclerview/hooks/useRecyclerViewController.tsx
++++ b/node_modules/@shopify/flash-list/src/recyclerview/hooks/useRecyclerViewController.tsx
+@@ -146,6 +146,7 @@ export function useRecyclerViewController<T>(
+         //    engaged window. ignoreScrollEvents stays true for 100ms
+         //    after each correction, giving subsequent layout passes a
+         //    chance to refine the scroll position.
++        // 3. (patch) The anchor left the engaged window after a large size change above it.
+         const currentIndexOfFirstVisibleItem =
+           recyclerViewManager
+             .getEngagedIndices()
+@@ -154,13 +155,11 @@ export function useRecyclerViewController<T>(
+                 recyclerViewManager.getDataKey(index) ===
+                 firstVisibleItemKey.current
+             ) ??
+-          (hasDataChanged || recyclerViewManager.ignoreScrollEvents
+-            ? data?.findIndex(
+-                (item, index) =>
+-                  recyclerViewManager.getDataKey(index) ===
+-                  firstVisibleItemKey.current
+-              )
+-            : undefined);
++          data?.findIndex(
++            (item, index) =>
++              recyclerViewManager.getDataKey(index) ===
++              firstVisibleItemKey.current
++          );
+ 
+         if (
+           currentIndexOfFirstVisibleItem !== undefined &&

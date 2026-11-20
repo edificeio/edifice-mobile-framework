@@ -14,7 +14,7 @@ export const ICON_LEFT = UI_SIZES.spacing.big;
 export const ICON_OVERFLOW = UI_SIZES.spacing.small + UI_SIZES.spacing.minor;
 
 /** Room the expanded band keeps under the title for the author line, the date and the icon. */
-const BIG_BOTTOM_RESERVE = UI_SIZES.spacing.major;
+export const BIG_BOTTOM_RESERVE = UI_SIZES.spacing.major;
 
 export const TEXT_LEFT_BIG = ICON_LEFT + ICON_BIG_SIZE + UI_SIZES.spacing.small;
 export const TEXT_LEFT_SMALL = ICON_LEFT + ICON_SMALL_SIZE + UI_SIZES.spacing.minor;

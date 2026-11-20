@@ -92,6 +92,7 @@ interface CommonPaginatedListProps<TItem, TCustomPlaceholderItem = never> {
 
   placeholderData?: (typeof LOADING_ITEM_DATA | TCustomPlaceholderItem)[];
   initialLoadingState?: ContentLoaderProps['initialLoadingState'];
+  refreshControlProps?: ContentLoaderProps['refreshControlProps'];
   onViewableItemsChanged?: (callback: { changed: ViewToken[]; viewableItems: ViewToken[] }) => void;
 }
 
@@ -279,6 +280,7 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
   placeholderData: _placeholderData,
   placeholderNumberOfRows: totalPlaceholderRows = DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
   ref,
+  refreshControlProps,
   renderItem: _renderItem,
   renderPlaceholderItem,
   viewabilityConfig,
@@ -357,6 +359,8 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
         data={placeholderData}
         scrollEnabled={false}
         {...flashListProps}
+        initialScrollIndex={undefined}
+        initialScrollIndexParams={undefined}
       />
     ),
     [flashListProps, keyExtractor, placeholderData, renderPlaceholderItem],
@@ -368,6 +372,7 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
     <ContentLoader
       initialLoadingState={initialLoadingState}
       loadContent={loadContent}
+      refreshControlProps={refreshControlProps}
       renderContent={renderContent}
       renderLoading={renderLoading}
     />
@@ -425,6 +430,7 @@ export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never
   placeholderData: _placeholderData,
   placeholderNumberOfRows: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
   ref,
+  refreshControlProps,
   renderItem: _renderItem,
   renderPlaceholderItem,
   stickyHeaderIndices,
@@ -546,6 +552,7 @@ export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never
     <ContentLoader
       initialLoadingState={initialLoadingState}
       loadContent={loadContent}
+      refreshControlProps={refreshControlProps}
       renderContent={renderContent}
       renderLoading={renderLoading}
     />

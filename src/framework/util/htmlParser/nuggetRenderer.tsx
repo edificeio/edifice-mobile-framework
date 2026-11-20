@@ -338,7 +338,6 @@ function renderParseInlineImage(nugget: IInlineImageNugget, key: string, style: 
  * @param style ViewStyle
  */
 function renderParseIframe(nugget: IIframeNugget, key: string, style: ViewStyle = {}): JSX.Element {
-  console.log('iframe in nuggetRenderer', nugget);
   return (
     <View key={key}>
       <MediaButton

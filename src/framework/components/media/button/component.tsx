@@ -4,12 +4,9 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
-import { IPlayerProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { getScaleHeight, getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
+import { getScaleImageSize } from '~/framework/components/constants';
 import MediaIcon from '~/framework/components/media/icon';
 import { openMediaPlayer } from '~/framework/components/media/player';
 import { MediaPlayerParams } from '~/framework/components/media/player/types';
@@ -18,6 +15,9 @@ import { SmallItalicText } from '~/framework/components/text';
 import { MediaType } from '~/framework/modules/media';
 import { Image } from '~/framework/util/media-deprecated';
 import { sessionURISource } from '~/framework/util/transport';
+
+import styles from './styles';
+import { IPlayerProps } from './types';
 
 const iconSizeAudio = getScaleImageSize(20);
 const iconSizeVideo = getScaleImageSize(24);
@@ -31,9 +31,6 @@ const notAvailableMediaText = {
 
 const MediaButton = (props: IPlayerProps) => {
   const { onPreviewPress, posterSource, ratio, source, style, type } = props;
-
-  const widthWaves = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.medium - getScaleHeight(36) - 3 * UI_SIZES.spacing.small;
-  const heightWaves = Math.round(widthWaves * (36 / 237));
 
   const isAudio = type === MediaType.AUDIO;
   const isVideoOrWebview = type === MediaType.VIDEO || type === MediaType.EMBEDDED;
@@ -70,7 +67,9 @@ const MediaButton = (props: IPlayerProps) => {
       <TouchableOpacity onPress={() => (onPreviewPress ? onPreviewPress() : showMediaPlayer())}>
         <View style={styles.previewAudio}>
           <MediaIcon icon="ui-play-filled" iconSize={iconSizeAudio} style={styles.iconAudio} />
-          <Svg width={widthWaves} height={heightWaves} fill={theme.palette.primary.light} name="ui-wavering" />
+          <View style={styles.waves}>
+            <Svg width="100%" height="100%" fill={theme.palette.primary.light} name="ui-wavering" />
+          </View>
         </View>
       </TouchableOpacity>
     );

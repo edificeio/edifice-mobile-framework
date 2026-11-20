@@ -8,11 +8,12 @@ import { accountApi } from '~/framework/util/transport';
  * Extension of DiscussionDto type : TODO ask a fix to backend dev
  * - firstUsers : this field is misspelled in the client's DiscussionDto type (fisrtUsers) but correctly spelled in the response
  * - hasUnreadMessages and lastVisitedTime are missing from DiscussionDto type but present in the response
+ *   (lastVisitedTime is absent until the user's first visit of the discussion)
  */
 export type DiscussionRuntimeExtras = {
   firstUsers: UserDto[];
   hasUnreadMessages: boolean;
-  lastVisitedTime: string;
+  lastVisitedTime?: string;
 };
 
 export type Discussion = DiscussionDto & DiscussionRuntimeExtras & { unreadCount: number };
@@ -21,6 +22,29 @@ export interface DiscussionsSummary {
   hasUnreadMessages: boolean;
   totalDiscussions: number;
 }
+/**
+ * Number of messages of the discussion, including deleted ones.
+ * The backend count excludes the first message, while `getMessages` includes it: we do +1 here
+ * so that the count matches the indexes of the messages list.
+ */
+export const countMessages = async (session: AuthActiveAccount, communityId: number, discussionId: number): Promise<number> => {
+  const { count } = await accountApi(session, moduleConfig, DiscussionClient).countMessages(communityId, discussionId);
+  return count + 1;
+};
+
+export const countUnreadMessages = async (
+  session: AuthActiveAccount,
+  communityId: number,
+  discussionId: number,
+  lastVisitedTime: string,
+): Promise<number> => {
+  const { count } = await accountApi(session, moduleConfig, DiscussionClient).countMessages(
+    communityId,
+    discussionId,
+    new Date(lastVisitedTime),
+  );
+  return count;
+};
 
 export const getDiscussion = async (
   session: AuthActiveAccount,
@@ -40,9 +64,8 @@ export const getDiscussions = async (
   const discussions = await Promise.all(
     (items as unknown as (DiscussionDto & DiscussionRuntimeExtras)[]).map(async discussion => {
       let unreadCount = 0;
-      if (discussion.hasUnreadMessages) {
-        const { count } = await client.countMessages(communityId, discussion.id, new Date(discussion.lastVisitedTime));
-        unreadCount = count;
+      if (discussion.hasUnreadMessages && discussion.lastVisitedTime) {
+        unreadCount = await countUnreadMessages(session, communityId, discussion.id, discussion.lastVisitedTime);
       }
       return { ...discussion, unreadCount };
     }),
@@ -59,6 +82,8 @@ export const getDiscussionsSummary = async (session: AuthActiveAccount, communit
     totalDiscussions: meta.totalItems,
   };
 };
+
+export const MESSAGES_PAGE_SIZE = 20;
 
 export const getMessages = async (
   session: AuthActiveAccount,
