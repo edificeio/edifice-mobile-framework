@@ -8,9 +8,9 @@ import { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeab
 import { SwipeRow } from '~/framework/components/list/swipeable/row';
 
 import styles from './styles';
-import { SwipeableListProps } from './types';
+import { SwipeableFlashListProps } from './types';
 
-export default function SwipeableList<ItemT>({
+export default function SwipeableFlashList<ItemT>({
   extraData,
   getSwipeActions,
   keyExtractor,
@@ -19,7 +19,7 @@ export default function SwipeableList<ItemT>({
   onSwipeActiveChange,
   renderItem,
   ...listProps
-}: Readonly<SwipeableListProps<ItemT>>) {
+}: Readonly<SwipeableFlashListProps<ItemT>>) {
   const listRef = React.useRef<FlashListRef<ItemT>>(null);
 
   const scrollToTopRef = React.useRef({ scrollToTop: () => listRef.current?.scrollToOffset({ animated: false, offset: 0 }) });

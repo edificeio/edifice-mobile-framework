@@ -11,8 +11,8 @@ import type { UserEditMoodMottoScreenNavParams } from '~/framework/modules/user/
 import type { UserStructuresScreenNavParams } from '~/framework/modules/user/screens/profile/structures';
 import type { IPushNotifsItemsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
 import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
-import type { UserSentNotificationFiltersScreenNavParams } from '~/framework/modules/user/screens/sent-notification-filters/types';
-import type { UserSentNotificationsScreenNavParams } from '~/framework/modules/user/screens/sent-notifications/types';
+import type { UserSentNotificationFiltersScreen } from '~/framework/modules/user/screens/sent-notification-filters/types';
+import type { UserSentNotificationsScreen } from '~/framework/modules/user/screens/sent-notifications/types';
 import type { UserThemeScreenNavParams } from '~/framework/modules/user/screens/theme/types';
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
 
@@ -39,8 +39,8 @@ export interface UserNavigationParams extends ParamListBase {
   'home': UserHomeScreenNavParams;
   'notifPrefs': IPushNotifsTopicsListScreenNavigationParams;
   'notifPrefsDetails': IPushNotifsItemsListScreenNavigationParams;
-  'sentNotifications': UserSentNotificationsScreenNavParams;
-  'sentNotificationsFilters': UserSentNotificationFiltersScreenNavParams;
+  'sentNotifications': UserSentNotificationsScreen.NavParams;
+  'sentNotificationsFilters': UserSentNotificationFiltersScreen.NavParams;
   'profile': ProfileScreenNavigationParams;
   'structures': UserStructuresScreenNavParams;
   'editHobbies': UserEditHobbiesScreenNavParams;

@@ -1,6 +1,3 @@
-import SwipeableList from './component';
-
-export { SwipeableList };
+export { default, default as SwipeableFlashList } from './component';
 export type { SwipeRowAction } from './row';
-export type { SwipeableListProps, SwipeableListRenderItemInfo } from './types';
-export default SwipeableList;
+export type { SwipeableFlashListProps, SwipeableFlashListRenderItemInfo } from './types';
