@@ -15,9 +15,10 @@ import Pane from './components/pane';
 import AttachmentPreview from './components/preview/attachment';
 import ImagePreview from './components/preview/image';
 import MediaPreview from './components/preview/media';
-import { ENRICHED_TEXT_HTML_STYLE, ENRICHED_TEXT_STYLE, getContainerStyle } from './styles';
+import { splitRichContent } from './parser';
+import styles, { ENRICHED_TEXT_HTML_STYLE, ENRICHED_TEXT_STYLE } from './styles';
 import { RichContentSegment, RichContentSegmentType, RichEditorNativeViewerProps } from './types';
-import { buildCarouselMedias, findMediaIndex, splitRichContent } from './util';
+import { buildCarouselMedias, findMediaIndex } from './util';
 
 const onOpenLink = (url: string) => {
   openUrl(url);
@@ -29,12 +30,11 @@ const onLinkPress = ({ url }: OnLinkPressEvent) => onOpenLink(url);
  * Read-only rich content viewer without WebView, made to be rendered many times in a list.
  * Text is rendered natively by `react-native-enriched-html`, images and other medias by preview components.
  */
-const RichEditorNativeViewer = ({ backgroundColor, content }: Readonly<RichEditorNativeViewerProps>) => {
+const RichEditorNativeViewer = ({ content }: Readonly<RichEditorNativeViewerProps>) => {
   const navigation = useNavigation<NavigationProp<NavigationRootParams>>();
   const platformUrl = useSelector((state: IGlobalState) => selectors.session(state)?.platform.url);
   const segments = React.useMemo(() => splitRichContent(content, platformUrl), [content, platformUrl]);
   const medias = React.useMemo(() => buildCarouselMedias(segments), [segments]);
-  const containerStyle = React.useMemo(() => getContainerStyle(backgroundColor), [backgroundColor]);
 
   const onOpenMedia = React.useCallback(
     (url: string) => openMedias(navigation, medias, findMediaIndex(medias, url, platformUrl)),
@@ -54,7 +54,7 @@ const RichEditorNativeViewer = ({ backgroundColor, content }: Readonly<RichEdito
       case RichContentSegmentType.PANE:
         return (
           <Pane key={index} type={segment.paneType}>
-            {segment.segments.map(renderSegment)}
+            {segment.segments.map((childSegment, childIndex) => renderSegment(childSegment, childIndex))}
           </Pane>
         );
       case RichContentSegmentType.ATTACHMENTS:
@@ -66,7 +66,7 @@ const RichEditorNativeViewer = ({ backgroundColor, content }: Readonly<RichEdito
     }
   };
 
-  return <View style={containerStyle}>{segments.map(renderSegment)}</View>;
+  return <View style={styles.container}>{segments.map((segment, index) => renderSegment(segment, index))}</View>;
 };
 
 export default React.memo(RichEditorNativeViewer);
