@@ -281,6 +281,8 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       }
   }, [showHelpCenter, zendesk]);
 
+  const openSentNotifications = React.useCallback(() => navigation.navigate(userRouteNames.sentNotifications, {}), [navigation]);
+
   //
   // Show User Home Screen
   //
@@ -300,6 +302,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               }}
               icon="ui-notif"
               testID="account-notifications"
+            />
+            <LineButton
+              title={I18n.get('user-page-sentnotifications')}
+              onPress={openSentNotifications}
+              icon="ui-megaphone"
+              testID="account-sent-notifications"
             />
           </ButtonLineGroup>
         </View>
@@ -417,6 +425,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       navigation,
       editUserInformation,
       openHelpCenter,
+      openSentNotifications,
       splashads,
     ],
   );

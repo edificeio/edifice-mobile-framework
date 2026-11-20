@@ -79,7 +79,7 @@ export const NotificationCard = React.memo(({ notification, onPress }: Notificat
           <Svg name={badge?.icon as SvgIconName} fill={badge?.color} width={AVATAR_SIZE} height={AVATAR_SIZE} />
         )}
         <View style={styles.message}>
-          <HtmlContentView html={message} opts={MESSAGE_HTML_OPTIONS} />
+          <HtmlContentView key={notification.id} html={message} opts={MESSAGE_HTML_OPTIONS} />
           {showChip ? (
             <NotificationChip
               background={appTheme?.colors.pale}

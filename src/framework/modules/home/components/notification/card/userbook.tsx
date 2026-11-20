@@ -30,7 +30,7 @@ export const UserbookNotificationCard = React.memo(({ notification, onPress }: N
       <View style={styles.header}>
         {author ? <SingleAvatar userId={author} size="sm" /> : null}
         <View style={styles.message}>
-          <HtmlContentView html={message} opts={MESSAGE_HTML_OPTIONS} />
+          <HtmlContentView key={notification.id} html={message} opts={MESSAGE_HTML_OPTIONS} />
           {isMood ? null : <SmallItalicText>{`"${params.motto}"`}</SmallItalicText>}
           <CaptionItalicText style={styles.date}>{displayPastDate(notification.date)}</CaptionItalicText>
         </View>

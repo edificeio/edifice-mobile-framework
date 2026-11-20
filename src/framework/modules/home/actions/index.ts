@@ -3,6 +3,7 @@
  */
 import { ThunkDispatch } from 'redux-thunk';
 
+import type { AppDispatch } from '~/app/store';
 import moduleConfig from '~/framework/modules/home/module-config';
 import { TimelineState } from '~/framework/modules/home/reducer';
 import { actions as flashMessagesActions } from '~/framework/modules/home/reducer/flash-messages';
@@ -89,6 +90,16 @@ export const loadNotificationsPageAction =
       // ToDo: Error handling
       dispatch(notificationsActions.error(e as Error));
     }
+  };
+
+/**
+ * Every notification type the user is allowed to see, loaded first if needed.
+ */
+export const loadAuthorizedNotificationTypesAction =
+  () =>
+  async (dispatch: AppDispatch): Promise<string[]> => {
+    const state = await dispatch($prepareNotificationsAction());
+    return state.notifDefinitions.notifFilters.data.map(filter => filter.type);
   };
 
 /**
