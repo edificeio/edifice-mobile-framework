@@ -1,3 +1,4 @@
+export * from './favorite-reorder-item';
 export * from './my-apps-card';
 export * from './my-apps-filters';
 export * from './my-apps-filters-cell';

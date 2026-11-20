@@ -14,6 +14,10 @@ import { buildAllAppsCategoryList, buildAppItem, isSeparator } from './utils';
 
 const NUM_COLUMNS = 2;
 
+// FlashList keeps the first visible item at the same place when the data changes: once the favorites are
+// reordered, the list scrolls to follow that item.
+const MAINTAIN_VISIBLE_CONTENT_POSITION = { disabled: true };
+
 export const MyAppsList = React.forwardRef<FlashListRef<MyAppsListItem>, MyAppsListProps>(
   ({ apps, emptyScreenConfig, isAllAppsFilter, onLongPressApp, onPressApp, onRefresh, refreshing }, forwardedRef) => {
     const localRef = React.useRef<FlashListRef<MyAppsListItem>>(null);
@@ -86,6 +90,7 @@ export const MyAppsList = React.forwardRef<FlashListRef<MyAppsListItem>, MyAppsL
         onRefresh={onRefresh}
         refreshing={refreshing}
         ListEmptyComponent={renderEmptyComponent}
+        maintainVisibleContentPosition={MAINTAIN_VISIBLE_CONTENT_POSITION}
       />
     );
   },
