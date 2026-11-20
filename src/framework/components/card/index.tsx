@@ -32,7 +32,13 @@ import {
   CardWithoutPadding,
   TouchCardWithoutPadding,
 } from './base';
-import { OverviewCardProps } from './picture';
+
+export type OverviewCardProps = {
+  title?: string | React.ReactElement;
+  picture?: PictureProps;
+  pictureStyle?: PictureProps['style'];
+  pictureWrapperStyle?: ViewStyle;
+} & ViewProps;
 
 export interface IContentCardProps extends ViewProps {
   header?: React.ReactElement;

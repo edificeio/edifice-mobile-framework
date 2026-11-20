@@ -26,8 +26,6 @@ import { thunk, ThunkDispatch } from 'redux-thunk';
 
 import { reducer as startupReducer } from '~/framework/navigation/redux';
 
-import { reactotronEnhancer } from './debug';
-import monitorReducerEnhancer from './monitor';
 import { ModuleCompat } from '../module/compat';
 import { AllModulesState } from '../module/types';
 
@@ -68,10 +66,7 @@ const theStore: { current?: Store } = { current: undefined };
 export default function configureStore(preloadedState?: AllModulesState) {
   const middlewares = [thunk];
   const middlewareEnhancer = applyMiddleware(...middlewares);
-
-  const enhancers = __DEV__ ? [middlewareEnhancer, monitorReducerEnhancer, reactotronEnhancer] : [middlewareEnhancer];
-  const composedEnhancers: StoreEnhancer = compose(...enhancers);
-
+  const composedEnhancers: StoreEnhancer = compose(...[middlewareEnhancer]);
   const rootReducer = combineReducers({
     ...ModuleCompat.getAllModulesReducers(),
     // Build-in reducers here

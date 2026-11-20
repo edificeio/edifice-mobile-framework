@@ -2,12 +2,13 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { applyFilter, appShouldBeAtBottom } from '~/framework/modules/myapps/reducer/adapter';
-import { selectAggregatedApps } from '~/framework/modules/myapps/reducer/selectors';
+import { applyFilter, appShouldBeAtBottom, sortAppsByBookmarks } from '~/framework/modules/myapps/reducer/adapter';
+import { selectAggregatedApps, selectAppBookmarks } from '~/framework/modules/myapps/reducer/selectors';
 import { MyAppsFilter, MyAppsFilterCategories, MyAppsFilterTypes } from '~/framework/modules/myapps/types';
 
 export const useFilteredApps = (filter: MyAppsFilter, showAllApps = false) => {
   const aggregatedApps = useSelector(selectAggregatedApps);
+  const { bookmarks } = useSelector(selectAppBookmarks);
 
   return React.useMemo(() => {
     if (!aggregatedApps) return [];
@@ -24,7 +25,7 @@ export const useFilteredApps = (filter: MyAppsFilter, showAllApps = false) => {
         (filter.value === MyAppsFilterCategories.all || filter.value === MyAppsFilterCategories.otherServices));
 
     if (filter.type === MyAppsFilterTypes.Favorites) {
-      return filtered;
+      return sortAppsByBookmarks(filtered, bookmarks ?? []);
     }
 
     let baseResult: typeof filteredTopApps;
@@ -38,5 +39,5 @@ export const useFilteredApps = (filter: MyAppsFilter, showAllApps = false) => {
 
     const bottomAppsToShow = filter.type === MyAppsFilterTypes.Search ? filtered.filter(appShouldBeAtBottom) : bottomApps;
     return shouldShowBottomApps ? [...baseResult, ...bottomAppsToShow] : baseResult;
-  }, [aggregatedApps, filter, showAllApps]);
+  }, [aggregatedApps, bookmarks, filter, showAllApps]);
 };

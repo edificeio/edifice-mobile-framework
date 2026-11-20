@@ -58,21 +58,25 @@ const getLocalFile = language => {
 const getTranslationActions = () => {
   // Read local translations files
   let localCoContent = null;
+  let localDeContent = null;
   let localEnContent = null;
   let localEsContent = null;
   let localFrContent = null;
   let localItContent = null;
   let localMqContent = null;
+  let localPtContent = null;
 
   try {
     localCoContent = JSON.parse(fs.readFileSync(getLocalFile('co'), 'utf-8'));
+    localDeContent = JSON.parse(fs.readFileSync(getLocalFile('de'), 'utf-8'));
     localEnContent = JSON.parse(fs.readFileSync(getLocalFile('en'), 'utf-8'));
     localEsContent = JSON.parse(fs.readFileSync(getLocalFile('es'), 'utf-8'));
     localFrContent = JSON.parse(fs.readFileSync(getLocalFile('fr'), 'utf-8'));
     localItContent = JSON.parse(fs.readFileSync(getLocalFile('it'), 'utf-8'));
     localMqContent = JSON.parse(fs.readFileSync(getLocalFile('fr-MQ'), 'utf-8'));
+    localPtContent = JSON.parse(fs.readFileSync(getLocalFile('pt'), 'utf-8'));
   } catch (error) {
-    console.error('!!! Unable to read fr.json, co.json, en.json, es.json or it.json !!!');
+    console.error('!!! Unable to read co.json, de.json, en.json, es.json, fr.json, it.json, fr-MQ.json or pt.json !!!');
     console.error(error);
     process.exit(2);
   }
@@ -82,24 +86,30 @@ const getTranslationActions = () => {
   //
   const displayObject = object => (isObjectEmpty(object) ? '✅' : object);
   const frCoDiff = getKeysDifference(localFrContent, localCoContent);
+  const frDeDiff = getKeysDifference(localFrContent, localDeContent);
   const frEnDiff = getKeysDifference(localFrContent, localEnContent);
   const frEsDiff = getKeysDifference(localFrContent, localEsContent);
   const frItDiff = getKeysDifference(localFrContent, localItContent);
   const frMqDiff = getKeysDifference(localFrContent, localMqContent);
+  const frPtDiff = getKeysDifference(localFrContent, localPtContent);
   console.info({
     translate: {
       corsican: displayObject(frCoDiff.extraKeysObject1),
+      deutsch: displayObject(frDeDiff.extraKeysObject1),
       english: displayObject(frEnDiff.extraKeysObject1),
       spanish: displayObject(frEsDiff.extraKeysObject1),
       italian: displayObject(frItDiff.extraKeysObject1),
       martinican: displayObject(frMqDiff.extraKeysObject1),
+      portugues: displayObject(frPtDiff.extraKeysObject1),
     },
     delete: {
       corsican: displayObject(frCoDiff.extraKeysObject2),
+      deutsch: displayObject(frDeDiff.extraKeysObject2),
       english: displayObject(frEnDiff.extraKeysObject2),
       spanish: displayObject(frEsDiff.extraKeysObject2),
       italian: displayObject(frItDiff.extraKeysObject2),
       martinican: displayObject(frMqDiff.extraKeysObject2),
+      portugues: displayObject(frPtDiff.extraKeysObject2),
     },
   });
 };

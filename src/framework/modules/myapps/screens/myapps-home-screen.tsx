@@ -23,6 +23,10 @@ export const computeNavBar = screenOptions(() => ({
   title: I18n.get('myapp-appname'),
 }));
 
+const MIN_FAVORITES_TO_REORDER = 2;
+// Lets the bottom sheet close before a modal opens over it.
+const BOTTOM_SHEET_CLOSING_DELAY_MS = 300;
+
 const MyAppsHomeScreen = ({ navigation, route }: MyAppsHomeScreenProps) => {
   const {
     apps,
@@ -43,6 +47,7 @@ const MyAppsHomeScreen = ({ navigation, route }: MyAppsHomeScreenProps) => {
     loadingMenuItem,
     modalRef,
     navigateToFavorites,
+    navigateToFavoritesReorder,
     onExternalLinkPress,
     onPressApp,
     onRefresh,
@@ -149,10 +154,25 @@ const MyAppsHomeScreen = ({ navigation, route }: MyAppsHomeScreenProps) => {
     [],
   );
 
-  const handleToggleFavorite = React.useCallback(() => {
-    closeBottomSheet();
-    setTimeout(() => navigateToFavorites(), 300);
-  }, [closeBottomSheet, navigateToFavorites]);
+  const closeBottomSheetThen = React.useCallback(
+    (navigate: () => void) => {
+      closeBottomSheet();
+      setTimeout(navigate, BOTTOM_SHEET_CLOSING_DELAY_MS);
+    },
+    [closeBottomSheet],
+  );
+
+  const handleToggleFavorite = React.useCallback(
+    () => closeBottomSheetThen(navigateToFavorites),
+    [closeBottomSheetThen, navigateToFavorites],
+  );
+
+  const handleReorderFavorites = React.useCallback(
+    () => closeBottomSheetThen(navigateToFavoritesReorder),
+    [closeBottomSheetThen, navigateToFavoritesReorder],
+  );
+
+  const canReorderFavorites = isFavoritesFilter && apps.length >= MIN_FAVORITES_TO_REORDER;
 
   const onAppInfoPress = React.useCallback(() => {
     closeBottomSheet();
@@ -170,6 +190,15 @@ const MyAppsHomeScreen = ({ navigation, route }: MyAppsHomeScreenProps) => {
               label={I18n.get('myapp-bottomsheet-handle-favorites')}
               testID="myapps-menu-manage-favorites"
             />
+
+            {canReorderFavorites ? (
+              <MyAppsMenuItem
+                onPress={handleReorderFavorites}
+                leftElement={renderMenuIcon('ui-listOrder')}
+                label={I18n.get('myapp-bottomsheet-reorder-favorites')}
+                testID="myapps-menu-reorder-favorites"
+              />
+            ) : null}
 
             {!isFavoritesFilter && (
               <React.Fragment>
@@ -237,6 +266,8 @@ const MyAppsHomeScreen = ({ navigation, route }: MyAppsHomeScreenProps) => {
   }, [
     areAppsShowed,
     bottomSheetMode,
+    canReorderFavorites,
+    handleReorderFavorites,
     handleToggleFavorite,
     isFavoritesFilter,
     onAppInfoPress,

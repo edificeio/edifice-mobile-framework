@@ -14,12 +14,6 @@ import './wdyr';
 // in React Native, `process.nextTick` doesn't exist.
 process.nextTick = setImmediate;
 
-if (__DEV__) {
-  globalThis.RNFBDebug = true;
-  require('./src/app/reactotron.ts');
-  console.debug('Reactotron initialized');
-}
-
 Log.init();
 
 AppRegistry.registerComponent(appName, () => App);
