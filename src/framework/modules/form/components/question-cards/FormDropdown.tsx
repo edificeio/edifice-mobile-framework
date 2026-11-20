@@ -8,7 +8,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { SmallActionText, SmallText } from '~/framework/components/text';
-import { useRegisterModalClose } from '~/framework/navigation/modals/modal-dismissal';
+import { useRegisterOpenModal } from '~/framework/hooks/modal';
 import { ModalBox, ModalContent } from '~/ui/Modal';
 
 const styles = StyleSheet.create({
@@ -82,7 +82,7 @@ const DropdownIOS = ({
 }: IDropdownProps) => {
   const [isModalVisible, setModalVisible] = React.useState(false);
   const closeModal = React.useCallback(() => setModalVisible(false), []);
-  useRegisterModalClose(isModalVisible, closeModal);
+  useRegisterOpenModal(isModalVisible, closeModal);
   const [tempValue, setTempValue] = React.useState<string | undefined>(value ?? keyExtractor(data[0]));
   const selectedValue = data.find(item => keyExtractor(item) === value);
 
