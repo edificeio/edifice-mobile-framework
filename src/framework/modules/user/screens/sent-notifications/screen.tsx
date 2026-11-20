@@ -8,6 +8,7 @@ import { screenOptions } from '~/app/navigation/util';
 import { AppDispatch } from '~/app/store';
 import theme from '~/app/theme';
 import { genericHitSlop, UI_SIZES } from '~/framework/components/constants';
+import EmptyErrorScreen from '~/framework/components/empty-screens/error/component';
 import type { SwipeRowAction } from '~/framework/components/list/swipeable';
 import CustomBottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -53,6 +54,13 @@ export default function UserSentNotificationsScreen({ navigation }: Readonly<Use
   const [notifications, setNotifications] = React.useState<ITimelineNotification[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [loadingMore, setLoadingMore] = React.useState<boolean>(false);
+  const [loadFailed, setLoadFailed] = React.useState<boolean>(false);
+
+  // read when a reload fails, without making the reload depend on the list.
+  const hasNotifications = React.useRef<boolean>(false);
+  React.useEffect(() => {
+    hasNotifications.current = notifications.length > 0;
+  }, [notifications]);
 
   // kept in refs so that a page asked twice by onEndReached is only fetched once.
   const nextPage = React.useRef<number>(0);
@@ -82,14 +90,21 @@ export default function UserSentNotificationsScreen({ navigation }: Readonly<Use
     fetching.current = true;
     try {
       setNotifications(await fetchPage(0));
+      setLoadFailed(false);
     } catch (e) {
-      // a failed reload keeps the list already shown.
+      // a failed reload keeps the list already shown
       console.error('Error while loading the sent notifications', e);
-      Toast.showError(I18n.get('timeline-error-text'));
+      setLoadFailed(true);
+      if (hasNotifications.current) Toast.showError(I18n.get('timeline-error-text'));
     } finally {
       fetching.current = false;
     }
   }, [fetchPage]);
+
+  const restartLoading = React.useCallback(() => {
+    setLoading(true);
+    reload().finally(() => setLoading(false));
+  }, [reload]);
 
   React.useEffect(() => {
     reload().finally(() => setLoading(false));
@@ -97,9 +112,8 @@ export default function UserSentNotificationsScreen({ navigation }: Readonly<Use
 
   React.useEffect(() => {
     if (!sentNotificationFilters || appliedFilters.current === null || sentNotificationFilters === appliedFilters.current) return;
-    setLoading(true);
-    reload().finally(() => setLoading(false));
-  }, [reload, sentNotificationFilters]);
+    restartLoading();
+  }, [restartLoading, sentNotificationFilters]);
 
   const { onRefresh, refreshing } = useRefresh(reload);
 
@@ -192,6 +206,8 @@ export default function UserSentNotificationsScreen({ navigation }: Readonly<Use
   );
 
   function renderList() {
+    // with nothing loaded, the empty list would tell the user they sent nothing.
+    if (loadFailed && !loading && !notifications.length) return <EmptyErrorScreen onRetry={restartLoading} />;
     return (
       <NotificationList
         notifications={notifications}
