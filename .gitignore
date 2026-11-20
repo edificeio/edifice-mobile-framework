@@ -16,6 +16,11 @@ buck-out/
 *.keystore
 !debug.keystore
 
+# Claude Code
+.claude/
+CLAUDE.md
+claude.md
+
 # Fastlane
 **/fastlane/report.xml
 **/fastlane/Preview.html
