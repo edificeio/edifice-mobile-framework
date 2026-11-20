@@ -83,7 +83,8 @@ export function useDiscussionMessages({
     const targetPage = getPage(index);
     const needsPreviousPage =
       target === 'end' && index >= MESSAGES_PAGE_SIZE && index % MESSAGES_PAGE_SIZE < MIN_MESSAGES_ABOVE_LATEST;
-    const pages = await Promise.all((needsPreviousPage ? [targetPage - 1, targetPage] : [targetPage]).map(fetchMessagesPage));
+    const pagesToLoad = needsPreviousPage ? [targetPage - 1, targetPage] : [targetPage];
+    const pages = await Promise.all(pagesToLoad.map(page => fetchMessagesPage(page)));
     initialTargetRef.current = target;
     setInitialScrollIndex(target === undefined ? undefined : index);
     setMessages(

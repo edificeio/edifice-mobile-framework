@@ -1,3 +1,3 @@
 export { default, default as RichEditorNativeViewer } from './component';
 export type { RichEditorNativeViewerProps } from './types';
-export { hasMediaContent } from './util';
+export { hasMediaContent } from './parser';

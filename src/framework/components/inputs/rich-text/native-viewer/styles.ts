@@ -1,4 +1,4 @@
-import { ColorValue, StyleSheet, TextStyle } from 'react-native';
+import { StyleSheet, TextStyle } from 'react-native';
 
 import type { EnrichedTextHtmlStyle } from 'react-native-enriched-html';
 
@@ -46,8 +46,5 @@ export const ENRICHED_TEXT_HTML_STYLE: EnrichedTextHtmlStyle = {
   ol: { markerColor: theme.palette.grey.black },
   ul: { bulletColor: theme.palette.grey.black },
 };
-
-export const getContainerStyle = (backgroundColor?: ColorValue) =>
-  backgroundColor ? [styles.container, { backgroundColor }] : styles.container;
 
 export default styles;

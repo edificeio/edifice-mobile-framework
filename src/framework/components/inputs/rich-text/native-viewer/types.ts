@@ -1,5 +1,3 @@
-import type { ColorValue } from 'react-native';
-
 export interface ImageSize {
   height: number;
   width: number;
@@ -45,6 +43,5 @@ export enum RichContentPaneType {
 }
 
 export interface RichEditorNativeViewerProps {
-  backgroundColor?: ColorValue;
   content: string;
 }
