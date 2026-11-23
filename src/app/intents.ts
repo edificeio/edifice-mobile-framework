@@ -41,15 +41,6 @@ export type OldEntAppName =
   | 'wiki'
   | 'workspace';
 
-export type NewEntAppName = 'Blog' | 'Cahier Multimédia' | 'Wiki' | 'Cahier de texte';
-
-export const newEntAppNameFromOldMap: Partial<Record<OldEntAppName, NewEntAppName>> = {
-  blog: 'Blog',
-  homeworks: 'Cahier de texte',
-  scrapbook: 'Cahier Multimédia',
-  wiki: 'Wiki',
-};
-
 /**
  * Some apps have various names depending of the context :/
  */

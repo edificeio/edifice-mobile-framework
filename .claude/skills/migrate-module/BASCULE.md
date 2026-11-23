@@ -37,6 +37,7 @@
 | 18 | écran qui lit la session : `getSession()` / `assertSession()` dans l'écran ou dans son `mapStateToProps`, `sessionScreen` (`~/framework/components/screen`), `withSession` de `~/framework/modules/auth/util` | `screen: withSession<StaticScreenProps<Params>>(Écran)` (`~/modules/auth/hoc`) dans `defineScreen` : l'écran reçoit `session` en prop, garantie, et les storages par compte (`Storage.account`) travaillent sur son compte (`AccountStorageProvider`). Avec `connect(`, la session arrive en second argument de `mapStateToProps` (`(state, { session }) => …`) au lieu de `getSession()`. Modèles : `src/framework/modules/support/screens/create-ticket/screen.tsx` (avec `connect(`), `src/app/test/amodule.tsx` (fonction) |
 | 19 | `notif-handler.ts`, branché par `setUpNotifHandlers()` en bas de l'ancien `index.ts` | **débranché** (décidé le 2026-11-19) : l'appel disparaît avec l'ancien `index.ts` ; le fichier reste tel quel, avec en tête `// ToDo(<module>-migration): unplugged until modules declare their notifications through the config key notifications`, et une ligne dans la fiche. En attendant, sur la branche, les notifications du module s'ouvrent sur le web. Rebranché avant la livraison, par la clé de config `notifications` (à concevoir avec `timeline`) |
 | 20 | widget ou section de l'accueil (`MYAPPS_WIDGET`, `home-widget`, `home-section`) | **hors de la migration** : fait à part par l'équipe (développements parallèles). Le code reste tel quel, non branché, avec un `ToDo(<module>-migration)` et une ligne dans la fiche |
+| 21 | fichier **mort et cassé** du module : importé nulle part (`grep` du chemin, alias `~/` et imports relatifs) et en erreur `tsc` (souvent des types retirés par un changement plus ancien) | **supprimé** pendant la bascule (décidé le 2026-11-23, modèle : `model/index.ts` d'`explorer`, [explorer.md](journal/explorer.md) décision 11). Une ligne dans la fiche (§4), avec le `grep` qui prouve qu'il est mort et les erreurs qui partent. Un fichier mort qui compile (`styles.ts` orphelin…) reste, au backlog (§5) |
 
 **Emplacement** : le module reste où il est, dans `src/framework/modules/` (ARCHITECTURE §2). Il n'est jamais déplacé vers `src/modules/`, sauf s'il y a déjà un dossier (`user`, `audience`…) : on continue là. Décidé le 2026-11-19.
 
@@ -64,7 +65,7 @@ Chaque envie se note en une ligne dans la fiche du module, §5 : c'est le backlo
 - conversions d'interface : bottom sheet (`@gorhom/bottom-sheet`, `CustomBottomSheetModal`, `BottomMenu`) vers `formSheet`, `react-native-modal` / `ModalBox` vers `transparentModal`, tant qu'elles marchent ;
 - `moment` vers Temporal ; `rights.ts` vers `hasRight` (change ce que l'utilisateur voit) ;
 - correction de bug, sauf une régression causée par le nouveau système ;
-- reformatage, erreurs `tsc` ou ESLint déjà présentes (modèle comme reste du code) ;
+- reformatage, erreurs `tsc` ou ESLint déjà présentes (modèle comme reste du code), sauf celles d'un fichier mort et cassé, supprimé (geste 21) ;
 - jamais : Redux vers zustand (hors des deux skills), changement d'API serveur.
 
 ## Vérifier

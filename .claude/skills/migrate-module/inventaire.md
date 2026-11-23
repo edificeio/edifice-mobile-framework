@@ -23,7 +23,7 @@ Pour chaque ligne : ce qu'il y a dans le module, et le geste de [BASCULE.md](BAS
 | Imports d'autres modules anciens | Pour chacun : code seul (service, util, constantes, types) ou navigation / state | 16 ; navigation / state : arrêt |
 | `notif-handler.ts`, widgets (`home-widget.ts`, `home-section.ts`), intents | Types gérés, routes ouvertes | handler : 19 (débranché) ; widget : 20 (hors migration) ; intent : arrêt ([framework.md](framework.md)) |
 
-Relever aussi, pour §5 de la fiche (sans y toucher) : `connect(`, `tryAction` / `tryActionLegacy` / `handleAction`, classes, `useCallback` / `useMemo` manquants, styles en ligne ou `StyleSheet.create` hors de `styles.ts`, ce que les autres modules importent (API publique : types, hooks, utilitaires), `moment`, bottom sheets et modales (`@gorhom/bottom-sheet`, `CustomBottomSheetModal`, `BottomMenu`, `react-native-modal`, `ModalBox`), `rights.ts`, structure du dossier, erreurs `tsc` / ESLint existantes, bugs vus à la lecture, fichiers orphelins.
+Relever aussi, pour §5 de la fiche (sans y toucher) : `connect(`, `tryAction` / `tryActionLegacy` / `handleAction`, classes, `useCallback` / `useMemo` manquants, styles en ligne ou `StyleSheet.create` hors de `styles.ts`, ce que les autres modules importent (API publique : types, hooks, utilitaires), `moment`, bottom sheets et modales (`@gorhom/bottom-sheet`, `CustomBottomSheetModal`, `BottomMenu`, `react-native-modal`, `ModalBox`), `rights.ts`, structure du dossier, erreurs `tsc` / ESLint existantes, bugs vus à la lecture, fichiers orphelins (un fichier orphelin **et** en erreur `tsc` est supprimé dans la bascule : geste 21).
 
 ### 2. Importeurs
 

@@ -8,6 +8,7 @@ export default [
   import('~/modules/audience'),
   import('~/modules/auth'),
   import('~/modules/editor'),
+  import('~/framework/modules/explorer'),
   import('~/modules/media'),
   import('~/modules/myapps'),
   import('~/modules/notifications'),

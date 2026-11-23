@@ -12,9 +12,6 @@ import { useModuleReducers } from '../module/hooks';
 import { AllModulesActions, AllModulesReducers, AllModulesState } from '../module/types';
 
 let _store: Store<AllModulesState, AllModulesActions, unknown> | null = null;
-/**
- * @deprecated useSelector + useDispatch only.
- */
 export const getStore = () => _store!;
 /**
  * ToDo: automatically type the global store

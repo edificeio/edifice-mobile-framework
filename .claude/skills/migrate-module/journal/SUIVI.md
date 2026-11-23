@@ -1,16 +1,16 @@
 # Suivi calculé de la migration
 
-> Généré par `yarn migration-status` le 2026-11-19, branche `feat/ia/migration-outillage`, commit `e526a6cf0`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
+> Généré par `yarn migration-status` le 2026-11-23, branche `feat/ia/migration-outillage`, commit `488510c19`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
 
 ## En bref
 
 | Indicateur | Valeur |
 | --- | ---: |
-| Modules sur la nouvelle génération | 8 / 41 |
+| Modules sur la nouvelle génération | 9 / 42 |
 | Modules restant sur l'ancienne | 33 |
 | Lignes dans les modules anciens | 62526 |
 | Écrans anciens à porter (`<Stack.Screen>`) | 97 |
-| Fichiers sur l'ancienne navigation | 222 |
+| Fichiers sur l'ancienne navigation | 221 |
 | Fichiers avec `connect(` | 56 |
 
 ## Modules sur la nouvelle génération
@@ -24,6 +24,7 @@
 | `myapps` | basculé, testable | 73 | 3134 | 0 | 5 | 0 | 0 | — | — | 6 |
 | `notifications` | basculé, sans test | 2 | 65 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `user` | basculé, sans test | 2 | 53 | 0 | 1 | 0 | 0 | — | — | 0 |
+| `explorer` | bascule incomplète | 14 | 507 | 0 | 0 | 1 | 0 | — | — | 0 |
 | `support` | basculé, testable | 10 | 535 | 0 | 1 | 0 | 0 | `workspace` | — | 1 |
 
 ## Modules sur l'ancienne génération
@@ -72,7 +73,6 @@
 | `auth` | — | 30 | 2489 | 0 | 0 | 7 | 3 | `user` | — | 0 |
 | `connectors/common` | — | 3 | 84 | 0 | 0 | 2 | 0 | — | — | 0 |
 | `debug` | — | 13 | 535 | 0 | 0 | 4 | 0 | — | — | 0 |
-| `explorer` | — | 11 | 463 | 0 | 0 | 2 | 0 | — | — | 0 |
 | `media` | — | 7 | 32 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `splashads` | — | 7 | 229 | 0 | 0 | 2 | 0 | — | — | 0 |
 | `timeline` | — | 45 | 2598 | 5 | 0 | 7 | 2 | `user` | oui | 0 |
