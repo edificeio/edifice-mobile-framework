@@ -43,6 +43,8 @@ export {
 export type { HeaderActionButtonProps, HeaderIcon, HeaderItem, HeaderMenuEntry, HeaderMenuIcon } from './header';
 export { getTabScreenName } from './tabs';
 export { useCanOpenModule, useOpenModule } from './open-module';
+export { useFocusEffect, useIsFocused, useNavigation, useScrollToTop } from './hooks';
+export { type NavigateAsync, useScreenPromise } from './promise';
 
 export interface AppNavigationProps {
   /** Called once the navigation is ready, after the telemetry. Must be stable (the navigation is not meant to re-render). */

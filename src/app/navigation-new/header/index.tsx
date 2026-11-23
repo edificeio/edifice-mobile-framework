@@ -116,8 +116,6 @@ const toIOSItem = (item: HeaderItem, side: Side, props: NativeStackHeaderItemPro
       };
       if (item.type === 'button') return { ...item.ios, ...common, onPress: item.onPress, type: 'button' };
       // `layout` and `multiselectable` are fields of the menu itself (see `toNativeMenu`): they are taken out of the item. The `_` prefix
-      // marks them as unused on purpose (`varsIgnorePattern` of `@typescript-eslint/no-unused-vars`), which sonarjs doesn't know.
-      // eslint-disable-next-line sonarjs/no-unused-vars
       const { layout: _layout, multiselectable: _multiselectable, ...ios } = item.ios ?? {};
       return { ...ios, ...common, menu: toNativeMenu(item), type: 'menu' };
     }
@@ -145,7 +143,6 @@ const toAndroidRow = (items: HeaderItem[], side: Side) =>
       <View style={styles[side]}>
         {items.map((item, index) => (
           // The items of a row never change (they are fixed when the options are built): their position is their identity
-          // eslint-disable-next-line react/no-array-index-key
           <React.Fragment key={index}>{renderAndroidItem(item, side, props)}</React.Fragment>
         ))}
       </View>

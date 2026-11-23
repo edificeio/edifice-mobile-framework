@@ -53,3 +53,47 @@ export type RootNavigation = NativeStackNavigationProp<RootStackParamList, keyof
 
 type TabsParamList = StaticParamList<ReturnType<typeof useTabNavigation>>;
 export type TabNavigation = NativeStackNavigationProp<TabsParamList, keyof TabsParamList>;
+
+/**
+ * Key that carries the type of what a screen gives back to `navigateAsync` (see `ScreenPromiseParams`).
+ * Type only: no value has this key at runtime, so it is never exported.
+ */
+declare const screenPromiseBrand: unique symbol;
+
+type ScreenPromiseKeys<Result> = {
+  [screenPromiseBrand]?: Result;
+  /** Set by `navigateAsync`: the promise that `useScreenPromise` settles. */
+  screenPromiseId?: string;
+};
+
+/**
+ * Params of a screen (a modal or not) that gives back a result to the screen that opened it with `navigation.navigateAsync`.
+ * Declared in the props of the screen: `StaticScreenProps<ScreenPromiseParams<{ source: FileSource }, LocalFile[]>>`.
+ * A screen without params is declared with `ScreenPromiseParams<undefined, Result>`.
+ */
+export type ScreenPromiseParams<Params extends object | undefined, Result> =
+  | ([NonNullable<Params>] extends [never] ? ScreenPromiseKeys<Result> : NonNullable<Params> & ScreenPromiseKeys<Result>)
+  | Extract<Params, undefined>;
+
+/**
+ * Whether params are built with `ScreenPromiseParams`.
+ * Params that are only `undefined` are ruled out first: their object part is `never`, and `keyof never` holds every key, the brand too.
+ */
+type HasScreenPromise<Params> = [NonNullable<Params>] extends [never]
+  ? false
+  : typeof screenPromiseBrand extends keyof NonNullable<Params>
+    ? true
+    : false;
+
+/** Result declared by params built with `ScreenPromiseParams` (`never` for other params). */
+export type ScreenPromiseResult<Params> =
+  HasScreenPromise<Params> extends true
+    ? Required<NonNullable<Params>> extends { [screenPromiseBrand]: infer Result }
+      ? Result
+      : never
+    : never;
+
+/** Screens and modals that give back a result: the ones `navigateAsync` can open. */
+export type ScreenPromiseName = {
+  [Name in keyof AllModulesNavigationParams]: HasScreenPromise<AllModulesNavigationParams[Name]> extends true ? Name : never;
+}[keyof AllModulesNavigationParams];
