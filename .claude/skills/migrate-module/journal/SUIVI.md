@@ -1,6 +1,6 @@
 # Suivi calculé de la migration
 
-> Généré par `yarn migration-status` le 2026-11-23, branche `feat/ia/migration-outillage`, commit `488510c19`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
+> Généré par `yarn migration-status` le 2026-11-23, branche `feat/ia/migration-outillage`, commit `a3f5c4910`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
 
 ## En bref
 
@@ -10,21 +10,21 @@
 | Modules restant sur l'ancienne | 33 |
 | Lignes dans les modules anciens | 62526 |
 | Écrans anciens à porter (`<Stack.Screen>`) | 97 |
-| Fichiers sur l'ancienne navigation | 221 |
-| Fichiers avec `connect(` | 56 |
+| Fichiers sur l'ancienne navigation | 216 |
+| Fichiers avec `connect(` | 53 |
 
 ## Modules sur la nouvelle génération
 
 | Module | Statut | Fichiers | Lignes | Écrans anciens | Écrans nouveaux | Navigation ancienne | `connect(` | Modules anciens importés | Notif. | Flows |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | :---: | ---: |
-| `audience` | basculé, sans test | 2 | 48 | 0 | 0 | 0 | 0 | — | — | 0 |
+| `audience` | basculé, sans test | 31 | 1553 | 0 | 3 | 0 | 0 | `blog` | — | 0 |
 | `auth` | bascule incomplète | 169 | 9932 | 0 | 22 | 1 | 0 | — | — | 0 |
 | `editor` | basculé, sans test | 1 | 18 | 0 | 0 | 0 | 0 | — | — | 0 |
-| `media` | bascule incomplète | 63 | 3541 | 0 | 2 | 1 | 0 | — | — | 0 |
+| `media` | bascule incomplète | 63 | 3584 | 0 | 2 | 1 | 0 | — | — | 0 |
 | `myapps` | basculé, testable | 73 | 3134 | 0 | 5 | 0 | 0 | — | — | 6 |
 | `notifications` | basculé, sans test | 2 | 65 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `user` | basculé, sans test | 2 | 53 | 0 | 1 | 0 | 0 | — | — | 0 |
-| `explorer` | bascule incomplète | 14 | 507 | 0 | 0 | 1 | 0 | — | — | 0 |
+| `explorer` | bascule incomplète | 14 | 516 | 0 | 0 | 1 | 0 | — | — | 0 |
 | `support` | basculé, testable | 10 | 535 | 0 | 1 | 0 | 0 | `workspace` | — | 1 |
 
 ## Modules sur l'ancienne génération
@@ -69,7 +69,7 @@
 
 | Module | Statut | Fichiers | Lignes | Écrans anciens | Écrans nouveaux | Navigation ancienne | `connect(` | Modules anciens importés | Notif. | Flows |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | :---: | ---: |
-| `audience` | — | 20 | 1309 | 0 | 0 | 5 | 3 | `blog` | — | 0 |
+| `audience` | — | 5 | 28 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `auth` | — | 30 | 2489 | 0 | 0 | 7 | 3 | `user` | — | 0 |
 | `connectors/common` | — | 3 | 84 | 0 | 0 | 2 | 0 | — | — | 0 |
 | `debug` | — | 13 | 535 | 0 | 0 | 4 | 0 | — | — | 0 |

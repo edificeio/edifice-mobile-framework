@@ -5,8 +5,6 @@ import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
 import MediaPlayer from '~/framework/components/media/player';
 import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pdf/pdf-reader';
-import AudienceReactionsScreen, { computeNavBar as audienceReactionsNavBar } from '~/framework/modules/audience/screens/reactions';
-import AudienceViewsScreen, { computeNavBar as audienceViewsNavBar } from '~/framework/modules/audience/screens/views';
 import { infosNavBar, InfosScreen, logNavBar, LogScreen, networkNavBar, NetworkScreen } from '~/framework/modules/debug';
 import AttachmentsImportScreen, {
   computeNavBar as AttachmentsImportAddNavBar,
@@ -30,12 +28,6 @@ export default (
       screenOptions={{
         presentation: 'modal',
       }}>
-      <RootStack.Screen
-        name={ModalsRouteNames.AudienceReactions}
-        options={audienceReactionsNavBar}
-        component={AudienceReactionsScreen}
-      />
-      <RootStack.Screen name={ModalsRouteNames.AudienceViews} options={audienceViewsNavBar} component={AudienceViewsScreen} />
       <RootStack.Screen name={ModalsRouteNames.Pdf} options={PDFNavBar} component={PDFReader} initialParams={{ title: '' }} />
     </RootStack.Group>
     <RootStack.Group
@@ -64,8 +56,6 @@ export default (
 );
 
 setModalModeForRoutes([
-  ModalsRouteNames.AudienceReactions,
-  ModalsRouteNames.AudienceViews,
   ModalsRouteNames.AttachmentsImport,
   ModalsRouteNames.Carousel,
   ModalsRouteNames.FileImport,

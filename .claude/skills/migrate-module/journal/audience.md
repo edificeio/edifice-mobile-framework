@@ -1,6 +1,6 @@
 # Bascule : `audience`
 
-> Statut : à faire — mis à jour le 2026-11-23
+> Statut : basculé et assaini (sélecteur de réactions joué sur iOS, le reste pas testé dans l'app) — mis à jour le 2026-11-23
 >
 > Fiche du module : sa bascule (étape 1), puis son assainissement (étape 2, §9). Le pourquoi de la migration, les règles et la définition de « terminé » sont dans [INTENT.md](../INTENT.md) et ne se répètent pas ici ; le patron est dans [BASCULE.md](../BASCULE.md). Une page : ce qui est propre à ce module.
 
@@ -52,7 +52,7 @@ Repris de [SUIVI.md](SUIVI.md) le 2026-11-23.
 
 ## 4. Dans la bascule
 
-Validé le 2026-11-23 (questions 1 et 2, §6) :
+Fait le 2026-11-23 (questions 1 et 2, §6), non commité :
 
 - **Tout le code passe dans `src/modules/audience`** (décision 1), déplacé tel quel, même arborescence :
   - `service.ts`, `types.ts`, `components/` (barre `Audience` à la racine de `components/`, `button/`), `screens/reactions/`, `screens/views/` ;
@@ -82,43 +82,67 @@ Validé le 2026-11-23 (questions 1 et 2, §6) :
 - **Import de `blog`** (geste 16) : `ToDo(audience-migration)` sur `blogUriCaptureFunction`, dans `actions.ts`.
 - **Chargement de session** (geste 12) : déjà fait (`onSessionStart`). Pas de reducer, pas de storage.
 
+- **Écarts au portage tel quel**, imposés par le typage de la nouvelle navigation (à relire) :
+  - params des deux écrans en `type` au lieu d'`interface` (`AudienceReactionsScreenNavParams`, `AudienceViewsScreenNavParams`) : les params d'une route doivent être un `Record<string, unknown>` ;
+  - `mapDispatchToProps` de l'écran `reactions` : `(dispatch) => ({ dispatch })` au lieu de la fabrique `(dispatch, _) => () => ({ dispatch })`, qui ne se typait plus avec la prop `session`. Même prop `dispatch` (inutilisée : §5, 1).
+
 Fichiers touchés hors des deux dossiers : `src/framework/navigation/modals/index.ts`, `src/framework/navigation/modals/navigator.tsx` (2, sous la limite de 3).
 
 ## 5. Hors de la bascule
 
 ### Backlog
 
+Traité par l'assainissement du 2026-11-23 (§9) : n° 1 à 4, 6 à 10, 12 à 17 de l'ancien backlog, et la partie du n° 11 sans changement visible (`countByType!`, `renderTabReaction` typé, erreur relancée telle quelle). Reste :
+
 | # | Point | Sujet |
 | --- | --- | --- |
-| 1 | `connect(` dans la barre, le bouton et l'écran `reactions`, seulement pour lire les types de réactions : `usePlatformReactionTypes(platform)` existe déjà dans `src/modules/audience/store.ts` | `connect` |
-| 2 | **Régression possible du passage d'`auth` à zustand** : les types de réactions sont dans un store zustand, mais lus par un `mapStateToProps` Redux. La barre ne se rafraîchit que si le state Redux change : si les types arrivent après son affichage sans autre action Redux, le squelette reste. À vérifier dans l'app avec le premier consommateur ; corrigé par le n° 1 | `connect` (à valider) |
-| 3 | `Audience` est un **composant d'interface qui navigue et appelle le service** (réagir, rafraîchir, ouvrir les modales) : contraire à CONVENTIONS « Trois types de composants » et à `COMPONENTS.md` (pas de réseau dans un composant). Actions dans `actions.ts`, navigation par des props d'événement ou en template | `structure` |
-| 4 | Structure de `src/modules/audience` après le déplacement : `model/` (types du domaine), `service/` avec `types.ts` / `adapter.ts` et `getModuleTransport('audience')`, barre dans `components/audience/` ; importeurs à passer aux nouveaux chemins pour supprimer les façades | `structure` |
-| 5 | `computeAudienceRefererFromResourceUri` connaît `blog` (règle d'un autre module en dur) : le consommateur devrait donner le `referer` | `structure` |
-| 6 | Bouton : `Modal` de `react-native` pour le choix de réaction → `transparentModal` | `ui` (à valider : animation positionnée sur le bouton) |
-| 7 | Bouton : hooks appelés dans un `reduce` sur les types de réactions (`rules-of-hooks` désactivé) : si le nombre de types change pendant que le bouton est affiché, React plante | `dette` (bug) |
-| 8 | Bouton : fragments sans `key` dans le `map` des réactions (la `key` est sur l'enfant) : avertissement React, rendu instable | `dette` (bug) |
-| 9 | Bouton : `longPressTimeout` typé `null`, `let component = useRef(null)` : 5 erreurs `tsc` | `erreurs` |
-| 10 | `service.view.post` : `try/catch` autour d'une promesse non attendue, le `catch` ne voit jamais l'erreur (rejet non traité) ; paramètre `session` inutilisé dans `reaction.delete` / `post` / `update` | `dette` (bug) |
-| 11 | Écran `reactions` : `countByType` lu une seule fois (pas rafraîchi), `countByType!`, paramètres de `renderTabReaction` non typés, `throw new Error()` qui perd l'erreur, condition de pagination fragile (`userReactions.length >= (page - 1) * 20`) | `dette` |
-| 12 | Écran `reactions` : `BadgeAvatar` reçoit `badgeContent.type: 'Svg'`, absent du type (`'Icon' \| 'Image'`) : le badge de réaction s'affiche-t-il ? À vérifier dans l'app | `erreurs` (bug possible) |
-| 13 | Écran `views` : `renderItem` exige `color` mais deux appels ne le donnent pas (2 TS2345) ; `name` des `Svg` typés `string` (TS2322, aussi dans la barre et le bouton) ; journal `[BlogAudienceScreen]` dans l'écran des vues | `erreurs`, `dette` |
-| 14 | `PageView` (`@deprecated`) dans les deux écrans | `dette` |
-| 15 | Styles en ligne (`paddingBottom` du pied de liste, `left` / `opacity` du bouton, `{}` conditionnels) | `styles` |
-| 16 | `useCallback` / `useMemo` manquants (fonctions passées aux listes et à `TabView`) | `performance` |
-| 17 | 26 erreurs ESLint dans le dossier (ordre des imports, variables inutilisées, `sort-keys`) | `erreurs` |
-| 18 | Ligne commentée `require('~/framework/modules/audience').default` dans `src/app/modules.ts` | `dette` (nettoyage final) |
+| 5 | `computeAudienceRefererFromResourceUri` connaît `blog` (règle d'un autre module en dur, `actions.ts`) : le consommateur devrait donner le `referer`. Gardé jusqu'à la bascule de `blog` (§6, 11) | `structure`, avec `blog` |
+| 11 | Écran `reactions` : les compteurs par type sont lus une fois, avec la première page (`ToDo`) ; condition de pagination fragile (`userReactions.length >= (page - 1) * 20`) | `dette` (changement visible, à valider) |
+| 18 | Ligne commentée `require('~/framework/modules/audience').default` dans `src/app/modules.ts`, au milieu des autres modules commentés | nettoyage final du dépôt |
+| 19 | Façades `@deprecated` de `framework/modules/audience` : restent pour `blog`, `news`, `communities`, `wiki` (§6, 7) | à leur bascule |
 
 ### Noté, non traité
 
+- `POST` / `PUT` inversés dans le bouton (§6, 8, `ToDo` dans `components/audience-react-button`) : à comparer avec le web avant de changer les requêtes.
+- Squelette de la barre : hauteurs `24` et `30` en dur, sans constante exacte (`styles`).
+- Badge de réaction des avatars (modale « Réactions ») : le type est corrigé, l'affichage reste à voir dans l'app avec une vraie ressource.
 - Le store des types de réactions est en zustand (`src/modules/audience/store.ts`), fait avec `auth` : `audience` n'avait pas de state avant. Gardé (pas de passage de gestionnaire d'état).
-- `markViewAudience` est utilisé par des composants du framework (carrousel, lecteur, pièces jointes) : API publique du module, à garder à l'assainissement.
+- `markViewAudience` est utilisé par des composants du framework (carrousel, lecteur, pièces jointes) : API publique du module (`actions.ts`).
 
 ## 6. Décisions
 
 1. **Tout le code passe dans `src/modules/audience`** (2026-11-23, développeur), avec des façades `@deprecated` aux anciens chemins : un seul dossier pour le module, comme le veut CONVENTIONS « Emplacement ».
 2. **Les routes `Audience*` sont retirées de l'ancien registre des modales globales** (2026-11-23, développeur) : seule l'ancienne navigation le monte, et seule la barre d'`audience` y navigue.
 3. Décidé seul (à relire) : `useAudience` dans `hooks.ts`, `markViewAudience` et `computeAudienceRefererFromResourceUri` dans `actions.ts` ; `components/` et `screens/` gardent leur arborescence.
+
+Assainissement (`/sanitize-module`, plan d'ensemble, 2026-11-23) :
+
+4. **Livraison d'un seul bloc** (développeur) : petit module transverse ; tous les sujets dans l'arbre de travail, un seul commit avec la bascule, après relecture. §9 garde un statut par sujet.
+5. **Barre séparée** (développeur) : un composant d'interface `AudienceBar` (props seulement) et le composant public `Audience`, aux props inchangées, qui charge par des hooks et des actions et navigue vers les modales. Consommateurs inchangés.
+6. **`sessionFetch` typé** (développeur) : `getModuleTransport('audience').sessionFetch`, signatures du service gardées (sans le paramètre `session` inutilisé). Écart avec `support` (`accountFetch(session)`) assumé : les consommateurs anciens n'ont pas toujours la session.
+7. **Importeurs du framework rebranchés** (développeur) : carrousel, lecteur, `media`, `htmlParser`, `src/ui/` passent aux nouveaux chemins ; `blog`, `news`, `communities`, `wiki` gardent les façades jusqu'à leur bascule.
+8. **`POST` / `PUT` inversés dans le bouton : notés, pas corrigés** (développeur) : à comparer avec le web avant de changer les requêtes (§5).
+9. **Choix de la réaction converti en `transparentModal`** (développeur, contre la recommandation) : écran `audience/react`.
+10. **Le squelette de la barre se rafraîchit à l'arrivée des types de réactions** (recommandation prise, le développeur n'ayant pas de préférence) : changement visible, correction de la régression du passage d'`auth` à zustand.
+11. Annoncé, sans effet visible : le bouton reçoit les types de réactions de la barre (prop) ; la règle de `blog` (`computeAudienceRefererFromResourceUri`) reste, isolée, avec son `ToDo`, jusqu'à la bascule de `blog`.
+
+12. **Le choix de réaction revient par `navigateAsync`** (2026-11-23, développeur ; répond à l'ancienne question ouverte 1) : le bouton ouvre `audience/react` avec `navigation.navigateAsync` (`~/app/navigation-new`), l'écran rend la réaction avec `useScreenPromise`, `undefined` si l'utilisateur ferme. Le bouton appelle ensuite ses props (`postReaction`…) comme aujourd'hui : pas de store ni de callback dans les params.
+
+13. **Le geste continu « appui long puis glisser » est gardé avec l'écran `audience/react`** (2026-11-23, essais ; répond à l'ancienne question ouverte 2) : le geste survit à l'ouverture d'une `transparentModal`.
+   - iOS (simulateur iPhone 18 Pro, `react-native-screens` 4.30.1), essai de l'agent : après l'ouverture, le `PanResponder` du bouton a reçu les 9 mouvements et le relâchement, avec les coordonnées de l'écran. Rien dans `react-native-screens` n'annule les touchers à la présentation d'une modale (seulement au geste de retour, `cancelTouchesInParent`).
+   - Android, essai du développeur : fonctionne aussi bien.
+   - Conception : le toucher reste au bouton qui l'a commencé, la modale n'en reçoit rien. Le bouton transmet à l'écran la réaction survolée et le relâchement (petit état partagé, ex. store zustand du module) ; l'écran affiche le choix et se résout au relâchement. Un toucher simple sur une réaction de l'écran marche aussi.
+   - Code de l'essai, jetable, marqué `ToDo(audience-migration): EXPERIMENT` : `screens/react/` (écran + `gesture.ts`), enregistrement dans `index.ts`, appels dans le bouton, bouton posé sur l'accueil de test (`src/app/test/amodule.tsx`). Remplacé par l'implémentation du sujet `ui`, et le bouton retiré de l'accueil de test.
+
+14. Décidé seul pendant l'assainissement (2026-11-23, sans effet visible sauf mention ; à relire) :
+   - **Structure** : `model/index.ts` (types, ancien `types.ts`), `model/business.ts` (`getReactionAt`, testé), `service/` (`index.ts`, `types.ts` avec `namespace API` en alias du modèle, `adapter.ts` testé), `util.ts` (`getReactionIconName`), `actions.ts` (fonctions async sans session : `loadPlatformReactionTypes`, `loadResourceReactions`, `deleteReaction`, `postReaction`, `updateReaction`, `loadReactionsPage`, `loadViews`, `markViewAudience`). Les formats rendus par le service ne changent pas : `blog`, `news` et `communities` les lisent par la façade. Seul `getValidReactionTypes` (lu par le module seul) rend désormais la liste des types.
+   - **Composants** : `components/audience-bar/` (`AudienceBar`, props seulement, le bouton en `children`), `components/audience-react-button/` (`AudienceReactButton`, props d'événement `on…`), `components/audience/` (`Audience` public : hooks, actions, navigation). `components/index.ts` exporte `Audience` et `AudienceProps`.
+   - **Sélecteur `audience/react`** : `transparentModal`, `animation: 'none'` : le sélecteur apparaît et disparaît par ses propres animations, et l'écran ne quitte la pile qu'à leur fin (retour Android compris, `usePreventRemove`). Le bouton s'anime dès qu'il reçoit la réaction. Corrigé le 2026-11-23 sur le retour du développeur : avec `animation: 'fade'` et la fermeture 100 ms après le choix (comme l'ancien `Modal`), les icônes se figeaient pendant le fondu, car `react-native-screens` (Fabric) montre une capture figée d'un écran qui quitte la pile (`addSnapshotToView`, `RNSScreen.mm`). Params : position du bouton et types de réactions (pas de `withSession`). Le geste passe par `useReactionPickerGestureStore` (`store.ts`). La zone de choix compte les types reçus (l'ancien code supposait 4).
+   - **Gestes du bouton** (2026-11-23, sur le retour du développeur : la page défilait pendant « maintenir puis glisser ») : `react-native-gesture-handler` (déjà une dépendance) au lieu du `PanResponder`. Un `PanResponder` est un JS responder : React Native ne bloque que les scroll views qu'il contient, pas celle qui le contient. Un pan activé après 300 ms d'appui (`activateAfterLongPress`) ouvre le sélecteur et suit le doigt ; s'il bouge avant, le pan échoue et la page défile comme avant. Un toucher (`useTapGesture`, exclusif) retire la réaction ou ouvre le sélecteur. Pas un appui long (`useLongPressGesture`) : il s'annule dès que le doigt sort du bouton ou dépasse quelques points, même actif. Le toucher est limité à 10 points (`maxDistance`) : sans limite, un glissé rapide parti du bouton comptait comme un toucher et ouvrait le sélecteur. Joué : par le développeur (essai réussi, 2026-11-23) ; par l'agent sur iOS, appui long puis glissé lent vers le bas : la page ne défile plus (elle défilait avant le correctif). **Pas vérifié** : le glissé immédiat parti du bouton (la page doit défiler) avec la limite de 10 points, la session s'étant perdue au redémarrage de l'app.
+   - **Position du sélecteur** : calculée depuis la position mesurée de la modale, au lieu du décalage de la barre d'état ajouté à la main sur Android. **À vérifier sur Android.**
+   - **Type de réaction inconnu de l'app** : pas d'icône (avant : un `Svg` au nom inconnu).
+   - `audienceService.view.post` attend la requête : un échec est journalisé (avant : rejet non traité, le `catch` ne voyait rien).
+   - `useAudience` rend un objet mémoïsé ; les `types.ts` des écrans sont supprimés (types internes, CONVENTIONS « Dossier d'un écran »).
 
 ### Questions ouvertes
 
@@ -128,15 +152,16 @@ Aucune.
 
 | Contrôle | Avant | Après |
 | --- | --- | --- |
-| `tsc` (comparé fichier par fichier) | 792 au total ; 11 dans `audience` (bouton 5, barre 2, `reactions` 1, `views` 3 : §5) | |
-| ESLint sur les deux dossiers | 26 erreurs | |
-| `yarn lint-all` | 2166 problèmes | |
-| Jest | 447 / 447 | |
-| Compteurs de [SUIVI.md](SUIVI.md) | `framework/modules/audience` : navigation ancienne 5, `connect(` 3 | |
-| Flows Maestro ou recette manuelle | aucun flow | |
-| Parcours joué dans l'app (iOS, Android) | — | |
+| `tsc` (comparé fichier par fichier) | 792 au total ; 11 dans `audience` (bouton 5, barre 2, `reactions` 1, `views` 3 : §5) | 792, identiques par fichier et par code une fois les chemins déplacés pris en compte (`src/framework/modules/audience/…` → `src/modules/audience/…`) |
+| ESLint sur les deux dossiers (et `framework/navigation/modals`) | 26 erreurs | 13, toutes déjà présentes (variables inutilisées du bouton, `sort-keys` de `components/styles.ts`) ; `eslint --fix` sur les fichiers touchés |
+| `yarn lint-all` | 2166 problèmes | 2153 |
+| Jest | 447 / 447 | 447 / 447 (aucun test sur `audience`) |
+| Compteurs de [SUIVI.md](SUIVI.md) | `framework/modules/audience` : navigation ancienne 5, `connect(` 3 ; fichiers sur l'ancienne navigation 221 | `audience` (`src/modules`) : basculé, sans test, 2 modales, navigation ancienne 0, `connect(` 3, importe `blog` (code, `ToDo`) ; `framework/modules/audience` : 5 façades, navigation ancienne 0 ; total 216. `--check` vert |
+| `testID`, clés i18n, storage | `cancel-reaction-btn`, `post-reaction-btn` ; pas de storage | inchangés (`git diff -M` : lignes déplacées seulement) |
+| Flows Maestro ou recette manuelle | aucun flow | aucun flow (rien de jouable, §3) |
+| Parcours joué dans l'app (iOS, Android) | — | **pas testé dans l'app** |
 
-Ce qui ne peut pas encore être joué dans l'app, et le module qu'il attend : §3, 2 à 7, le premier consommateur basculé (`news` ou `blog`).
+Ce qui ne peut pas encore être joué dans l'app, et le module qu'il attend : §3, 2 à 7, le premier consommateur basculé (`news` ou `blog`). Le n° 1 (chargement des types à la connexion) est jouable dès maintenant.
 
 ## 8. Mesure
 
@@ -144,5 +169,23 @@ Temps passé : à remplir. Questions posées par l'agent : 2 (emplacement : rép
 
 ## 9. Assainissement
 
+Plan d'ensemble, fait le 2026-11-23 dans l'arbre de travail, un seul commit avec la bascule (§6, 4). Non commité.
+
 | Sujet | Statut | Décisions | Recette à jouer dans l'app | PR / commit |
 | --- | --- | --- | --- | --- |
+| `connect` | fait | §6, 10 et 11 | barre : squelette puis compteurs dès que les types arrivent ; modale « Réactions » : onglets par type | commit unique (§6, 4) |
+| `try-action` | sans objet | | | |
+| `classes` | sans objet | | | |
+| `structure` : service + `transport` | fait | §6, 6 et 14 | réagir, changer, retirer : requêtes inchangées (`POST`, `PUT`, `DELETE`) | commit unique |
+| `structure` : modèle + actions | fait | §6, 5 et 14 | compteurs rafraîchis après chaque réaction | commit unique |
+| `ui` | fait | §6, 9, 12, 13 et 14 | appui long sur « Réagir » : le sélecteur s'ouvre au-dessus du bouton ; glisser sur une réaction (elle grossit, son nom s'affiche) et lever le doigt la choisit ; lever hors du sélecteur le laisse ouvert ; un toucher sur une réaction la choisit, sur le fond ferme. **iOS** (2026-11-23, agent, accueil de test, ressource fictive) : ouverture, position, relâché hors du sélecteur, fermeture par le fond. Pas joué : le choix (il écrit sur le serveur), Android | commit unique |
+| `performance` | fait | | `useCallback` / `useMemo` / `React.memo` ; `react-hooks/exhaustive-deps` sans erreur | commit unique |
+| `styles` | fait | | `paddingBottom` du pied de liste et couleur par défaut des vues dans `styles.ts` ; hauteurs du squelette gardées (§5) | commit unique |
+| `dette` | fait | §6, 8 | `PageView` → `View` (`flex: 1`) : fond et marges des deux modales de détail | commit unique |
+| `erreurs` | fait | | `tsc` : 10 erreurs du module en moins ; ESLint du dossier : 0 | commit unique |
+| `api-publique` | fait | §6, 7 | importeurs du framework sur `~/modules/audience/actions` et `~/modules/audience/model` | commit unique |
+| `temporal`, `droits` | sans objet | | | |
+
+Vérification (2026-11-23), avant → après : `tsc` 790 → 780 (les 10 erreurs d'`audience`, aucune nouvelle, comparé fichier par fichier) ; ESLint des deux dossiers 14 → 0 ; `yarn lint-all` 2153 → 2134 ; Jest 447 → 453 (`model/business.test.ts`, `service/adapter.test.ts`) ; `yarn migration-status --check` vert ; `testID` `cancel-reaction-btn` et `post-reaction-btn` gardés (dans le sélecteur), clés i18n inchangées.
+
+Joué sur le simulateur iPhone 18 Pro avec la barre posée un temps sur l'accueil de test (retirée ensuite) : la barre s'affiche (types chargés), le sélecteur (voir `ui`), la modale « Réactions » s'ouvre avec titre et bouton fermer (écran d'erreur attendu : ressource fictive). Pas joué : réagir pour de vrai, la modale « Vues », Android.

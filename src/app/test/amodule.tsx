@@ -27,6 +27,8 @@ import { PrimaryButton } from '~/framework/components/button';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/text';
 import { useStorageNumber } from '~/framework/util/storage/hooks';
+import { Audience } from '~/modules/audience/components';
+import type { AudienceReferer } from '~/modules/audience/model';
 import { AccountsButton } from '~/modules/auth/components';
 import { useAuthFlows } from '~/modules/auth/flows';
 import { withSession } from '~/modules/auth/hoc';
@@ -52,6 +54,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+// Resource of the reactions test. A fictitious one: replace it by a real resource of the platform (a blog post…) to react for real.
+const AUDIENCE_TEST_REFERER: AudienceReferer = { module: 'blog', resourceId: 'audience-test', resourceType: 'post' };
 
 // `withSession`: the hooks of an account storage work on the account of the session
 const AModuleHomeScreen = withSession<StaticScreenProps<undefined>>(function ({ session }) {
@@ -112,6 +117,9 @@ const AModuleHomeScreen = withSession<StaticScreenProps<undefined>>(function ({ 
         <BodyText>{`Stockage compte : ${favoriteNumber ?? 0}`}</BodyText>
         <PrimaryButton testID="favorite" text="Compte +1" onPress={() => setFavoriteNumber((favoriteNumber ?? 0) + 1)} />
       </View>
+
+      <HeadingSText>Test réactions</HeadingSText>
+      <Audience referer={AUDIENCE_TEST_REFERER} session={session} isManager />
 
       <HeadingSText>Test scroll</HeadingSText>
       <BodyText style={styles.row}>1</BodyText>

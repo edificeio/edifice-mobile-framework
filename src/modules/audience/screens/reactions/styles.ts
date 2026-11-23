@@ -6,6 +6,7 @@ import { getScaleHeight, UI_SIZES } from '~/framework/components/constants';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.palette.grey.white,
+    flex: 1,
     padding: UI_SIZES.spacing.medium,
   },
   flatlist: {
@@ -26,6 +27,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.minor,
+  },
+  listFooter: {
+    paddingBottom: UI_SIZES.screen.bottomInset,
   },
   noReactionTitle: {
     color: theme.palette.grey.black,

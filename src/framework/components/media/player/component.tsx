@@ -10,16 +10,16 @@ import WebView, { WebViewProps } from 'react-native-webview';
 import { connect } from 'react-redux';
 
 import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
-import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
-import { markViewAudience } from '~/framework/modules/audience';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { MediaType } from '~/framework/modules/media';
 import AppInfo from '~/framework/util/app-info';
 import { sessionURISource } from '~/framework/util/transport';
+import { markViewAudience } from '~/modules/audience/actions';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
 import { MediaPlayerEmbeddedParams, MediaPlayerPlayableParams, MediaPlayerProps } from './types';

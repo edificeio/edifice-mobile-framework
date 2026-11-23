@@ -10,10 +10,10 @@ import { convertLegacyMediaToFileMedia } from '~/framework/components/carousel/u
 import { getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { SmallInverseText } from '~/framework/components/text';
-import { AudienceParameter } from '~/framework/modules/audience/types';
 import { IMAGE_MAX_DIMENSION } from '~/framework/util/fileHandler';
 import { FastImage } from '~/framework/util/media-deprecated';
 import { sessionURISource } from '~/framework/util/transport';
+import type { AudienceParameter } from '~/modules/audience/model';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Row } from './Grid';

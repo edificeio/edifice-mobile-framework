@@ -4,18 +4,10 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 const styles = StyleSheet.create({
-  button: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 0,
-    paddingVertical: UI_SIZES.spacing.minor,
-  },
-  buttonView: {
-    alignSelf: 'flex-start',
-  },
-  flex1: {
+  container: {
     flex: 1,
   },
-  reactions: {
+  picker: {
     alignSelf: 'flex-start',
     backgroundColor: theme.palette.grey.white,
     borderColor: theme.palette.grey.cloudy,
@@ -23,7 +15,6 @@ const styles = StyleSheet.create({
     borderWidth: UI_SIZES.border.thin,
     elevation: 16,
     flexDirection: 'row',
-    left: 0,
     position: 'absolute',
     shadowColor: theme.ui.shadowColor,
     shadowOffset: {
@@ -33,15 +24,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 10,
   },
-  reactionsIcon: {
+  pickerItem: {
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing.medium,
   },
-  reactionsText: {
-    color: theme.palette.grey.white,
-    textAlign: 'center',
-  },
-  reactionsTextView: {
+  pickerLabel: {
     backgroundColor: theme.palette.grey.black,
     borderRadius: UI_SIZES.radius.medium,
     paddingHorizontal: UI_SIZES.spacing.minor,
@@ -49,6 +36,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -30,
   },
+  pickerLabelText: {
+    color: theme.palette.grey.white,
+    textAlign: 'center',
+  },
+});
+
+export const REACTION_ICON_SIZE = 30;
+/** Width of one reaction in the picker. */
+export const PICKER_ITEM_WIDTH = REACTION_ICON_SIZE + styles.pickerItem.paddingHorizontal * 2;
+export const PICKER_HEIGHT = REACTION_ICON_SIZE + styles.pickerItem.paddingVertical * 2 + styles.picker.borderWidth * 2;
+export const getPickerWidth = (count: number) => PICKER_ITEM_WIDTH * count + styles.picker.borderWidth * 2;
+
+/** Position of the picker in the modal: above the react button (`anchor`), both in the coordinates of the page. */
+export const getPickerPosition = (anchor: { x: number; y: number }, modalOrigin: { x: number; y: number }) => ({
+  left: anchor.x - modalOrigin.x,
+  top: anchor.y - PICKER_HEIGHT - modalOrigin.y,
 });
 
 export default styles;

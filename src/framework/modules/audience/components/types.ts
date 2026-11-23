@@ -1,25 +1,2 @@
-import { ViewStyle } from 'react-native';
-
-import { AudienceReferer } from '~/framework/modules/audience/types';
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
-
-export interface AudienceReduxProps {
-  validReactionTypes: string[];
-}
-export interface AudienceProps {
-  referer: AudienceReferer;
-  session: AuthActiveAccount;
-  nbComments?: number;
-  nbViews?: number;
-  infosReactions?: {
-    total: number;
-    types: string[];
-    userReaction?: string;
-  };
-  containerStyle?: ViewStyle;
-  preview?: boolean;
-  isManager?: boolean;
-  showComments?: boolean;
-}
-
-export interface AudienceAllProps extends AudienceProps, AudienceReduxProps {}
+/** @deprecated façade: use `AudienceProps` from `~/modules/audience/components`. Removed when nothing imports it anymore. */
+export type { AudienceProps } from '~/modules/audience/components';

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import Attachment, { ILocalAttachment, IRemoteAttachment } from './Attachment';
-
-import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';
-import { markViewAudience } from '~/framework/modules/audience';
-import { AudienceParameter } from '~/framework/modules/audience/types';
+import { markViewAudience } from '~/modules/audience/actions';
+import type { AudienceParameter } from '~/modules/audience/model';
+import { I18n } from '~/util/i18n';
+
+import Attachment, { ILocalAttachment, IRemoteAttachment } from './Attachment';
 
 const getAttachmentStyle = (index: number) => {
   return {

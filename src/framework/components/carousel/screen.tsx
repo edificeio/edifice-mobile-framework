@@ -14,7 +14,6 @@ import RNFS from 'react-native-fs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Share from 'react-native-share';
 
-import { I18n } from '~/util/i18n';
 import { NavigationRootParams } from '~/app/navigation/types';
 import theme from '~/app/theme';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
@@ -25,8 +24,6 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
-import { markViewAudience } from '~/framework/modules/audience';
-import { AudienceParameter } from '~/framework/modules/audience/types';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { toURISource } from '~/framework/modules/media';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -38,7 +35,10 @@ import { isEmpty } from '~/framework/util/object';
 import { assertPermissions, PermissionError } from '~/framework/util/permissions';
 import { OldStorageFunctions } from '~/framework/util/storage';
 import { sessionURISource } from '~/framework/util/transport';
+import { markViewAudience } from '~/modules/audience/actions';
+import type { AudienceParameter } from '~/modules/audience/model';
 import { Loading } from '~/ui/Loading';
+import { I18n } from '~/util/i18n';
 
 import { IImageSize } from './image-viewer/image-viewer.type';
 
