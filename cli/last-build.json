@@ -1,8 +1,8 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2026-10-27 11:35:04",
-  "notes": "release: 1.17.9-rc.2(1170905)",
-  "version": "1.17.9-rc.3(1170906)",
-  "track": "1.17.9",
-  "order": "rc.3"
+  "last": "2026-11-23 11:56:38",
+  "notes": "refactor(component): PEDAGO-4519 replacing RichEditorViewer\nfeat(discussions): PEDAGO-4518, SWMansion editor viewer\nfeat(discussions): PEDAGO-4155 list position on opening\nfeat(discussions): PEDAGO-4173 pull to refresh on list\nfeat(discussions): PEDAGO-2909 adding replies-bar component\nfeat(discussions): PEDAGO-4213 loaders discussion details screen\nfeat(discussions): PEDAGO-2906, PEDAGO-4339 adding rich editor (read & write)\nMerge branch 'dev/1.17.10' into dev/peda\nchore(ia): Ignore Claude code stuff\nchore(ia): Claude code stuff removal\nUpdated translations from Phrase (367)\nrefactor(myapps): IMPULS-6598, replace dots with dashes in app i18n keys (366)\nMerge branch 'dev/1.17.10' into dev/peda\nFeat/ai (362)\nfix(myapps): INTEG-2471, show app icons given as https URLs\nfeat(icons): INTEG-2467, add the nextcloud, alloregion and assistancetic app icons\nfeat(myapps): INTEG-2466, reorder favorite apps with drag and drop\nUpdated translations from Phrase (361)\nchore(i18n): ENABLING-1402, add de && pt languages\nrefactor(auth): ENABLING-1129, move the picture card into the auth module (357)\nchore(debug): reactotron stuff removal\nfeat(claude): new rule to manage native parts\nMerge branch 'dev/1.17.10' into dev/peda\nfix(i18n): ENABLING-1382, set primary language instead of regional one when language is automatic\nfix(clean): fix yarn clean android error\nfeat(blog): PEDAGO-4216 display pinned post\nMerge branch 'dev/1.17.10' into dev/peda\nchore(claude): adding component-skeleton skill\nchore(claude): file names to uppercase\nMerge branch 'dev/1.17.10' into dev/peda\nfix(editor): PEDAGO-2349 line breaks\nfix(user): ENABLING-1385 allow students to edit email/mobile\nMerge branch 'dev/1.17.10' into dev/peda\nfix(claude): Fix some typo\nfeat(claude): package.json management rule addition\nfix(claude): Fix some typo\nMerge branch 'dev/1.17.10' into dev/peda\nchore(ia): add the team conventions doc and the home widget skill\nfeat(claude): adding CLAUDE.md, first skills and rules\nMerge branch 'dev/1.17.10' into dev/peda\nchore(ia): add the team conventions doc and the home widget skill\nfeat(claude): adding CLAUDE.md, first skills and rules\nfix(editor): PEDAGO-2349 line breaks\nMerge branch 'dev/1.17.10' into dev/peda\nchore: update phrase sync branch\nrelease: 1.17.10(1171000)\nUpdated translations from Phrase (348)\nrelease: 1.17.9-rc.3(1170906)",
+  "version": "1.17.10-peda.6(1171001)",
+  "track": "1.17.10",
+  "order": "peda.6"
 }
