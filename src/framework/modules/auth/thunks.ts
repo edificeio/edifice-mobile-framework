@@ -1,4 +1,3 @@
-import DeviceInfo from 'react-native-device-info';
 import { Action } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
@@ -9,6 +8,7 @@ import { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
 import { appInfoActions } from '~/framework/modules/myapps/reducer/actions';
 import { loadAppsDataFromService } from '~/framework/modules/myapps/reducer/adapter';
 import { createMyAppsServiceWithTokenFetch } from '~/framework/modules/myapps/service';
+import AppInfo from '~/framework/util/app-info';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import firebaseService from '~/framework/util/notifications/service';
@@ -69,7 +69,7 @@ export const authInitAction = () => async (dispatch: AuthDispatch, getState: () 
   const startup = storage.readSavedStartup();
   const accounts = storage.readSavedAccounts();
   const showOnboarding = storage.readShowOnbording();
-  const deviceId = await DeviceInfo.getUniqueId();
+  const deviceId = await AppInfo.getUniqueId();
   dispatch(actions.authInit(startup, accounts, showOnboarding, deviceId));
 
   // 2. read from redux the startup account.

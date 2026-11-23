@@ -1,7 +1,7 @@
 import unorm from 'unorm';
 
 import { I18n } from '~/app/i18n';
-import BuildInfo from '~/framework/util/build-info';
+import AppInfo from '~/framework/util/app-info';
 
 /**
  * Check if string is empty (only contains spaces).
@@ -170,7 +170,7 @@ export function createUUID() {
  * @returns The override name
  */
 export function getOverrideName() {
-  return BuildInfo.BundleVersionOverride.split('/')[0];
+  return AppInfo.build.overrideName;
 }
 
 /**

@@ -3,7 +3,6 @@ import { AppState, BackHandler, Platform, StatusBar, View } from 'react-native';
 
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { getBundleId } from 'react-native-device-info';
 import VideoPlayer, { VideoPlayerProps } from 'react-native-media-console';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,6 +18,7 @@ import { PageView } from '~/framework/components/page';
 import { markViewAudience } from '~/framework/modules/audience';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
 import { MediaType } from '~/framework/modules/media';
+import AppInfo from '~/framework/util/app-info';
 import { sessionURISource } from '~/framework/util/transport';
 
 import styles from './styles';
@@ -48,7 +48,7 @@ function MediaPlayer(props: MediaPlayerProps) {
             ..._source,
             headers: {
               ...(_source.headers as Record<string, string>),
-              'Referer': session?.platform.url ?? getBundleId(),
+              'Referer': session?.platform.url ?? AppInfo.app.bundleId,
               'Referrer-Policy': 'strict-origin-when-cross-origin',
             },
           })

@@ -1,11 +1,12 @@
 import { Dimensions, Insets, PixelRatio, Platform, StyleSheet } from 'react-native';
 
-import DeviceInfo, { hasDynamicIsland, hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
+
+import AppInfo, { ANDROID_API, isAndroidApiAtLeast } from '~/framework/util/app-info';
 
 const fallbackInsets = Platform.select({
   default: { bottom: 0, left: 0, right: 0, top: 0 },
-  ios: { bottom: 34, left: 0, right: 0, top: hasDynamicIsland() ? 64 : hasNotch() ? 44 : 0 },
+  ios: { bottom: 34, left: 0, right: 0, top: AppInfo.device.hasDynamicIsland ? 64 : AppInfo.device.hasNotch ? 44 : 0 },
 });
 
 const insets = initialWindowMetrics?.insets || fallbackInsets;
@@ -190,13 +191,13 @@ export const UI_SIZES = {
     // TODO: Remove this workaround once edge-to-edge mode is handled
     // natively by the framework. revert to default: 0.
     bottomInset: Platform.select({
-      default: DeviceInfo.getApiLevelSync() >= 36 ? insets.bottom : 0, // Android 16+ edge-to-edge: add navigation bar height
-      ios: DeviceInfo.isTablet() ? 32 : insets.bottom,
+      default: isAndroidApiAtLeast(ANDROID_API.ANDROID_16) ? insets.bottom : 0, // Android 16+ edge-to-edge: add navigation bar height
+      ios: AppInfo.device.isTablet ? 32 : insets.bottom,
     }),
     height: screenDimensions.height,
     scale: screenDimensions.scale,
     topInset: Platform.select({
-      default: hasNotch() ? insets.top : 0,
+      default: AppInfo.device.hasNotch ? insets.top : 0,
       ios: insets.top,
     }),
     width: screenDimensions.width,

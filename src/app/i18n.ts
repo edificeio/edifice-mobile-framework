@@ -15,11 +15,11 @@ import 'moment/locale/fr';
 import 'moment/locale/it';
 import 'moment/locale/pt';
 import { initReactI18next } from 'react-i18next';
-import DeviceInfo from 'react-native-device-info';
 import * as RNLocalize from 'react-native-localize';
 import Phrase from 'react-native-phrase-sdk';
 import RNRestart from 'react-native-restart';
 
+import AppInfo from '~/framework/util/app-info';
 import appConf from '~/framework/util/appConf';
 import { isEmpty } from '~/framework/util/object';
 import { OldStorageFunctions } from '~/framework/util/storage';
@@ -101,7 +101,7 @@ export namespace I18n {
   const phraseId = phraseSecrets?.distributionId;
   const phraseSecret = appConf.isDevOrAlpha ? phraseSecrets?.devSecret : phraseSecrets?.prodSecret;
 
-  const phrase = new Phrase(phraseId, phraseSecret, DeviceInfo.getVersion(), 'i18next');
+  const phrase = new Phrase(phraseId, phraseSecret, AppInfo.app.version, 'i18next');
 
   const backendPhrase = resourcesToBackend((language, _namespace, callback) => {
     phrase

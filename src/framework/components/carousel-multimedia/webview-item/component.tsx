@@ -2,8 +2,9 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
-import { getBundleId } from 'react-native-device-info';
 import { WebView, WebViewProps } from 'react-native-webview';
+
+import AppInfo from '~/framework/util/app-info';
 
 import { WebviewItemProps } from './types';
 
@@ -33,7 +34,7 @@ const WebviewItem = ({ isCurrentItem, setIsWebviewError, src }: WebviewItemProps
   const webViewSource = React.useMemo(() => {
     return {
       headers: {
-        'Referer': session?.platform.url ?? getBundleId(),
+        'Referer': session?.platform.url ?? AppInfo.app.bundleId,
         'Referrer-Policy': 'strict-origin-when-cross-origin',
       },
       uri: src,

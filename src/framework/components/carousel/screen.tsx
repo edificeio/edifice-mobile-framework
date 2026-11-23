@@ -10,7 +10,6 @@ import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
-import DeviceInfo from 'react-native-device-info';
 import RNFS from 'react-native-fs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Share from 'react-native-share';
@@ -31,6 +30,7 @@ import { AudienceParameter } from '~/framework/modules/audience/types';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { toURISource } from '~/framework/modules/media';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import AppInfo from '~/framework/util/app-info';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media-deprecated';
@@ -205,7 +205,7 @@ export function Carousel(props: ICarouselProps) {
           if (e instanceof PermissionError) {
             Alert.alert(
               I18n.get('carousel-savetocameraroll-permissionblocked-title'),
-              I18n.get('carousel-savetocameraroll-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+              I18n.get('carousel-savetocameraroll-permissionblocked-text', { appName: AppInfo.app.name }),
             );
             return undefined;
           } else {
@@ -250,7 +250,7 @@ export function Carousel(props: ICarouselProps) {
         if (e instanceof PermissionError) {
           Alert.alert(
             I18n.get('carousel-share-permissionblocked-title'),
-            I18n.get('carousel-share-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+            I18n.get('carousel-share-permissionblocked-text', { appName: AppInfo.app.name }),
           );
         } else {
           console.error('Share error', e);

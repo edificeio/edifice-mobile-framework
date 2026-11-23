@@ -5,13 +5,12 @@
 
 import React from 'react';
 
-import DeviceInfo from 'react-native-device-info';
-
-import { FetchErrorCode } from './transport/error';
-
 import { I18n } from '~/app/i18n';
 import { AccountErrorCode } from '~/framework/modules/auth/model/error';
+import AppInfo from '~/framework/util/app-info';
 import { OAuth2ErrorCode } from '~/framework/util/oauth2';
+
+import { FetchErrorCode } from './transport/error';
 
 export namespace Error {
   /**
@@ -112,7 +111,7 @@ export namespace Error {
         return I18n.get('auth-error-networkerror');
 
       case OAuth2ErrorCode.OAUTH2_INVALID_CLIENT:
-        return I18n.get('auth-error-invalidclient', { version: DeviceInfo.getVersion() });
+        return I18n.get('auth-error-invalidclient', { version: AppInfo.app.version });
       case OAuth2ErrorCode.OAUTH2_INVALID_GRANT:
         return I18n.get('auth-error-invalidgrant');
       case OAuth2ErrorCode.PLATFORM_TOO_LOAD:

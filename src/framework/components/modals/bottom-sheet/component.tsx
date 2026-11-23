@@ -10,13 +10,13 @@ import {
 } from '@gorhom/bottom-sheet';
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { useHeaderHeight } from '@react-navigation/elements';
-import DeviceInfo from 'react-native-device-info';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { useSyncRef } from '~/framework/hooks/ref';
+import AppInfo, { ANDROID_API } from '~/framework/util/app-info';
 
 import styles from './styles';
 
@@ -32,8 +32,6 @@ export interface CustomBottomSheetModalProps extends BottomSheetModalProps {
   header?: React.ReactNode;
 }
 
-const ANDROID_9_API = 28;
-
 export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, CustomBottomSheetModalProps>(
   (
     { additionalTopInset = 0, children: Content, closeButton, gutters = true, header: _header, includeSafeArea = true, ...props },
@@ -44,7 +42,7 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
       () => [
         gutters ? { paddingHorizontal: UI_SIZES.spacing.big } : undefined,
         // Android 9 and below have issue where tabBar overlays bottomsheet
-        Platform.OS === 'android' && DeviceInfo.getApiLevelSync() <= ANDROID_9_API
+        Platform.OS === 'android' && AppInfo.device.androidApiLevel <= ANDROID_API.ANDROID_9
           ? { paddingBottom: UI_SIZES.elements.tabbarHeight }
           : undefined,
         includeSafeArea ? { paddingBottom: bottom } : undefined,
