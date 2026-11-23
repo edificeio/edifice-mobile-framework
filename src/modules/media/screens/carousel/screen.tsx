@@ -16,7 +16,7 @@ import { FileMedia, isPlayableMedia } from '~/modules/media/types';
 import { I18n } from '~/util/i18n';
 
 import CarouselItem from './component';
-import { useCarouselFileHandler, useCarouselOrientation, useTogglePagination } from './hooks';
+import { useCarouselFileHandler, useCarouselOrientation, useDownloadMedia, useTogglePagination } from './hooks';
 import { getCarouselHeaderOptions, getNavActions } from './navbar';
 import CarouselPagination from './pagination/component';
 import { PAGINATION_COMPONENT_HEIGHT } from './pagination/styles';
@@ -93,6 +93,7 @@ const CarouselScreen = ({ route }: StaticScreenProps<MediaCarouselParams>) => {
   const containerWidthShared = useSharedValue(0);
   const { onOrientationChange, orientation } = useCarouselOrientation();
   const { onShare } = useCarouselFileHandler(media[currentIndex]);
+  const downloadMedia = useDownloadMedia();
   const togglePaginationComponent = useTogglePagination(media, paginationTranslateY, setIsPaginationVisible);
   const carouselRef = React.useRef<CarouselRef>(null);
   const playerContextValue = React.useContext(PlayerContext);
@@ -182,7 +183,11 @@ const CarouselScreen = ({ route }: StaticScreenProps<MediaCarouselParams>) => {
       navigation.setOptions({
         ...getCarouselHeaderOptions(),
         ...modalCloseButtonOptions({ navigation }),
-        ...getNavActions({ isError: erroredIndexes.has(currentIndex), media: media[currentIndex], navigation, onShare }),
+        ...getNavActions({
+          isError: erroredIndexes.has(currentIndex),
+          onDownload: () => downloadMedia(media[currentIndex]),
+          onShare,
+        }),
         headerShown: isAndroid ? true : undefined,
         statusBarHidden: isLandscape,
         title:
@@ -203,7 +208,18 @@ const CarouselScreen = ({ route }: StaticScreenProps<MediaCarouselParams>) => {
         unstable_headerRightItems: undefined,
       });
     }
-  }, [isNavBarVisible, media.length, currentIndex, erroredIndexes, orientation, navigation, media, onShare, route.params.title]);
+  }, [
+    isNavBarVisible,
+    media.length,
+    currentIndex,
+    erroredIndexes,
+    orientation,
+    navigation,
+    media,
+    onShare,
+    downloadMedia,
+    route.params.title,
+  ]);
 
   React.useEffect(() => {
     mediaLengthShared.value = media.length;

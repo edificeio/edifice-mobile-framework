@@ -1,13 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
-
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { Svg } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { showPrivacyAlert } from '~/modules/media/privacy-alert';
+import { useDownloadMedia } from '~/modules/media/screens/carousel/hooks';
 import { FileMedia } from '~/modules/media/types';
 import { I18n } from '~/util/i18n';
 
@@ -16,13 +15,10 @@ import styles from './styles';
 const ICON_SIZE = 95;
 
 const UnviewableItem = React.memo(({ media }: { media: FileMedia }) => {
-  const navigation = useNavigation();
+  const downloadMedia = useDownloadMedia();
   const fileName = media.name?.trim() ?? '';
 
-  const onDownload = React.useCallback(
-    () => showPrivacyAlert(() => navigation.navigate('media/download', { media })),
-    [media, navigation],
-  );
+  const onDownload = React.useCallback(() => showPrivacyAlert(() => downloadMedia(media)), [downloadMedia, media]);
 
   return (
     <View style={styles.container}>

@@ -2,10 +2,9 @@ import { Platform } from 'react-native';
 
 import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
-import { headerAction, headerMenu, headerRightActions, menuAction, type RootNavigation } from '~/app/navigation-new';
+import { headerAction, headerMenu, headerRightActions, menuAction } from '~/app/navigation-new';
 import theme from '~/app/theme';
 import { showPrivacyAlert } from '~/modules/media/privacy-alert';
-import { FileMedia } from '~/modules/media/types';
 import { I18n } from '~/util/i18n';
 
 const isAndroid = Platform.OS === 'android';
@@ -32,13 +31,11 @@ export const getCarouselHeaderOptions = (): NativeStackNavigationOptions => ({
  */
 export const getNavActions = ({
   isError,
-  media,
-  navigation,
+  onDownload,
   onShare,
 }: {
   isError: boolean;
-  media: FileMedia;
-  navigation: RootNavigation;
+  onDownload: () => Promise<void>;
   onShare: () => Promise<void>;
 }) =>
   headerRightActions(
@@ -61,7 +58,7 @@ export const getNavActions = ({
       disabled: isError,
       icon: { android: 'ui-download', ios: { name: 'square.and.arrow.down', type: 'sfSymbol' } },
       label: I18n.get('carousel-filepreview-download'),
-      onPress: () => showPrivacyAlert(() => navigation.navigate('media/download', { media })),
+      onPress: () => showPrivacyAlert(onDownload),
       testID: 'media-navbar-download',
     }),
   );

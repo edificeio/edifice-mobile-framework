@@ -61,7 +61,9 @@ export type TabNavigation = NativeStackNavigationProp<TabsParamList, keyof TabsP
 declare const screenPromiseBrand: unique symbol;
 
 type ScreenPromiseKeys<Result> = {
-  [screenPromiseBrand]?: Result;
+  // Boxed: the key is optional, and reading the type of an optional key loses (or adds) `undefined`. Boxed, `Result` stays as
+  // declared, `undefined` included (a screen that can be cancelled declares `File | undefined`).
+  [screenPromiseBrand]?: { result: Result };
   /** Set by `navigateAsync`: the promise that `useScreenPromise` settles. */
   screenPromiseId?: string;
 };
@@ -88,7 +90,7 @@ type HasScreenPromise<Params> = [NonNullable<Params>] extends [never]
 /** Result declared by params built with `ScreenPromiseParams` (`never` for other params). */
 export type ScreenPromiseResult<Params> =
   HasScreenPromise<Params> extends true
-    ? Required<NonNullable<Params>> extends { [screenPromiseBrand]: infer Result }
+    ? NonNullable<Params> extends { [screenPromiseBrand]?: { result: infer Result } }
       ? Result
       : never
     : never;

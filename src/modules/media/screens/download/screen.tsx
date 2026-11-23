@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import { StaticScreenProps, useNavigation } from '@react-navigation/native';
+import { StaticScreenProps } from '@react-navigation/native';
 
-import { defineModal } from '~/app/navigation-new';
+import { defineModal, type ScreenPromiseParams, useScreenPromise } from '~/app/navigation-new';
 import theme from '~/app/theme';
 import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
+import type { SyncedFile } from '~/framework/util/fileHandler';
 import { useCarouselFileHandler } from '~/modules/media/screens/carousel/hooks';
 import type { FileMedia } from '~/modules/media/types';
 import { I18n } from '~/util/i18n';
@@ -16,19 +17,28 @@ export type MediaDownloadParams = {
   media: FileMedia;
 };
 
-const DownloadModal = ({ route }: StaticScreenProps<MediaDownloadParams>) => {
-  const navigation = useNavigation();
+/**
+ * Downloads a media, showing the progress. Gives the downloaded file to `navigateAsync` (see `useDownloadMedia`), `undefined` if the
+ * user cancels; rejects if the download fails. What to do with the file is up to the screen that opened it.
+ */
+const DownloadModal = ({ route }: StaticScreenProps<ScreenPromiseParams<MediaDownloadParams, SyncedFile | undefined>>) => {
+  const { reject, resolve } = useScreenPromise(route);
   const { media } = route.params;
   const [progress, setProgress] = React.useState(0);
 
-  const { cancelDownload, isCancelledRef, onSave } = useCarouselFileHandler(media, res => {
+  const { cancelDownload, download, isCancelledRef } = useCarouselFileHandler(media, res => {
     if (res.contentLength > 0) setProgress(res.bytesWritten / res.contentLength);
   });
 
   React.useEffect(() => {
+    // Once cancelled, the outcome is the one of the cancellation: the end of the download (stopped, it may fail) is ignored.
     const startDownload = async () => {
-      await onSave();
-      if (!isCancelledRef.current) navigation.goBack();
+      try {
+        const syncedFile = await download();
+        if (!isCancelledRef.current) resolve(syncedFile);
+      } catch (e) {
+        if (!isCancelledRef.current) reject(e);
+      }
     };
     startDownload();
 
@@ -41,8 +51,8 @@ const DownloadModal = ({ route }: StaticScreenProps<MediaDownloadParams>) => {
 
   const onCancel = React.useCallback(() => {
     cancelDownload();
-    navigation.goBack();
-  }, [cancelDownload, navigation]);
+    resolve(undefined);
+  }, [cancelDownload, resolve]);
 
   return (
     <View style={styles.container}>

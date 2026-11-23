@@ -14,7 +14,9 @@ import Orientation, {
 import { SharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import Share from 'react-native-share';
 
+import { useNavigation } from '~/app/navigation-new';
 import Toast from '~/framework/components/toast';
+import AppInfo from '~/framework/util/app-info';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { assertPermissions, PermissionError } from '~/framework/util/permissions';
@@ -89,68 +91,11 @@ export const useCarouselFileHandler = (
     return syncedFile;
   }, [media, downloadFile]);
 
-  const onSave = React.useCallback(async () => {
-    try {
-      if (!media) throw new Error('[Carousel] no media provided');
-      const syncedFile = await getSyncedFile();
-      if (isCancelledRef.current) return;
-      const effectiveMime = syncedFile.filetype || media.mime;
-      const isVideo = effectiveMime?.startsWith('video/');
-      const isImage = effectiveMime?.startsWith('image/');
-      const isGalleryContent = isVideo || isImage;
-      const permissionType = isGalleryContent ? 'gallery.write' : 'documents.write';
-
-      try {
-        await assertPermissions(permissionType);
-      } catch (e) {
-        if (e instanceof PermissionError) {
-          Alert.alert(
-            I18n.get('carousel-savetocameraroll-permissionblocked-title'),
-            I18n.get('carousel-savetocameraroll-permissionblocked-text', {
-              appName: AppInfo.app.name,
-            }),
-          );
-          return undefined;
-        } else {
-          throw e;
-        }
-      }
-
-      const realFilePath = Platform.select({
-        android: getPath(syncedFile.filepath),
-        default: decodeURI(syncedFile.filepath),
-      });
-
-      if (isGalleryContent) {
-        if (isAndroid) {
-          await CameraRoll.saveAsset(realFilePath, { album: 'Download', type: isVideo ? 'video' : 'photo' });
-        } else {
-          await CameraRoll.saveAsset(realFilePath, { type: isVideo ? 'video' : 'photo' });
-        }
-      } else {
-        if (isAndroid) {
-          await syncedFile.moveToDownloadFolder();
-        } else {
-          await Share.open({
-            failOnCancel: false,
-            message: syncedFile.filename,
-            saveToFiles: true,
-            type: syncedFile.filetype,
-            url: `file://${syncedFile.filepath}`,
-          });
-        }
-      }
-
-      isGalleryContent
-        ? Toast.showSuccess(I18n.get('carousel-savetocameraroll-success'))
-        : isAndroid
-          ? Toast.showSuccess(I18n.get('carousel-savetodownloads-success'))
-          : Toast.showSuccess(I18n.get('carousel-save-success'));
-    } catch (e) {
-      if (isCancelledRef.current) return;
-      console.error(`Fail saving from Carousel: `, e);
-      Toast.showError(I18n.get('carousel-savetocameraroll-error'));
-    }
+  /** Downloads the media (copied as is if it already is a local file). Gives `undefined` if cancelled, throws if it fails. */
+  const download = React.useCallback(async (): Promise<SyncedFile | undefined> => {
+    if (!media) throw new Error('[Carousel] no media provided');
+    const syncedFile = await getSyncedFile();
+    return isCancelledRef.current ? undefined : syncedFile;
   }, [media, getSyncedFile]);
 
   const onShare = React.useCallback(async () => {
@@ -194,7 +139,87 @@ export const useCarouselFileHandler = (
     }
   }, [media, getSyncedFile]);
 
-  return { cancelDownload, isCancelledRef, onSave, onShare };
+  return { cancelDownload, download, isCancelledRef, onShare };
+};
+
+/**
+ * Saves a downloaded media on the device: the gallery for images and videos, the downloads (Android) or the files (iOS, through the
+ * share sheet) for the others. Tells the user when it is done. Throws if it fails, except for a blocked permission (an alert tells it).
+ */
+const saveToDevice = async (syncedFile: SyncedFile, media: FileMedia) => {
+  const effectiveMime = syncedFile.filetype || media.mime;
+  const isVideo = effectiveMime?.startsWith('video/');
+  const isImage = effectiveMime?.startsWith('image/');
+  const isGalleryContent = isVideo || isImage;
+  const permissionType = isGalleryContent ? 'gallery.write' : 'documents.write';
+
+  try {
+    await assertPermissions(permissionType);
+  } catch (e) {
+    if (e instanceof PermissionError) {
+      Alert.alert(
+        I18n.get('carousel-savetocameraroll-permissionblocked-title'),
+        I18n.get('carousel-savetocameraroll-permissionblocked-text', {
+          appName: AppInfo.app.name,
+        }),
+      );
+      return;
+    } else {
+      throw e;
+    }
+  }
+
+  const realFilePath = Platform.select({
+    android: getPath(syncedFile.filepath),
+    default: decodeURI(syncedFile.filepath),
+  });
+
+  if (isGalleryContent) {
+    if (isAndroid) {
+      await CameraRoll.saveAsset(realFilePath, { album: 'Download', type: isVideo ? 'video' : 'photo' });
+    } else {
+      await CameraRoll.saveAsset(realFilePath, { type: isVideo ? 'video' : 'photo' });
+    }
+  } else {
+    if (isAndroid) {
+      await syncedFile.moveToDownloadFolder();
+    } else {
+      await Share.open({
+        failOnCancel: false,
+        message: syncedFile.filename,
+        saveToFiles: true,
+        type: syncedFile.filetype,
+        url: `file://${syncedFile.filepath}`,
+      });
+    }
+  }
+
+  isGalleryContent
+    ? Toast.showSuccess(I18n.get('carousel-savetocameraroll-success'))
+    : isAndroid
+      ? Toast.showSuccess(I18n.get('carousel-savetodownloads-success'))
+      : Toast.showSuccess(I18n.get('carousel-save-success'));
+};
+
+/**
+ * Downloads a media on the device: the download modal (progress, cancel) gives the file, then it is saved (see `saveToDevice`).
+ * Saved once the modal is unmounted: the share sheet or the permission alert are not shown over it.
+ * @returns `downloadMedia(media)`. Errors are told to the user, the cancellation does nothing.
+ */
+export const useDownloadMedia = () => {
+  const navigation = useNavigation();
+  return React.useCallback(
+    async (media: FileMedia) => {
+      try {
+        const syncedFile = await navigation.navigateAsync('media/download', { media });
+        if (syncedFile) await saveToDevice(syncedFile, media);
+      } catch (e) {
+        console.error('Fail saving from Carousel: ', e);
+        Toast.showError(I18n.get('carousel-savetocameraroll-error'));
+      }
+    },
+    [navigation],
+  );
 };
 
 const PAGINATION_ANIMATION_DELAY = 300;
