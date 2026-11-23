@@ -65,9 +65,25 @@ Exemple : `src/modules/myapps` (décidé le 2026-11-06 ; voir §5.2 et §5.3 de 
 - **Droits par fonction** (ancien `rights.ts`, actions autorisées de la session) : des règles pures de `model/business.ts` (`canCreateTicket(authorizedActions)`), testées.
 - **N'imiter que les couches que le module possède** : un module sans state n'a ni `store/`, ni `session.ts`, ni `storage.ts`.
 - **Dossier d'un écran** (décidé le 2026-11-19) :
-  - écran **avec un template** (composant d'écran fourni par un autre module, ex. les templates de `src/modules/auth/templates/`) : un seul fichier `screens/<écran>.tsx`, avec le composant qui consomme le template et son `defineScreen` (modèle : `src/modules/auth/sign-in/screens/wayf.tsx`) ;
+  - écran **avec un template** (contenu d'écran fourni par un autre module, ex. les templates de `src/modules/auth/templates/` ; voir « Trois types de composants ») : un seul fichier `screens/<écran>.tsx`, avec le composant qui consomme le template et son `defineScreen` (modèle : `src/modules/auth/sign-in/screens/wayf.tsx`) ;
   - écran **sans template** : un dossier `screens/<écran>/` ; `defineScreen` dans `screen.tsx` ; `index.ts` ne fait que réexporter ; `styles.ts` à côté ; `types.ts` seulement pour des types utilisés par plusieurs fichiers (modèle : `src/framework/modules/support/screens/create-ticket/`) ;
   - un composant **partagé par plusieurs écrans du module** (le contenu commun de deux sheets…) n'est **pas un template** : c'est un composant du module, dans `components/<composant>/` ; les écrans qui l'utilisent ont chacun leur dossier (décidé le 2026-11-19, modèle : `src/modules/myapps/components/sheet/` et `screens/menu/`, `screens/app-actions/`). Un sous-composant d'un écran (une slide…) va aussi dans `components/` (`.claude/rules/COMPONENTS.md`).
+
+## Trois types de composants
+
+Décidé le 2026-11-23. Ce qu'un composant reçoit dit ce qu'il est.
+
+| Type | Reçoit | Navigation | Où | Modèle |
+| --- | --- | --- | --- | --- |
+| **Écran** | sa `route` seulement (et ses params, `route.params`) | oui | `screens/<écran>/screen.tsx`, déclaré par `defineScreen` / `defineModal` | `src/framework/modules/support/screens/create-ticket/` |
+| **Template** | la `route` de l'écran qui l'affiche, et ses props propres | oui | `templates/<template>/` | `src/modules/auth/templates/` (navigation par `useNavigation()` ; ils ne reçoivent pas encore la `route`) |
+| **Composant d'interface** | ses props propres | non | `components/<composant>/` (module) ou `src/framework/components/` | `src/modules/myapps/components/` |
+
+- **Écran** : un point d'entrée de la navigation. Il assemble les données (store, service, session) et l'interface d'une route, et décide où l'on va ensuite. Personne ne l'appelle avec des props : tout ce dont il a besoin passe par les params de sa route, typés (`StaticScreenProps<Params>`). Les props ajoutées par le framework (`session` par `withSession`) ne sont pas des props d'appel. La navigation : `useNavigation()`, jamais une prop `navigation`.
+- **Template** : un contenu d'écran réutilisable tel quel, par plusieurs écrans (souvent d'autres modules). L'écran qui l'affiche lui passe sa `route` et ce qui le personnalise (contexte, titres, `emptyComponent`, `onOpenResource`…). Il peut utiliser la navigation directement (`useNavigation()`, `useIsFocused`, `push(route.name, …)`), mais ne reçoit jamais `navigation` en prop. Un écran qui consomme un template tient en un fichier (« Dossier d'un écran »).
+- **Composant d'interface** : une brique réutilisable, qui ne connaît ni la route ni la navigation. Tout passe par ses props, et ce qui doit naviguer remonte par une prop d'événement (`onPress`, `onOpen…`) que l'écran ou le template traite. Règles d'écriture : `.claude/rules/COMPONENTS.md`.
+- Un composant partagé par plusieurs écrans **du même module**, sans `route`, est un composant d'interface, pas un template (« Dossier d'un écran »).
+- Code existant qui ne suit pas cette répartition (composant d'interface qui navigue, écran qui reçoit des props d'appel) : porté tel quel pendant la bascule, noté dans la fiche du module (§5) ou dans [later.md](journal/later.md) pour le framework, corrigé en assainissement.
 
 ## Styles
 
