@@ -107,6 +107,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   image,
   membersId,
   navigation,
+  refreshDiscussionsSummary,
   route,
   route: {
     params: { communityId, hasJoinedWithCode = false, invitationId, showWelcome = false },
@@ -265,7 +266,14 @@ export const CommunitiesHomeScreenLoaded = function ({
     ],
   );
 
+  const refreshOpenCollectsCount = React.useCallback(() => {
+    getCommunityOpenCollectsCount(communityId, role)
+      .then(setOpenCollectsCount)
+      .catch(e => console.error('Error while loading community open collects count', e));
+  }, [communityId, role]);
+
   const loadingPagesRef = React.useRef<Set<string>>(new Set());
+  const hasLoadedOnceRef = React.useRef(false);
   const recycledRef = React.useRef(recycled);
   recycledRef.current = recycled;
 
@@ -276,6 +284,13 @@ export const CommunitiesHomeScreenLoaded = function ({
       const loadingPageKey = `${targetFilterIndex}-${page}`;
       if (loadingPagesRef.current.has(loadingPageKey)) return;
       loadingPagesRef.current.add(loadingPageKey);
+
+      // Pull to refresh: skip the first `reloadAll` at mount
+      if (reloadAll && hasLoadedOnceRef.current) {
+        refreshDiscussionsSummary();
+        refreshOpenCollectsCount();
+      }
+      hasLoadedOnceRef.current = true;
 
       try {
         const { announcements: newAnnouncements, total } = await getAnnouncementsDetails(
@@ -309,7 +324,19 @@ export const CommunitiesHomeScreenLoaded = function ({
         loadingPagesRef.current.delete(loadingPageKey);
       }
     },
-    [communityId, filterIndex, role],
+    [communityId, filterIndex, refreshDiscussionsSummary, refreshOpenCollectsCount, role],
+  );
+
+  // Skip the first focus: the parent has just fetched the summary
+  const isFirstFocusRef = React.useRef(true);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (isFirstFocusRef.current) {
+        isFirstFocusRef.current = false;
+        return;
+      }
+      refreshDiscussionsSummary();
+    }, [refreshDiscussionsSummary]),
   );
 
   useFocusEffect(
@@ -318,13 +345,7 @@ export const CommunitiesHomeScreenLoaded = function ({
     }, [communityId]),
   );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      getCommunityOpenCollectsCount(communityId, role)
-        .then(setOpenCollectsCount)
-        .catch(e => console.error('Error while loading community open collects count', e));
-    }, [communityId, role]),
-  );
+  useFocusEffect(refreshOpenCollectsCount);
 
   return (
     <>
@@ -426,6 +447,12 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
     setDiscussionsSummary(fetchedDiscussionsSummary);
   }, [communityId, session, setData]);
 
+  const refreshDiscussionsSummary = React.useCallback(() => {
+    getDiscussionsSummary(session, communityId)
+      .then(setDiscussionsSummary)
+      .catch(e => console.error('Error while refreshing community discussions summary', e));
+  }, [communityId, session]);
+
   const image = React.useMemo(() => (data ? getCommunityBannerImage(data) : undefined), [data]);
 
   const spotlightedCourseId = React.useMemo(() => (data ? data.courseEntId : undefined), [data]);
@@ -441,6 +468,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
           refreshControl={refreshControl}
           {...data}
           discussionsSummary={discussionsSummary}
+          refreshDiscussionsSummary={refreshDiscussionsSummary}
           image={image!}
           membersId={data.membersId ?? []}
           session={session}
@@ -450,7 +478,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
       ) : (
         <EmptyContentScreen />
       ),
-    [data, navigation, realRoute, discussionsSummary, image, session, spotlightedCourseId],
+    [data, navigation, realRoute, discussionsSummary, refreshDiscussionsSummary, image, session, spotlightedCourseId],
   );
 
   return <ContentLoader loadContent={loadContent} renderLoading={CommunitiesHomeScreenPlaceholder} renderContent={renderContent} />;
