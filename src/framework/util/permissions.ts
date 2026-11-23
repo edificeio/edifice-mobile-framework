@@ -1,6 +1,5 @@
 import { Platform } from 'react-native';
 
-import DeviceInfo from 'react-native-device-info';
 import {
   check,
   checkMultiple,
@@ -13,19 +12,12 @@ import {
 
 import { I18n } from '~/app/i18n';
 import toast from '~/framework/components/toast';
+import AppInfo, { ANDROID_API, isAndroidApiAtLeast } from '~/framework/util/app-info';
 
 export type SinglePermissionRequirement = true | Permission;
 export type PermissionRequirement = SinglePermissionRequirement | Permission[];
 
-export const ANDROID_10 = 29;
-export const ANDROID_12L = 32;
-export const ANDROID_13 = 33;
-export const ANDROID_14 = 34;
-export const ANDROID_15 = 35;
-export const ANDROID_16 = 36;
-
-const isAndroid = Platform.OS === 'android';
-const api = isAndroid ? DeviceInfo.getApiLevelSync() : 0;
+const api = AppInfo.device.androidApiLevel;
 
 const permissionI18nMap: Record<PermissionScenario, { title: string; text: string }> = {
   'audio.read': {
@@ -64,7 +56,7 @@ export type PermissionScenario = 'camera' | 'gallery.read' | 'gallery.write' | '
 
 const permissionScenarios = {
   'audio.read': Platform.select<PermissionRequirement>({
-    android: api < ANDROID_10 ? PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE : true,
+    android: api < ANDROID_API.ANDROID_10 ? PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE : true,
     ios: true,
   })!,
   'camera': Platform.select<PermissionRequirement>({
@@ -72,19 +64,19 @@ const permissionScenarios = {
     ios: PERMISSIONS.IOS.CAMERA,
   })!,
   'documents.read': Platform.select<PermissionRequirement>({
-    android: api < ANDROID_10 ? PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE : true,
+    android: api < ANDROID_API.ANDROID_10 ? PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE : true,
     ios: true,
   })!,
   'documents.write': Platform.select<PermissionRequirement>({
-    android: api < ANDROID_10 ? PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE : true,
+    android: api < ANDROID_API.ANDROID_10 ? PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE : true,
     ios: true,
   })!,
   'gallery.read': Platform.select<PermissionRequirement>({
-    android: api <= ANDROID_12L ? [PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE] : true,
+    android: api <= ANDROID_API.ANDROID_12L ? [PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE] : true,
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
   })!,
   'gallery.write': Platform.select<PermissionRequirement>({
-    android: api <= ANDROID_12L ? [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE] : true,
+    android: api <= ANDROID_API.ANDROID_12L ? [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE] : true,
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
   })!,
 };
@@ -128,7 +120,7 @@ const BLOCKING = new Set<PermissionStatus>([RESULTS.BLOCKED, RESULTS.UNAVAILABLE
  * DENIED UI
  */
 const showDeniedUI = (scenario: PermissionScenario) => {
-  const appName = DeviceInfo.getApplicationName();
+  const appName = AppInfo.app.name;
   const entry = permissionI18nMap[scenario];
   if (!entry) return;
 
@@ -161,7 +153,7 @@ export const assertPermissions = async (scenario: PermissionScenario, options: {
     }
   }
 
-  if (scenario === 'gallery.read' && isAndroid && api >= ANDROID_13) {
+  if (scenario === 'gallery.read' && isAndroidApiAtLeast(ANDROID_API.ANDROID_13)) {
     const ok = res.some(([, status]) => status === RESULTS.GRANTED || status === RESULTS.LIMITED);
     if (!ok) {
       if (!options.silent) showDeniedUI(scenario);

@@ -3,7 +3,6 @@ import { Alert, Platform } from 'react-native';
 
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-import DeviceInfo from 'react-native-device-info';
 import RNFS, { DownloadProgressCallbackResult } from 'react-native-fs';
 import Orientation, {
   LANDSCAPE_LEFT,
@@ -19,6 +18,7 @@ import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { FileMedia, isEmbeddedMedia, isPlayableMedia } from '~/framework/modules/media';
+import AppInfo from '~/framework/util/app-info';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { assertPermissions, PermissionError } from '~/framework/util/permissions';
@@ -108,7 +108,7 @@ export const useCarouselFileHandler = (
           Alert.alert(
             I18n.get('carousel-savetocameraroll-permissionblocked-title'),
             I18n.get('carousel-savetocameraroll-permissionblocked-text', {
-              appName: DeviceInfo.getApplicationName(),
+              appName: AppInfo.app.name,
             }),
           );
           return undefined;
@@ -178,7 +178,7 @@ export const useCarouselFileHandler = (
       if (e instanceof PermissionError) {
         Alert.alert(
           I18n.get('carousel-share-permissionblocked-title'),
-          I18n.get('carousel-share-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
+          I18n.get('carousel-share-permissionblocked-text', { appName: AppInfo.app.name }),
         );
       } else {
         console.error('Fail sharing from Carousel:', e);
