@@ -4,14 +4,12 @@ import { useNavigation } from '~/app/navigation-new';
 import { deleteReaction, postReaction, updateReaction } from '~/modules/audience/actions';
 import { AudienceBar } from '~/modules/audience/components/audience-bar';
 import { AudienceReactButton } from '~/modules/audience/components/audience-react-button';
-import type { AudiencePoint, AudienceRect, AudienceResourceReactions } from '~/modules/audience/model';
-import { usePlatformReactionTypes, useReactionPickerGestureStore } from '~/modules/audience/store';
+import type { AudienceResourceReactions } from '~/modules/audience/model';
+import { usePlatformReactionTypes } from '~/modules/audience/store';
 
 import type { AudienceProps } from './types';
 
-// The gesture goes to the reaction picker (`audience/react`) through the store: see `useReactionPickerGestureStore`.
-const onGestureMove = (point: AudiencePoint) => useReactionPickerGestureStore.getState().move(point);
-const onGestureRelease = () => useReactionPickerGestureStore.getState().release();
+const NO_REACTION_TYPES: string[] = [];
 
 type Reactions = { total: number; types: string[]; userReaction: string | null };
 
@@ -23,7 +21,7 @@ const toReactions = (reactions: AudienceResourceReactions | undefined): Reaction
 
 /**
  * The audience of a resource, for the modules that show it: its counters and the react button (`AudienceBar`).
- * Reacts to the resource, and opens the reactions, the views and the reaction picker (modals of `audience`).
+ * Reacts to the resource, and opens the reactions and the views (modals of `audience`).
  */
 const Audience = ({
   containerStyle,
@@ -67,14 +65,6 @@ const Audience = ({
     [react, referer],
   );
 
-  const onPickReaction = React.useCallback(
-    (anchor: AudienceRect) => {
-      useReactionPickerGestureStore.getState().reset();
-      return navigation.navigateAsync('audience/react', { anchor, reactionTypes: validReactionTypes ?? [] });
-    },
-    [navigation, validReactionTypes],
-  );
-
   const onPressReactions = React.useCallback(() => navigation.navigate('audience/reactions', { referer }), [navigation, referer]);
   const onPressViews = React.useCallback(() => navigation.navigate('audience/views', { referer }), [navigation, referer]);
 
@@ -94,11 +84,9 @@ const Audience = ({
       validReactionTypes={validReactionTypes}>
       <AudienceReactButton
         onDeleteReaction={onDeleteReaction}
-        onGestureMove={onGestureMove}
-        onGestureRelease={onGestureRelease}
-        onPickReaction={onPickReaction}
         onPostReaction={onPostReaction}
         onUpdateReaction={onUpdateReaction}
+        reactionTypes={validReactionTypes ?? NO_REACTION_TYPES}
         userReaction={reactions.userReaction}
       />
     </AudienceBar>

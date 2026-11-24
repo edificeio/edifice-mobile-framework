@@ -1,6 +1,6 @@
 # Suivi calculé de la migration
 
-> Généré par `yarn migration-status` le 2026-11-23, branche `feat/ia/migration-outillage`, commit `a3f5c4910`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
+> Généré par `yarn migration-status` le 2026-11-23, branche `feat/ia/migration-outillage`, commit `39e5b48bf`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
 
 ## En bref
 
@@ -17,7 +17,7 @@
 
 | Module | Statut | Fichiers | Lignes | Écrans anciens | Écrans nouveaux | Navigation ancienne | `connect(` | Modules anciens importés | Notif. | Flows |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | :---: | ---: |
-| `audience` | basculé, sans test | 31 | 1553 | 0 | 3 | 0 | 0 | `blog` | — | 0 |
+| `audience` | basculé, sans test | 32 | 1540 | 0 | 2 | 0 | 0 | `blog` | — | 0 |
 | `auth` | bascule incomplète | 169 | 9932 | 0 | 22 | 1 | 0 | — | — | 0 |
 | `editor` | basculé, sans test | 1 | 18 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `media` | bascule incomplète | 63 | 3584 | 0 | 2 | 1 | 0 | — | — | 0 |

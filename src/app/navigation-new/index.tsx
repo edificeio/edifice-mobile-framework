@@ -29,6 +29,7 @@ export { useIsModal } from './layout';
 export * from './screen';
 export * from './types';
 export * from './confirm-remove';
+export { NativeModal, type NativeModalCloseReason, type NativeModalProps } from './native-modal';
 export {
   headerAction,
   HeaderActionButton,

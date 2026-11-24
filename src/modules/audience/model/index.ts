@@ -56,13 +56,13 @@ export interface AudienceViews {
 /** Views of several resources of the same type: counter by resource id. */
 export type AudienceSummaryViews = Record<string, number>;
 
-/** A point of the screen, in the coordinates of the page (as `measure` and the gestures give them). */
+/** A point of the screen, in the coordinates of the window. */
 export interface AudiencePoint {
   x: number;
   y: number;
 }
 
-/** A rectangle of the screen, in the coordinates of the page. */
+/** A rectangle of the screen, in the coordinates of the window. */
 export interface AudienceRect extends AudiencePoint {
   height: number;
   width: number;

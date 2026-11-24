@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
 
 // Resource of the reactions test. A fictitious one: replace it by a real resource of the platform (a blog post…) to react for real.
 const AUDIENCE_TEST_REFERER: AudienceReferer = { module: 'blog', resourceId: 'audience-test', resourceType: 'post' };
+const AUDIENCE_TEST_NAVIGATION_DELAY = 3000;
 
 // `withSession`: the hooks of an account storage work on the account of the session
 const AModuleHomeScreen = withSession<StaticScreenProps<undefined>>(function ({ session }) {
@@ -120,6 +121,25 @@ const AModuleHomeScreen = withSession<StaticScreenProps<undefined>>(function ({ 
 
       <HeadingSText>Test réactions</HeadingSText>
       <Audience referer={AUDIENCE_TEST_REFERER} session={session} isManager />
+      {/* Opens another screen in 3 s, the time to open the reaction picker: it must close (the screen stays mounted under). */}
+      <PrimaryButton
+        style={styles.rowCenter}
+        testID="audience-delayed-navigation"
+        text="Naviguer dans 3 s"
+        onPress={() => setTimeout(() => navigation.navigate('amodule/details', { aId: 3 }), AUDIENCE_TEST_NAVIGATION_DELAY)}
+      />
+      {/* Same with a modal of the navigation (iOS: presented while the reaction picker is dismissed). */}
+      <PrimaryButton
+        style={styles.rowCenter}
+        testID="audience-delayed-modal"
+        text="Ouvrir une modale dans 3 s"
+        onPress={() =>
+          setTimeout(
+            () => navigation.navigate('amodule/modal', { skibidi: 'Modale ouverte pendant le sélecteur' }),
+            AUDIENCE_TEST_NAVIGATION_DELAY,
+          )
+        }
+      />
 
       <HeadingSText>Test scroll</HeadingSText>
       <BodyText style={styles.row}>1</BodyText>
@@ -247,19 +267,23 @@ const AModuleDetailsScreenDeclaration = defineScreen({
   screen: AModuleDetailsScreen,
 });
 
-function AModuleModalScreen({}: StaticScreenProps<{
-  skibidi: string;
-}>) {
+const AModuleModalScreen = withSession<
+  StaticScreenProps<{
+    skibidi: string;
+  }>
+>(function ({ session }) {
   const insets = useSafeAreaInsets();
   return (
     <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom, paddingLeft: insets.left, paddingRight: insets.right }}>
       <BodyText>A Modal Screen</BodyText>
+      {/* The reaction picker (a `NativeModal`) over a modal of the navigation */}
+      <Audience referer={AUDIENCE_TEST_REFERER} session={session} isManager />
       {new Array(40).fill(true).map((_, index) => (
         <HeadingSText key={index}>{index}</HeadingSText>
       ))}
     </ScrollView>
   );
-}
+});
 
 const AModuleModalScreenDeclaration = defineModal({
   options: ({}) => ({ title: 'Une modale wow !' }),

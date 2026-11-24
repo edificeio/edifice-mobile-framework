@@ -2,9 +2,10 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import type { AudienceRect } from '~/modules/audience/model';
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
   },
   picker: {
@@ -45,13 +46,15 @@ const styles = StyleSheet.create({
 export const REACTION_ICON_SIZE = 30;
 /** Width of one reaction in the picker. */
 export const PICKER_ITEM_WIDTH = REACTION_ICON_SIZE + styles.pickerItem.paddingHorizontal * 2;
-export const PICKER_HEIGHT = REACTION_ICON_SIZE + styles.pickerItem.paddingVertical * 2 + styles.picker.borderWidth * 2;
-export const getPickerWidth = (count: number) => PICKER_ITEM_WIDTH * count + styles.picker.borderWidth * 2;
+const PICKER_HEIGHT = REACTION_ICON_SIZE + styles.pickerItem.paddingVertical * 2 + styles.picker.borderWidth * 2;
+const getPickerWidth = (count: number) => PICKER_ITEM_WIDTH * count + styles.picker.borderWidth * 2;
 
-/** Position of the picker in the modal: above the react button (`anchor`), both in the coordinates of the page. */
-export const getPickerPosition = (anchor: { x: number; y: number }, modalOrigin: { x: number; y: number }) => ({
-  left: anchor.x - modalOrigin.x,
-  top: anchor.y - PICKER_HEIGHT - modalOrigin.y,
+/** Where the picker is, in the coordinates of the window: above the react button (`anchor`). */
+export const getPickerRect = (anchor: AudienceRect, count: number): AudienceRect => ({
+  height: PICKER_HEIGHT,
+  width: getPickerWidth(count),
+  x: anchor.x,
+  y: anchor.y - PICKER_HEIGHT,
 });
 
 export default styles;

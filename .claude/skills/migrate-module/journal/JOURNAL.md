@@ -21,7 +21,11 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 - Reprise et fin (même jour) : tous les sujets faits dans l'arbre de travail (fiche §9) ; l'essai est remplacé par l'implémentation. `model/` + `service/` (`namespace API`, adapter, `getModuleTransport('audience').sessionFetch`) + `actions.ts` ; barre séparée (`AudienceBar`, `AudienceReactButton`, `Audience` public) ; `connect` remplacés par des hooks ; sélecteur `audience/react` (`transparentModal`, `navigateAsync`, geste par `useReactionPickerGestureStore`) ; `PageView` retiré ; importeurs du framework rebranchés. Décisions prises seul : fiche §6, 14 (à relire).
 - Vérifié : `tsc` 790 → 780 (aucune nouvelle) ; ESLint du module 14 → 0 ; `lint-all` 2153 → 2134 ; Jest 447 → 453 ; `--check` vert. iOS (accueil de test, ressource fictive) : barre, ouverture et position du sélecteur, modale « Réactions ». Pas joué : réagir pour de vrai, Android.
 - En suspens : relecture ; essai Android (position du sélecteur, geste, toucher) ; `POST` / `PUT` inversés (noté).
-- Prochaine étape : relire, essayer sur Android, puis un seul commit (bascule + assainissement, fiche et suivi compris).
+- Retours du développeur (même jour) : icônes figées à la fermeture du sélecteur (capture de `react-native-screens`), page qui défilait pendant « maintenir puis glisser » (`PanResponder` → gestes natifs de `react-native-gesture-handler`). Puis **retour au `Modal` de react-native pour le sélecteur** (fiche §6, 15) : `audience/react` et son store retirés, `ui` abandonné. Signaux ajoutés à `framework.md`.
+- Framework : **`NativeModal`** (`src/app/navigation-new/native-modal.tsx`), le `Modal` de react-native qui se ferme quand son écran perd le focus et rend le retour Android obligatoire ; utilisé par le sélecteur de réactions (fiche §6, 16). Pas d'autre utilisateur pour l'instant ; les autres `Modal` de react-native du dépôt (`src/ui/Modal.tsx`, `backdropModal.tsx`…) ne sont pas touchés.
+- CONVENTIONS « UI » (accord du développeur) : `Modal` de react-native qui n'est pas une étape de navigation → `NativeModal`, ligne du tableau et règle sous le tableau.
+- En suspens : jouer le sélecteur en `Modal` sur iOS et Android (le simulateur n'a pas rechargé le code ; chaque redémarrage à froid a perdu la session, cause non étudiée).
+- Prochaine étape : relire, jouer le sélecteur, puis un seul commit (bascule + assainissement, fiche et suivi compris).
 
 ## 2026-11-23 — Bascule d'`audience` (`feat/ia/migration-outillage`)
 

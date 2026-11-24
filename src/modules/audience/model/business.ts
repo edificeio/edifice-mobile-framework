@@ -2,7 +2,7 @@ import type { AudiencePoint, AudienceRect } from '.';
 
 /**
  * The reaction under a point of the screen, in the picker of reactions (one after the other, in a row).
- * The point and the picker are in the coordinates of the page: the gesture started on the react button goes on over the picker.
+ * The point and the picker are in the same coordinates (the window): the gesture started on the react button goes on over the picker.
  * @param point where the finger is.
  * @param picker where the picker is.
  * @param itemWidth the width of one reaction in the picker.
