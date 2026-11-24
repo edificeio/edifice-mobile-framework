@@ -8,7 +8,7 @@ import Orientation, {
   PORTRAIT,
 } from 'react-native-orientation-locker';
 
-export const useCarouselOrientation = () => {
+export const useOrientation = () => {
   const [orientation, setOrientation] = React.useState<OrientationLockerProps['orientation']>(PORTRAIT);
 
   const onOrientationChange = React.useCallback((newOrientation: OrientationType) => {

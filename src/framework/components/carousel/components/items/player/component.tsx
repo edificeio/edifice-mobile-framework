@@ -13,7 +13,7 @@ import {
 } from 'react-native-video';
 
 import ANIMATION_AUDIO from 'ASSETS/animations/audio/disque.json';
-import LoaderItem from '~/framework/components/carousel/components/items/loader-item/component';
+import LoaderItem from '~/framework/components/carousel/components/items/loader/component';
 import { PlayerContext } from '~/framework/components/carousel/context';
 import { isAudioContent } from '~/framework/modules/media';
 

@@ -3,7 +3,7 @@ import { useWindowDimensions, View } from 'react-native';
 
 import Pdf from 'react-native-pdf';
 
-import LoaderItem from '~/framework/components/carousel/components/items/loader-item/component';
+import LoaderItem from '~/framework/components/carousel/components/items/loader/component';
 import { PdfContext } from '~/framework/components/carousel/context';
 
 import styles from './styles';

@@ -11,9 +11,14 @@ import { NavigationRootScreenProps } from '~/app/navigation/types';
 import CarouselItem from '~/framework/components/carousel/components/carousel-item/component';
 import CarouselPagination from '~/framework/components/carousel/components/pagination/component';
 import { PAGINATION_COMPONENT_HEIGHT } from '~/framework/components/carousel/components/pagination/styles';
+import {
+  PAGINATION_ANIMATION_DURATION,
+  PAGINATION_ANIMATION_OFFSET,
+  PAGINATION_ANIMATION_START_INDEX_DELAY,
+} from '~/framework/components/carousel/constants';
 import { PdfContext, PlayerContext } from '~/framework/components/carousel/context';
-import { useCarouselFileHandler } from '~/framework/components/carousel/hooks/use-carousel-file-handler';
-import { useCarouselOrientation } from '~/framework/components/carousel/hooks/use-carousel-orientation';
+import { useFileHandler } from '~/framework/components/carousel/hooks/use-file-handler';
+import { useOrientation } from '~/framework/components/carousel/hooks/use-orientation';
 import { useTogglePagination } from '~/framework/components/carousel/hooks/use-toggle-pagination';
 import { getSignedMediaSource } from '~/framework/components/carousel/utils';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -21,12 +26,6 @@ import { FileMedia, isPlayableMedia } from '~/framework/modules/media';
 
 import { CarouselScreenOptions, getNavActions } from './navbar';
 import styles from './styles';
-
-import {
-  PAGINATION_ANIMATION_DURATION,
-  PAGINATION_ANIMATION_OFFSET,
-  PAGINATION_ANIMATION_START_INDEX_DELAY,
-} from '~/framework/components/carousel/constants';
 
 /**
  * Useful things to know about this carousel screen:
@@ -78,8 +77,8 @@ const CarouselScreen = ({ navigation, route }: NavigationRootScreenProps<'media/
   const paginationTranslateY = useSharedValue(0);
   const mediaLengthShared = useSharedValue(media.length);
   const containerWidthShared = useSharedValue(0);
-  const { onOrientationChange, orientation } = useCarouselOrientation();
-  const { onShare } = useCarouselFileHandler(media[currentIndex]);
+  const { onOrientationChange, orientation } = useOrientation();
+  const { onShare } = useFileHandler(media[currentIndex]);
   const togglePaginationComponent = useTogglePagination(media, paginationTranslateY, setIsPaginationVisible);
   const carouselRef = React.useRef<CarouselRef>(null);
   const playerContextValue = React.useContext(PlayerContext);

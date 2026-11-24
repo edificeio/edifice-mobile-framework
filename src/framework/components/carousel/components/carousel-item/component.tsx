@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { ImageURISource } from 'react-native';
 
-import ImageItem from '~/framework/components/carousel/components/items/image-item/component';
-import PdfItem from '~/framework/components/carousel/components/items/pdf-item/component';
-import PlayerItem from '~/framework/components/carousel/components/items/player-item/component';
-import UnknownItem from '~/framework/components/carousel/components/items/unknown-item/component';
-import UnviewableItem from '~/framework/components/carousel/components/items/unviewable-item/component';
+import ImageItem from '~/framework/components/carousel/components/items/image/component';
+import PdfItem from '~/framework/components/carousel/components/items/pdf/component';
+import PlayerItem from '~/framework/components/carousel/components/items/player/component';
+import UnknownItem from '~/framework/components/carousel/components/items/unknown/component';
+import UnviewableItem from '~/framework/components/carousel/components/items/unviewable/component';
 import { isAudioContent, isImageContent, isPdfContent, isVideoContent } from '~/framework/modules/media';
 
 import { CarouselItemProps } from './types';

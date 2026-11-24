@@ -6,7 +6,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { I18n } from '~/app/i18n';
 import { modalScreenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
-import { useCarouselFileHandler } from '~/framework/components/carousel/hooks/use-carousel-file-handler';
+import { useFileHandler } from '~/framework/components/carousel/hooks/use-file-handler';
 import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 
@@ -23,7 +23,7 @@ const DownloadModal = (props: DownloadModalProps) => {
   const { media } = route.params;
   const [progress, setProgress] = React.useState(0);
 
-  const { cancelDownload, isCancelledRef, onSave } = useCarouselFileHandler(media, res => {
+  const { cancelDownload, isCancelledRef, onSave } = useFileHandler(media, res => {
     if (res.contentLength > 0) setProgress(res.bytesWritten / res.contentLength);
   });
 

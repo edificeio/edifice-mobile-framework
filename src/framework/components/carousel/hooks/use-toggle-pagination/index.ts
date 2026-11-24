@@ -2,9 +2,8 @@ import * as React from 'react';
 
 import { SharedValue, withDelay, withTiming } from 'react-native-reanimated';
 
-import { FileMedia, isEmbeddedMedia, isPlayableMedia } from '~/framework/modules/media';
-
 import { PAGINATION_ANIMATION_DURATION, PAGINATION_ANIMATION_OFFSET } from '~/framework/components/carousel/constants';
+import { FileMedia, isEmbeddedMedia, isPlayableMedia } from '~/framework/modules/media';
 
 const PAGINATION_ANIMATION_DELAY = 300;
 

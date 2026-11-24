@@ -66,10 +66,7 @@ const getMediaSrcString = (src: FileMedia['src']): string => {
   return (src as { uri?: string }).uri ?? '';
 };
 
-export const useCarouselFileHandler = (
-  media: FileMedia | undefined,
-  onProgress?: (res: DownloadProgressCallbackResult) => void,
-) => {
+export const useFileHandler = (media: FileMedia | undefined, onProgress?: (res: DownloadProgressCallbackResult) => void) => {
   const jobIdRef = React.useRef<number | null>(null);
   const isCancelledRef = React.useRef(false);
 
