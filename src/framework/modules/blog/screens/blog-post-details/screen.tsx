@@ -1,349 +1,208 @@
+/**
+ * A post of a blog, with its comments (`comments`): comment and reply, publish a submitted post, change or delete the post.
+ */
 import * as React from 'react';
-import { Alert, FlatListProps } from 'react-native';
+import { Alert, ScrollViewProps } from 'react-native';
 
-import { connect, useDispatch } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
+import type { StaticScreenProps } from '@react-navigation/native';
 
-import { screenOptions } from '~/app/navigation/util';
-import { IGlobalState } from '~/app/store';
+import { defineScreen, headerMenu, headerRightActions, menuAction, useNavigation } from '~/app/navigation-new';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import { BottomSheet } from '~/framework/components/BottomSheet';
-import { deleteAction } from '~/framework/components/menus/actions';
-import PopupMenu from '~/framework/components/menus/popup';
-import { NavBarAction } from '~/framework/components/navigation';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
-import { useAudience } from '~/framework/modules/audience';
-import { audienceService } from '~/framework/modules/audience/service';
-import { refreshSessionIdForAccountAction } from '~/framework/modules/auth/thunks';
-import { withSession } from '~/framework/modules/auth/util';
-import {
-  deleteBlogPostAction,
-  deleteBlogPostCommentAction,
-  getBlogPostDetailsAction,
-  publishBlogPostAction,
-  publishBlogPostCommentAction,
-  updateBlogPostCommentAction,
-} from '~/framework/modules/blog/actions';
+import { ContentLoader, type ContentLoaderHandle } from '~/framework/hooks/loader';
+import { deleteBlogPost, publishBlogPost } from '~/framework/modules/blog/actions';
 import BlogPostDetails from '~/framework/modules/blog/components/blog-post-details';
 import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
-import { blogRouteNames } from '~/framework/modules/blog/navigation';
-import { Blog, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
-import { computeCanComment, hasPermissionManager, publishBlogPostResourceRight } from '~/framework/modules/blog/rights';
-import { blogService } from '~/framework/modules/blog/service';
+import type { Blog, BlogPostDetails as BlogPostDetailsData, BlogPostIds } from '~/framework/modules/blog/model';
+import { computeCanComment, hasPermissionManager, publishBlogPostResourceRight } from '~/framework/modules/blog/model/business';
 import { ResourceWithCommentsTemplate } from '~/framework/modules/comments';
-import { CommentsTreeProps } from '~/framework/modules/comments/components/comments-tree';
 import { resourceHasRight } from '~/framework/util/resourceRights';
+import { withSession } from '~/modules/auth/hoc';
+import type { AuthActiveAccount } from '~/modules/auth/model';
 import { I18n } from '~/util/i18n';
 
+import { useBlogPostComments, useBlogPostDetails, useOnFocusBack } from './hooks';
 import styles from './styles';
-import { BlogPostDetailsScreenEventProps, BlogPostDetailsScreenProps } from './types';
+import type { BlogPostDetailsScreenNavParams } from './types';
 
-export const BlogPostDetailsScreenOptions = screenOptions(() => ({ title: '' }));
-
-const BlogPostDetailsScreenLoaded = withSession<
-  BlogPostDetailsScreenProps & {
-    refreshControl: FlatListProps<any>['refreshControl'];
-    blogData: Blog;
-    postData: BlogPostWithAudience;
-    refresh: () => Promise<BlogPostWithAudience>;
-  }
->(function ({
-  blogData,
-  handleDeleteBlogPost,
-  handleDeleteBlogPostComment,
-  handleGetBlogPostDetails,
-  handlePublishBlogPost,
-  handlePublishBlogPostComment,
-  handleUpdateBlogPostComment,
-  navigation,
-  postData,
-  refresh,
+/** The post loaded: its header (title, menu), its content and its comments. */
+function BlogPostDetailsScreenLoaded({
+  blog,
+  ids,
+  post,
   refreshControl,
-  route,
-  route: {
-    params: { blogId, postId },
-  },
+  reload,
   session,
+}: {
+  blog: Blog;
+  ids: BlogPostIds;
+  post: BlogPostDetailsData;
+  refreshControl: ScrollViewProps['refreshControl'];
+  /** Loads the post again, without indicator. Throws if it fails. */
+  reload: () => Promise<BlogPostDetailsData>;
+  session: AuthActiveAccount;
 }) {
-  const [autoScrollItem, setAutoScrollItem] = React.useState<
-    ArrayElement<React.ComponentProps<typeof ResourceWithCommentsTemplate>['data']>['id'] | undefined
-  >(undefined);
+  const navigation = useNavigation();
+  const { deleteComment, focusedComment, submitComment, updateComment } = useBlogPostComments(session, ids, reload);
 
   const deletePost = React.useCallback(async () => {
     try {
-      await handleDeleteBlogPost({ blogId, postId });
-      navigation.navigate(
-        blogRouteNames.blogPostList,
-        {
-          blogId,
-          forceReload: true,
-        },
-        { pop: true },
-      );
-    } catch {
+      await deleteBlogPost(session, ids);
+    } catch (e) {
+      console.error('[BlogPostDetailsScreen] failed to delete the post', e);
       Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
+      return;
     }
-  }, [blogId, handleDeleteBlogPost, navigation, postId]);
+    // Back to the list under the post (`pop`), not a new one on top of the deleted post
+    navigation.navigate('blog/list', { blogId: ids.blogId, forceReload: true }, { pop: true });
+  }, [ids, navigation, session]);
 
-  const submitComment = React.useCallback<NonNullable<CommentsTreeProps['onSubmit']>>(
-    async (comment, replyTo) => {
-      try {
-        handlePublishBlogPostComment({ blogId, postId }, comment.content, replyTo);
-        const newData = await refresh();
-        if (newData.comments.length > 0) setAutoScrollItem(newData.comments[0].id);
-      } catch {
-        Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
-      }
-    },
-    [handlePublishBlogPostComment, blogId, postId, refresh],
-  );
-
-  const updateComment = React.useCallback<NonNullable<CommentsTreeProps['onEdit']>>(
-    async (comment, commentId) => {
-      try {
-        await handleUpdateBlogPostComment({ blogId, commentId, postId }, comment.content);
-        await refresh();
-      } catch {
-        Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
-      }
-    },
-    [handleUpdateBlogPostComment, blogId, postId, refresh],
-  );
-
-  const deleteComment = React.useCallback<NonNullable<CommentsTreeProps['onDelete']>>(
-    async commentId => {
-      try {
-        await handleDeleteBlogPostComment({ blogId, commentId, postId });
-        await refresh();
-      } catch {
-        Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
-      }
-    },
-    [handleDeleteBlogPostComment, blogId, postId, refresh],
-  );
-
-  // Silent refresh on focus
-  React.useEffect(() => navigation.addListener('focus', refresh), [refresh, navigation]);
-
-  // Navbar actions
-  React.useEffect(() => {
-    const menuData =
-      blogData && postData && (hasPermissionManager(blogData, session) || postData.author.userId === session.user.id)
-        ? [
-            {
-              action: () =>
-                navigation.navigate(blogRouteNames.blogEditPost, {
-                  blog: blogData,
-                  content: postData.content,
-                  postId: postData._id,
-                  postState: postData.state,
-                  title: postData.title,
-                }),
-              icon: {
-                android: 'ic_edit',
-                ios: 'pencil',
-              },
-              title: I18n.get('common-edit'),
-            },
-            deleteAction({
-              action: () => {
-                Alert.alert(I18n.get('blog-postdetails-deletion-title'), I18n.get('blog-postdetails-deletion-text'), [
-                  {
-                    style: 'default',
-                    text: I18n.get('common-cancel'),
-                  },
-                  {
-                    onPress: deletePost,
-                    style: 'destructive',
-                    text: I18n.get('common-delete'),
-                  },
-                ]);
-              },
-            }),
-          ]
-        : [];
+  // The title is the one of the post, and the menu depends on the rights on the post
+  const canManagePost = hasPermissionManager(blog, session) || post.author.userId === session.user.id;
+  React.useLayoutEffect(() => {
+    const menuData = canManagePost
+      ? [
+          menuAction({
+            icon: { android: 'ic_edit', ios: { name: 'pencil', type: 'sfSymbol' } },
+            label: I18n.get('common-edit'),
+            onPress: () =>
+              navigation.navigate('blog/edit', {
+                blog,
+                content: post.content,
+                postId: post._id,
+                postState: post.state,
+                title: post.title,
+              }),
+            testID: 'blog-postdetails-edit',
+          }),
+          menuAction({
+            destructive: true,
+            icon: { android: 'ic_delete_item', ios: { name: 'trash', type: 'sfSymbol' } },
+            label: I18n.get('common-delete'),
+            onPress: () =>
+              Alert.alert(I18n.get('blog-postdetails-deletion-title'), I18n.get('blog-postdetails-deletion-text'), [
+                { style: 'default', text: I18n.get('common-cancel') },
+                { onPress: deletePost, style: 'destructive', text: I18n.get('common-delete') },
+              ]),
+            testID: 'blog-postdetails-delete',
+          }),
+        ]
+      : [];
 
     navigation.setOptions({
-      title: postData?.title,
-      ...(menuData.length
-        ? {
-            headerRight: () =>
-              menuData.length > 0 ? (
-                <PopupMenu actions={menuData}>
-                  <NavBarAction icon="ui-options" />
-                </PopupMenu>
-              ) : undefined,
-          }
-        : undefined),
+      ...headerRightActions(
+        ...(menuData.length
+          ? [
+              headerMenu({
+                icon: { android: 'ui-options', ios: { name: 'ellipsis', type: 'sfSymbol' } },
+                items: menuData,
+                // ToDo(blog-migration): a translation of « options » for screen readers (none in the app yet)
+                label: I18n.get('common-edit'),
+                testID: 'blog-postdetails-options',
+              }),
+            ]
+          : []),
+      ),
+      // The title of the post replaces the empty one of the options
+      headerTitle: undefined,
+      title: post.title,
     });
-  }, [blogData, postData, deletePost, navigation, session]);
+  }, [blog, canManagePost, deletePost, navigation, post]);
 
   const publishPost = React.useCallback(async () => {
     try {
-      if (!blogData || !postData) return;
-      await handlePublishBlogPost({ blogId: blogData.id, postId: postData._id });
-      await handleGetBlogPostDetails({
-        blogId: blogData.id,
-        postId: postData._id,
-      });
-      await refresh();
-      Toast.showSuccess(I18n.get('blog-postdetails-publish-success'));
-    } catch {
+      await publishBlogPost(session, ids);
+    } catch (e) {
+      console.error('[BlogPostDetailsScreen] failed to publish the post', e);
       Toast.showError(I18n.get('blog-postdetails-error-text'));
+      return;
     }
-  }, [blogData, postData, handlePublishBlogPost, handleGetBlogPostDetails, refresh]);
+    Toast.showSuccess(I18n.get('blog-postdetails-publish-success'));
+    // Published: the post shown is reloaded (an error leaves it as it is, until the next refresh)
+    try {
+      await reload();
+    } catch (e) {
+      console.error('[BlogPostDetailsScreen] failed to reload the post', e);
+    }
+  }, [ids, reload, session]);
 
-  const renderFooter = () => {
-    const hasPublishBlogPostRight = session && blogData && resourceHasRight(blogData, publishBlogPostResourceRight, session);
+  const hasPublishBlogPostRight = resourceHasRight(blog, publishBlogPostResourceRight, session);
+  const renderFooter = React.useCallback(() => {
+    if (post.state !== 'SUBMITTED') return null;
+    return hasPublishBlogPostRight ? (
+      <BottomButtonSheet text={I18n.get('blog-postdetails-publish')} action={publishPost} />
+    ) : (
+      <BottomSheet
+        content={
+          <SmallBoldText style={styles.footerWaitingValidation}>{I18n.get('blog-postdetails-waitingvalidation')}</SmallBoldText>
+        }
+      />
+    );
+  }, [hasPublishBlogPostRight, post.state, publishPost]);
 
-    return postData?.state === 'SUBMITTED' ? (
-      hasPublishBlogPostRight ? (
-        <BottomButtonSheet text={I18n.get('blog-postdetails-publish')} action={publishPost} />
-      ) : (
-        <BottomSheet
-          content={
-            <SmallBoldText style={styles.footerWaitingValidation}>{I18n.get('blog-postdetails-waitingvalidation')}</SmallBoldText>
-          }
-        />
-      )
-    ) : null;
-  };
-
-  const canAddComment = React.useMemo<boolean>(() => computeCanComment(blogData, session), [blogData, session]);
+  const canAddComment = React.useMemo(() => computeCanComment(blog, session), [blog, session]);
 
   return (
     <ResourceWithCommentsTemplate
-      navigation={navigation}
-      route={route}
       alwaysShowCommentField
-      canAddReply={blogData.allowReplies}
+      canAddReply={blog.allowReplies}
       canAddComment={canAddComment}
-      data={postData.comments}
+      data={post.commentsThread}
       onSubmit={submitComment}
       onEdit={updateComment}
-      focusItem={autoScrollItem}
+      focusItem={focusedComment}
       onDelete={deleteComment}
       refreshControl={refreshControl}
-      ListHeaderComponent={<BlogPostDetails blog={blogData} post={postData} session={session} />}
+      ListHeaderComponent={<BlogPostDetails blog={blog} post={post} session={session} />}
       ListFooterComponent={renderFooter}
     />
   );
-});
+}
 
-const mapDispatchToProps: (
-  dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState,
-) => BlogPostDetailsScreenEventProps = dispatch => ({
-  dispatch,
+const BlogPostDetailsScreen = withSession<StaticScreenProps<BlogPostDetailsScreenNavParams>>(function ({ route, session }) {
+  const navigation = useNavigation();
+  const { blogId, postId } = route.params;
+  const ids = React.useMemo(() => ({ blogId, postId }), [blogId, postId]);
+  const loaderRef = React.useRef<ContentLoaderHandle>(null);
+  const { blog, loadContent, post } = useBlogPostDetails(session, ids);
 
-  // TS BUG: dispatch mishandled
-  handleDeleteBlogPost: async (blogPostId: { blogId: string; postId: string }) => {
-    return (await dispatch(deleteBlogPostAction(blogPostId))) as unknown as number | undefined;
-  },
+  // Reloaded when the screen comes back (from the change of the post, from another screen)
+  useOnFocusBack(navigation, () => loaderRef.current?.refreshSilent());
 
-  // TS BUG: dispatch mishandled
-  handleDeleteBlogPostComment: async (blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
-    return (await dispatch(deleteBlogPostCommentAction(blogPostCommentId))) as unknown as number | undefined;
-  },
-
-  handleGetBlogPostDetails: async (blogPostId: { blogId: string; postId: string }, blogPostState?: string) => {
-    return (await dispatch(getBlogPostDetailsAction(blogPostId, blogPostState))) as unknown as BlogPostWithAudience | undefined;
-  },
-
-  // TS BUG: dispatch mishandled
-  handlePublishBlogPost: async (blogPostId: { blogId: string; postId: string }) => {
-    return dispatch(publishBlogPostAction(blogPostId.blogId, blogPostId.postId));
-  },
-
-  // TS BUG: dispatch mishandled
-  handlePublishBlogPostComment: async (blogPostId: { blogId: string; postId: string }, comment: string, replyTo?: string) => {
-    return (await dispatch(publishBlogPostCommentAction(blogPostId, comment, replyTo))) as unknown as number | undefined;
-  },
-
-  // TS BUG: dispatch mishandled
-  handleUpdateBlogPostComment: async (
-    blogPostCommentId: { blogId: string; postId: string; commentId: string },
-    comment: string,
-  ) => {
-    return (await dispatch(updateBlogPostCommentAction(blogPostCommentId, comment))) as unknown as number | undefined;
-  },
-});
-
-export const BlogPostDetailsScreen = connect(
-  undefined,
-  mapDispatchToProps,
-)(
-  withSession<BlogPostDetailsScreenProps>(function ({
-    handleGetBlogPostDetails,
-    navigation,
-    route,
-    route: {
-      params: { blogId, postId },
-    },
-    session,
-    ...props
-  }) {
-    const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-    const [blogData, setBlogData] = React.useState<Blog | undefined>(undefined);
-    const [postData, setPostData] = React.useState<BlogPostWithAudience | undefined>(undefined);
-    const audience = useAudience({ module: 'blog', resourceId: postId, resourceType: 'post' });
-
-    const loadAudienceData = React.useCallback(async () => {
-      try {
-        const views = await audienceService.view.getSummary('blog', 'post', [postId]);
-        const reactions = await audienceService.reaction.getSummary('blog', 'post', [postId]);
-        setPostData(
-          prevBlogPostData =>
-            ({
-              ...prevBlogPostData,
-              audience: {
-                reactions: {
-                  total: reactions.reactionsByResource[postId].totalReactionsCounter ?? 0,
-                  types: reactions.reactionsByResource[postId].reactionTypes,
-                  userReaction: reactions.reactionsByResource[postId].userReaction ?? null,
-                },
-                views: views[postId],
-              },
-            }) as BlogPostWithAudience,
-        );
-      } catch (e) {
-        console.error(e);
-      }
-    }, [postId]);
-
-    const loadContent = React.useCallback(async () => {
-      await dispatch(refreshSessionIdForAccountAction(session));
-      setBlogData(await blogService.get(session, blogId));
-      let blogPostState: string | undefined;
-      const newBlogPostData = (await handleGetBlogPostDetails({ blogId, postId }, blogPostState)) as
-        BlogPostWithAudience | undefined;
-      if (!newBlogPostData) throw new Error('blogPostData is undefined');
-      setPostData(newBlogPostData);
-      await loadAudienceData();
-      audience.markView();
-      return newBlogPostData;
-    }, [audience, blogId, dispatch, loadAudienceData, handleGetBlogPostDetails, postId, session]);
-
-    const renderContent = React.useCallback<NonNullable<ContentLoaderProps['renderContent']>>(
-      refreshControl => (
+  const renderContent = React.useCallback(
+    (refreshControl: ScrollViewProps['refreshControl']) =>
+      blog && post ? (
         <BlogPostDetailsScreenLoaded
-          navigation={navigation}
-          route={route}
+          blog={blog}
+          ids={ids}
+          post={post}
           refreshControl={refreshControl}
-          handleGetBlogPostDetails={handleGetBlogPostDetails}
-          blogData={blogData!}
-          postData={postData!}
-          refresh={loadContent}
-          {...props}
+          reload={loadContent}
+          session={session}
         />
+      ) : (
+        <BlogPlaceholderDetails />
       ),
-      [blogData, handleGetBlogPostDetails, loadContent, navigation, postData, props, route],
-    );
+    [blog, ids, loadContent, post, session],
+  );
 
-    return <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={BlogPlaceholderDetails} />;
-  }),
-);
+  return (
+    <ContentLoader
+      // Another post asked by the params (a notification on the screen already in the stack): it is opened again
+      key={`${blogId}/${postId}`}
+      ref={loaderRef}
+      loadContent={loadContent}
+      renderContent={renderContent}
+      renderLoading={BlogPlaceholderDetails}
+    />
+  );
+});
+BlogPostDetailsScreen.displayName = 'BlogPostDetailsScreen';
 
-export default BlogPostDetailsScreen;
+export default defineScreen({
+  // The title of the post is set by the screen once loaded: hidden until then (`title: ''` would show the name of the route)
+  options: () => ({ headerTitle: () => '', title: '' }),
+  screen: BlogPostDetailsScreen,
+});

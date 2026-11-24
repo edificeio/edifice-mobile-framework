@@ -1,143 +1,127 @@
 /**
- * Blog services
+ * API of `blog`. It takes and gives types of the model (see `adapter.ts`).
+ * Every call is signed with the account given (`accountFetch`): the session of the screen.
  */
+import type {
+  Blog,
+  BlogList,
+  BlogPost,
+  BlogPostCommentIds,
+  BlogPostComments,
+  BlogPostCounts,
+  BlogPostIds,
+} from '~/framework/modules/blog/model';
+import { getModuleTransport } from '~/framework/util/transport';
+import type { AccountType, AuthActiveAccount } from '~/modules/auth/model';
 
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { BlogList } from '~/framework/modules/blog/reducer';
-import { sessionFetch } from '~/framework/util/transport';
+import { toAccountType, toBlog, toBlogPost, toBlogPostComments, toCommentBody, toPostBody } from './adapter';
+import type { API } from './types';
 
-import { blogAdapter, blogFolderAdapter, blogPostAdapter, hydratePostComments } from './adapters';
-import {
-  BlogPostCommentIdType,
-  BlogPostIdType,
-  IEntcoreBlog,
-  IEntcoreBlogFolder,
-  IEntcoreBlogList,
-  IEntcoreBlogPost,
-  IEntcoreBlogPostComments,
-  IEntcoreBlogPostList,
-  IEntcoreCreatedBlogPost,
-} from './types';
+// Typed with the scopes of the module (`getModuleTransport`): `/blog/...`, and `/userbook/...` for the authors of the comments
+const transport = getModuleTransport('blog');
+
+/** The states of posts asked, for a list of posts. */
+const statesQuery = (state?: string | string[]) => {
+  const states = typeof state === 'string' ? [state] : state;
+  return states ? `&states=${states.join(',')}` : '';
+};
 
 export const blogService = {
+  /**
+   * The types of account of users (`userId` → type), for the authors of the comments: the comments of the server don't give them.
+   * `undefined` for a user not found.
+   */
+  accountTypes: async (session: AuthActiveAccount, userIds: string[]): Promise<Partial<Record<string, AccountType>>> =>
+    Object.fromEntries(
+      await Promise.all(
+        userIds.map(
+          async userId =>
+            [
+              userId,
+              toAccountType(await transport.accountFetch.json<API.PersonResponse>(session, `/userbook/api/person?id=${userId}`)),
+            ] as const,
+        ),
+      ),
+    ),
+
   comments: {
-    delete: async (session: AuthActiveAccount, blogPostCommentId: BlogPostCommentIdType) => {
-      const { blogId, commentId, postId } = blogPostCommentId;
-      const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
-      return sessionFetch.json<{ number: number }>(api, { method: 'DELETE' });
+    delete: async (session: AuthActiveAccount, { blogId, commentId, postId }: BlogPostCommentIds) => {
+      await transport.accountFetch.json(session, `/blog/comment/${blogId}/${postId}/${commentId}`, { method: 'DELETE' });
     },
-    get: async (session: AuthActiveAccount, blogPostId: BlogPostIdType) => {
-      const { blogId, postId } = blogPostId;
-      const api = `/blog/comments/${blogId}/${postId}`;
-      const entcoreBlogPostComments = await sessionFetch.json<IEntcoreBlogPostComments>(api);
-      // Run the adapter for the received blog post comments
-      return hydratePostComments(entcoreBlogPostComments);
+    get: async (session: AuthActiveAccount, { blogId, postId }: BlogPostIds): Promise<BlogPostComments> =>
+      toBlogPostComments(await transport.accountFetch.json<API.Comment[]>(session, `/blog/comments/${blogId}/${postId}`)),
+    /** Publishes a comment, or a reply to the comment `replyTo`. */
+    publish: async (session: AuthActiveAccount, { blogId, postId }: BlogPostIds, comment: string, replyTo?: string) => {
+      await transport.accountFetch.json(session, `/blog/comment/${blogId}/${postId}`, {
+        body: JSON.stringify(toCommentBody(comment, replyTo)),
+        method: 'POST',
+      });
     },
-    publish: async (session: AuthActiveAccount, blogPostId: BlogPostIdType, comment: string, replyTo?: string) => {
-      const { blogId, postId } = blogPostId;
-      const api = `/blog/comment/${blogId}/${postId}`;
-      const body = JSON.stringify({ comment, replyTo });
-      return sessionFetch.json<{ number: number }>(api, { body, method: 'POST' });
-    },
-    update: async (session: AuthActiveAccount, blogPostCommentId: BlogPostCommentIdType, comment: string) => {
-      const { blogId, commentId, postId } = blogPostCommentId;
-      const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
-      const body = JSON.stringify({ comment });
-      return sessionFetch.json<{ number: number }>(api, { body, method: 'PUT' });
+    update: async (session: AuthActiveAccount, { blogId, commentId, postId }: BlogPostCommentIds, comment: string) => {
+      await transport.accountFetch.json(session, `/blog/comment/${blogId}/${postId}/${commentId}`, {
+        body: JSON.stringify(toCommentBody(comment)),
+        method: 'PUT',
+      });
     },
   },
 
-  // This service automatically filters only non-trashed content.
-  folders: {
-    list: async (session: AuthActiveAccount) => {
-      const api = `/blog/folder/list/all`;
-      const entcoreBlogFolderList = await sessionFetch.json<IEntcoreBlogFolder[]>(api);
-      return entcoreBlogFolderList.map(b => blogFolderAdapter(b)).filter(f => !f.trashed);
-    },
+  get: async (session: AuthActiveAccount, blogId: string): Promise<Blog> =>
+    toBlog(await transport.accountFetch.json<API.Blog>(session, `/blog/${blogId}`)),
+
+  /** The blogs of the user, out of the trash. */
+  list: async (session: AuthActiveAccount): Promise<BlogList> => {
+    const blogs = await transport.accountFetch.json<API.Blog[]>(session, '/blog/list/all');
+    return blogs.filter(blog => !blog.trashed).map(toBlog);
   },
 
-  get: async (session: AuthActiveAccount, blogId: string) => {
-    const api = `/blog/${blogId}`;
-    const entcoreBlog = await sessionFetch.json<IEntcoreBlog>(api);
-    return blogAdapter(entcoreBlog);
-  },
-  // This service automatically filters only non-trashed content.
-  list: async (session: AuthActiveAccount) => {
-    const api = `/blog/list/all`;
-    const entcoreBlogList = await sessionFetch.json<IEntcoreBlogList>(api);
-    const blogList = [] as BlogList;
-    for (const entcoreBlog of entcoreBlogList) {
-      if (!entcoreBlog.trashed) blogList.push(blogAdapter(entcoreBlog));
-    }
-    return blogList;
-  },
   post: {
+    /** Creates a post (a draft). @returns its id. */
     create: async (session: AuthActiveAccount, blogId: string, postTitle: string, postContentHtml: string) => {
-      const api = `/blog/post/${blogId}`;
-      const body = JSON.stringify({ content: postContentHtml, title: postTitle });
-      return sessionFetch.json<IEntcoreCreatedBlogPost>(api, { body, method: 'POST' });
+      const createdPost = await transport.accountFetch.json<API.CreatedBlogPost>(session, `/blog/post/${blogId}`, {
+        body: JSON.stringify(toPostBody(postTitle, postContentHtml)),
+        method: 'POST',
+      });
+      return createdPost._id;
     },
-    delete: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }) => {
-      const { blogId, postId } = blogPostId;
-      const api = `/blog/post/${blogId}/${postId}`;
-      return sessionFetch(api, { method: 'DELETE' });
+    delete: async (session: AuthActiveAccount, { blogId, postId }: BlogPostIds) => {
+      await transport.accountFetch(session, `/blog/post/${blogId}/${postId}`, { method: 'DELETE' });
     },
     edit: async (session: AuthActiveAccount, blogId: string, postId: string, postTitle: string, postContentHtml: string) => {
-      const api = `/blog/post/${blogId}/${postId}`;
-      const body = JSON.stringify({ content: postContentHtml, title: postTitle });
-      return sessionFetch.json(api, { body, method: 'PUT' });
+      await transport.accountFetch.json(session, `/blog/post/${blogId}/${postId}`, {
+        body: JSON.stringify(toPostBody(postTitle, postContentHtml)),
+        method: 'PUT',
+      });
     },
-    get: async (session: AuthActiveAccount, blogPostId: { blogId: string; postId: string }, state?: string) => {
-      const { blogId, postId } = blogPostId;
+    /** A post, in a state (`PUBLISHED`…). Without state, it is read first from the list of the posts of the blog. */
+    get: async (session: AuthActiveAccount, { blogId, postId }: BlogPostIds, state?: string): Promise<BlogPost> => {
       if (!state) {
-        const apiMetadata = `/blog/post/list/all/${blogId}?postId=${postId}`;
-        const entcoreBlogPostMetadata = await sessionFetch.json<IEntcoreBlogPost>(apiMetadata);
-        state = entcoreBlogPostMetadata[0].state;
+        const metadata = await transport.accountFetch.json<API.BlogPost[]>(
+          session,
+          `/blog/post/list/all/${blogId}?postId=${postId}`,
+        );
+        state = metadata[0].state;
       }
-      let api = `/blog/post/${blogId}/${postId}`;
-      if (state) {
-        api += `?state=${state}`;
-      }
-      const entcoreBlogPost = await sessionFetch.json<IEntcoreBlogPost>(api);
-      // Run the adapter for the received blog post
-      return blogPostAdapter(entcoreBlogPost);
+      const query = state ? `?state=${state}` : '';
+      return toBlogPost(await transport.accountFetch.json<API.BlogPost>(session, `/blog/post/${blogId}/${postId}${query}`));
     },
     publish: async (session: AuthActiveAccount, blogId: string, postId: string) => {
-      const api = `/blog/post/publish/${blogId}/${postId}`;
-      return sessionFetch.json<{ number: number }>(api, { method: 'PUT' });
+      await transport.accountFetch.json(session, `/blog/post/publish/${blogId}/${postId}`, { method: 'PUT' });
     },
     submit: async (session: AuthActiveAccount, blogId: string, postId: string) => {
-      const api = `/blog/post/submit/${blogId}/${postId}`;
-      return sessionFetch.json<{ number: number }>(api, { method: 'PUT' });
+      await transport.accountFetch.json(session, `/blog/post/submit/${blogId}/${postId}`, { method: 'PUT' });
     },
   },
+
   posts: {
-    get: async (session: AuthActiveAccount, blogId: string, state?: string | string[]) => {
-      let stateAsArray: string[] | undefined;
-      if (typeof state === 'string') stateAsArray = [state];
-      else stateAsArray = state;
-      let api = `/blog/post/list/all/${blogId}?content=true`;
-      if (stateAsArray) api += `&states=${stateAsArray.join(',')}`;
-      const entcoreBlogPostList = await sessionFetch.json<IEntcoreBlogPostList>(api);
-      const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp));
-      return blogPosts;
-    },
+    /** A page of the posts of a blog, with their content, in the states asked. */
     page: async (session: AuthActiveAccount, blogId: string, page: number, size: number, state?: string | string[]) => {
-      // Compute state parameter
-      let stateAsArray: string[] | undefined;
-      if (typeof state === 'string') stateAsArray = [state];
-      else stateAsArray = state;
-      // Call API
-      let api = `/blog/post/list/all/${blogId}?content=true&page=${page}&pageSize=${size}`;
-      if (stateAsArray) api += `&states=${stateAsArray.join(',')}`;
-      const entcoreBlogPostList = await sessionFetch.json<IEntcoreBlogPostList>(api);
-      const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp));
-      return blogPosts;
-    },
-    total: async (session: AuthActiveAccount, blogId: string) => {
-      return sessionFetch.json<{ countPublished: number; countDraft: number; countSubmitted: number; countAll: number }>(
-        `/blog/counter/${blogId}`,
+      const posts = await transport.accountFetch.json<API.BlogPost[]>(
+        session,
+        `/blog/post/list/all/${blogId}?content=true&page=${page}&pageSize=${size}${statesQuery(state)}`,
       );
+      return posts.map(toBlogPost);
     },
+    total: async (session: AuthActiveAccount, blogId: string): Promise<BlogPostCounts> =>
+      transport.accountFetch.json<API.PostCountsResponse>(session, `/blog/counter/${blogId}`),
   },
 };

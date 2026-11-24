@@ -35,6 +35,8 @@ Suivi, dans ce dossier :
 | [wiki.md](wiki.md) | Fiche de `wiki` : spécifiée, en attente des préalables `explorer` et `audience` |
 | [explorer.md](explorer.md) | Fiche d'`explorer` : `CoreModule` sur place, préalable de `wiki` |
 | [support.md](support.md) | Fiche de `support` : premier module passé par la bascule seule |
+| [blog.md](blog.md) | Fiche de `blog` : basculé et assaini, puis rebasé sur `feat/rn86` (décision 18) |
+| [comments.md](comments.md) | Fiche courte de `comments` : basculé pendant le rebase, pour les réponses de `blog` |
 
 ## Protocole d'une session
 

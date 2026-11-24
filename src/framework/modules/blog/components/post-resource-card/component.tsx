@@ -3,12 +3,11 @@ import { View } from 'react-native';
 
 import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardIcon, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
-import { UI_SIZES } from '~/framework/components/constants';
 import Pill from '~/framework/components/pill';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import Audience from '~/framework/modules/audience/components';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { isStringEmpty } from '~/framework/util/string';
+import Audience from '~/modules/audience/components';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { I18n } from '~/util/i18n';
 
@@ -58,9 +57,7 @@ export const BlogPostResourceCard = React.memo(
           title={
             <>
               {state === 'SUBMITTED' ? (
-                <SmallBoldText style={{ color: theme.palette.status.warning.regular }}>
-                  {I18n.get('blog-postlist-needvalidation')}
-                </SmallBoldText>
+                <SmallBoldText style={styles.needValidation}>{I18n.get('blog-postlist-needvalidation')}</SmallBoldText>
               ) : null}
               <ContentCardTitle>{title}</ContentCardTitle>
               {pinned ? (
@@ -90,9 +87,7 @@ export const BlogPostResourceCard = React.memo(
             ) : undefined
           }>
           {hasBlogPostText ? (
-            <SmallText
-              style={{ marginBottom: blogPostMedia?.length ? UI_SIZES.spacing.small : undefined }}
-              numberOfLines={contentTextMaxLines}>
+            <SmallText style={hasBlogPostMedia ? styles.textAboveMedia : undefined} numberOfLines={contentTextMaxLines}>
               {blogPostText}
             </SmallText>
           ) : null}

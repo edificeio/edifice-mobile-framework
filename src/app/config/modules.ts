@@ -7,6 +7,8 @@ export default [
   import('~/app/test/dmodule'),
   import('~/modules/audience'),
   import('~/modules/auth'),
+  import('~/framework/modules/blog'),
+  import('~/framework/modules/comments'),
   import('~/modules/editor'),
   import('~/framework/modules/explorer'),
   import('~/modules/media'),

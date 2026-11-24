@@ -1,24 +1,22 @@
-import React from 'react';
-
+/**
+ * Comments of a resource, with their replies: the template a module puts on the screen of its resource
+ * (`ResourceWithCommentsTemplate`), and the modal that shows a comment with all its replies (`comments/reply`).
+ */
 import { CoreModule } from '~/app/module';
-import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 
-import { CommentsThreadReplyScreen, CommentsThreadReplyScreenOptions } from './screens/reply/screen';
-import { CommentItem } from './types';
+import commentsReplyModal from './screens/reply';
 
-export default new CoreModule<'comments', { 'comments/reply': { id: CommentItem['id'] } }>(
-  {
-    name: 'comments',
+export default new CoreModule({
+  modals: {
+    'comments/reply': commentsReplyModal,
   },
-  Stack => (
-    <>
-      <Stack.Screen name="comments/reply" component={CommentsThreadReplyScreen} options={CommentsThreadReplyScreenOptions} />
-    </>
-  ),
-);
+  name: 'comments',
+});
 
-setModalModeForRoutes(['comments/reply']);
-
+/**
+ * custom config for the module
+ * ToDo: externalize this in overrides/platforms
+ */
 export const config = {
   maxLength: 800,
 };

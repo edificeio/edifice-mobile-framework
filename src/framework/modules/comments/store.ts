@@ -2,7 +2,11 @@ import { FlatListProps } from 'react-native';
 
 import { create } from 'zustand';
 
-import { CommentsThreadInternals, CommentsThreadProps } from './components/comments-thread';
+import type { CommentsThreadInternals } from './components/comments-thread-internal';
+import type { CommentsTreeProps } from './components/comments-tree';
+
+// The props of the template given to the modal `comments/reply`
+type CommentsThreadProps = CommentsTreeProps;
 
 interface CommentsThreadStore {
   // data

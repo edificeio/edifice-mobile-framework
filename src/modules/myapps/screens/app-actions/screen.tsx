@@ -9,7 +9,6 @@ import { defineModal } from '~/app/navigation-new';
 import Toast from '~/framework/components/toast';
 import { openUrl } from '~/framework/util/linking';
 import { withSession } from '~/modules/auth/hoc';
-import type { AuthActiveAccount } from '~/modules/auth/model';
 import { MyAppsMenuItem } from '~/modules/myapps/components/my-apps-menu-item';
 import { MenuIcon, Separator, Sheet, sheetOptions } from '~/modules/myapps/components/sheet';
 import { useEntApp, useFavorites } from '~/modules/myapps/hooks';
@@ -21,7 +20,7 @@ type MyAppsAppActionsParams = {
   appName: string;
 };
 
-function MyAppsAppActionsScreen({ route, session }: StaticScreenProps<MyAppsAppActionsParams> & { session: AuthActiveAccount }) {
+const MyAppsAppActionsScreen = withSession<StaticScreenProps<MyAppsAppActionsParams>>(function ({ route, session }) {
   const { appName } = route.params;
   const navigation = useNavigation();
   const app = useEntApp(appName);
@@ -67,9 +66,10 @@ function MyAppsAppActionsScreen({ route, session }: StaticScreenProps<MyAppsAppA
       )}
     </Sheet>
   );
-}
+});
+MyAppsAppActionsScreen.displayName = 'MyAppsAppActionsScreen';
 
 export default defineModal({
   options: sheetOptions,
-  screen: withSession<StaticScreenProps<MyAppsAppActionsParams>>(MyAppsAppActionsScreen),
+  screen: MyAppsAppActionsScreen,
 });

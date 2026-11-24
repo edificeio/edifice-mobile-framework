@@ -20,7 +20,6 @@ import type { AudienceReferer, AudienceUserReaction } from '~/modules/audience/m
 import { usePlatformReactionTypes } from '~/modules/audience/store';
 import { getReactionIconName } from '~/modules/audience/util';
 import { withSession } from '~/modules/auth/hoc';
-import type { AuthActiveAccount } from '~/modules/auth/model';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';
@@ -67,10 +66,7 @@ const ReactionItem = React.memo(({ item }: { item: AudienceUserReaction }) => {
 
 const renderReactionItem = ({ item }: { item: AudienceUserReaction }) => <ReactionItem item={item} />;
 
-const AudienceReactionsScreen = ({
-  route,
-  session,
-}: StaticScreenProps<AudienceReactionsScreenNavParams> & { session: AuthActiveAccount }) => {
+const AudienceReactionsScreen = withSession<StaticScreenProps<AudienceReactionsScreenNavParams>>(function ({ route, session }) {
   const { module, resourceId, resourceType } = route.params.referer;
   const validReactionTypes = usePlatformReactionTypes(session.platform.name) ?? NO_REACTION_TYPES;
 
@@ -182,7 +178,8 @@ const AudienceReactionsScreen = ({
   );
 
   return <ContentLoader loadContent={loadData} renderContent={renderContent} renderError={renderError} />;
-};
+});
+AudienceReactionsScreen.displayName = 'AudienceReactionsScreen';
 
 const renderError = () => <EmptyConnectionScreen />;
 
@@ -190,5 +187,5 @@ export default defineModal({
   options: () => ({
     title: I18n.get('audience-reactions-title'),
   }),
-  screen: withSession<StaticScreenProps<AudienceReactionsScreenNavParams>>(AudienceReactionsScreen),
+  screen: AudienceReactionsScreen,
 });

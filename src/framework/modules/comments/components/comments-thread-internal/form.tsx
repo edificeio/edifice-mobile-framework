@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ListRenderItemInfo, StyleProp, View, ViewStyle } from 'react-native';
 
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { KeyboardStickyView, KeyboardStickyViewProps, useKeyboardState } from 'react-native-keyboard-controller';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,6 +17,7 @@ import { config } from '~/framework/modules/comments';
 import { I18n } from '~/util/i18n';
 
 import { CommentsThreadContext } from './context';
+import { useTabBarHeight } from './hooks';
 import styles from './styles';
 import { CommentsThreadInternalProps, CommentsThreadInternals } from './types';
 
@@ -142,8 +142,8 @@ export const CommentsThreadEditForm = ({
   const buttonsStyle = React.useMemo(() => [styles.itemContentButtons, styles.itemContentButtonsEdit], []);
 
   // Note: FlashList and FlatList have opposite behavior of scroll offset. The first line is for FlashList, the second is for FlatList.
-  // const viewOffset = useKeyboardState(state => state.height) - useBottomTabBarHeight();
-  const viewOffset = -useKeyboardState(state => state.height) + useBottomTabBarHeight();
+  // const viewOffset = useKeyboardState(state => state.height) - useTabBarHeight();
+  const viewOffset = -useKeyboardState(state => state.height) + useTabBarHeight();
 
   const onChangeText = React.useCallback<NonNullable<ChatTextAreaProps['onChangeText']>>(
     text => {

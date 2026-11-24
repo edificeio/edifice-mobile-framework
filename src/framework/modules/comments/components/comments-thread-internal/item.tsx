@@ -93,7 +93,7 @@ export namespace CommentsThread {
     return (
       <View style={itemStyle}>
         <View style={contentStyle}>
-          <ContentDeletedItem {...info} />
+          <ContentDeletedItem />
         </View>
       </View>
     );
@@ -148,7 +148,7 @@ export namespace CommentsThread {
           {item.hasReplies && <View style={itemTreeDecoStyle} />}
         </View>
         <View style={styles.itemReplyContentWrapper}>
-          <ContentDeletedItem {...info} />
+          <ContentDeletedItem />
         </View>
       </View>
     );
@@ -228,11 +228,9 @@ export namespace CommentsThread {
     );
   };
 
-  export const ContentDeletedItem = (
-    _: ListRenderItemInfo<CommentsThreadInternals.CommentDeletedItem | CommentsThreadInternals.ReplyDeletedItem>,
-  ) => {
-    const containerStye = React.useMemo(() => [styles.itemContentText, styles.itemContentDeletedText], []);
-    return <SmallItalicText style={containerStye}>{I18n.get('comment-deleted')}</SmallItalicText>;
+  export const ContentDeletedItem = () => {
+    const containerStyle = React.useMemo(() => [styles.itemContentText, styles.itemContentDeletedText], []);
+    return <SmallItalicText style={containerStyle}>{I18n.get('comment-deleted')}</SmallItalicText>;
   };
 
   export const RepliesEllipsisItem = ({

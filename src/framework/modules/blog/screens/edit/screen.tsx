@@ -1,111 +1,96 @@
+/**
+ * Change of a post: its title and its content. It is then published again, or submitted (see `editBlogPost`).
+ */
 import * as React from 'react';
-import { Keyboard } from 'react-native';
+import { ActivityIndicator, Keyboard } from 'react-native';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { connect } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
+import type { StaticScreenProps } from '@react-navigation/native';
 
-import { I18n } from '~/util/i18n';
-import { IGlobalState } from '~/app/store';
+import { defineModal, headerAction, headerCustom, headerRightActions, useNavigation } from '~/app/navigation-new';
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text';
-import { LoadingIndicator } from '~/framework/components/loading';
-import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import Toast from '~/framework/components/toast';
-import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { editBlogPostAction } from '~/framework/modules/blog/actions';
-import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { Blog } from '~/framework/modules/blog/reducer';
-import { getBlogPostRight } from '~/framework/modules/blog/rights';
-import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { editBlogPost } from '~/framework/modules/blog/actions';
+import { getBlogPostRight } from '~/framework/modules/blog/model/business';
+import { withSession } from '~/modules/auth/hoc';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
-import { BlogEditPostScreenDataProps, BlogEditPostScreenEventProps, BlogEditPostScreenProps } from './types';
+import { BlogEditPostScreenNavParams } from './types';
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogEditPost>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('blog-editpost-title'),
-    titleStyle: { width: undefined },
-  }),
-});
+/** While the post is saved, instead of the button to save it (the theme is read when called, not at import). */
+const savingIndicator = () =>
+  headerCustom(<ActivityIndicator size={UI_SIZES.elements.navbarIconSize} color={theme.palette.grey.black} />);
 
 const preventBackI18n = {
   text: 'blog-createpost-unsavedpublication',
   title: 'blog-createpost-confirmation-unsavedpublication',
 };
 
-const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
+const BlogEditPostScreen = withSession<StaticScreenProps<BlogEditPostScreenNavParams>>(function ({ route, session }) {
+  const { blog, postId, postState } = route.params;
   const [loadingState, setLoadingState] = React.useState(false);
-  const [title, setTitle] = React.useState(props.route.params.title);
-  const [content, setContent] = React.useState(props.route.params.content);
+  const [title, setTitle] = React.useState(route.params.title);
+  const [content, setContent] = React.useState(route.params.content);
   const [saving, setSaving] = React.useState(false);
 
-  const { handleEditBlogPost, navigation, route, session } = props;
-  const blog = route.params.blog;
-  const postState = route.params.postState;
+  const navigation = useNavigation();
 
-  const doEditPost = async () => {
+  /** @returns whether the post was saved. */
+  const doEditPost = React.useCallback(async () => {
     try {
       const blogId = blog && blog.id;
       if (!blog || !blogId) {
         throw new Error('[doEditPost] failed to retrieve blog information');
       }
-      const blogPostRight = blog && session && getBlogPostRight(blog, session);
+      const blogPostRight = getBlogPostRight(blog, session);
       if (!blogPostRight) {
         throw new Error('[doEditPost] user has no post rights for this blog');
       }
       // Translate entered content to httml
       const htmlContent = content.replace(/\n/g, '<br>').trim();
-      // console.debug(`SAVED HTML CONTENT:\r\n${htmlContent}`);
-      await handleEditBlogPost(blog, props.route.params.postId, title.trim(), htmlContent, postState);
+      await editBlogPost(session, blog, postId, title.trim(), htmlContent, postState);
       navigation.goBack();
       Toast.showSuccess(I18n.get('blog-editpost-edit-success'));
+      return true;
     } catch {
       Toast.showError(I18n.get('blog-editpost-edit-errortext'));
+      return false;
     }
-  };
+  }, [blog, content, navigation, postId, postState, session, title]);
 
-  const doEdit = async () => {
+  const doEdit = React.useCallback(async () => {
     Keyboard.dismiss();
-    try {
-      setSaving(true);
-      setLoadingState(true);
-      await doEditPost();
-    } catch {
+    setSaving(true);
+    setLoadingState(true);
+    // Once saved, the screen is closed: only a failure gives the button back
+    if (!(await doEditPost())) {
       setSaving(false);
       setLoadingState(false);
     }
-  };
+  }, [doEditPost]);
 
-  React.useEffect(() => {
-    //console.debug(`HTML CONTENT:\r\n${props.route.params.content}`);
-    props.navigation.setOptions({
-      headerRight: () => (
-        <NavBarActionsGroup
-          elements={[
-            {
-              ...(loadingState ? (
-                <LoadingIndicator small customColor={theme.ui.text.inverse} />
-              ) : (
-                <NavBarAction icon="ui-save" onPress={doEdit} disabled={title.trim().length === 0 || content.trim().length === 0} />
-              )),
-            },
-          ]}
-        />
+  // The button depends on the title, the content and the saving, states of the screen
+  React.useLayoutEffect(() => {
+    navigation.setOptions(
+      headerRightActions(
+        loadingState
+          ? savingIndicator()
+          : headerAction({
+              disabled: title.trim().length === 0 || content.trim().length === 0,
+              icon: 'ui-save',
+              label: I18n.get('common-save'),
+              onPress: doEdit,
+              testID: 'blog-editpost-save',
+            }),
       ),
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, loadingState, content]);
+    );
+  }, [content, doEdit, loadingState, navigation, title]);
 
   const topForm = React.useCallback(
-    onChange => (
+    (onChange: () => void) => (
       <MultilineTextInput
         style={styles.inputTitle}
         placeholder={I18n.get('blog-createpost-post-title-placeholder')}
@@ -120,47 +105,27 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
     [title],
   );
 
-  const renderPostInfos = () => {
-    return (
-      <RichEditorForm
-        topForm={topForm}
-        initialContentHtml={props.route.params.content}
-        uploadParams={
-          blog.visibility === 'PUBLIC'
-            ? {
-                public: true,
-              }
-            : {
-                parent: 'protected',
-              }
-        }
-        onChangeText={value => setContent(value)}
-        preventBackI18n={preventBackI18n}
-        saving={saving}
-        pageStyle={styles.page}
-        placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
-      />
-    );
-  };
+  const uploadParams = React.useMemo(
+    () => (blog.visibility === 'PUBLIC' ? { public: true } : { parent: 'protected' as const }),
+    [blog.visibility],
+  );
 
-  return <>{renderPostInfos()}</>;
-};
-
-const mapStateToProps: (s: IGlobalState) => BlogEditPostScreenDataProps = s => {
-  return {
-    session: getSession(),
-  };
-};
-
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogEditPostScreenEventProps = dispatch => ({
-  dispatch,
-  handleEditBlogPost: async (blog: Blog, postId: string, title: string, content: string, postState: string) => {
-    return (await dispatch(editBlogPostAction(blog, postId, title, content, postState))) as unknown as string | undefined;
-  },
-  handleInitTimeline: async () => {
-    await dispatch(startLoadNotificationsAction());
-  },
+  return (
+    <RichEditorForm
+      topForm={topForm}
+      initialContentHtml={route.params.content}
+      uploadParams={uploadParams}
+      onChangeText={setContent}
+      preventBackI18n={preventBackI18n}
+      saving={saving}
+      pageStyle={styles.page}
+      placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
+    />
+  );
 });
+BlogEditPostScreen.displayName = 'BlogEditPostScreen';
 
-const BlogEditPostScreenConnected = connect(mapStateToProps, mapDispatchToProps)(BlogEditPostScreen);
-export default BlogEditPostScreenConnected;
+export default defineModal({
+  options: () => ({ presentation: 'fullScreenModal', title: I18n.get('blog-editpost-title') }),
+  screen: BlogEditPostScreen,
+});

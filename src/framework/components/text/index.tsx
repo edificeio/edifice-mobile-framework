@@ -23,10 +23,11 @@ const textFontFamilyPrefixAndroid = 'font_';
 /**
  * Font variations
  */
+// `as const`: the style needs the literal weights (`'700'`), not a `string`
 const FontWeightIOS = {
   Bold: '700',
   Normal: '400',
-};
+} as const;
 
 export const TextFontStyle = Platform.select({
   android: {

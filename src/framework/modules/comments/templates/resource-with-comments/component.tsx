@@ -2,19 +2,24 @@ import React from 'react';
 
 import { ExtractState } from 'zustand';
 
-import { AllModulesNavigationParams, ModuleScreenProps } from '~/app/navigation/types';
+import { useNavigation } from '~/app/navigation-new';
 import { CommentsTree, CommentsTreeProps } from '~/framework/modules/comments/components/comments-tree';
 import { useCommentsThreadStore } from '~/framework/modules/comments/store';
 
-export function ResourceWithCommentsTemplate<ScreenName extends keyof AllModulesNavigationParams>({
+/**
+ * The comments of a resource, under it (`ListHeaderComponent`). Replying to a comment opens it in the modal `comments/reply`, which
+ * reads the data and the callbacks given here (`useCommentsThreadStore`).
+ */
+export function ResourceWithCommentsTemplate({
   data,
-  navigation,
   onDelete,
   onEdit,
   onSubmit,
   refreshControl,
   ...props
-}: CommentsTreeProps & Pick<ExtractState<typeof useCommentsThreadStore>, 'refreshControl'> & ModuleScreenProps<ScreenName>) {
+}: CommentsTreeProps & Pick<ExtractState<typeof useCommentsThreadStore>, 'refreshControl'>) {
+  const navigation = useNavigation();
+
   // Setup zustand store for reply screen
   const setData = useCommentsThreadStore(s => s.setData);
   const setRefreshControl = useCommentsThreadStore(s => s.setRefreshControl);

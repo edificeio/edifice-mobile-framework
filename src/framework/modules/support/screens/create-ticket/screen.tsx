@@ -24,7 +24,6 @@ import {
 } from '~/framework/modules/support/model/business';
 import { LocalFile } from '~/framework/util/fileHandler/models';
 import { withSession } from '~/modules/auth/hoc';
-import { AuthActiveAccount } from '~/modules/auth/model';
 import { useEntApps } from '~/modules/myapps/hooks';
 import { I18n } from '~/util/i18n';
 
@@ -45,7 +44,7 @@ const MANDATORY_TEXT = ' *';
 // (`adjustResize`)
 const PageComponent: React.ComponentType<React.PropsWithChildren> = Platform.OS === 'ios' ? KeyboardAvoidingView : React.Fragment;
 
-const SupportCreateTicketScreen = ({ session }: { session: AuthActiveAccount }) => {
+const SupportCreateTicketScreen = withSession<StaticScreenProps<undefined>>(function ({ session }) {
   const navigation = useNavigation();
   // Labels of the apps translated by the server, loaded by « Mes applis »
   const { apps: entApps } = useEntApps();
@@ -204,11 +203,12 @@ const SupportCreateTicketScreen = ({ session }: { session: AuthActiveAccount }) 
       )}
     </PageComponent>
   );
-};
+});
+SupportCreateTicketScreen.displayName = 'SupportCreateTicketScreen';
 
 export default defineScreen({
   options: () => ({
     title: I18n.get('support-createticket-title'),
   }),
-  screen: withSession<StaticScreenProps<undefined>>(SupportCreateTicketScreen),
+  screen: SupportCreateTicketScreen,
 });

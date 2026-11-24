@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { Alert, FlatList, LayoutRectangle, TextInput, View } from 'react-native';
+import { Alert, FlatList, LayoutRectangle, type TextInputInstance, View } from 'react-native';
 
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { useRoute } from '@react-navigation/native';
 import { KeyboardChatScrollView } from 'react-native-keyboard-controller';
 import Animated, {
   FlatListPropsWithLayout,
@@ -23,17 +21,24 @@ import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import { usePrevious } from '~/framework/hooks/previous';
 import { useSyncRef } from '~/framework/hooks/ref';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
-import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import { unwrapAnimatedProp } from '~/framework/util/reanimated';
 import { I18n } from '~/util/i18n';
 
 import { CommentsThreadContext, commentsThreadContextInitialData, commentsThreadContextReducer } from './context';
 import { CommentsThreadAddForm } from './form';
+import { useScrollToIndex, useTabBarHeight } from './hooks';
 import { CommentsThread as CommentsThreadComponents } from './item';
 import styles from './styles';
 import { CommentsThreadInternalProps, CommentsThreadInternals } from './types';
 
 export const DefaultAnimatedListComponent = Animated.FlatList<CommentsThreadInternals.Item>;
+
+/**
+ * Whether the header of the list is a component to render, not an element already rendered. `!React.isValidElement(header)` alone
+ * doesn't narrow the type: its types don't take the element out of the union in the `false` branch.
+ */
+const isListHeaderComponentType = (header: React.ComponentType<any> | React.JSX.Element): header is React.ComponentType<any> =>
+  !React.isValidElement(header);
 
 export function CommentsThreadInternal({
   alwaysShowCommentField = false,
@@ -60,8 +65,7 @@ export function CommentsThreadInternal({
   const context = React.useReducer(commentsThreadContextReducer, commentsThreadContextInitialData);
 
   // Screen layout
-  const route = useRoute();
-  const tabBarHeight = useBottomTabBarHeight() * (isModalModeOnThisRoute(route.name) ? 0 : 1);
+  const tabBarHeight = useTabBarHeight();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const formBottomInset = Math.max(bottomInset - tabBarHeight, 0);
   const [measuredResourceHeight, setMeasuredResourceHeight] = React.useState(0);
@@ -69,7 +73,7 @@ export function CommentsThreadInternal({
 
   // Refs
   const listRef = React.useRef<FlatList<CommentsThreadInternals.Item>>(null);
-  const inlineEditRef = React.useRef<TextInput>(null);
+  const inlineEditRef = React.useRef<TextInputInstance>(null);
 
   // Add comment Input state
   const { newCommentHeight, newCommentValue } = context[0];
@@ -144,10 +148,10 @@ export function CommentsThreadInternal({
       onMeasure={React.useCallback(rect => {
         setMeasuredResourceHeight(rect.height);
       }, [])}>
-      {!UnwrappedListHeaderComponent || React.isValidElement(UnwrappedListHeaderComponent) ? (
-        UnwrappedListHeaderComponent
-      ) : (
+      {UnwrappedListHeaderComponent && isListHeaderComponentType(UnwrappedListHeaderComponent) ? (
         <UnwrappedListHeaderComponent />
+      ) : (
+        UnwrappedListHeaderComponent
       )}
     </CommentsThreadHeaderComponent>
   );
@@ -274,15 +278,11 @@ export function CommentsThreadInternal({
   }, []);
 
   // auto-scroll
+  const { onScrollToIndexFailed, scrollToIndex } = useScrollToIndex(listRef);
   const previousFocusItem = usePrevious(focusItem);
   if (focusItem && previousFocusItem !== focusItem) {
-    const scrollToIndex = data.findIndex(e => 'id' in e && e.id === focusItem);
-    scrollToIndex !== -1 &&
-      listRef.current?.scrollToIndex({
-        animated: true,
-        index: scrollToIndex,
-        viewPosition: 0,
-      });
+    const focusIndex = data.findIndex(e => 'id' in e && e.id === focusItem);
+    focusIndex !== -1 && scrollToIndex(focusIndex);
   }
 
   // Note: FlatList is used instead of FlashList because it doesn't unmount clipped input elements, allowing scrolling to current editing item from everwhere.
@@ -300,6 +300,7 @@ export function CommentsThreadInternal({
         data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
+        onScrollToIndexFailed={onScrollToIndexFailed}
         ListHeaderComponent={ListHeaderComponent}
         scrollIndicatorInsets={scrollIndicatorInsets}
         keyboardShouldPersistTaps="handled"

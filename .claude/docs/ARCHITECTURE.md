@@ -120,11 +120,7 @@ export default new CoreModule({
     //   libellé : `labelI18n` (clé i18n) s'il est donné, sinon l'`appName` de l'app du module (`myapps`), sinon `name` (`getTabLabel`)
     userMenu: [{ route: 'media/…', labelI18n, icon, testID, section: 'configuration', order }], // liens dans l'accueil de `user`
   },
-  intents: {
-    // facultatif ; tableaux de callbacks essayés dans l'ordre, qui renvoient `true` s'ils prennent la main (sinon le suivant)
-    resource: [{ resourceType: 'blog', callback: (resource, navigation) => (navigation.navigate('media/…', { id: resource.resourceId }), true) }],
-    notification: [notificationIntent({ type: 'WIKI', eventType: ['CREATE'], callback: (notification, navigation) => … })],
-  },
+  intents, // facultatif ; déclaré dans `intents.ts` à la racine du module (voir plus bas)
   // EntModule : matchEntcoreApp, matchEntcoreWidget, hasRight, entTrackingName
   // Hooks de session : sessionSetup, onSessionStart, onSessionRelease
 });
@@ -135,7 +131,17 @@ export default new CoreModule({
 - `scope` : scopes OAuth2 dont les API du module ont besoin (le jeton demande ceux de tous les modules). Leur type littéral est gardé dans celui du module : `getModuleTransport('<module>')` (`~/framework/util/transport`) donne les fonctions signées du transport (`accountFetch`, `sessionFetch`, `tokenFetch`, `accountApi`, `sessionApi`), typées pour n'accepter que les chemins sous ces scopes (`/timeline/…`). Types seulement, opt-in : voir `module-transport.ts`.
 - Route d'une entrée (`EntryRoute`) : une entrée ouvre l'écran **sans aucun params** (`route.params` vaut `undefined`, pas `{}`), donc `undefined` doit faire partie des params de l'écran. `StaticScreenProps<undefined>` convient ; des params facultatifs aussi, déclarés `StaticScreenProps<{ a?: string } | undefined>` et lus par `route.params?.a`. `StaticScreenProps<{ a?: string }>` (sans `| undefined`) est refusé.
 - `entries.userMenu` : `user` lit les liens des modules disponibles avec `useUserMenuEntries(section)` (triés par `order`, puis dans l'ordre des modules) ; le module qui déclare un lien ne dépend pas de `user`. Une entrée `create` est prévue, ajoutée avec son premier consommateur.
-- `intents` : ce que le module ouvre quand on le lui demande d'ailleurs, en **tableaux** de `{ …, callback }` (à la différence d'`entries`, des objets avec une `route`). Un `callback` renvoie un `boolean` : `true` arrête la recherche, `false` passe à l'intent compatible suivant (modules dans leur ordre, puis tableaux).
+- `intents` : ce que le module ouvre quand on le lui demande d'ailleurs, en **tableaux** de `{ …, callback }` (à la différence d'`entries`, des objets avec une `route`). Un `callback` renvoie un `boolean` : `true` arrête la recherche, `false` passe à l'intent compatible suivant (modules dans leur ordre, puis tableaux). Ils s'écrivent dans **`intents.ts`** à la racine du module, jamais en ligne dans la config (modèle : `src/framework/modules/blog/intents.ts`) :
+
+  ```ts
+  // intents.ts
+  export const intents: ConfigForIntents = {
+    resource: [{ resourceType: 'blog', callback: (resource, navigation) => (navigation.push('blog/list', { blogId: resource.resourceId }), true) }],
+    notification: [notificationIntent({ type: 'WIKI', eventType: ['CREATE'], callback: (notification, navigation) => … })],
+  };
+  ```
+
+  Le type `ConfigForIntents` suffit à typer les callbacks (même typage qu'en ligne).
   - `intents.resource` : `{ resourceType, callback(resource: ResourceMedia, navigation) }`. `useOpenMedia` (`openResource`, `openMedia(s)`) appelle ceux dont le `resourceType` est égal à `ResourceMedia.resourceType` (nom technique de l'app : `'blog'`, `'wiki'`…), parmi les modules disponibles pour l'utilisateur (`runResourceIntents`) ; si aucun ne renvoie `true`, la ressource s'ouvre dans le navigateur. Remplace les anciens intents (`registerIntent`).
   - `intents.notification` : `{ type, eventType: string | string[], callback(notification, navigation) }`, déclaré par `notificationIntent({ … })` pour que la notification (`IAbstractNotification`) ait le `type` et l'`event-type` de l'intent. **Pas encore lu** : l'ouverture des notifications reste à faire (§6).
   - **Typage, à ne pas simplifier** : `navigation` est une `IntentNavigation`, interface qui étend `RootNavigation` (l'alias direct rend circulaires les types de tous les modules dès qu'un callback est écrit dans la config), et `intents` n'est pas un générique du module. Les callbacks sont des méthodes (paramètres bivariants), pour qu'un intent restreint entre dans le tableau.

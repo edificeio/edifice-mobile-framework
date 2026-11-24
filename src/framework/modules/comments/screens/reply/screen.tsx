@@ -1,22 +1,30 @@
+/**
+ * A comment with all its replies, to reply to it: opened from the template of the resource (`ResourceWithCommentsTemplate`), which
+ * gives it its data and its callbacks through the store (`useCommentsThreadStore`).
+ */
 import React from 'react';
 
-import { ModuleScreenProps } from '~/app/navigation/types';
-import { modalScreenOptions } from '~/app/navigation/util';
+import type { StaticScreenProps } from '@react-navigation/native';
+
+import { defineModal } from '~/app/navigation-new';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
-import { withSession } from '~/framework/modules/auth/util';
 import { CommentsTree, CommentsTreeProps } from '~/framework/modules/comments/components/comments-tree';
 import { useCommentsThreadStore } from '~/framework/modules/comments/store';
+import type { CommentItem } from '~/framework/modules/comments/types';
+import { withSession } from '~/modules/auth/hoc';
 import { I18n } from '~/util/i18n';
 
-export const CommentsThreadReplyScreenOptions = modalScreenOptions<'comments/reply'>('modal', () => ({
-  title: I18n.get('comments-reply-title'),
-}));
-export const CommentsThreadReplyScreen = withSession<ModuleScreenProps<'comments/reply'>>(function ({
+/** The comment replied to. A `type`, not an interface: `StaticScreenProps` needs a `Record`. */
+export type CommentsReplyScreenNavParams = {
+  commentId: CommentItem['id'];
+};
+
+const CommentsThreadReplyScreen = withSession<StaticScreenProps<CommentsReplyScreenNavParams>>(function ({
   route: {
     params: { commentId },
   },
 }) {
-  // Setup zustand store for reply screen
+  // Data and callbacks of the resource, set by its template
   const _data = useCommentsThreadStore(s => s.data);
   const refreshControl = useCommentsThreadStore(s => s.refreshControl);
   const _onSubmit = useCommentsThreadStore(s => s.onSubmit);
@@ -47,4 +55,10 @@ export const CommentsThreadReplyScreen = withSession<ModuleScreenProps<'comments
       refreshControl={refreshControl}
     />
   );
+});
+CommentsThreadReplyScreen.displayName = 'CommentsThreadReplyScreen';
+
+export default defineModal({
+  options: () => ({ title: I18n.get('comments-reply-title') }),
+  screen: CommentsThreadReplyScreen,
 });

@@ -4,13 +4,13 @@ import { View } from 'react-native';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { HeadingSText, SmallBoldText } from '~/framework/components/text';
-import Audience from '~/framework/modules/audience/components';
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { type Blog, type BlogPostWithAudience, countComments } from '~/framework/modules/blog/reducer';
-import { hasPermissionManager } from '~/framework/modules/blog/rights';
+import type { Blog, BlogPostWithAudience } from '~/framework/modules/blog/model';
+import { countComments, hasPermissionManager } from '~/framework/modules/blog/model/business';
+import Audience from '~/modules/audience/components';
+import type { AuthActiveAccount } from '~/modules/auth/model';
 import { I18n } from '~/util/i18n';
 
-import styles from './style';
+import styles from './styles';
 
 interface BlogPostDetailsProps {
   blog: Blog;

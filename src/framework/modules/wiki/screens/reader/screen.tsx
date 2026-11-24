@@ -214,7 +214,6 @@ const WikiReaderContent = ({
 export function WikiReaderScreenLoaded({
   navigation,
   refreshControl,
-  route,
   route: {
     params: { pageId, resourceId },
   },
@@ -278,8 +277,6 @@ export function WikiReaderScreenLoaded({
   return (
     <>
       <ResourceWithCommentsTemplate
-        navigation={navigation}
-        route={route}
         canAddComment={canAddComment}
         canAddReply
         data={page.comments}

@@ -1,4 +1,3 @@
-import BlogPostListScreen, { computeNavBar } from './screen';
+import blogPostListScreen from './screen';
 
-export { computeNavBar };
-export default BlogPostListScreen;
+export default blogPostListScreen;

@@ -8,9 +8,15 @@ const styles = StyleSheet.create({
     borderColor: theme.palette.complementary.purple.light,
     borderWidth: UI_SIZES.border.small,
   },
+  needValidation: {
+    color: theme.palette.status.warning.regular,
+  },
   pinnedPill: {
     alignSelf: 'flex-start',
     marginTop: UI_SIZES.spacing.minor,
+  },
+  textAboveMedia: {
+    marginBottom: UI_SIZES.spacing.small,
   },
 });
 

@@ -29,6 +29,8 @@ const PATTERNS = {
   legacySetOptionsContent: /headerRight:|headerLeft:|navBarOptions/,
   legacyScreen: /<Stack\.Screen/g,
   newDeclaration: /new (Ent|Core)Module\(/,
+  // Notifications declared in the new form, not read yet (BASCULE, gesture 19)
+  notificationIntent: /notificationIntent\(/,
   newScreen: /define(Screen|Modal)\(/,
 };
 
@@ -80,7 +82,7 @@ const readModule = dir => {
     name: dir.replace(/^src\/(framework\/)?modules\//, ''),
     newDeclaration: count(PATTERNS.newDeclaration) > 0,
     newScreens: count(PATTERNS.newScreen),
-    notifHandler: files.some(({ file }) => file.includes('notif-handler')),
+    notifHandler: files.some(({ file }) => file.includes('notif-handler')) || count(PATTERNS.notificationIntent) > 0,
   };
 };
 
@@ -210,7 +212,7 @@ const markdown = [
   '- **Fichiers**, **Lignes** : fichiers source du module, tests (`*.test.*`) non compris.\n- **Écrans anciens** : nombre de `<Stack.Screen>`. **Écrans nouveaux** : fichiers avec `defineScreen(` ou `defineModal(`.',
   '- **Navigation ancienne** : fichiers avec `createModuleNavigator`, un import de `~/app/navigation` ou de `~/framework/navigation`, `NativeStackScreenProps`, ou un `navigation.setOptions` au contenu ancien (`headerRight:`, `headerLeft:`, `navBarOptions`). Les `notif-handler`, débranchés pendant la bascule, ne sont pas comptés (colonne **Notif.**).',
   '- **Modules anciens importés** : modules encore en `NavigableModule` que ce module importe. L’app ne les charge pas : leur code s’exécute sans leur reducer ni leur initialisation. Un import de code seul est permis s’il est justifié dans la fiche du module ; naviguer vers ses routes ne l’est pas.',
-  '- **Notif.** : le module a un `notif-handler`, sans équivalent dans le nouveau système pour l’instant.',
+  '- **Notif.** : le module a un `notif-handler`, ou déclare des `intents.notification` (`notificationIntent(`). Ni l’un ni l’autre n’est lu par le nouveau système pour l’instant.',
   '- **Flows** : fichiers `.maestro/flows/<module>-*.yaml`.',
   '- Les modules anciens sont triés du plus petit au plus gros.',
   '',

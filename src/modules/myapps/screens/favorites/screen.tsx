@@ -11,7 +11,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import SearchBar from '~/framework/components/search-bar';
 import { withSession } from '~/modules/auth/hoc';
-import type { AuthActiveAccount } from '~/modules/auth/model';
 import { EMPTY_SCREEN_CONFIG, MyAppsList } from '~/modules/myapps/components/my-apps-list';
 import type { ListedApp } from '~/modules/myapps/model';
 import { I18n } from '~/util/i18n';
@@ -23,7 +22,7 @@ import { styles } from './styles';
 const savingIndicator = () =>
   headerCustom(<ActivityIndicator size={UI_SIZES.elements.navbarIconSize} color={theme.palette.grey.black} />);
 
-function MyAppsFavoritesScreen({ session }: StaticScreenProps<undefined> & { session: AuthActiveAccount }) {
+const MyAppsFavoritesScreen = withSession<StaticScreenProps<undefined>>(function ({ session }) {
   const navigation = useNavigation();
   const [searchFocused, setSearchFocused] = React.useState(false);
   const { apps, hasUnsavedChanges, query, selected, setQuery, toggle } = useFavoritesSelection();
@@ -66,7 +65,8 @@ function MyAppsFavoritesScreen({ session }: StaticScreenProps<undefined> & { ses
       </View>
     </>
   );
-}
+});
+MyAppsFavoritesScreen.displayName = 'MyAppsFavoritesScreen';
 
 export default defineModal({
   options: () => ({
@@ -76,5 +76,5 @@ export default defineModal({
     headerTitle: () => '', // No title: `title: ''` would show the name of the route (CONVENTIONS « UI »)
     statusBarStyle: 'dark',
   }),
-  screen: withSession<StaticScreenProps<undefined>>(MyAppsFavoritesScreen),
+  screen: MyAppsFavoritesScreen,
 });

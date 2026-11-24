@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import type { AuthActiveAccount } from '~/modules/auth/model';
 
 export interface BlogPostResourceCardProps {
   action: () => void;

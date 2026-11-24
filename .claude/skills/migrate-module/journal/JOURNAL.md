@@ -12,6 +12,33 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-25 — Rebase de la branche de migration sur `feat/rn86` (`009dddad9`)
+
+- Fait : rebase des 40 commits, conflits résolus étape par étape (i18n déplacé, `myapps`, `auth` (`AccountTypeText` dans `src/modules/auth/components`), `explorer`, `audience`). Dernière étape, `blog` : les 8 commits d'upstream portés sur le module assaini ([blog.md](blog.md), décision 18) ; `comments` basculé pour les réponses ([comments.md](comments.md)).
+- Décidé (développeur) : billet repris de la version d'upstream (commentaires), refait aux gestes de la bascule ; `comments` basculé maintenant plutôt que reporté.
+- Vérifié (étape `blog`) : `tsc` sans erreur dans `blog` ; erreurs restantes de `comments` et `wiki` : celles d'upstream ; Jest `blog` 45 / 45 ; ESLint `blog` 0. **Pas testé dans l'app.**
+- Relevé : [later.md](later.md), visualiseur natif de texte riche sur l'ancienne API `media`.
+- Prochaine étape : finir le rebase, relancer `yarn migration-status`, recette `blog` (fiche §9, « Rebase »).
+
+## 2026-11-24 — Assainissement de `blog` : tous les sujets (`feat/ia/migration-outillage`)
+
+- Fait (non commité, tout dans l'arbre, décision 7) : `connect` (`create-post`, `edit`), `classes` (`BlogPostDetailsScreen` en fonction, `hooks.ts`), code mort (slices `blogs` / `folders` / `tree`, 7 actions, dont la seule qui importait `workspace`, placeholder `explorer`…), `structure` service (`types.ts` `namespace API`, `adapter.ts`, `getModuleTransport('blog').accountFetch`), `api-publique` (`util.ts`, import d'`audience` rebranché), `structure` modèle (`model/`, `business.ts` à la place de `rights.ts`, `actions.ts`, `store/`, `screens/select/`, `timeline-workflow.ts`), `performance`, `styles`, `dette` (bugs 15, 16, 17, 19 ; `KeyboardAvoidingView` ; façades), `erreurs`.
+- Décidé (développeur) : plan d'ensemble sans patch ni commit ; bugs 15, 16, 17, 19 corrigés ; `KeyboardPageView` remplacé ; `referrer` gardé, typé ; billet en fonction ; workflow de `timeline` dans `timeline-workflow.ts`, à reprendre par une entrée `create`. Annoncé : `try-action` et `droits` sans objet, `temporal` reporté, `ui` abandonné, `accountFetch`. Pris seul : fiche §6, 14 (erreurs avalées gardées, rechargement au retour après un `blur`, audience en parallèle).
+- Décidé (développeur, après la relecture) : adresses dans `service/resource-uri.ts` (propre à `blog`, décision 16) ; `withSession` posé à la définition de l'écran, avec son `displayName` (décision 17), généralisé : geste 18 de BASCULE réécrit, modèle `amodule.tsx` (l'ancien modèle `support` n'a plus de `connect(` ni cette forme). Écrans déjà migrés alignés : `support/create-ticket`, `myapps` (`home`, `favorites`, `app-actions`), `audience/reactions`.
+- Vérifié : `tsc` 767 → 743, aucune erreur nouvelle (module à 0) ; ESLint du module 36 → 0 ; `lint-all` 2120 → 2084 ; Jest 456 → 489 ; `--check` vert ; `testID` et clés i18n inchangés. **Pas testé dans l'app.**
+- Relevé : `BottomEditorSheet` ne transmet pas son `ref`, `moment` dans les composants du framework ([later.md](later.md)) ; erreurs avalées du module (fiche §5, 23).
+- Relecture (`/code-review`, 10 retours) : tous corrigés (décision 15), dont les erreurs avalées (backlog 23, visible). Revérifié : `tsc` 743 identique par fichier (module à 0), ESLint du module 0, Jest 489, `--check` vert.
+- Prochaine étape : relecture du diff (le billet d'abord), recette de la fiche §9 dans l'app, commit.
+
+## 2026-11-24 — Bascule de `blog` (`feat/ia/migration-outillage`)
+
+- Fait : bascule de `blog` sur place, d'après la fiche écrite par la session précédente ([blog.md](blog.md)), non commitée. `index.ts` en `EntModule` (`entries.myApps: blog/explorer`, `intents.resource` et deux `intents.notification`, premiers du dépôt) ; `module-config.ts`, `navigation/` et `notif-handler.ts` supprimés ; six écrans en `defineScreen` / `defineModal` (`fullScreenModal`), `withSession` partout, classe du billet gardée derrière un écran fonction ; en-têtes en `headerRightActions` / `headerMenu` ; `usePreventBack` → `useConfirmRemove` ; écran d'accueil sur le nouveau template d'`explorer` ; ligne dans `src/app/config/modules.ts` ; colonne « Notif. » de `cli/migration-status.js` qui compte aussi `notificationIntent(`.
+- Découvert pendant la bascule (fiche §4, « Ajouts découverts ») : params des routes en `type` (comme `audience`) ; reducer Redux 5 qui doit accepter toute action ; `route.name` et `NavParams` du template d'`explorer` incompatibles avec `StaticScreenProps` (contourné dans `blog`, noté dans `later.md`) ; `label` et `testID` obligatoires sur les items d'en-tête (5 `testID` ajoutés).
+- Vérifié : `tsc` 780 → 767, 14 erreurs de `blog` parties, une nouvelle (`create-post`, révélée par le typage de la session, backlog 20) ; ESLint du module 50 → 36, aucune nouvelle ; `lint-all` 2134 → 2120 ; Jest 456 / 456 ; `migration-status --check` sans hausse ; `testID` existant (`header-post-create`) gardé, aucune clé de stockage. **Pas testé dans l'app.**
+- En suspens : relecture du développeur ; recette de §3 dans l'app (accueil, liste, billet, commentaires, création, modification) ; `explorer` et `audience` à jouer avec `blog` ; titre vide du billet à vérifier (nom de route affiché ?).
+- Décidé (développeur, après la bascule) : intents sortis dans `intents.ts` ([blog.md](blog.md) décision 6), puis généralisé à tous les modules : CONVENTIONS « Structure d'un module », geste 19 de BASCULE, ARCHITECTURE §2.3, `framework.md`.
+- Prochaine étape : relecture, test dans l'app, commit unique de la bascule (fiche et suivi compris).
+
 ## 2026-11-24 — Intents des modules à la place des anciens intents (`feat/ia/migration-outillage`)
 
 - Fait (commit `59804c2fd`, puis repris) : les anciens intents (`registerIntent` / `openIntent` / `INTENT_TYPE`) sont retirés. D'abord remplacés par une entry `entries.resource`, puis déplacés dans une nouvelle clé de module **`intents`** (`ConfigForIntents`, `src/app/module/types.ts` ; `Module.intents`) : des tableaux de callbacks, à la différence d'`entries` (des objets avec une `route`). Un callback renvoie `true` s'il prend la main, `false` pour laisser l'intent compatible suivant.

@@ -2,8 +2,8 @@
  * Actions of `audience`: plain async functions (the module has no Redux store). They call the service and give types of the model.
  * Calls are signed with the session of the app (see `service/index.ts`): no session to give.
  */
-// ToDo(audience-migration): code of `blog`, an old module (allowed: code only). The consumer should give the referer.
-import { blogUriCaptureFunction } from '~/framework/modules/blog/service/adapters';
+// ToDo(audience-migration): a rule of `blog` (its addresses). The consumer should give the referer.
+import { blogUriCaptureFunction } from '~/framework/modules/blog/service/resource-uri';
 import type { AudienceParameter, AudienceReferer, AudienceResourceReactions } from '~/modules/audience/model';
 import { audienceService } from '~/modules/audience/service';
 import { usePlatformReactionTypesStore } from '~/modules/audience/store';

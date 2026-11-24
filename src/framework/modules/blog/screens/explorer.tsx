@@ -3,33 +3,25 @@
  */
 import React from 'react';
 
-import { useIsFocused } from '@react-navigation/native';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { StaticScreenProps } from '@react-navigation/native';
 
-import { I18n } from '~/util/i18n';
-import { screenOptions } from '~/app/navigation/util';
+import { defineScreen, useIsFocused, useNavigation } from '~/app/navigation-new';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import { withSession } from '~/framework/modules/auth/util';
-import moduleConfig from '~/framework/modules/blog/module-config';
-import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { selectors } from '~/framework/modules/blog/reducer';
-import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
-import ResourceExplorer, { ResourceExplorerTemplate } from '~/framework/modules/explorer/templates/resource-explorer';
+import { getBlogWorkflowInformation } from '~/framework/modules/blog/model/business';
+import ResourceExplorer, {
+  explorerScreenHeader,
+  ResourceExplorerTemplate,
+} from '~/framework/modules/explorer/templates/resource-explorer';
+import { withSession } from '~/modules/auth/hoc';
+import { I18n } from '~/util/i18n';
 
-// # Props
-
-export namespace BlogExplorerScreen {
-  export interface NavParams extends ResourceExplorerTemplate.NavParams {}
-  export type NavigationProps = NativeStackScreenProps<BlogNavigationParams, 'blogExplorer'>;
-  export interface AllProps
-    extends Omit<ResourceExplorerTemplate.ScreenProps, keyof ResourceExplorerTemplate.NavigationProps>, NavigationProps {}
-}
-
-// # NavBar
-
-export const computeNavBar = screenOptions(() => ({
-  title: I18n.get('blog-appname'),
-}));
+// ToDo(blog-migration): the params of a route must be a `Record<string, unknown>`, which the `interface` of the template is not, and
+// the template needs `route.name`, which `StaticScreenProps` doesn't give (later.md)
+type BlogExplorerScreenProps = {
+  route: StaticScreenProps<
+    Pick<ResourceExplorerTemplate.NavParams, keyof ResourceExplorerTemplate.NavParams> | undefined
+  >['route'] & { name: string };
+};
 
 const blogExplorerContext = {
   application: 'blog',
@@ -38,13 +30,14 @@ const blogExplorerContext = {
 
 // # Screen
 
-export default withSession<BlogExplorerScreen.AllProps>(({ navigation, route, session, ...props }) => {
+const BlogExplorerScreen = withSession<BlogExplorerScreenProps>(function ({ route, session }) {
+  const navigation = useNavigation();
   const hasBlogCreationRights = getBlogWorkflowInformation(session) && getBlogWorkflowInformation(session).blog.create;
 
   const isFocused = useIsFocused();
   const onOpenResource = React.useCallback<NonNullable<ResourceExplorerTemplate.Props['onOpenResource']>>(
     r => {
-      isFocused && navigation.navigate(blogRouteNames.blogPostList, { blogId: r.resourceId });
+      isFocused && navigation.navigate('blog/list', { blogId: r.resourceId });
     },
     [isFocused, navigation],
   );
@@ -64,15 +57,12 @@ export default withSession<BlogExplorerScreen.AllProps>(({ navigation, route, se
   }, [hasBlogCreationRights]);
 
   return (
-    <ResourceExplorer
-      {...props}
-      navigation={navigation as ResourceExplorerTemplate.NavigationProps['navigation']}
-      route={route as ResourceExplorerTemplate.NavigationProps['route']}
-      moduleConfig={moduleConfig}
-      onOpenResource={onOpenResource}
-      selectors={selectors.explorer}
-      emptyComponent={emptyComponent}
-      context={blogExplorerContext}
-    />
+    <ResourceExplorer route={route} onOpenResource={onOpenResource} emptyComponent={emptyComponent} context={blogExplorerContext} />
   );
+});
+BlogExplorerScreen.displayName = 'BlogExplorerScreen';
+
+export default defineScreen({
+  options: explorerScreenHeader(blogExplorerContext, 'blog-appname'),
+  screen: BlogExplorerScreen,
 });

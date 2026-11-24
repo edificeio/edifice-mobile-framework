@@ -4,51 +4,51 @@
 import React from 'react';
 import { ListRenderItemInfo } from 'react-native';
 
-import moment from 'moment';
+import type { StaticScreenProps } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { I18n } from '~/util/i18n';
-import { headerAction, screenOptions } from '~/app/navigation/util';
+import { defineScreen, headerAction, headerRightActions, useNavigation } from '~/app/navigation-new';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PaginatedFlatList, PaginatedFlatListProps } from '~/framework/components/list/paginated-list';
-import { sessionScreen } from '~/framework/components/screen';
 import { ContentLoader } from '~/framework/hooks/loader';
-import { audienceService } from '~/framework/modules/audience/service';
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { loadBlog, loadPostsPage } from '~/framework/modules/blog/actions';
 import BlogPlaceholderList from '~/framework/modules/blog/components/placeholder/list';
 import { BlogPostPlaceholder } from '~/framework/modules/blog/components/placeholder/list/component';
 import BlogPostResourceCard from '~/framework/modules/blog/components/post-resource-card';
-import moduleConfig from '~/framework/modules/blog/module-config';
-import { blogRouteNames } from '~/framework/modules/blog/navigation';
-import { actions, Blog, BlogPost, BlogPostWithAudience, countComments, selectors } from '~/framework/modules/blog/reducer';
-import { getBlogPostRight, hasPermissionManager } from '~/framework/modules/blog/rights';
-import { blogService } from '~/framework/modules/blog/service';
+import type { Blog, BlogPostWithAudience } from '~/framework/modules/blog/model';
+import { countComments, getBlogPostRight, hasPermissionManager } from '~/framework/modules/blog/model/business';
+import { BlogDispatch, selectBlog, selectPosts } from '~/framework/modules/blog/store';
+import { withSession } from '~/modules/auth/hoc';
+import type { AuthActiveAccount } from '~/modules/auth/model';
+import { I18n } from '~/util/i18n';
 
 import { styles } from './styles';
-import { BlogPostListScreenProps } from './types';
+import { BlogPostListScreenNavigationParams } from './types';
 
-export const computeNavBar = screenOptions(() => ({ title: I18n.get('blog-appname') }));
+const PAGE_SIZE = 20;
 
-const BlogPostListItem = ({
+const keyExtractor = (item: BlogPostWithAudience) => item._id;
+
+const renderPlaceholderItem = () => <BlogPostPlaceholder />;
+
+const BlogPostListItem = React.memo(function BlogPostListItemComponent({
   blog,
   isManager,
   item,
-  navigation,
   session,
 }: {
   session: AuthActiveAccount;
   isManager: boolean;
   blog: Blog;
-  navigation: BlogPostListScreenProps['navigation'];
-} & ListRenderItemInfo<BlogPostWithAudience>) => {
-  const dateAsMoment = React.useMemo(() => moment(item.created), [item.created]);
+} & Pick<ListRenderItemInfo<BlogPostWithAudience>, 'item'>) {
+  const navigation = useNavigation();
   const totalComments = React.useMemo(() => countComments(item), [item]);
   const onOpen = React.useCallback(() => {
-    navigation.navigate(blogRouteNames.blogPostDetails, {
+    navigation.navigate('blog/blog-post-details', {
       blogId: blog.id,
       postId: item._id,
     });
-  }, [blog, item, navigation]);
+  }, [blog.id, item._id, navigation]);
   return (
     <BlogPostResourceCard
       action={onOpen}
@@ -56,7 +56,7 @@ const BlogPostListItem = ({
       authorName={item.author.username}
       comments={totalComments}
       contentHtml={item.content}
-      date={dateAsMoment}
+      date={item.created}
       pinned={item.pinned}
       title={item.title}
       state={item.state as 'PUBLISHED' | 'SUBMITTED'}
@@ -67,108 +67,54 @@ const BlogPostListItem = ({
       isManager={isManager}
     />
   );
-};
+});
 
 const BlogPostListScreenLoaded = ({
   blogId,
-  navigation,
   route,
   session,
-}: Pick<BlogPostListScreenProps, 'navigation' | 'route'> &
-  Pick<BlogPostListScreenProps['route']['params'], 'blogId'> & { session: AuthActiveAccount }) => {
-  const dispatch = useDispatch();
-  const blog = useSelector(selectors.blog(blogId));
-  const hasBlogPostCreationRights = session && blog && getBlogPostRight(blog, session)?.actionRight;
-  const isManager = hasPermissionManager(blog, session);
-  const data = useSelector(selectors.posts(blogId));
+}: Pick<StaticScreenProps<BlogPostListScreenNavigationParams>, 'route'> &
+  Pick<BlogPostListScreenNavigationParams, 'blogId'> & { session: AuthActiveAccount }) => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch<BlogDispatch>();
+  const blog = useSelector(selectBlog(blogId));
+  const hasBlogPostCreationRights = React.useMemo(() => !!getBlogPostRight(blog, session)?.actionRight, [blog, session]);
+  const isManager = React.useMemo(() => hasPermissionManager(blog, session), [blog, session]);
+  const data = useSelector(selectPosts(blogId));
 
   const onGoToPostCreationScreen = React.useCallback(
-    () =>
-      navigation.navigate(blogRouteNames.blogCreatePost, {
-        blog,
-        referrer: `${moduleConfig.routeName}/posts`,
-      }),
+    () => navigation.navigate('blog/create-post', { blog, referrer: 'blog/list' }),
     [navigation, blog],
   );
 
-  React.useEffect(() => {
+  // The title is the one of the blog, and the button depends on the rights on it: both are set once the blog is loaded
+  React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: hasBlogPostCreationRights
-        ? props => headerAction({ icon: 'ui-plus', onPress: onGoToPostCreationScreen, testID: 'header-post-create' }, props).element
-        : undefined,
-
+      ...(hasBlogPostCreationRights
+        ? headerRightActions(
+            headerAction({
+              icon: 'ui-plus',
+              label: I18n.get('blog-createpost-title'),
+              onPress: onGoToPostCreationScreen,
+              testID: 'header-post-create',
+            }),
+          )
+        : headerRightActions()),
       title: blog.title ?? I18n.get('blog-appname'),
-      unstable_headerRightItems: hasBlogPostCreationRights
-        ? props => [headerAction({ icon: 'ui-plus', onPress: onGoToPostCreationScreen, testID: 'header-post-create' }, props)]
-        : undefined,
     });
   }, [blog.title, hasBlogPostCreationRights, navigation, onGoToPostCreationScreen]);
 
   const renderItem = React.useCallback<PaginatedFlatListProps<BlogPostWithAudience>['renderItem']>(
-    info => <BlogPostListItem {...info} navigation={navigation} session={session} blog={blog} isManager={isManager} />,
-    [blog, isManager, navigation, session],
+    ({ item }) => <BlogPostListItem item={item} session={session} blog={blog} isManager={isManager} />,
+    [blog, isManager, session],
   );
-
-  const renderPlaceholderItem = React.useCallback<PaginatedFlatListProps<BlogPostWithAudience>['renderPlaceholderItem']>(() => {
-    return <BlogPostPlaceholder />;
-  }, []);
-
-  const getAudienceForPosts = React.useCallback(async (newBlogPosts: BlogPost[]) => {
-    try {
-      const [viewsForPosts, reactionsForPosts] = await Promise.all([
-        audienceService.view.getSummary(
-          'blog',
-          'post',
-          newBlogPosts.map(p => p._id),
-        ),
-        audienceService.reaction.getSummary(
-          'blog',
-          'post',
-          newBlogPosts.map(p => p._id),
-        ),
-      ]);
-      return newBlogPosts.map(p => {
-        const views = viewsForPosts[p._id];
-        const reactions = reactionsForPosts.reactionsByResource[p._id];
-        return {
-          ...p,
-          audience: {
-            reactions: {
-              total: reactions?.totalReactionsCounter ?? 0,
-              types: reactions?.reactionTypes ?? [],
-              userReaction: reactions?.userReaction ?? null,
-            },
-            views,
-          },
-        } as BlogPostWithAudience;
-      });
-    } catch (e) {
-      console.error('[BlogPostListScreen] fetchAudience error :', e);
-      throw e;
-    }
-  }, []);
 
   const onPageReached = React.useCallback<NonNullable<PaginatedFlatListProps<BlogPostWithAudience>['onPageReached']>>(
-    async (page, reloadAll) => {
-      const [posts, totals] = await Promise.all([
-        blogService.posts.page(session, blogId, page, PAGE_SIZE, ['PUBLISHED', 'SUBMITTED']),
-        blogService.posts.total(session, blogId),
-      ]);
-      const postsWithAudience = await getAudienceForPosts(posts);
-      dispatch(
-        actions.posts.page(blogId, page * PAGE_SIZE, postsWithAudience, totals.countPublished + totals.countSubmitted, reloadAll),
-      );
-    },
-    [blogId, dispatch, getAudienceForPosts, session],
+    (page, reloadAll) => dispatch(loadPostsPage(session, blogId, page, PAGE_SIZE, !!reloadAll)),
+    [blogId, dispatch, session],
   );
 
-  const onFlushPosts = React.useCallback(async () => {
-    onPageReached(0, true);
-  }, [onPageReached]);
-
-  const keyExtractor = React.useCallback((item: BlogPostWithAudience) => item._id, []);
-
-  const PAGE_SIZE = 20;
+  const onFlushPosts = React.useCallback(() => onPageReached(0, true), [onPageReached]);
 
   const renderEmpty = React.useCallback(() => {
     return (
@@ -192,7 +138,7 @@ const BlogPostListScreenLoaded = ({
 
   React.useEffect(() => {
     if (route.params.forceReload) {
-      onFlushPosts();
+      onFlushPosts().catch(e => console.error('[BlogPostListScreen] reload error :', e));
       navigation.setParams({ forceReload: false });
     }
   }, [navigation, onFlushPosts, route.params.forceReload]);
@@ -211,21 +157,24 @@ const BlogPostListScreenLoaded = ({
   );
 };
 
-export default sessionScreen<BlogPostListScreenProps>(function BlogPostListScreen({
-  navigation,
+const BlogPostListScreen = withSession<StaticScreenProps<BlogPostListScreenNavigationParams>>(function ({
   route: {
     params: { blogId },
   },
   route,
   session,
 }) {
-  const dispatch = useDispatch();
-  const loadContent = React.useCallback(async () => {
-    dispatch(actions.blog.load(await blogService.get(session, blogId)));
-  }, [blogId, dispatch, session]);
+  const dispatch = useDispatch<BlogDispatch>();
+  const loadContent = React.useCallback(() => dispatch(loadBlog(session, blogId)), [blogId, dispatch, session]);
   const renderContent = React.useCallback(
-    () => <BlogPostListScreenLoaded navigation={navigation} blogId={blogId} session={session} route={route} />,
-    [navigation, blogId, session, route],
+    () => <BlogPostListScreenLoaded blogId={blogId} session={session} route={route} />,
+    [blogId, session, route],
   );
   return <ContentLoader renderContent={renderContent} loadContent={loadContent} renderLoading={BlogPlaceholderList} />;
+});
+BlogPostListScreen.displayName = 'BlogPostListScreen';
+
+export default defineScreen({
+  options: () => ({ title: I18n.get('blog-appname') }),
+  screen: BlogPostListScreen,
 });

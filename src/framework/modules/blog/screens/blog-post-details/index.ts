@@ -1,4 +1,3 @@
-import BlogPostDetailsScreen, { BlogPostDetailsScreenOptions } from './screen';
+import blogPostDetailsScreen from './screen';
 
-export { BlogPostDetailsScreenOptions };
-export default BlogPostDetailsScreen;
+export default blogPostDetailsScreen;
