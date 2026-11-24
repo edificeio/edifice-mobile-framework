@@ -2,7 +2,6 @@ import React from 'react';
 import { Platform, View } from 'react-native';
 
 import { NavigationRoute } from '@react-navigation/native';
-import deviceInfoModule from 'react-native-device-info';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 
@@ -12,6 +11,7 @@ import { ButtonGroup, PrimaryButton, SecondaryButton } from '~/framework/compone
 import { UI_STYLES } from '~/framework/components/constants';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
 import { getRouteForOnboarding } from '~/framework/modules/auth/new-navigation';
+import AppInfo from '~/framework/util/app-info';
 import appConf from '~/framework/util/appConf';
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media-deprecated';
@@ -76,7 +76,7 @@ export function AuthOnboardingScreen({ navigation }: AuthOnboardingScreenProps) 
       <SafeAreaView style={UI_STYLES.flex1}>
         <View style={styles.mainContainer}>
           <HeadingLText style={styles.title} testID="onboarding-title">
-            {showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}
+            {showAppName ? AppInfo.app.name.toUpperCase() : null}
           </HeadingLText>
           <Swiper autoplay autoplayTimeout={5} dotStyle={styles.swiper} activeDotStyle={[styles.swiper, styles.swiperActive]}>
             {texts.map((onboardingText, index) => (
@@ -95,5 +95,5 @@ export function AuthOnboardingScreen({ navigation }: AuthOnboardingScreenProps) 
 AuthOnboardingScreen.options = screenOptions(() => ({
   headerShown: false,
   statusBarStyle: 'dark',
-  title: deviceInfoModule.getApplicationName(),
+  title: AppInfo.app.name,
 }));

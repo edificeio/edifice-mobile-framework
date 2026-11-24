@@ -1,10 +1,10 @@
 import { PermissionsAndroid, Platform } from 'react-native';
 
 import { AuthorizationStatus, getMessaging, getToken, onTokenRefresh, requestPermission } from '@react-native-firebase/messaging';
-import DeviceInfo from 'react-native-device-info';
 
 import { AuthActiveAccount, AuthSavedLoggedInAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import { ANDROID_API, isAndroidApiAtLeast } from '~/framework/util/app-info';
 import { Storage } from '~/framework/util/storage';
 import { accountFetch } from '~/framework/util/transport';
 
@@ -89,8 +89,7 @@ class FirebaseCloudMessagingService {
 
   /** Ensure that the app has the necessary permissions to receive notifications on Android. Ask user for permission if needed. */
   protected async ensureNotificationPermissionsAndroid() {
-    const apiLevel = await DeviceInfo.getApiLevel();
-    if (apiLevel < 33) {
+    if (!isAndroidApiAtLeast(ANDROID_API.ANDROID_13)) {
       return true;
     } else {
       const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);

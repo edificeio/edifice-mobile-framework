@@ -1,12 +1,11 @@
 import CookieManager from '@preeternal/react-native-cookie-manager';
 import { getCrashlytics, log, recordError, setAttribute, setAttributes, setUserId } from '@react-native-firebase/crashlytics';
-import DeviceInfo from 'react-native-device-info';
 
 import { EntModule } from '~/app/module';
 import { Modules } from '~/app/module/all';
 import AllModules from '~/app/modules';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import BuildInfo from '~/framework/util/build-info';
+import AppInfo, { fullVersionLabel } from '~/framework/util/app-info';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
 import { sessionFetch } from '~/framework/util/transport';
 
@@ -211,11 +210,11 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   private static moduleAccessMap: Record<string, string> = {};
 
   private static defaultPayload = {
-    appName: DeviceInfo.getBundleId(),
-    appVersion: `${DeviceInfo.getVersion()}-${BuildInfo.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
-    deviceName: DeviceInfo.getModel(),
-    osName: DeviceInfo.getSystemName(),
-    osVersion: DeviceInfo.getSystemVersion(),
+    appName: AppInfo.app.bundleId,
+    appVersion: fullVersionLabel,
+    deviceName: AppInfo.device.model,
+    osName: AppInfo.device.systemName,
+    osVersion: AppInfo.device.systemVersion,
   };
 
   errorCount: number = 0;

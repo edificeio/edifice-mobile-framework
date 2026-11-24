@@ -3,12 +3,7 @@ import { Alert, Platform, View } from 'react-native';
 
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
-import DeviceInfo from 'react-native-device-info';
 import Rate, { AndroidMarket } from 'react-native-rate';
-
-import styles from './styles';
-import type { UserWhoAreWeScreenPrivateProps } from './types';
-import { WhoAreWellustrationType, WhoAreWeQuoteType } from './types';
 
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -18,8 +13,13 @@ import { BodyBoldText, BodyText, HeadingXSText } from '~/framework/components/te
 import { getPlatform } from '~/framework/modules/auth/redux/reducer';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import AppInfo from '~/framework/util/app-info';
 import appConf from '~/framework/util/appConf';
 import { Image } from '~/framework/util/media-deprecated';
+
+import styles from './styles';
+import { WhoAreWellustrationType, WhoAreWeQuoteType } from './types';
+import type { UserWhoAreWeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -89,7 +89,7 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
   function rateApp() {
     const options = {
       AppleAppID: appleId,
-      GooglePackageName: DeviceInfo.getBundleId(),
+      GooglePackageName: AppInfo.app.bundleId,
       inAppDelay: 0,
       openAppStoreIfInAppFails: true,
       preferInApp: Platform.OS !== 'android',
@@ -108,7 +108,7 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
       {renderIllustration(illustration)}
       <View style={styles.textWrapper}>
         {renderQuote(quote)}
-        <BodyText>{I18n.get('user-whoarewe-description', { appName: DeviceInfo.getApplicationName() })}</BodyText>
+        <BodyText>{I18n.get('user-whoarewe-description', { appName: AppInfo.app.name })}</BodyText>
         <PrimaryButton style={styles.buttonReview} text={I18n.get('user-whoarewe-reviewapp')} action={rateApp} />
         {renderEntButton(entButton)}
         <SecondaryButton style={styles.buttonDiscover} text={I18n.get('user-whoarewe-discoveredifice')} url={discoverUrl} />
