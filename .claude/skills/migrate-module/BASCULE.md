@@ -49,7 +49,7 @@ Exemple complet : le commit de bascule de `support`, puis son alignement du 2026
 
 - Le module **navigue vers un module ancien** (ses routes, `<module>RouteNames`) ou **lit son state** : ce module n'est pas chargé par l'app. Un import de son code seul n'arrête pas (geste 16).
 - La bascule demande une **évolution du framework** (`src/app/`, `navigation-new`, `framework/util`) : elle part avant, dans un changement à part.
-- Le module utilise un intent ou une modale globale (`~/framework/navigation/modals`) : pas d'équivalent dans le nouveau système pour l'instant ([later.md](journal/later.md)). Un handler de notification ou un widget n'arrête plus la bascule (gestes 19 et 20).
+- Le module utilise une modale globale (`~/framework/navigation/modals`) : pas d'équivalent dans le nouveau système pour l'instant ([later.md](journal/later.md)). Un handler de notification ou un widget n'arrête plus la bascule (gestes 19 et 20).
 - Plus de trois fichiers touchés hors du dossier du module (les façades sont dans le module et ne comptent pas).
 - Un composant ou un hook ne marche pas dans la nouvelle navigation alors qu'il n'est pas dans les gestes : c'est un geste à ajouter, à décider avec le développeur.
 

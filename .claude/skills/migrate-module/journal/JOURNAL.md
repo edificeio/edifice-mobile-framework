@@ -12,6 +12,14 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-24 — Entry `resource` à la place des intents (`feat/ia/migration-outillage`)
+
+- Fait : nouvelle entry de module `entries.resource` (`ConfigForResourceEntry`, `src/app/module/types.ts`) : une fonction `(media: ResourceMedia, navigation: ResourceEntryNavigation) => void`. `useOpenMedia` la trouve avec `getResourceEntry`, dans `openResource` (exportée par le hook, utilisée par `openMedia(s)`), (`src/app/module/entries.ts`) parmi les modules disponibles pour l'utilisateur, par `matchEntcoreApp === media.appName` ; sans elle, la ressource s'ouvre dans le navigateur (comme l'ancien `openIntent` sans intent). Le système d'intents est retiré : `registerIntent` / `openIntent` / `INTENT_TYPE` supprimés ; `src/app/intents.ts` garde son nom et seulement les noms d'apps (lus par `explorer`). Les `registerIntent` de `blog`, `scrapbook` et `wiki` (non chargés) deviennent des `ToDo(<module>-migration)` qui donnent route et params. Docs : `framework.md`, BASCULE (plus d'arrêt), `inventaire.md`, INTENT §4, STATUS B5 levé, `later.md` (ligne retirée), fiches `media`, `wiki`, `blog` (décision 2 revue, à confirmer), ARCHITECTURE §2.3.
+- Cycle de types : une entry écrite en ligne dans `entries` rendait circulaires les types de tous les modules (le type du module contient la fonction, qui cite `RootNavigation`, calculé depuis tous les modules) : plus d'auto-complétion. Correctif, les deux parties sont nécessaires : `ResourceEntryNavigation`, interface qui étend `RootNavigation` (résolue à l'usage), et `ModuleConfig.entries?: Entries & ConfigForEntries<EntryRoute<Screens>>`. Effet de bord : les clés de `entries` et de `tab` se complètent (ce n'était pas le cas avant).
+- Décidé (utilisateur) : signature `(media, navigation)` ; seuls les modules disponibles pour l'utilisateur ouvrent leurs ressources ; `intents.ts` garde son nom ; `ToDo` de bascule dans les modules legacy ; note « à confirmer » sur la décision 2 de `blog`. Décidé seul : une ressource avec entry s'ouvre même sans `src`.
+- Vérifié : voir la fin de session (tsc, ESLint, Jest, typage par le language service). Pas joué dans l'app : aucun module chargé ne déclare `entries.resource`.
+- Prochaine étape : la première bascule concernée (`blog`) déclare l'entry.
+
 ## 2026-11-23 — Assainissement d'`audience` : plan d'ensemble (`feat/ia/migration-outillage`)
 
 - Fait : analyse de tous les sujets (`/sanitize-module src/modules/audience`, `tous`), décisions écrites dans la fiche ([audience.md](audience.md) §6, 4 à 11 ; §9). Aucun code écrit.

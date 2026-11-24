@@ -21,7 +21,7 @@ Pour chaque ligne : ce qu'il y a dans le module, et le geste de [BASCULE.md](BAS
 | Écrans qui lisent la session | `getSession()` / `assertSession()` dans l'écran ou son `mapStateToProps`, `sessionScreen`, `withSession` de `~/framework/modules/auth/util` | 18 |
 | `storage*` | Clés, namespaces, migrations, API de storage utilisée | 13, clés inchangées |
 | Imports d'autres modules anciens | Pour chacun : code seul (service, util, constantes, types) ou navigation / state | 16 ; navigation / state : arrêt |
-| `notif-handler.ts`, widgets (`home-widget.ts`, `home-section.ts`), intents | Types gérés, routes ouvertes | handler : 19 (débranché) ; widget : 20 (hors migration) ; intent : arrêt ([framework.md](framework.md)) |
+| `notif-handler.ts`, widgets (`home-widget.ts`, `home-section.ts`), intents | Types gérés, routes ouvertes | handler : 19 (débranché) ; widget : 20 (hors migration) ; intent : `entries.resource` ([framework.md](framework.md)) |
 
 Relever aussi, pour §5 de la fiche (sans y toucher) : `connect(`, `tryAction` / `tryActionLegacy` / `handleAction`, classes, `useCallback` / `useMemo` manquants, styles en ligne ou `StyleSheet.create` hors de `styles.ts`, ce que les autres modules importent (API publique : types, hooks, utilitaires), `moment`, bottom sheets et modales (`@gorhom/bottom-sheet`, `CustomBottomSheetModal`, `BottomMenu`, `react-native-modal`, `ModalBox`), `rights.ts`, structure du dossier, erreurs `tsc` / ESLint existantes, bugs vus à la lecture, fichiers orphelins (un fichier orphelin **et** en erreur `tsc` est supprimé dans la bascule : geste 21).
 
@@ -41,7 +41,7 @@ Pour chaque importeur :
 - il importe `module-config.ts` ou `navigation/` : **façade** au même chemin (geste 15), avec les routes renommées ;
 - il est lui-même ancien et non chargé : le noter, ne pas le migrer.
 
-Navigation entrante : les modules qui naviguent vers les routes du module (noms de routes en dur, `<module>RouteNames`), l'ouverture par `myapps` (`entries.myApps`, `matchEntcoreApp`), les liens d'autres modules (`entries.userMenu`), les liens profonds et intents (`src/app/intents.ts`).
+Navigation entrante : les modules qui naviguent vers les routes du module (noms de routes en dur, `<module>RouteNames`), l'ouverture par `myapps` (`entries.myApps`, `matchEntcoreApp`), les liens d'autres modules (`entries.userMenu`), les liens profonds et l'ouverture de ses ressources (`entries.resource`, par `useOpenMedia`).
 
 ### 3. Comportements à conserver
 

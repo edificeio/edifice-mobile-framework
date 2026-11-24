@@ -4,11 +4,12 @@ import type { createNativeStackScreen } from '@react-navigation/native-stack';
 import type { Action, Reducer } from 'redux';
 
 import type importModules from '~/app/config/modules';
-import type { ScreenComponent, ScreenTelemetryConfig } from '~/app/navigation-new/types';
+import type { RootNavigation, ScreenComponent, ScreenTelemetryConfig } from '~/app/navigation-new/types';
 import type { SvgIconName } from '~/framework/components/picture';
 import type { IModuleFileManagerConfig } from '~/framework/util/fileHandler/types';
 import type { StorageHandler } from '~/framework/util/storage/storage-handler';
 import type { AuthActiveAccount, AuthLoggedAccount } from '~/modules/auth/model';
+import type { ResourceMedia } from '~/modules/media/types';
 
 import { Module } from '.';
 
@@ -147,12 +148,30 @@ export interface ConfigForUserMenuEntry<Route extends PropertyKey> {
 }
 
 /**
- * Places where a module can be opened from. Each entry has a `route`: one of the screens of the module that needs no params
- * (`EntryRoute`). A module without any can only be reached by the navigation of other screens.
+ * The root navigation, given to `entries.resource`. An interface, not `RootNavigation` itself: the type of a module would then depend
+ * on `RootNavigation`, which is computed from the types of all modules (circular, every module type breaks). TypeScript only reads the
+ * members of an interface when they are used. It works together with the intersection of `ModuleConfig.entries`: neither is enough
+ * alone.
+ */
+export interface ResourceEntryNavigation extends RootNavigation {}
+
+/**
+ * Opens a resource of the app of the module, with the navigation of the screen that opens it (`useOpenMedia`).
+ * Given the `ResourceMedia` whose `appName` is the `matchEntcoreApp` of the module: only an `EntModule` that has one gets resources.
+ */
+export type ConfigForResourceEntry = (media: ResourceMedia, navigation: ResourceEntryNavigation) => void;
+
+/**
+ * Places where a module can be opened from. Each entry that opens a screen has a `route`: one of the screens of the module that
+ * needs no params (`EntryRoute`). A module without any can only be reached by the navigation of other screens.
  */
 export interface ConfigForEntries<Route extends PropertyKey> {
-  // « Mes applis » (and `useOpenModule`: notifications, intents...).
+  // « Mes applis » (and `useOpenModule`: notifications, deep links...).
   myApps?: ConfigForMyAppsEntry<Route>;
+
+  // The resources of the app of the module (`matchEntcoreApp`), opened from elsewhere (`useOpenMedia`: links in rich contents...).
+  // Without it, they open in the browser.
+  resource?: ConfigForResourceEntry;
 
   // The tab bar. Opening the module (`useOpenModule`) jumps to its tab when it has one.
   tab?: ConfigForTabEntry<Route>;
@@ -226,9 +245,13 @@ export interface ModuleConfig<
   // A scope is most often the first segment of the paths it covers (`/timeline/...`): `getModuleTransport` relies on it.
   scope?: readonly Scope[];
 
-  // Where the module can be opened from: « Mes applis » (`myApps`), the tab bar (`tab`), the home of `user` (`userMenu`). Without
-  // `myApps`, the module can't be opened from elsewhere (`useOpenModule`: « Mes applis », notifications...).
-  entries?: Entries;
+  // Where the module can be opened from: « Mes applis » (`myApps`), the tab bar (`tab`), the home of `user` (`userMenu`), its
+  // resources (`resource`). Without `myApps`, the module can't be opened from elsewhere (`useOpenModule`: « Mes applis »,
+  // notifications...).
+  // `& ConfigForEntries` gives the object its keys and the parameters of `resource` written inline from the config itself, not from
+  // the inference of `Entries`: without it, an inline `resource` makes the types of all modules circular (see
+  // `ResourceEntryNavigation`), and the keys don't complete.
+  entries?: Entries & ConfigForEntries<EntryRoute<Screens>>;
 
   // Screens and Modals, each one configured like with `createNativeStackScreen`.
   screens?: ModuleScreensConfig<Screens>;

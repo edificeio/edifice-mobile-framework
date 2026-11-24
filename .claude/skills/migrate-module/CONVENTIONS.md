@@ -40,6 +40,7 @@ Règles valables **pour toute la durée de la migration**, pour tous les modules
 - « **requirements** », jamais « prérequis » (étape d'auth : CGU, mot de passe, MFA…). Pour « étape à faire avant », écrire « préalable ».
 - Noms de dossiers, modules et routes en kebab-case.
 - **Routes** : `<module>/<dossier de l'écran>` (`support/create-ticket`), renommées pendant la bascule. Le suffixe de la route d'accueil d'un module ancien (souvent le nom du module seul) se demande au développeur. Les noms de la télémétrie changent avec la route : la fiche du module les note (décidé le 2026-11-19).
+- **Routes écrites en clair**, jamais en constantes (`navigate('blog/list', { blogId })`) : la navigation est typée, une faute de frappe ou un paramètre manquant ne compile pas, et `tsc` liste les appels à corriger quand une route est renommée. Une valeur qui porte une route (paramètre, champ, retour de fonction) est typée par l'union des noms de routes, jamais `string` ; pas de `as` sur une route. Mieux : ne pas passer de route en paramètre (revenir par `goBack` / `pop`). Code porté pendant la bascule qui passe une route en `string` (ex. `referrer`) : gardé avec un `ToDo(<module>-migration)`, au backlog (décidé le 2026-11-24).
 
 ## Structure d'un module
 
