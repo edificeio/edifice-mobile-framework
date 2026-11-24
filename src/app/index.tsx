@@ -4,7 +4,6 @@ import { AppState, AppStateStatus, Platform } from 'react-native';
 import FastImage from '@d11/react-native-fast-image';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
-import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import * as RNLocalize from 'react-native-localize';
@@ -15,6 +14,7 @@ import { Action, Store } from 'redux';
 import { AppStartupHandler } from '~/app/startup';
 import { UI_STYLES } from '~/framework/components/constants';
 import { useConstructor } from '~/framework/hooks/constructor';
+import AppInfo from '~/framework/util/app-info';
 import appConf from '~/framework/util/appConf';
 import { NetworkMonitorProvider } from '~/framework/util/monitoring/network';
 import { isEmpty } from '~/framework/util/object';
@@ -76,8 +76,8 @@ function useAppState() {
 function useTrackers() {
   React.useEffect(() => {
     Trackers.init().then(() => {
-      Trackers.trackDebugEvent('Application', DeviceInfo.getApplicationName());
-      Trackers.setCustomDimension(3, 'application', DeviceInfo.getApplicationName());
+      Trackers.trackDebugEvent('Application', '');
+      Trackers.setCustomDimension(4, 'App Name', AppInfo.app.name);
     });
   }, []);
 }

@@ -22,6 +22,15 @@ const fixedRNConfig = fixupConfigRules(reactNativeConfig).map(config => {
   return config;
 });
 
+// Flat config replaces a rule's whole options when a later block redefines it,
+// so the shared entry is reused by the app-info exemption below.
+const restrictedReactNativeImport = {
+  importNames: ['Text', 'Image'],
+  message: 'Please use @app/blueprints for importing main elements.',
+  name: 'react-native',
+};
+const appInfoMessage = 'Use AppInfo from ~/framework/util/app-info instead.';
+
 module.exports = [
   // ── Ignores (replaces eslintIgnore in package.json) ──────────────────
   {
@@ -120,11 +129,12 @@ module.exports = [
       // ── Console ─────────────────────────────────────────────────────
       'no-console': ['error', { allow: ['debug', 'error', 'info', 'warn'] }],
       // ── Restricted imports ──────────────────────────────────────────
-      'no-restricted-imports': ['error', {
-        importNames: ['Text', 'Image'],
-        message: 'Please use @app/blueprints for importing main elements.',
-        name: 'react-native',
-      }],
+      'no-restricted-imports': [
+        'error',
+        restrictedReactNativeImport,
+        { message: appInfoMessage, name: 'react-native-device-info' },
+        { message: appInfoMessage, name: '~/specs/NativeBuildInfo' },
+      ],
       // ── Prettier ────────────────────────────────────────────────────
       'prettier/prettier': ['error', {
         arrowParens: 'avoid',
@@ -140,6 +150,13 @@ module.exports = [
         tabWidth: 2,
         trailingComma: 'all',
       }],
+    },
+  },
+  // ── AppInfo — the only place allowed to read device and build info ────
+  {
+    files: ['src/framework/util/app-info/**'],
+    rules: {
+      'no-restricted-imports': ['error', restrictedReactNativeImport],
     },
   },
   // ── Jest — only for test files ────────────────────────────────────────

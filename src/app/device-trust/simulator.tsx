@@ -8,9 +8,8 @@
 import React, { PropsWithChildren } from 'react';
 import { Alert, View } from 'react-native';
 
-import DeviceInfo from 'react-native-device-info';
-
 import { I18n } from '~/app/i18n';
+import AppInfo from '~/framework/util/app-info';
 
 export const SimulatorTrust = React.memo(function SimulatorTrust({
   children,
@@ -22,7 +21,7 @@ export const SimulatorTrust = React.memo(function SimulatorTrust({
     (async () => {
       if (isTrustedDevice !== undefined) return;
 
-      const trusted = __DEV__ || !(await DeviceInfo.isEmulator());
+      const trusted = __DEV__ || !(await AppInfo.device.isEmulator());
 
       setIsTrustedDevice(trusted);
       if (trusted) {
@@ -31,7 +30,7 @@ export const SimulatorTrust = React.memo(function SimulatorTrust({
         console.error(`[SimulatorTrust] Device is a simulator`);
         Alert.alert(
           I18n.get('device-untrusted-simulator-title'),
-          I18n.get('device-untrusted-simulator-description', { name: DeviceInfo.getApplicationName() }),
+          I18n.get('device-untrusted-simulator-description', { name: AppInfo.app.name }),
           [{ isPreferred: true, onPress: onUntrusted, text: I18n.get('device-untrusted-action') }],
           {
             cancelable: false,

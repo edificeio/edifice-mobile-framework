@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import DeviceInfo from 'react-native-device-info';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { I18n } from '~/app/i18n';
@@ -10,6 +9,7 @@ import GridList from '~/framework/components/GridList';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import TouchableSelectorPictureCard from '~/framework/modules/auth/components/picture-card';
 import { DebugOptions } from '~/framework/modules/debug';
+import AppInfo from '~/framework/util/app-info';
 import appConf, { Platform } from '~/framework/util/appConf';
 
 import styles from './styles';
@@ -55,7 +55,7 @@ export function AuthPlatformsScreenTemplate(props: AuthPlatformsScreenProps) {
         <>
           <DebugOptions />
           <SmallText style={styles.lightP} testID="network-version-number">
-            {I18n.get('user-page-versionnumber')} {DeviceInfo.getVersion()}
+            {I18n.get('user-page-versionnumber')} {AppInfo.app.version}
           </SmallText>
         </>
       }

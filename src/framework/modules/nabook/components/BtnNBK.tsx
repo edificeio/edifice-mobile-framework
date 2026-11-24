@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { ActivityIndicator, GestureResponderEvent, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { isTablet } from 'react-native-device-info';
-
 import { getScaleWidth } from '~/framework/components/constants';
 import { SmallInverseText } from '~/framework/components/text';
 import { NBK_COLORS } from '~/framework/modules/nabook/utils/constants';
+import AppInfo from '~/framework/util/app-info';
 
 interface BtnNBKProps {
   txt: string;
@@ -16,12 +15,12 @@ interface BtnNBKProps {
 const styles = StyleSheet.create({
   containerTxt: {
     alignItems: 'center',
-    borderRadius: isTablet() ? 10 : 8,
+    borderRadius: AppInfo.device.isTablet ? 10 : 8,
     justifyContent: 'center',
   },
   shadowView: {
-    borderRadius: isTablet() ? 10 : 8,
-    paddingBottom: isTablet() ? 6 : 4,
+    borderRadius: AppInfo.device.isTablet ? 10 : 8,
+    paddingBottom: AppInfo.device.isTablet ? 6 : 4,
     width: '100%',
   },
 });
@@ -50,7 +49,7 @@ const BtnNBK: React.FunctionComponent<BtnNBKProps> = (props: BtnNBKProps) => {
           },
         ]}>
         {isLoading ? (
-          <ActivityIndicator color="#FFFFFF" size={isTablet() ? 'large' : 'small'} />
+          <ActivityIndicator color="#FFFFFF" size={AppInfo.device.isTablet ? 'large' : 'small'} />
         ) : (
           <View>
             <SmallInverseText>{txt}</SmallInverseText>

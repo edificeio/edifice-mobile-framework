@@ -3,7 +3,6 @@ import { Alert, TouchableOpacity, View } from 'react-native';
 
 import { useHeaderHeight } from '@react-navigation/elements';
 import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
-import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -53,8 +52,8 @@ import ChangeAccountButton from '~/framework/modules/user/components/buttons/cha
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { UserPreferences, userService } from '~/framework/modules/user/service';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
+import { versionDetails as appVersionDetails } from '~/framework/util/app-info';
 import appConf from '~/framework/util/appConf';
-import BuildInfo from '~/framework/util/build-info';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { platformURISource } from '~/framework/util/transport';
 import { useZendesk } from '~/framework/util/zendesk';
@@ -553,7 +552,7 @@ function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']
             <DebugOptions />
           ) : (
             <SmallBoldText style={styles.version}>
-              {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
+              {`${appVersionDetails.buildType} (${appVersionDetails.buildNumber}) – ${appVersionDetails.override} – ${currentPlatform} - ${appVersionDetails.os} ${appVersionDetails.osVersion} - ${appVersionDetails.deviceModel}`}
             </SmallBoldText>
           )}
         </>
@@ -581,21 +580,12 @@ function useVersionFeature(setDebugVisible, scrollViewRef) {
     return (
       <TouchableOpacity onLongPress={toggleVersionDetails}>
         <SmallBoldText style={styles.version} testID="account-version-number">
-          {I18n.get('user-page-versionnumber')} {useVersionFeature.versionNumber}
+          {I18n.get('user-page-versionnumber')} {appVersionDetails.version}
         </SmallBoldText>
       </TouchableOpacity>
     );
   }, [toggleVersionDetails]);
 }
-
-// All these values are compile-time constants. So we decalre them as function statics.
-useVersionDetailsFeature.buildNumber = DeviceInfo.getBuildNumber();
-useVersionDetailsFeature.deviceModel = DeviceInfo.getModel();
-useVersionDetailsFeature.os = DeviceInfo.getSystemName();
-useVersionDetailsFeature.osVersion = DeviceInfo.getSystemVersion();
-useVersionDetailsFeature.versionType = BuildInfo.BundleVersionType;
-useVersionDetailsFeature.versionOverride = BuildInfo.BundleVersionOverride;
-useVersionFeature.versionNumber = DeviceInfo.getVersion();
 
 /**
  * UserHomeScreen component

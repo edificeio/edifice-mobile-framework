@@ -1,21 +1,20 @@
-import DeviceInfo, { getDeviceId } from 'react-native-device-info';
-
 import { AuthActiveAccount, AuthSavedLoggedInAccount, AuthTokenSet } from '~/framework/modules/auth/model';
+import AppInfo from '~/framework/util/app-info';
 import { Platform } from '~/framework/util/appConf';
 
 export const MAX_FETCH_TIMEOUT_MS = 30000; // 30 seconds
 
 export const DEFAULT_HEADERS = {
   'X-APP': 'mobile',
-  'X-APP-NAME': DeviceInfo.getBundleId(),
-  'X-APP-VERSION': DeviceInfo.getReadableVersion(),
+  'X-APP-NAME': AppInfo.app.bundleId,
+  'X-APP-VERSION': AppInfo.app.readableVersion,
 };
 
 export const deviceIdHeaderName = 'X-Device-Id';
 
 export const getDeviceHeaders = () => ({
   ...DEFAULT_HEADERS,
-  [deviceIdHeaderName]: getDeviceId(),
+  [deviceIdHeaderName]: AppInfo.device.modelId,
 });
 
 /**

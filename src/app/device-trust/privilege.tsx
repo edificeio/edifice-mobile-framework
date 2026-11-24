@@ -9,6 +9,7 @@ import React, { PropsWithChildren } from 'react';
 
 import JailMonkey from 'jail-monkey';
 
+import AppInfo from '~/framework/util/app-info';
 
 export const PrivilegeTrust = React.memo(function PrivilegeTrust({
   children,
@@ -30,7 +31,7 @@ export const PrivilegeTrust = React.memo(function PrivilegeTrust({
         console.error(`[PrivilegeTrust] UNTRUSTED DEVICE`);
         /*Alert.alert(
           I18n.get('device-untrusted-privilege-title'),
-          I18n.get('device-untrusted-privilege-description', { name: DeviceInfo.getApplicationName() }),
+          I18n.get('device-untrusted-privilege-description', { name: AppInfo.app.name }),
           [{ isPreferred: true, onPress: onUntrusted, text: I18n.get('device-untrusted-action') }],
           {
             cancelable: false,

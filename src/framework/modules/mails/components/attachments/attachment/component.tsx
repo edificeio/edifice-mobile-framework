@@ -1,11 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, Alert, Modal, Platform, TouchableOpacity, View } from 'react-native';
 
-import DeviceInfo from 'react-native-device-info';
 import Share from 'react-native-share';
-
-import styles from './styles';
-import { AttachmentProps } from './types';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -13,9 +9,13 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
+import AppInfo from '~/framework/util/app-info';
 import { SyncedFile } from '~/framework/util/fileHandler/models';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { PermissionError } from '~/framework/util/permissions';
+
+import styles from './styles';
+import { AttachmentProps } from './types';
 
 export default function Attachment(props: AttachmentProps) {
   const [isDownloading, setIsDownloading] = React.useState(false);
@@ -89,7 +89,7 @@ export default function Attachment(props: AttachmentProps) {
         Alert.alert(
           I18n.get('carousel-share-permissionblocked-title'),
           I18n.get('carousel-share-permissionblocked-text', {
-            appName: DeviceInfo.getApplicationName(),
+            appName: AppInfo.app.name,
           }),
         );
       } else {

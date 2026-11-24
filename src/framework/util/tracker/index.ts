@@ -3,15 +3,14 @@ import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
 import CookieManager from '@preeternal/react-native-cookie-manager';
 import crashlytics from '@react-native-firebase/crashlytics';
 import { initSdk, resetIdentity, setIdentity, setProperties, trackEvent, trackScreen } from '@screeb/react-native';
-import DeviceInfo from 'react-native-device-info';
 
 import { I18n } from '~/app/i18n';
 import { EntModule } from '~/app/module';
 import { Modules } from '~/app/module/all';
 import AllModules from '~/app/modules';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
+import AppInfo, { fullVersionLabel } from '~/framework/util/app-info';
 import appConf from '~/framework/util/appConf';
-import BuildInfo from '~/framework/util/build-info';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
 import { sessionFetch } from '~/framework/util/transport';
 
@@ -130,7 +129,6 @@ export abstract class AbstractTracker<OptionsType> {
     } catch (err) {
       console.error('trackEvent failed: ', (err as Error).message);
     }
-    t;
   }
 
   async trackEventOfModule(
@@ -232,11 +230,11 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   private static moduleAccessMap: Record<string, string> = {};
 
   private static defaultPayload = {
-    appName: DeviceInfo.getBundleId(),
-    appVersion: `${DeviceInfo.getVersion()}-${BuildInfo.BundleVersionType} (${DeviceInfo.getBuildNumber()})`,
-    deviceName: DeviceInfo.getModel(),
-    osName: DeviceInfo.getSystemName(),
-    osVersion: DeviceInfo.getSystemVersion(),
+    appName: AppInfo.app.bundleId,
+    appVersion: fullVersionLabel,
+    deviceName: AppInfo.device.model,
+    osName: AppInfo.device.systemName,
+    osVersion: AppInfo.device.systemVersion,
   };
 
   errorCount: number = 0;
@@ -415,14 +413,14 @@ export class ConcreteScreebTracker extends AbstractTracker<undefined> {
     const session = getSession();
     //await resetIdentity();
     setIdentity(hashedUserId, {
-      device: DeviceInfo.getModel(),
+      device: AppInfo.device.model,
       language: I18n.getLanguage(),
-      os: `${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`,
-      override: BuildInfo.BundleVersionOverride,
+      os: AppInfo.device.getOsLabel(),
+      override: AppInfo.build.override,
       platform: session?.platform?.displayName ?? session?.platform?.name,
-      version: DeviceInfo.getVersion(),
-      versionNumber: DeviceInfo.getBuildNumber(),
-      versionType: BuildInfo.BundleVersionType,
+      version: AppInfo.app.version,
+      versionNumber: AppInfo.app.buildNumber,
+      versionType: AppInfo.build.type,
     });
     console.debug(`[Screeb] setUserId(${id}): Identity setted to ${hashedUserId}`);
     return true;
