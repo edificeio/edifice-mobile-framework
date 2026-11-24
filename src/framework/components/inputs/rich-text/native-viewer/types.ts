@@ -15,6 +15,15 @@ export interface RichContentImage {
   src: string;
 }
 
+export interface RichContentTableCell {
+  backgroundColor?: string;
+  colspan: number;
+  isHeader: boolean;
+  // Empty cell filling the place of a cell with a rowspan of a previous row: drawn without a top border, to look merged
+  isRowspanFiller?: boolean;
+  segments: RichContentSegment[];
+}
+
 export type RichContentSegment =
   | { type: RichContentSegmentType.ATTACHMENTS; items: RichContentAttachment[] }
   | { type: RichContentSegmentType.AUDIO; src: string }
@@ -23,6 +32,8 @@ export type RichContentSegment =
   | ({ type: RichContentSegmentType.IMAGE } & RichContentImage)
   // A pane needs a second split to render its content (e.g medias), so it has segments too
   | { type: RichContentSegmentType.PANE; paneType: RichContentPaneType; segments: RichContentSegment[] }
+  // Each cell content is split too. A column width is undefined when the html does not declare it.
+  | { type: RichContentSegmentType.TABLE; columnWidths: (number | undefined)[]; rows: RichContentTableCell[][] }
   | { type: RichContentSegmentType.VIDEO; posterUri?: string; ratio?: number; src: string };
 
 export enum RichContentSegmentType {
@@ -32,6 +43,7 @@ export enum RichContentSegmentType {
   IFRAME = 'iframe',
   IMAGE = 'image',
   PANE = 'pane',
+  TABLE = 'table',
   VIDEO = 'video',
 }
 

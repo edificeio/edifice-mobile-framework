@@ -3,10 +3,10 @@
  */
 import { decode } from 'html-entities';
 
+import { RichContentSegment, RichContentSegmentType } from '~/framework/components/inputs/rich-text/native-viewer/types';
 import { FileMedia, MediaType } from '~/framework/modules/media';
 
 import { getAbsoluteUrl } from './parser';
-import { RichContentSegment, RichContentSegmentType } from './types';
 
 // Used to match a pressed media url with the medias built from the html
 const getComparableUrl = (url: string, platformUrl?: string): string => {
@@ -44,6 +44,8 @@ export const buildCarouselMedias = (segments: RichContentSegment[]): FileMedia[]
         }));
       case RichContentSegmentType.PANE:
         return buildCarouselMedias(segment.segments);
+      case RichContentSegmentType.TABLE:
+        return segment.rows.flat().flatMap(cell => buildCarouselMedias(cell.segments));
       default:
         return [];
     }

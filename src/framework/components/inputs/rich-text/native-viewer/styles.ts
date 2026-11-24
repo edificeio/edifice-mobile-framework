@@ -18,6 +18,12 @@ export const ENRICHED_TEXT_STYLE: TextStyle = {
   color: theme.palette.grey.black,
 };
 
+export const ENRICHED_TEXT_HEADER_STYLE: TextStyle = {
+  ...(TextFontStyle.Bold as TextStyle),
+  ...TextSizeStyle.Normal,
+  color: theme.palette.grey.black,
+};
+
 export const ENRICHED_TEXT_HTML_STYLE: EnrichedTextHtmlStyle = {
   a: {
     color: theme.palette.primary.regular,

@@ -1,8 +1,8 @@
 /**
  * Splits ENT rich content (html) into segments that can be rendered natively:
  * - text goes to `EnrichedText` (html segments),
- * - images, videos, audios, iframes and attachments become dedicated segments: `react-native-enriched-html` does not
- *   support most of them, and cannot authenticate image requests.
+ * - images, videos, audios, iframes, attachments and tables become dedicated segments: `react-native-enriched-html` does
+ *   not support most of them, and cannot authenticate image requests.
  *
  * A light regex tokenizer is used instead of a sax parser: ENT html is not strict xml (unclosed void tags),
  * and we only need to locate top-level media blocks, not build a tree.
@@ -11,10 +11,6 @@ import { Platform } from 'react-native';
 
 import { decode } from 'html-entities';
 
-import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
-import { extractVideoResolution } from '~/framework/util/htmlParser/content';
-import { parseAttrs } from '~/utils/attrs';
-
 import {
   ImageSize,
   RichContentAttachment,
@@ -22,14 +18,17 @@ import {
   RichContentPaneType,
   RichContentSegment,
   RichContentSegmentType,
-} from './types';
+} from '~/framework/components/inputs/rich-text/native-viewer/types';
+import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
+import { extractVideoResolution } from '~/framework/util/htmlParser/content';
 
-const TAG_REGEX = /<(\/?)([a-zA-Z][a-zA-Z0-9-]*)(?![a-zA-Z0-9-])((?:[^>"']|"[^"]*"|'[^']*')*)>/g;
+import { getAttributes, getBackgroundColor, ParsedTag, TAG_REGEX, toParsedTag } from './html-tokenizer';
+import { buildTableSegment } from './table-builder';
+
 const LINK_TAG_REGEX = /<a\b((?:[^>"']|"[^"]*"|'[^']*')*)>([\s\S]*?)<\/a>/gi;
 const STRIP_TAGS_REGEX = /<[^<>]*>/g;
 const MARK_OPENING_TAG_REGEX = /<mark\b((?:[^>"']|"[^"]*"|'[^']*')*)>/gi;
 const MARK_CLOSING_TAG_REGEX = /<\/mark\s*>/gi;
-const BACKGROUND_COLOR_REGEX = /background-color\s*:\s*([^;]+)/i;
 // Left in place of an extracted `<img>`, to tell paragraphs emptied by the extraction from real empty lines
 const IMAGE_MARKER = '<!--rich-img-->';
 const IMAGE_ONLY_PARAGRAPH_REGEX = new RegExp(String.raw`<p\b[^>]*>\s*(?:${IMAGE_MARKER}\s*)+</p>`, 'gi');
@@ -50,15 +49,6 @@ const MEDIA_TAGS: Record<string, RichContentSegmentType> = {
 };
 
 const PANE_TYPES = new Set<string>(Object.values(RichContentPaneType));
-
-const getAttributes = (rawAttributes: string): Record<string, string> => {
-  try {
-    return parseAttrs(rawAttributes.replace(/\/\s*$/, '').trim()) as Record<string, string>;
-  } catch {
-    // Malformed attributes: ignore them rather than failing the whole render
-    return {};
-  }
-};
 
 const getMediaBlockType = (tagName: string, attributes: Record<string, string>): RichContentSegmentType | undefined => {
   if (MEDIA_TAGS[tagName]) return MEDIA_TAGS[tagName];
@@ -150,7 +140,7 @@ const convertHighlights = (html: string): string =>
   html
     .replace(MARK_OPENING_TAG_REGEX, (_, rawAttributes: string) => {
       const attributes = getAttributes(rawAttributes);
-      const color = BACKGROUND_COLOR_REGEX.exec(attributes.style ?? '')?.[1].trim() ?? attributes['data-color'];
+      const color = getBackgroundColor(attributes.style) ?? attributes['data-color'];
       return color ? `<span style="background-color: ${color}">` : '<span>';
     })
     .replace(MARK_CLOSING_TAG_REGEX, '</span>');
@@ -182,21 +172,14 @@ const getAuthenticatedImage = (rawAttributes: string, platformUrl?: string): Ric
   return { declaredSize: parseSize(attributes.width, attributes.height), src: getAbsoluteUrl(decode(attributes.src), platformUrl) };
 };
 
-interface ParsedTag {
-  end: number;
-  isClosing: boolean;
-  isSelfClosing: boolean;
-  rawAttributes: string;
-  start: number;
-  tagName: string;
-}
-
 interface SplitState {
   html: string;
   // Currently opened media block: its type, the tag that opened it and the nesting depth of that tag
   mediaBlock?: { depth: number; start: number; tagName: string; type: RichContentSegmentType };
   // Currently opened information pane: `div` nesting depth, to find its closing tag
   paneBlock?: { contentStart: number; depth: number; start: number; type: RichContentPaneType };
+  // Currently opened table: `table` nesting depth, to find its closing tag
+  tableBlock?: { contentStart: number; depth: number; start: number };
   pendingHtml: string;
   pendingImages: RichContentImage[];
   platformUrl?: string;
@@ -204,19 +187,6 @@ interface SplitState {
   textStart: number;
   topLevelDepth: number;
 }
-
-const toParsedTag = (match: RegExpExecArray): ParsedTag => {
-  const [fullTag, closingSlash, rawTagName, rawAttributes] = match;
-  const start = match.index ?? 0;
-  return {
-    end: start + fullTag.length,
-    isClosing: !!closingSlash,
-    isSelfClosing: rawAttributes.trim().endsWith('/'),
-    rawAttributes,
-    start,
-    tagName: rawTagName.toLowerCase(),
-  };
-};
 
 const flush = (state: SplitState, end: number) => {
   state.pendingHtml += state.html.slice(state.textStart, end);
@@ -230,13 +200,23 @@ const flush = (state: SplitState, end: number) => {
 const handlePaneTag = (state: SplitState, paneBlock: NonNullable<SplitState['paneBlock']>, tag: ParsedTag) => {
   if (tag.tagName === 'div' && !tag.isSelfClosing) paneBlock.depth += tag.isClosing ? -1 : 1;
   if (paneBlock.depth !== 0) return;
-  // A pane's content is split recursively
   const paneSegments = splitRichContent(state.html.slice(paneBlock.contentStart, tag.start), state.platformUrl);
   if (paneSegments.length) {
     state.segments.push({ paneType: paneBlock.type, segments: paneSegments, type: RichContentSegmentType.PANE });
   }
   state.textStart = tag.end;
   state.paneBlock = undefined;
+};
+
+const handleTableTag = (state: SplitState, tableBlock: NonNullable<SplitState['tableBlock']>, tag: ParsedTag) => {
+  if (tag.tagName === 'table' && !tag.isSelfClosing) tableBlock.depth += tag.isClosing ? -1 : 1;
+  if (tableBlock.depth !== 0) return;
+  const segment = buildTableSegment(state.html.slice(tableBlock.contentStart, tag.start), cellHtml =>
+    splitRichContent(cellHtml, state.platformUrl),
+  );
+  if (segment) state.segments.push(segment);
+  state.textStart = tag.end;
+  state.tableBlock = undefined;
 };
 
 const closeMediaBlockIfDone = (state: SplitState, mediaBlock: NonNullable<SplitState['mediaBlock']>, end: number) => {
@@ -256,6 +236,12 @@ const openPane = (state: SplitState, tag: ParsedTag, type: RichContentPaneType) 
   flush(state, tag.start);
   state.topLevelDepth = 0;
   state.paneBlock = { contentStart: tag.end, depth: 1, start: tag.start, type };
+};
+
+const openTable = (state: SplitState, tag: ParsedTag) => {
+  flush(state, tag.start);
+  state.topLevelDepth = 0;
+  state.tableBlock = { contentStart: tag.end, depth: 1, start: tag.start };
 };
 
 const openMediaBlock = (state: SplitState, tag: ParsedTag, type: RichContentSegmentType) => {
@@ -288,6 +274,7 @@ const handleContentTag = (state: SplitState, tag: ParsedTag) => {
   const paneType = attributes && !tag.isSelfClosing ? getPaneType(tag.tagName, attributes) : undefined;
   const mediaBlockType = attributes && !paneType ? getMediaBlockType(tag.tagName, attributes) : undefined;
   if (paneType) openPane(state, tag, paneType);
+  else if (tag.tagName === 'table' && attributes && !tag.isSelfClosing) openTable(state, tag);
   else if (mediaBlockType) openMediaBlock(state, tag, mediaBlockType);
   else if (tag.tagName === 'img') handleImageTag(state, tag);
   else if (!tag.isSelfClosing && !VOID_TAGS.has(tag.tagName)) handleBlockTag(state, tag);
@@ -295,6 +282,7 @@ const handleContentTag = (state: SplitState, tag: ParsedTag) => {
 
 const handleTag = (state: SplitState, tag: ParsedTag) => {
   if (state.paneBlock) handlePaneTag(state, state.paneBlock, tag);
+  else if (state.tableBlock) handleTableTag(state, state.tableBlock, tag);
   else if (state.mediaBlock) handleMediaTag(state, state.mediaBlock, tag);
   else handleContentTag(state, tag);
 };
@@ -302,17 +290,18 @@ const handleTag = (state: SplitState, tag: ParsedTag) => {
 /**
  * Images are moved right after the top-level block that contains them (`<p>`, `<div>`…),
  * so that the html given to `EnrichedText` stays balanced.
- * Pane's content is split recursively.
+ * Pane's and table cells' content is split recursively.
  */
 export const splitRichContent = (html: string, platformUrl?: string): RichContentSegment[] => {
   const state: SplitState = { html, pendingHtml: '', pendingImages: [], platformUrl, segments: [], textStart: 0, topLevelDepth: 0 };
   for (const match of html.matchAll(TAG_REGEX)) handleTag(state, toParsedTag(match));
-  // An unclosed media block or pane is rendered as html: EnrichedText strips the tags it does not support
+  // An unclosed media block, pane or table is rendered as html: EnrichedText strips the tags it does not support
   if (state.mediaBlock) state.textStart = state.mediaBlock.start;
   if (state.paneBlock) state.textStart = state.paneBlock.start;
+  if (state.tableBlock) state.textStart = state.tableBlock.start;
   flush(state, html.length);
   return state.segments;
 };
 
-const MEDIA_CONTENT_REGEX = /<(?:audio|iframe|img|video)\b|class\s*=\s*["'][^"']*\b(?:attachments|download-attachments)\b/i;
+const MEDIA_CONTENT_REGEX = /<(?:audio|iframe|img|table|video)\b|class\s*=\s*["'][^"']*\b(?:attachments|download-attachments)\b/i;
 export const hasMediaContent = (html: string): boolean => MEDIA_CONTENT_REGEX.test(html);

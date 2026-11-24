@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { TextStyle, View } from 'react-native';
 
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { EnrichedText, OnLinkPressEvent } from 'react-native-enriched-html';
@@ -15,10 +15,11 @@ import Pane from './components/pane';
 import AttachmentPreview from './components/preview/attachment';
 import ImagePreview from './components/preview/image';
 import MediaPreview from './components/preview/media';
-import { splitRichContent } from './parser';
-import styles, { ENRICHED_TEXT_HTML_STYLE, ENRICHED_TEXT_STYLE } from './styles';
+import Table from './components/table';
+import styles, { ENRICHED_TEXT_HEADER_STYLE, ENRICHED_TEXT_HTML_STYLE, ENRICHED_TEXT_STYLE } from './styles';
 import { RichContentSegment, RichContentSegmentType, RichEditorNativeViewerProps } from './types';
-import { buildCarouselMedias, findMediaIndex } from './util';
+import { buildCarouselMedias, findMediaIndex } from './utils/carousel';
+import { splitRichContent } from './utils/parser';
 
 const onOpenLink = (url: string) => {
   openUrl(url).catch(e => console.error('Error while opening rich content link', e));
@@ -41,11 +42,12 @@ const RichEditorNativeViewer = ({ content }: Readonly<RichEditorNativeViewerProp
     [medias, navigation, platformUrl],
   );
 
-  const renderSegment = (segment: RichContentSegment, index: number) => {
+  // `textStyle` is given to the text of nested segments too (e.g. bold text of table header cells)
+  const renderSegment = (segment: RichContentSegment, index: number, textStyle: TextStyle = ENRICHED_TEXT_STYLE) => {
     switch (segment.type) {
       case RichContentSegmentType.HTML:
         return (
-          <EnrichedText key={index} style={ENRICHED_TEXT_STYLE} htmlStyle={ENRICHED_TEXT_HTML_STYLE} onLinkPress={onLinkPress}>
+          <EnrichedText key={index} style={textStyle} htmlStyle={ENRICHED_TEXT_HTML_STYLE} onLinkPress={onLinkPress}>
             {segment.html}
           </EnrichedText>
         );
@@ -54,9 +56,11 @@ const RichEditorNativeViewer = ({ content }: Readonly<RichEditorNativeViewerProp
       case RichContentSegmentType.PANE:
         return (
           <Pane key={index} type={segment.paneType}>
-            {segment.segments.map((childSegment, childIndex) => renderSegment(childSegment, childIndex))}
+            {segment.segments.map((childSegment, childIndex) => renderSegment(childSegment, childIndex, textStyle))}
           </Pane>
         );
+      case RichContentSegmentType.TABLE:
+        return <Table key={index} segment={segment} renderCellContent={renderCellContent} />;
       case RichContentSegmentType.ATTACHMENTS:
         return segment.items.map(attachment => (
           <AttachmentPreview key={`${index}-${attachment.href}`} attachment={attachment} onPress={onOpenMedia} />
@@ -65,6 +69,11 @@ const RichEditorNativeViewer = ({ content }: Readonly<RichEditorNativeViewerProp
         return <MediaPreview key={index} segment={segment} onOpenMedia={onOpenMedia} onOpenLink={onOpenLink} />;
     }
   };
+
+  const renderCellContent = (cellSegments: RichContentSegment[], isHeader: boolean) =>
+    cellSegments.map((cellSegment, cellIndex) =>
+      renderSegment(cellSegment, cellIndex, isHeader ? ENRICHED_TEXT_HEADER_STYLE : ENRICHED_TEXT_STYLE),
+    );
 
   return <View style={styles.container}>{segments.map((segment, index) => renderSegment(segment, index))}</View>;
 };
