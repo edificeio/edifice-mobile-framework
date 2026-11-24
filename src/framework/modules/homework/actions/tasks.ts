@@ -5,7 +5,8 @@
 import moment from 'moment';
 
 import homeworkConfig from '~/framework/modules/homework/module-config';
-import { IHomeworkDay, IHomeworkTasks, IHomeworkTaskStatuses } from '~/framework/modules/homework/reducers/tasks';
+import { IHomeworkDay, IHomeworkTasks } from '~/framework/modules/homework/reducers/tasks';
+import { sessionFetch } from '~/framework/util/transport';
 import { asyncActionTypes, asyncFetchIfNeeded, asyncGetJson, IState } from '~/infra/redux/async';
 
 /** Retuns the local state (global state -> homework -> tasks). Give the global state as parameter. */
@@ -106,26 +107,26 @@ export interface IHomeworkTaskStatusBackend {
   homeworkId: string;
   entryId: string;
   finished: boolean;
+  modified?: {
+    $date: number;
+  };
+  userName: string;
 }
 
-export type IHomeworkTaskStatusesBackend = IHomeworkTaskStatusBackend[];
-
-const homeworkTaskStatusesAdapter: (data: IHomeworkTaskStatusesBackend) => IHomeworkTaskStatuses = data => {
-  const ret = data.map(taskStatus => ({ entryId: taskStatus.entryId, finished: taskStatus.finished }));
-  return ret;
-};
-
-const homeworkTasksData = (tasksData: IHomeworkTasks, taskStatusesData: IHomeworkTaskStatuses) => {
-  const ret = tasksData;
-  taskStatusesData?.forEach(taskStatus => {
-    ret?.ids?.forEach(id => {
-      ret?.byId[id]?.tasks?.ids?.forEach(taskId => {
-        const task = ret?.byId[id]?.tasks?.byId[taskId];
-        if (taskStatus?.entryId === task?.taskId) task.finished = taskStatus?.finished;
-      });
-    });
+const homeworkTasksData = (tasksData: IHomeworkTasks, taskStatuses: IHomeworkTaskStatusBackend[]): IHomeworkTasks => {
+  const latestStatusByEntryId = new Map<string, IHomeworkTaskStatusBackend>();
+  taskStatuses?.forEach(status => {
+    const current = latestStatusByEntryId.get(status.entryId);
+    if (!current || (status.modified?.$date ?? 0) > (current.modified?.$date ?? 0))
+      latestStatusByEntryId.set(status.entryId, status);
   });
-  return ret;
+
+  Object.values(tasksData.byId).forEach(day =>
+    Object.values(day.tasks.byId).forEach(task => {
+      task.finished = latestStatusByEntryId.get(task.taskId)?.finished ?? false;
+    }),
+  );
+  return tasksData;
 };
 
 // ACTION LIST ------------------------------------------------------------------------------------
@@ -172,12 +173,11 @@ export function fetchHomeworkTasks(diaryId: string, entryId?: string, repeatId?:
         if (repeatId) queryParams = entryId ? `${queryParams}&repeatid=${repeatId}` : `${queryParams}repeatid=${repeatId}`;
         return queryParams;
       };
-      const taskStatusesData = await asyncGetJson(
-        `/homeworks/${diaryId}/entry/status${getTaskStatusesQueryParams()}`,
-        homeworkTaskStatusesAdapter,
-      );
-      const tasksData = await asyncGetJson(`/homeworks/get/${diaryId}`, homeworkTasksAdapter);
-      const data = homeworkTasksData(tasksData, taskStatusesData);
+      const [taskStatuses, tasksData] = await Promise.all([
+        sessionFetch.json<IHomeworkTaskStatusBackend[]>(`/homeworks/${diaryId}/entry/status${getTaskStatusesQueryParams()}`),
+        asyncGetJson(`/homeworks/get/${diaryId}`, homeworkTasksAdapter),
+      ]);
+      const data = homeworkTasksData(tasksData, taskStatuses);
       dispatch(homeworkTasksReceived(diaryId, data));
     } catch (errmsg) {
       dispatch(homeworkTasksFetchError(diaryId, errmsg as string));
