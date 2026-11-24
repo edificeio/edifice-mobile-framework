@@ -10,7 +10,7 @@ Affichage et ouverture des médias : carrousel, lecteur PDF, téléchargement, i
 
 - **Signature bas niveau** : composants ponts aux mêmes noms que les natifs (`Image`, `FastImage`, `Video`, `Pdf`) dans `src/modules/media/components`, props `account?` et `signed?: false`. Hors composant : `useSignedSource` / `signSource` / `resolveUrl` (`src/modules/media/source.ts`). La signature compare les **origines** (l'ancien `startsWith` fuyait des jetons).
 - **ESLint** : dans `src/modules/**` (sauf `media`), importer `FastImage`, `react-native-video` ou `react-native-pdf` est une erreur.
-- **Ouvrir un média** : `useOpenMedia()` → `openCarousel`, `openPdf({ src, title })`, `openResource(media)` (par `entries.resource` du module de son app, sinon navigateur), `openMedia(s)`.
+- **Ouvrir un média** : `useOpenMedia()` → `openCarousel`, `openPdf({ src, title })`, `openResource(media)` (par les `intents.resource` de son `resourceType`, sinon navigateur), `openMedia(s)`.
 - **Affichage** : `useMediaDisplay` (icône, vignette) ; `useResourceDisplay` (+ couleurs / icône de l'app, par `useEntApp` du nouveau `myapps`, depuis le 2026-11-06).
 - **Stockage** : date de l'alerte de confidentialité dans `Storage.device({ namespace: 'media' })`, clé `privacyAlertDate` ; la migration copie l'ancienne clé `privacyAlert` sans la supprimer (rétrocompatibilité).
 

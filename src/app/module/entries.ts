@@ -1,15 +1,7 @@
 /**
  * Entries of the modules (`entries` of their config): what other modules read of them.
  */
-import type {
-  AllModulesNames,
-  AllModulesRecord,
-  ConfigForResourceEntry,
-  ConfigForRights,
-  ConfigForUserMenuEntry,
-  ModuleEntries,
-  UserMenuSection,
-} from './types';
+import type { AllModulesNames, AllModulesRecord, ConfigForUserMenuEntry, ModuleEntries, UserMenuSection } from './types';
 
 /** A link of `entries.userMenu` of a module of the app, with the name of that module. */
 export type UserMenuEntry = {
@@ -37,17 +29,3 @@ export const getUserMenuEntries = (modules: readonly ModuleWithUserMenu[], secti
       if (b.order === undefined) return -1;
       return a.order - b.order;
     }) as UserMenuEntry[];
-
-/** What `getResourceEntry` reads of a module. */
-type ModuleWithResourceEntry = Pick<ConfigForRights, 'matchEntcoreApp'> & { entries: { resource?: ConfigForResourceEntry } };
-
-/**
- * The entry that opens the resources of an app (`entries.resource`): the one of the module whose `matchEntcoreApp` is that app.
- * @param modules the modules available for the user.
- * @param appName the app of the resource (`ResourceMedia.appName`).
- */
-export const getResourceEntry = (
-  modules: readonly ModuleWithResourceEntry[],
-  appName: string,
-): ConfigForResourceEntry | undefined =>
-  modules.find(module => module.matchEntcoreApp === appName && module.entries.resource !== undefined)?.entries.resource;

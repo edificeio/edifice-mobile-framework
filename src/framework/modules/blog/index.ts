@@ -10,7 +10,8 @@ module.exports = new NavigableModule({ config, getRoot, reducer });
 
 setUpNotifHandlers();
 
-// ToDo(blog-migration): the intents are replaced by `entries.resource` (`~/app/module/types`). Declare it at the switch: it opens the
-// list of the posts of the blog (`blogRouteNames.blogPostList`, params `{ blogId: media.resourceId }`).
+// ToDo(blog-migration): the intents are replaced by `intents.resource` (`~/app/module/types`). Declare one at the switch, with
+// `resourceType: 'blog'`: it opens the list of the posts of the blog (`blogRouteNames.blogPostList`, params
+// `{ blogId: resource.resourceId }`) and gives `true`.
 
 registerTimelineWorkflow();

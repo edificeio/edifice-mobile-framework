@@ -46,6 +46,7 @@ Ce que `notifications` porte déjà :
 
 - **2026-11-07** — Les notifications sont extraites de `timeline` dans le module `notifications`, consommé par `timeline` et par le futur module `home`, qui ont tous deux un fil de notifications (§5.1).
 - **2026-11-19** — Un module déclare l'ouverture de ses notifications par une **clé de config `notifications`** (`'<TYPE>.<EVENT>': handler`), lue par le module `notifications` depuis les modules chargés : même schéma que `entries` et `fileManager`, typé, sans effet de bord à l'import (fin de `registerNotifHandlers`). Les handlers des modules basculés avant sont débranchés, puis rebranchés par cette clé. Les widgets sont hors de la migration (faits à part par l'équipe).
+- **2026-11-24** — La clé `notifications` devient **`intents.notification`** (`src/app/module/types.ts`) : un tableau de `notificationIntent({ type, eventType: string | string[], callback(notification, navigation) })`, le callback renvoie `true` s'il a ouvert la notification (sinon l'intent compatible suivant). La notification est une `IAbstractNotification` dont `type` et `event-type` sont ceux de l'intent. Déclaré seulement : sa lecture par le module `notifications` reste à faire.
 
 ## 8. Questions ouvertes
 

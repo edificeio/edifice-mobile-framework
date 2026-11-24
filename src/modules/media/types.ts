@@ -101,7 +101,11 @@ export interface EmbeddedMedia extends Media {
 export const isEmbeddedMedia = (media: Media): media is EmbeddedMedia => media.type === MediaType.EMBEDDED;
 
 export interface ResourceMedia extends Media {
+  // Name of the app, as shown to the user (its colors and icon come from it: `useResourceDisplay`).
   appName: string;
+  // Technical name of the app (`'blog'`, `'wiki'`...): the intents of the modules that open the resource are found by it
+  // (`intents.resource`, see `useOpenMedia`).
+  resourceType: string;
   resourceId: string;
   thumbnail?: Media['src'];
 }

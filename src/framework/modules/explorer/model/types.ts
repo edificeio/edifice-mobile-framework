@@ -1,4 +1,4 @@
-import type { OldEntAppNameOrSynonym } from '~/app/intents';
+import type { OldEntAppNameOrSynonym } from '~/app/ent-app-names';
 import type { DocumentItem, FolderItem } from '~/framework/components/list/paginated-document-list/types';
 import { PaginatedListItem } from '~/framework/components/list/paginated-list';
 import { ResourceMedia } from '~/modules/media/types';

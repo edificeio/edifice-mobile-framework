@@ -51,11 +51,11 @@ Il reste **30 modules anciens** à basculer et **5 chantiers** commencés à ter
 
 |     | Blocage                                                                                                                                          | Modules concernés                                                                 | État                                                                                                                                                                                      |
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| B1  | **Ouverture des notifications.** Pas encore d'équivalent dans le nouveau système ; c'est aussi pour cela que 12 modules dépendent de `timeline`. | 17 modules, dont `blog`, `news`, `wiki`, `workspace`, `mails`, `user`, `timeline` | **levé pour la bascule** : le gestionnaire est débranché (geste 19). Reste un chantier avant la livraison : concevoir la clé de config `notifications`, puis rebrancher les gestionnaires |
+| B1  | **Ouverture des notifications.** Pas encore d'équivalent dans le nouveau système ; c'est aussi pour cela que 12 modules dépendent de `timeline`. | 17 modules, dont `blog`, `news`, `wiki`, `workspace`, `mails`, `user`, `timeline` | **levé pour la bascule** : le gestionnaire est débranché (geste 19). Reste un chantier avant la livraison : lire `intents.notification` (forme fixée le 2026-11-24), puis rebrancher les gestionnaires |
 | B2  | **Widgets d'accueil.**                                                                                                                           | les 3 `widgets/*`, le widget de `timeline`                                        | **hors de la migration** (geste 20)                                                                                                                                                       |
 | B3  | **Modales globales** (informations, journal, réseau, publicités au démarrage). Absentes du nouveau système.                                      | `homework`, `mails`, `user` (`audience` : levé le 2026-11-23, ses modales globales étaient ses propres écrans, devenus ses `modals`) | basculer d'abord `debug` et `splashads`, qui les portent                                                                                                                                  |
 | B4  | **Modules qui naviguent l'un vers l'autre.**                                                                                                     | les 5 `viescolaire` autour de `dashboard` ; `mails` et `user`                     | les basculer ensemble, ou couper un sens avec un `ToDo` (déjà décidé : `user` masque « Envoyer un message »)                                                                              |
-| B5  | **Intents.** Remplacés par l'entry `resource` des modules (`entries.resource`, lue par `useOpenMedia`). | `blog`, `scrapbook`, `wiki` | **levé le 2026-11-24** : la bascule déclare `entries.resource` (route et params dans le `ToDo(<module>-migration)` de l'ancien `index.ts`). `explorer` n'était pas concerné (types de noms d'apps seulement, restés dans `src/app/intents.ts`) |
+| B5  | **Intents.** Remplacés par les intents des modules (`intents.resource`, lus par `useOpenMedia`). | `blog`, `scrapbook`, `wiki` | **levé le 2026-11-24** : la bascule déclare un `intents.resource` (`resourceType`, route et params dans le `ToDo(<module>-migration)` de l'ancien `index.ts`). `explorer` n'était pas concerné (types de noms d'apps seulement, dans `src/app/ent-app-names.ts`) |
 
 ### Difficulté
 
@@ -70,7 +70,7 @@ Il reste **30 modules anciens** à basculer et **5 chantiers** commencés à ter
 | `audience`                   | basculé et assaini le 2026-11-23 : relecture, commit unique ; essai Android du sélecteur ; joué en entier avec le premier consommateur (`news` ou `blog`)| —           |
 | `debug`, `splashads`         | petits utilitaires qui portent les modales globales                                                                     | moyen       |
 | `user`                       | le reste du module : 15 écrans, déjà spécifié                                                                           | difficile   |
-| `timeline` + `notifications` | concevoir la clé `notifications`, puis rebrancher les gestionnaires débranchés                                          | difficile   |
+| `timeline` + `notifications` | lire `intents.notification`, puis rebrancher les gestionnaires débranchés                                          | difficile   |
 
 **Modules anciens**
 
@@ -89,9 +89,9 @@ Il reste **30 modules anciens** à basculer et **5 chantiers** commencés à ter
 2. **Les préalables partagés.** `explorer`, le reste d'`audience`, `debug` et `splashads`, puis `workspace`.
 3. **Les petits et moyens modules à notifications**, gestionnaires débranchés : `collaborativewall`, `nabook`, `scrapbook`, `news`, `schoolbook`, `mediacentre`, `form`.
 4. **Les gros modules dépendants.** `wiki`, `homework`, `blog`.
-5. **Les groupes et le cœur.** `viescolaire`, `communities`, `timeline` avec la clé `notifications`, puis `user` et `mails`.
+5. **Les groupes et le cœur.** `viescolaire`, `communities`, `timeline` avec la lecture d'`intents.notification`, puis `user` et `mails`.
 
-**Avant la livraison**, quel que soit l'avancement : rebrancher les gestionnaires de notifications débranchés (clé `notifications`), et la liste des modules par marque ([later.md](later.md)).
+**Avant la livraison**, quel que soit l'avancement : rebrancher les gestionnaires de notifications débranchés (`intents.notification`), et la liste des modules par marque ([later.md](later.md)).
 
 ## Chantiers transverses
 
@@ -106,7 +106,7 @@ Il reste **30 modules anciens** à basculer et **5 chantiers** commencés à ter
 | Retirer l'ancienne navigation                      | à faire  | `src/app/navigation/` : 38 fichiers l'importent encore (36 pour `navigation-new`). L'ancien `index.tsx` importe `navigation-new/confirm-remove` et `telemetry`.                                                                                                                                                                                |
 | Doc navigation (fin)                               | en cours | ARCHITECTURE §3. Manque : exemple de module avec onglet, modales de module, navigation inter-onglets.                                                                                                                                                                                                                                          |
 | Doc authentification                               | à faire  | À écrire dans `.claude/docs/` (pas de reprise d'une série existante).                                                                                                                                                                                                                                                                          |
-| Ouverture des notifications (clé `notifications`)  | à faire  | Décidé le 2026-11-19 : clé de config de module, lue par `notifications` ; à concevoir avec `timeline` ([timeline.md](timeline.md)). Puis rebrancher les `notif-handler` débranchés pendant les bascules (geste 19 de [BASCULE.md](../BASCULE.md)). **Avant la livraison.**                                                                     |
+| Ouverture des notifications (`intents.notification`)  | à faire  | Décidé le 2026-11-19 ; forme fixée le 2026-11-24 (`intents.notification`, typé, pas encore lu) ; lecture à concevoir avec `timeline` ([timeline.md](timeline.md)). Puis rebrancher les `notif-handler` débranchés pendant les bascules (geste 19 de [BASCULE.md](../BASCULE.md)). **Avant la livraison.**                                                                     |
 | Tests des flows auth                               | à faire  | Décision : après documentation du service auth (`setActiveAccount`, `restoreAccount`…).                                                                                                                                                                                                                                                        |
 
 ## Reportés et « plus tard »

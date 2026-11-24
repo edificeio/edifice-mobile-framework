@@ -7,6 +7,7 @@ import type importModules from '~/app/config/modules';
 import type { RootNavigation, ScreenComponent, ScreenTelemetryConfig } from '~/app/navigation-new/types';
 import type { SvgIconName } from '~/framework/components/picture';
 import type { IModuleFileManagerConfig } from '~/framework/util/fileHandler/types';
+import type { IAbstractNotification } from '~/framework/util/notifications';
 import type { StorageHandler } from '~/framework/util/storage/storage-handler';
 import type { AuthActiveAccount, AuthLoggedAccount } from '~/modules/auth/model';
 import type { ResourceMedia } from '~/modules/media/types';
@@ -148,36 +149,70 @@ export interface ConfigForUserMenuEntry<Route extends PropertyKey> {
 }
 
 /**
- * The root navigation, given to `entries.resource`. An interface, not `RootNavigation` itself: the type of a module would then depend
- * on `RootNavigation`, which is computed from the types of all modules (circular, every module type breaks). TypeScript only reads the
- * members of an interface when they are used. It works together with the intersection of `ModuleConfig.entries`: neither is enough
- * alone.
- */
-export interface ResourceEntryNavigation extends RootNavigation {}
-
-/**
- * Opens a resource of the app of the module, with the navigation of the screen that opens it (`useOpenMedia`).
- * Given the `ResourceMedia` whose `appName` is the `matchEntcoreApp` of the module: only an `EntModule` that has one gets resources.
- */
-export type ConfigForResourceEntry = (media: ResourceMedia, navigation: ResourceEntryNavigation) => void;
-
-/**
- * Places where a module can be opened from. Each entry that opens a screen has a `route`: one of the screens of the module that
- * needs no params (`EntryRoute`). A module without any can only be reached by the navigation of other screens.
+ * Places where a module can be opened from. Each entry has a `route`: one of the screens of the module that needs no params
+ * (`EntryRoute`). A module without any can only be reached by the navigation of other screens.
  */
 export interface ConfigForEntries<Route extends PropertyKey> {
   // « Mes applis » (and `useOpenModule`: notifications, deep links...).
   myApps?: ConfigForMyAppsEntry<Route>;
-
-  // The resources of the app of the module (`matchEntcoreApp`), opened from elsewhere (`useOpenMedia`: links in rich contents...).
-  // Without it, they open in the browser.
-  resource?: ConfigForResourceEntry;
 
   // The tab bar. Opening the module (`useOpenModule`) jumps to its tab when it has one.
   tab?: ConfigForTabEntry<Route>;
 
   // Links in the home of the module `user` (« Mon compte »).
   userMenu?: readonly ConfigForUserMenuEntry<Route>[];
+}
+
+/**
+ * The root navigation, given to the callbacks of the intents. An interface, not `RootNavigation` itself: a callback written inline in
+ * the config of a module would then make its type depend on `RootNavigation`, which is computed from the types of all modules
+ * (circular, every module type breaks). TypeScript only reads the members of an interface when they are used.
+ */
+export interface IntentNavigation extends RootNavigation {}
+
+/**
+ * Opens a resource (`ResourceMedia`, a link to a blog in a rich content...) whose `resourceType` is the one of the intent
+ * (`useOpenMedia`). The callbacks are written as methods: see `NotificationIntent`.
+ */
+export interface ResourceIntent {
+  // Technical name of the app of the resource (`'blog'`, `'wiki'`...), compared to `ResourceMedia.resourceType`.
+  resourceType: string;
+
+  // Gives `true` when it opened the resource: the search stops. `false` lets the next compatible intent try, then the browser.
+  callback(resource: ResourceMedia, navigation: IntentNavigation): boolean;
+}
+
+/** The notification given to a `NotificationIntent`: its `type` and `event-type` are the ones the intent declares. */
+export type IntentNotification<Type extends string, EventType extends string> = IAbstractNotification & {
+  'type': Type;
+  'event-type': EventType;
+};
+
+/**
+ * Opens a notification of a `type` and one of the `eventType` (`notification['event-type']`). Not read yet: the opening of the
+ * notifications is to be done.
+ * Declare it with `notificationIntent`, so that the notification given to `callback` has the `type` and `event-type` of the intent.
+ */
+export interface NotificationIntent<Type extends string = string, EventType extends string = string> {
+  type: Type;
+  eventType: EventType | readonly EventType[];
+
+  // Gives `true` when it opened the notification: the search stops. `false` lets the next compatible intent try.
+  // A method, not a property: its parameters are then bivariant, so that an intent of a given type (`'WIKI'`) is a
+  // `NotificationIntent` (with a property, the parameter of a narrower callback would be refused).
+  callback(notification: IntentNotification<Type, EventType>, navigation: IntentNavigation): boolean;
+}
+
+/**
+ * What the module opens when it is asked from elsewhere: lists of callbacks, tried in order (see each intent). Unlike `entries`, they
+ * don't open a route of the module but take the hand on an object (a resource, a notification).
+ */
+export interface ConfigForIntents {
+  // The resources of the module (`useOpenMedia`). A resource without a compatible intent that gives `true` opens in the browser.
+  resource?: readonly ResourceIntent[];
+
+  // The notifications of the module (not read yet).
+  notification?: readonly NotificationIntent[];
 }
 
 interface ConfigForRedux<State = undefined, ActionType extends Action = never> {
@@ -245,13 +280,14 @@ export interface ModuleConfig<
   // A scope is most often the first segment of the paths it covers (`/timeline/...`): `getModuleTransport` relies on it.
   scope?: readonly Scope[];
 
-  // Where the module can be opened from: « Mes applis » (`myApps`), the tab bar (`tab`), the home of `user` (`userMenu`), its
-  // resources (`resource`). Without `myApps`, the module can't be opened from elsewhere (`useOpenModule`: « Mes applis »,
-  // notifications...).
-  // `& ConfigForEntries` gives the object its keys and the parameters of `resource` written inline from the config itself, not from
-  // the inference of `Entries`: without it, an inline `resource` makes the types of all modules circular (see
-  // `ResourceEntryNavigation`), and the keys don't complete.
+  // Where the module can be opened from: « Mes applis » (`myApps`), the tab bar (`tab`), the home of `user` (`userMenu`). Without
+  // `myApps`, the module can't be opened from elsewhere (`useOpenModule`: « Mes applis », notifications...).
+  // `& ConfigForEntries`: the keys of the object complete from the config itself (the inferred `Entries` doesn't give them).
   entries?: Entries & ConfigForEntries<EntryRoute<Screens>>;
+
+  // What the module opens when it is asked from elsewhere: its resources, its notifications (see `ConfigForIntents`).
+  // Not generic on purpose: the type of the module doesn't hold the callbacks (see `IntentNavigation`).
+  intents?: ConfigForIntents;
 
   // Screens and Modals, each one configured like with `createNativeStackScreen`.
   screens?: ModuleScreensConfig<Screens>;

@@ -10,7 +10,7 @@ import { useOpenMedia } from './open-media';
 
 jest.mock('~/modules/media/mime', () => ({ mimeCompare: jest.fn() }));
 jest.mock('~/app/module', () => ({
-  getResourceEntry: jest.requireActual('~/app/module/entries').getResourceEntry,
+  runResourceIntents: jest.requireActual('~/app/module/intents').runResourceIntents,
   useUserAvailableModules: jest.fn(),
 }));
 jest.mock('~/framework/components/toast', () => ({ __esModule: true, default: { showError: jest.fn() } }));
@@ -18,14 +18,21 @@ jest.mock('~/framework/util/linking', () => ({ openUrl: jest.fn() }));
 
 const image = (name: string): FileMedia => ({ mime: 'image/png', name, src: `/img/${name}`, type: MediaType.IMAGE });
 const link: LinkMedia = { src: 'https://elsewhere.test', type: MediaType.LINK };
-const resource: ResourceMedia = { appName: 'Blog', resourceId: 'r1', src: '/blog/r1', type: MediaType.RESOURCE };
-const openBlogResource = jest.fn();
-const blogModule = { entries: { resource: openBlogResource }, matchEntcoreApp: 'Blog', name: 'blog' };
+const resource: ResourceMedia = {
+  appName: 'Blog',
+  resourceId: 'r1',
+  resourceType: 'blog',
+  src: '/blog/r1',
+  type: MediaType.RESOURCE,
+};
+const openBlogResource = jest.fn(() => true);
+const declineBlogResource = jest.fn(() => false);
+const moduleWithResourceIntent = (callback: () => boolean) => ({ intents: { resource: [{ callback, resourceType: 'blog' }] } });
 
-const setup = () => {
+const setup = (modules = [moduleWithResourceIntent(openBlogResource)]) => {
   const navigation = { navigate: jest.fn() };
   jest.mocked(useNavigation).mockReturnValue(navigation);
-  jest.mocked(useUserAvailableModules).mockReturnValue([blogModule] as unknown as ReturnType<typeof useUserAvailableModules>);
+  jest.mocked(useUserAvailableModules).mockReturnValue(modules as unknown as ReturnType<typeof useUserAvailableModules>);
   return { navigation, ...renderHook(useOpenMedia).result.current };
 };
 
@@ -60,16 +67,30 @@ describe('openMedias', () => {
     expect(navigation.navigate).not.toHaveBeenCalled();
   });
 
-  it('opens a resource with the entry of the module of its app', () => {
+  it('opens a resource with an intent of its resource type', () => {
     const { navigation, openMedias } = setup();
     openMedias([resource], 0);
     expect(openBlogResource).toHaveBeenCalledWith(resource, navigation);
     expect(openUrl).not.toHaveBeenCalled();
   });
 
-  it('opens in the browser a resource that no module opens', () => {
+  it('tries the next intent when one gives false', () => {
+    const { openMedias } = setup([moduleWithResourceIntent(declineBlogResource), moduleWithResourceIntent(openBlogResource)]);
+    openMedias([resource], 0);
+    expect(declineBlogResource).toHaveBeenCalled();
+    expect(openBlogResource).toHaveBeenCalled();
+    expect(openUrl).not.toHaveBeenCalled();
+  });
+
+  it('opens a resource in the browser when no intent gives true', () => {
+    const { openMedias } = setup([moduleWithResourceIntent(declineBlogResource)]);
+    openMedias([resource], 0);
+    expect(openUrl).toHaveBeenCalledWith('/blog/r1');
+  });
+
+  it('opens in the browser a resource that no intent opens', () => {
     const { openMedias } = setup();
-    const wikiResource: ResourceMedia = { ...resource, appName: 'Wiki', src: '/wiki/r1' };
+    const wikiResource: ResourceMedia = { ...resource, appName: 'Wiki', resourceType: 'wiki', src: '/wiki/r1' };
     openMedias([wikiResource], 0);
     expect(openUrl).toHaveBeenCalledWith('/wiki/r1');
     expect(openBlogResource).not.toHaveBeenCalled();

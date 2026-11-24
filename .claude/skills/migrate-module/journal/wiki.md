@@ -13,7 +13,7 @@ Dans le périmètre : déclaration, données, écrans, conversion de la bottom s
 Hors périmètre, reporté :
 
 - Ouverture des notifications `WIKI.*` (`notif-handler.ts`) : pas d'équivalent dans le nouveau système (later.md, STATUS question 1).
-- Intent `registerIntent('Wiki', OPEN_RESOURCE)` (→ `wiki/summary`) : remplacé par `entries.resource` le 2026-11-24, à déclarer à la bascule (`ToDo(wiki-migration)` dans `index.ts`, [framework.md](../framework.md)).
+- Intent `registerIntent('Wiki', OPEN_RESOURCE)` (→ `wiki/summary`) : remplacé par `intents.resource` (`resourceType: 'wiki'`) le 2026-11-24, à déclarer à la bascule (`ToDo(wiki-migration)` dans `index.ts`, [framework.md](../framework.md)).
 - Création (écran `wiki/create` vide, composants `image-input`) : jamais branchée (question 4).
 
 ## 2. Existant

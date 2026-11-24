@@ -50,6 +50,7 @@ const hydrateResource = (
     id: item.id,
     name: item.name,
     resourceId: item.assetId,
+    resourceType: item.resourceType,
     src: '', // No src provided
     thumbnail: item.thumbnail,
     type: MediaType.RESOURCE,

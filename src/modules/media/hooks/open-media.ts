@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useNavigation } from '@react-navigation/native';
 
-import { getResourceEntry, useUserAvailableModules } from '~/app/module';
+import { runResourceIntents, useUserAvailableModules } from '~/app/module';
 import type { RootNavigation } from '~/app/navigation-new';
 import toast from '~/framework/components/toast';
 import { openUrl } from '~/framework/util/linking';
@@ -14,8 +14,8 @@ import { toURISource } from '~/modules/media/util';
  * The functions that open medias, with the navigation of the screen that calls the hook:
  * - `openCarousel`: the carousel on the files given;
  * - `openPdf`: a pdf in the carousel, which is the reader of the app;
- * - `openResource`: a resource in its app, by `entries.resource` of the module of its app (`matchEntcoreApp`), when the user can use
- *   it; else in the browser;
+ * - `openResource`: a resource with the intents of the modules the user can use (`intents.resource` of its `resourceType`), until one
+ *   gives `true`; else in the browser;
  * - `openMedias`: the one of the medias that was touched, the way its type needs: the files in the carousel (with the other files of the
  *   list, the touched one first), a resource with `openResource`, anything else in the browser;
  * - `openMedia`: the same for a single media.
@@ -44,12 +44,7 @@ export const useOpenMedia = () => {
     };
 
     const openResource = (media: ResourceMedia) => {
-      const openWithEntry = getResourceEntry(modules, media.appName);
-      if (openWithEntry) {
-        openWithEntry(media, navigation);
-      } else {
-        openInBrowser(media);
-      }
+      if (!runResourceIntents(modules, media, navigation)) openInBrowser(media);
     };
 
     const openMedias = (medias: Media[], index = 0, opts?: { title?: string }) => {

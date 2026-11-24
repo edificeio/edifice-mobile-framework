@@ -9,5 +9,6 @@ module.exports = new NavigableModule({ config, getRoot, reducer });
 
 setUpNotifHandlers();
 
-// ToDo(scrapbook-migration): the intents are replaced by `entries.resource` (`~/app/module/types`). Declare it at the switch: it opens
-// the scrapbook (`scrapbookRouteNames.details`, params `{ resourceUri: `/scrapbook#/view-scrapbook/${media.resourceId}` }`).
+// ToDo(scrapbook-migration): the intents are replaced by `intents.resource` (`~/app/module/types`). Declare one at the switch, with
+// `resourceType: 'scrapbook'`: it opens the scrapbook (`scrapbookRouteNames.details`, params
+// `{ resourceUri: `/scrapbook#/view-scrapbook/${resource.resourceId}` }`) and gives `true`.

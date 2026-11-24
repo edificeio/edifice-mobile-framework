@@ -10,6 +10,7 @@ import type { ScreenComponent } from '~/app/navigation-new';
 
 import {
   ConfigForEntries,
+  ConfigForIntents,
   CoreModuleConfig,
   EntModuleConfig,
   EntryRoute,
@@ -23,6 +24,7 @@ export * from './types';
 export * from './hooks';
 export * from './loader';
 export * from './entries';
+export * from './intents';
 export * from './rights';
 
 // ToDo: does the hasRight must check token scope too ?
@@ -40,6 +42,8 @@ export abstract class Module<
   scope: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['scope'];
   /** The entries given to the module, `{}` without any. */
   entries: ConfigForEntries<EntryRoute<Screens>> & Entries;
+  /** The intents given to the module, `{}` without any. */
+  intents: ConfigForIntents;
   redux: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['redux'];
   storages: NonNullable<ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['storages']>;
   fileManager: ModuleConfig<Name, Screens, Modals, ReduxState, ReduxAction, Entries, Scope>['fileManager'];
@@ -55,6 +59,7 @@ export abstract class Module<
     this.name = opts.name;
     this.scope = opts.scope;
     this.entries = opts.entries ?? ({} as Entries);
+    this.intents = opts.intents ?? {};
     this.redux = opts.redux;
     this.storages = opts.storages ?? [];
     this.fileManager = opts.fileManager;

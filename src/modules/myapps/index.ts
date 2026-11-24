@@ -19,7 +19,6 @@ const { onSessionStart, sessionSetup } = createMyAppsSessionHooks({
 export default new EntModule({
   entries: {
     myApps: { route: 'myapps/home' },
-    resource: (media, navigation) => {},
     tab: {
       iconActive: 'ui-applications-fill',
       iconInactive: 'ui-applications',

@@ -14,7 +14,8 @@ module.exports = new NavigableModule({
   reducer: reducer as unknown as Reducer<WikiStore, ExplorerAction>,
 });
 
-// ToDo(wiki-migration): the intents are replaced by `entries.resource` (`~/app/module/types`). Declare it at the switch: it opens the
-// summary of the wiki (`wikiRouteNames.summary`, params `{ resourceId: media.resourceId }`).
+// ToDo(wiki-migration): the intents are replaced by `intents.resource` (`~/app/module/types`). Declare one at the switch, with
+// `resourceType: 'wiki'`: it opens the summary of the wiki (`wikiRouteNames.summary`, params `{ resourceId: resource.resourceId }`)
+// and gives `true`.
 
 setUpNotifHandlers();

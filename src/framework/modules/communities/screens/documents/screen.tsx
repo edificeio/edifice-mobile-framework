@@ -66,6 +66,7 @@ const formatDocuments = (data: EnrichedResourceDto[]): CommunitiesDocumentItem[]
     if (isResourceMedia(media)) {
       media.appName = item.mobileAppName;
       media.resourceId = item.resourceEntId;
+      media.resourceType = item.appName;
       media.thumbnail = item.thumbnail;
     }
     return media;
