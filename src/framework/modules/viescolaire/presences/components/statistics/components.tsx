@@ -36,16 +36,18 @@ const Statistics = (props: StatisticsProps) => {
     }
   };
 
-  const filterEvents = (stats: { events: Event[] }) => {
+  const filterEvents = (stats?: { events: Event[] }) => {
     const term = selectedTerm !== 'year' ? props.terms.find(t => t.order.toString() === selectedTerm) : undefined;
+    // A category can be missing from the fetched statistics: render it as empty instead of crashing.
+    const events = stats?.events ?? [];
 
     return {
       events: term
-        ? stats.events.filter(e => {
+        ? events.filter(e => {
             const date = 'startDate' in e ? e.startDate : e.date;
             return date.isSameOrAfter(term.startDate) && date.isSameOrBefore(term.endDate);
           })
-        : stats?.events,
+        : events,
       recoveryMethod: props.statistics.recoveryMethod,
     };
   };
