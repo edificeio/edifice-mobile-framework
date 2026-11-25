@@ -51,9 +51,7 @@ export default StyleSheet.create({
   loader: {
     backgroundColor: theme.ui.background.card,
     flex: 1,
-  },
-  page: {
-    backgroundColor: theme.ui.background.card,
+    marginTop: UI_SIZES.border.thin,
   },
   scrollContent: {
     flexGrow: 1,

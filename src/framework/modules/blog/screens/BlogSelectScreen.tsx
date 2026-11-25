@@ -1,9 +1,10 @@
 import * as React from 'react';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
+import { screenOptions } from '~/app/navigation/util';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourcePicker from '~/framework/components/explorer/resource-picker';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
@@ -12,7 +13,6 @@ import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/n
 import { BlogList } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { useAppTheme } from '~/framework/modules/myapps/hooks';
-import { navBarOptions } from '~/framework/navigation/navBar';
 
 export interface BlogSelectScreenNavParams {
   blogsData: BlogList;
@@ -23,16 +23,7 @@ export interface BlogSelectScreenState {
   blogsData: BlogList;
 }
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.home>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('blog-select-title'),
-  }),
-});
+export const computeNavBar = screenOptions(() => ({ title: I18n.get('blog-select-title') }));
 
 function BlogSelectScreenComponent(props: BlogSelectScreenProps) {
   const appTheme = useAppTheme('blog');

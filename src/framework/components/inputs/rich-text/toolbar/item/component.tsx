@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 
-import styles from './styles';
-import { RichToolbarItemProps } from './types';
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
+
+import styles from './styles';
+import { RichToolbarItemProps } from './types';
 
 export const RichToolbarItem = (props: RichToolbarItemProps) => {
   const renderColor = () => {
@@ -18,7 +18,8 @@ export const RichToolbarItem = (props: RichToolbarItemProps) => {
     <TouchableOpacity
       disabled={props.disabled}
       onPress={props.onSelected}
-      style={[styles.item, props.selected ? styles.selected : {}]}>
+      style={[styles.item, props.selected ? styles.selected : {}]}
+      testID={props.testId}>
       <Svg name={props.icon} fill={renderColor()} height={UI_SIZES.elements.icon.small} width={UI_SIZES.elements.icon.small} />
     </TouchableOpacity>
   );

@@ -89,7 +89,13 @@ export const ContentLoader = React.forwardRef<ContentLoaderHandle, ContentLoader
       case LoadingState.REFRESH:
       case LoadingState.REFRESH_FAILED:
       case LoadingState.REFRESH_SILENT:
-        return renderContent(<RefreshControl refreshing={loadingState === LoadingState.REFRESH} onRefresh={() => refresh()} />);
+        return renderContent(
+          <RefreshControl
+            refreshing={loadingState === LoadingState.REFRESH}
+            onRefresh={() => refresh()}
+            {...refreshControlProps}
+          />,
+        );
 
       case LoadingState.PRISTINE:
       case LoadingState.INIT:

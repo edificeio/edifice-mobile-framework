@@ -21,26 +21,24 @@ import { resourceHasRight } from '~/framework/util/resourceRights';
  * Fetch the details of a given blog post.
  * Info: no reducer is used in this action.
  */
-export const getBlogPostDetailsAction =
-  (blogPostId: { blogId: string; postId: string }, blogPostState?: string) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    try {
-      const session = assertSession();
+export const getBlogPostDetailsAction = (blogPostId: { blogId: string; postId: string }, blogPostState?: string) => async () => {
+  try {
+    const session = assertSession();
 
-      // Get blog post and comments
-      const [blogPost, blogPostComments] = await Promise.all([
-        blogService.post.get(session, blogPostId, blogPostState),
-        blogService.comments.get(session, blogPostId),
-      ]);
-      const blogPostWithComments = {
-        ...blogPost,
-        comments: blogPostComments,
-      };
-      return blogPostWithComments;
-    } catch {
-      // ToDo: Error handling
-    }
-  };
+    // Get blog post and comments
+    const [blogPost, blogPostComments] = await Promise.all([
+      blogService.post.get(session, blogPostId, blogPostState),
+      blogService.comments.get(session, blogPostId),
+    ]);
+    const blogPostWithComments = {
+      ...blogPost,
+      comments: blogPostComments,
+    };
+    return blogPostWithComments;
+  } catch {
+    // ToDo: Error handling
+  }
+};
 
 /**
  * Fetch the posts of a given blog.
@@ -48,7 +46,7 @@ export const getBlogPostDetailsAction =
 export const blogPostsActionsCreators = createAsyncActionCreators(actionTypes.blogPosts);
 export const fetchBlogPostsAction =
   (blogId: string): ThunkAction<Promise<BlogPost[]>, any, any, any> =>
-  async (dispatch, getState) => {
+  async dispatch => {
     try {
       const session = assertSession();
       dispatch(blogPostsActionsCreators.request());
@@ -65,7 +63,7 @@ export const fetchBlogPostsAction =
  * Fetch the user's publishable blog list.
  * Info: no reducer is used in this action.
  */
-export const getPublishableBlogListAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+export const getPublishableBlogListAction = () => async () => {
   try {
     const session = assertSession();
 
@@ -77,14 +75,14 @@ export const getPublishableBlogListAction = () => async (dispatch: ThunkDispatch
   }
 };
 
-export const getBlogsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+export const getBlogsAction = () => async () => {
   const session = assertSession();
   const ret = await Promise.all([blogService.list(session), blogService.folders.list(session)]);
   return { blogs: ret[0], folders: ret[1] };
 };
 
 export const uploadBlogPostImagesAction =
-  (images: LocalFile[], isPublic: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (images: LocalFile[], isPublic: boolean) => async (dispatch: ThunkDispatch<any, any, any>) => {
     return dispatch(
       workspaceFileTransferActions.uploadFilesAction(
         images,
@@ -103,51 +101,46 @@ export const uploadBlogPostImagesAction =
  * Create a post for a given blog.
  * Info: no reducer is used in this action.
  */
-export const createBlogPostAction =
-  (blogId: string, postTitle: string, postContent: string) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = assertSession();
+export const createBlogPostAction = (blogId: string, postTitle: string, postContent: string) => async () => {
+  const session = assertSession();
 
-    const createdPost = await blogService.post.create(session, blogId, postTitle, postContent);
-    const postId = createdPost._id;
-    return postId;
-  };
+  const createdPost = await blogService.post.create(session, blogId, postTitle, postContent);
+  const postId = createdPost._id;
+  return postId;
+};
 
 /**
  * Publish a created post for a given blog.
  * Info: no reducer is used in this action.
  */
-export const publishBlogPostAction =
-  (blogId: string, postId: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    try {
-      const session = assertSession();
-      return await blogService.post.publish(session, blogId, postId);
-    } catch {
-      // ToDo: Error handling
-    }
-  };
+export const publishBlogPostAction = (blogId: string, postId: string) => async () => {
+  try {
+    const session = assertSession();
+    return await blogService.post.publish(session, blogId, postId);
+  } catch {
+    // ToDo: Error handling
+  }
+};
 
 /**
  * Submit a created post for a given blog.
  * Info: no reducer is used in this action.
  */
-export const submitBlogPostAction =
-  (blogId: string, postId: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    try {
-      const session = assertSession();
-      return await blogService.post.submit(session, blogId, postId);
-    } catch {
-      // ToDo: Error handling
-    }
-  };
+export const submitBlogPostAction = (blogId: string, postId: string) => async () => {
+  try {
+    const session = assertSession();
+    return await blogService.post.submit(session, blogId, postId);
+  } catch {
+    // ToDo: Error handling
+  }
+};
 
 /**
  * Edit a post for a given blog.
  * Info: no reducer is used in this action.
  */
 export const editBlogPostAction =
-  (blog: Blog, postId: string, postTitle: string, postContent: string, postState: string) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (blog: Blog, postId: string, postTitle: string, postContent: string, postState: string) => async () => {
     const session = assertSession();
     const blogId = blog.id;
     const blogPostRight = getBlogPostRight(blog, session);
@@ -166,7 +159,7 @@ export const editBlogPostAction =
  * Info: no reducer is used in this action.
  */
 export const sendBlogPostAction =
-  (blog: Blog, postTitle: string, postContent: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (blog: Blog, postTitle: string, postContent: string) => async (dispatch: ThunkDispatch<any, any, any>) => {
     const session = assertSession();
     const blogId = blog.id;
     const blogPostRight = getBlogPostRight(blog, session);
@@ -208,11 +201,10 @@ export const deleteBlogPostAction = (blogPostId: { blogId: string; postId: strin
  * Info: no reducer is used in this action.
  */
 export const publishBlogPostCommentAction =
-  (blogPostId: { blogId: string; postId: string }, comment: string) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (blogPostId: { blogId: string; postId: string }, comment: string, replyTo?: string) => async () => {
     try {
       const session = assertSession();
-      return await blogService.comments.publish(session, blogPostId, comment);
+      return await blogService.comments.publish(session, blogPostId, comment, replyTo);
     } catch {
       // ToDo: Error handling
     }
@@ -223,8 +215,7 @@ export const publishBlogPostCommentAction =
  * Info: no reducer is used in this action.
  */
 export const updateBlogPostCommentAction =
-  (blogPostCommentId: { blogId: string; postId: string; commentId: string }, comment: string) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (blogPostCommentId: { blogId: string; postId: string; commentId: string }, comment: string) => async () => {
     try {
       const session = assertSession();
       return await blogService.comments.update(session, blogPostCommentId, comment);
@@ -238,8 +229,7 @@ export const updateBlogPostCommentAction =
  * Info: no reducer is used in this action.
  */
 export const deleteBlogPostCommentAction =
-  (blogPostCommentId: { blogId: string; postId: string; commentId: string }) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (blogPostCommentId: { blogId: string; postId: string; commentId: string }) => async () => {
     try {
       const session = assertSession();
       return await blogService.comments.delete(session, blogPostCommentId);
@@ -252,7 +242,7 @@ export const deleteBlogPostCommentAction =
  * These are actions to fetch and populate Blog main reducer.
  */
 export const blogFoldersActionsCreators = createAsyncActionCreators(actionTypes.folders);
-export const fetchBlogFoldersAction = (): ThunkAction<Promise<BlogFolder[]>, any, any, any> => async (dispatch, getState) => {
+export const fetchBlogFoldersAction = (): ThunkAction<Promise<BlogFolder[]>, any, any, any> => async dispatch => {
   try {
     const session = assertSession();
     dispatch(blogFoldersActionsCreators.request());
@@ -265,7 +255,7 @@ export const fetchBlogFoldersAction = (): ThunkAction<Promise<BlogFolder[]>, any
   }
 };
 export const blogActionsCreators = createAsyncActionCreators(actionTypes.blogs);
-export const fetchBlogsAction = (): ThunkAction<Promise<Blog[]>, any, any, any> => async (dispatch, getState) => {
+export const fetchBlogsAction = (): ThunkAction<Promise<Blog[]>, any, any, any> => async dispatch => {
   try {
     const session = assertSession();
     dispatch(blogActionsCreators.request());
@@ -277,10 +267,9 @@ export const fetchBlogsAction = (): ThunkAction<Promise<Blog[]>, any, any, any> 
     throw e;
   }
 };
-export const fetchBlogsAndFoldersAction =
-  (): ThunkAction<Promise<[Blog[], BlogFolder[]]>, any, any, any> => async (dispatch, getState) => {
-    const data = await Promise.all([dispatch(fetchBlogsAction()), dispatch(fetchBlogFoldersAction())]);
-    // ToDo : call line below when tha case of trashed blogs will be handled
-    await dispatch({ blogs: data[0], folders: data[1], type: actionTypes.tree.compute });
-    return data;
-  };
+export const fetchBlogsAndFoldersAction = (): ThunkAction<Promise<[Blog[], BlogFolder[]]>, any, any, any> => async dispatch => {
+  const data = await Promise.all([dispatch(fetchBlogsAction()), dispatch(fetchBlogFoldersAction())]);
+  // ToDo : call line below when tha case of trashed blogs will be handled
+  await dispatch({ blogs: data[0], folders: data[1], type: actionTypes.tree.compute });
+  return data;
+};

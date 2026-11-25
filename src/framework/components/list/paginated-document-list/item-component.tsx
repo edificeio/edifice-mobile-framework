@@ -93,7 +93,7 @@ export function DocumentListItem<IdType, MediaT extends Media>({
     <WrapperComponent style={[styles.item, styles.itemDocument, style]} onPress={onPress} testID={testID}>
       {thumbnailElement}
       <View style={styles.documentMetadata}>
-        <SmallBoldText style={styles.documentMetadataTitle} numberOfLines={1}>
+        <SmallBoldText style={styles.documentMetadataTitle} numberOfLines={1} testID="label-resource-name">
           {item.name ?? ''}
         </SmallBoldText>
         <CaptionText style={styles.documentMetadataDate} numberOfLines={1}>
@@ -118,14 +118,17 @@ export function FolderListItem<IdType>({
   Pick<ViewProps, 'style'>) {
   const WrapperComponent = onPress ? TouchableOpacity : View;
   return (
-    <WrapperComponent style={React.useMemo(() => [FolderListItem.wrapperComponentStyle, style], [style])} onPress={onPress}>
+    <WrapperComponent
+      style={React.useMemo(() => [FolderListItem.wrapperComponentStyle, style], [style])}
+      onPress={onPress}
+      testID="button-folder">
       <Svg
         name="ui-folder"
         height={UI_SIZES.elements.icon.small}
         width={UI_SIZES.elements.icon.small}
         fill={theme.ui.text.regular}
       />
-      <SmallBoldText style={UI_STYLES.flex1} numberOfLines={1}>
+      <SmallBoldText style={UI_STYLES.flex1} numberOfLines={1} testID="label-folder-name">
         {item.title}
       </SmallBoldText>
     </WrapperComponent>

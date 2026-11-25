@@ -15,7 +15,7 @@ import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { SelfAvatar } from '~/framework/components/avatar/self';
 import { cardPaddingMerging } from '~/framework/components/card/base';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { getScaleWidth, UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -201,6 +201,10 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   }
 
   // RENDER =======================================================================================
+  //
+
+  boxStyle = { backgroundColor: theme.palette.grey.pearl, flex: 1 };
+  boxStyle2 = { ...this.boxStyle, padding: getScaleWidth(7.5) };
 
   render() {
     return (

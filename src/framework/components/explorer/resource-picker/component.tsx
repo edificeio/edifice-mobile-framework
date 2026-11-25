@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { RefreshControl, TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
-import { ResourcePickerProps } from './types';
-
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -14,6 +11,9 @@ import { Svg } from '~/framework/components/picture';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { Image } from '~/framework/util/media-deprecated';
+
+import styles from './styles';
+import { ResourcePickerProps } from './types';
 
 const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, onRefresh }: ResourcePickerProps) => {
   const listAdditionalStyle = { paddingBottom: data?.length === 0 ? undefined : UI_SIZES.screen.bottomInset };
@@ -44,7 +44,7 @@ const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, o
     const handleOnPress = () => onPressItem(item);
 
     return (
-      <TouchableOpacity onPress={handleOnPress}>
+      <TouchableOpacity onPress={handleOnPress} testID="button-resource">
         <ListItem
           leftElement={
             <View style={styles.item}>
@@ -65,8 +65,10 @@ const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, o
                 </View>
               )}
               <View style={styles.itemTexts}>
-                <BodyBoldText numberOfLines={numberOfLines}>{item.title}</BodyBoldText>
-                <SmallText>{shareText}</SmallText>
+                <BodyBoldText numberOfLines={numberOfLines} testID="label-resource-name">
+                  {item.title}
+                </BodyBoldText>
+                <SmallText testID="label-resource-share-info">{shareText}</SmallText>
               </View>
             </View>
           }

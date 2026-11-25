@@ -69,6 +69,8 @@ export default StyleSheet.create({
   terciary: {
     borderColor: theme.palette.primary.regular,
     // no borderWidth on purpose. borderColor is data source for content color
+    paddingHorizontal: UI_SIZES.spacing.tiny,
+    paddingVertical: UI_SIZES.spacing.tiny,
   },
   terciaryActive: { borderColor: theme.palette.primary.dark },
   terciaryDisabled: { borderColor: theme.palette.primary.light },

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import {
+  AnnouncementSearchType,
   AnnouncementType,
   CommunityClient,
   CommunitySection,
@@ -16,12 +17,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { EmptyContent } from '~/framework/components/empty-screens/base/component';
 import { LOADING_ITEM_DATA, PaginatedFlatListProps, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { sessionScreen } from '~/framework/components/screen';
 import ScrollView from '~/framework/components/scrollView';
+import SegmentedControl, { SegmentedControlLoader } from '~/framework/components/segmented-control';
 import { HeadingXSText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 import AnnouncementListItem from '~/framework/modules/communities/components/announcements/list/item/';
@@ -41,7 +44,11 @@ import {
 import { BANNER_BASE_HEIGHT } from '~/framework/modules/communities/hooks/use-community-navbar/community-navbar/styles';
 import moduleConfig from '~/framework/modules/communities/module-config';
 import { CommunitiesNavigationParams, communitiesRouteNames } from '~/framework/modules/communities/navigation';
-import { AnnouncementDetails, getAnnouncementsDetails } from '~/framework/modules/communities/service/announcements';
+import {
+  AnnouncementDetails,
+  getAnnouncementsDetails,
+  getCommunityOpenCollectsCount,
+} from '~/framework/modules/communities/service/announcements';
 import { DiscussionsSummary, getDiscussionsSummary } from '~/framework/modules/communities/service/discussions';
 import { communitiesActions, communitiesSelectors } from '~/framework/modules/communities/store';
 import { getCommunityBannerImage, getItemSeparatorStyle } from '~/framework/modules/communities/utils';
@@ -52,6 +59,30 @@ import type { CommunitiesHomeScreen } from './types';
 
 const ANNOUNCEMENTS_PAGE_SIZE = 20;
 const EMPTY_DISCUSSIONS_SUMMARY: DiscussionsSummary = { hasUnreadMessages: false, totalDiscussions: 0 };
+
+const ANNOUNCEMENT_FILTERS = [
+  { i18n: 'communities-announcements-filter-all', id: 'all', searchType: AnnouncementSearchType.ALL, type: undefined },
+  {
+    i18n: 'communities-announcements-filter-information',
+    id: 'information',
+    searchType: AnnouncementSearchType.INFORMATION,
+    type: AnnouncementType.INFORMATION,
+  },
+  {
+    i18n: 'communities-announcements-filter-collect',
+    id: 'collect',
+    searchType: AnnouncementSearchType.COLLECT,
+    type: AnnouncementType.COLLECT,
+  },
+] as const;
+
+const ALL_FILTER_INDEX = ANNOUNCEMENT_FILTERS.findIndex(filter => filter.type === undefined);
+const COLLECT_FILTER_INDEX = ANNOUNCEMENT_FILTERS.findIndex(filter => filter.type === AnnouncementType.COLLECT);
+
+type AnnouncementsPage = (AnnouncementDetails<number> | typeof LOADING_ITEM_DATA)[];
+
+// Stable identity, so a filter without a list of its own doesn't hand a brand new array to the list on every render.
+const NO_ANNOUNCEMENTS: AnnouncementsPage = [];
 
 const BannerLoader = () => {
   const { top: statusBarHeight } = useSafeAreaInsets();
@@ -76,6 +107,7 @@ export const CommunitiesHomeScreenLoaded = function ({
   image,
   membersId,
   navigation,
+  refreshDiscussionsSummary,
   route,
   route: {
     params: { communityId, hasJoinedWithCode = false, invitationId, showWelcome = false },
@@ -115,11 +147,35 @@ export const CommunitiesHomeScreenLoaded = function ({
     [],
   );
 
-  const [announcements, setAnnouncements] = React.useState<(AnnouncementDetails<number> | typeof LOADING_ITEM_DATA)[]>([]);
+  const [announcementsByFilter, setAnnouncementsByFilter] = React.useState<Record<number, AnnouncementsPage>>({});
+  const [isLoadingAnnouncements, setIsLoadingAnnouncements] = React.useState(true);
+  const [filterIndex, setFilterIndex] = React.useState(ALL_FILTER_INDEX);
+  const [openCollectsCount, setOpenCollectsCount] = React.useState<number | undefined>(undefined);
+
+  const announcements = announcementsByFilter[ALL_FILTER_INDEX] ?? NO_ANNOUNCEMENTS;
+
+  const recycled = React.useMemo(() => {
+    const { type } = ANNOUNCEMENT_FILTERS[filterIndex];
+    if (!type) return NO_ANNOUNCEMENTS;
+
+    const firstHole = announcements.indexOf(LOADING_ITEM_DATA);
+    const loadedHead = firstHole < 0 ? announcements : announcements.slice(0, firstHole);
+
+    return loadedHead.filter(item => item !== LOADING_ITEM_DATA && item.type === type);
+  }, [announcements, filterIndex]);
+
+  const data = React.useMemo<AnnouncementsPage>(() => {
+    const own = announcementsByFilter[filterIndex];
+    if (own) return own;
+    if (filterIndex === ALL_FILTER_INDEX) return NO_ANNOUNCEMENTS;
+
+    const isAllComplete = announcements.length > 0 && !announcements.includes(LOADING_ITEM_DATA);
+    return isAllComplete ? recycled : [...recycled, LOADING_ITEM_DATA];
+  }, [announcementsByFilter, filterIndex, announcements, recycled]);
 
   const renderItem = React.useCallback(
     ({ index, item }: { index: number; item: AnnouncementDetails<number> }) => {
-      const itemSeparator = getItemSeparatorStyle(index, announcements.length, styles.itemSeparator);
+      const itemSeparator = getItemSeparatorStyle(index, data.length, styles.itemSeparator);
       const separatorColor =
         itemSeparator && item.type === AnnouncementType.COLLECT
           ? { borderBottomColor: getCollectionStatus(item, role).colors.light }
@@ -128,7 +184,7 @@ export const CommunitiesHomeScreenLoaded = function ({
 
       return <AnnouncementListItem announcement={item} session={session} style={itemStyle} userRole={role} />;
     },
-    [announcements.length, role, session],
+    [data.length, role, session],
   );
 
   const [scrollElements, scrollViewProps] = useCommunityScrollableThumbnail({
@@ -136,6 +192,28 @@ export const CommunitiesHomeScreenLoaded = function ({
     navigation,
     title,
   });
+
+  const segments = React.useMemo(
+    () =>
+      ANNOUNCEMENT_FILTERS.map((filter, index) => ({
+        badgeColor: theme.palette.status.failure.regular,
+        count: index === COLLECT_FILTER_INDEX ? openCollectsCount || undefined : undefined,
+        id: filter.id,
+        text: I18n.get(filter.i18n),
+      })),
+    [openCollectsCount],
+  );
+
+  const onFilterChange = React.useCallback((index?: number) => setFilterIndex(index ?? 0), []);
+
+  // Sync the SegmentedControl + loader with the announcements list + loader
+  const filters = React.useMemo(() => {
+    if (isLoadingAnnouncements) return <SegmentedControlLoader isFullWidth />;
+
+    return announcements.length ? (
+      <SegmentedControl initialSelectedIndex={filterIndex} segments={segments} onChange={onFilterChange} />
+    ) : null;
+  }, [isLoadingAnnouncements, announcements.length, filterIndex, segments, onFilterChange]);
 
   const stickyElements = React.useMemo(
     () => [
@@ -166,7 +244,10 @@ export const CommunitiesHomeScreenLoaded = function ({
             </View>
           </View>
         </View>
-        <HeadingXSText style={styles.announcementTitle}>{I18n.get('communities-announcements-title')}</HeadingXSText>
+        <View style={styles.announcementHeader}>
+          <HeadingXSText>{I18n.get('communities-announcements-title')}</HeadingXSText>
+          {filters}
+        </View>
       </View>,
     ],
     [
@@ -179,33 +260,83 @@ export const CommunitiesHomeScreenLoaded = function ({
       platformUrl,
       spotlightedCourseId,
       role,
-      discussionsSummary,
+      discussionsSummary.hasUnreadMessages,
+      discussionsSummary.totalDiscussions,
+      filters,
     ],
   );
 
-  const loadData = React.useCallback(
+  const refreshOpenCollectsCount = React.useCallback(() => {
+    getCommunityOpenCollectsCount(communityId, role)
+      .then(setOpenCollectsCount)
+      .catch(e => console.error('Error while loading community open collects count', e));
+  }, [communityId, role]);
+
+  const loadingPagesRef = React.useRef<Set<string>>(new Set());
+  const hasLoadedOnceRef = React.useRef(false);
+  const recycledRef = React.useRef(recycled);
+  recycledRef.current = recycled;
+
+  const loadPage = React.useCallback(
     async (page: number, reloadAll?: boolean) => {
+      // A refresh always reloads the 'all' list, which every other list derives from
+      const targetFilterIndex = reloadAll ? ALL_FILTER_INDEX : filterIndex;
+      const loadingPageKey = `${targetFilterIndex}-${page}`;
+      if (loadingPagesRef.current.has(loadingPageKey)) return;
+      loadingPagesRef.current.add(loadingPageKey);
+
+      // Pull to refresh: skip the first `reloadAll` at mount
+      if (reloadAll && hasLoadedOnceRef.current) {
+        refreshDiscussionsSummary();
+        refreshOpenCollectsCount();
+      }
+      hasLoadedOnceRef.current = true;
+
       try {
         const { announcements: newAnnouncements, total } = await getAnnouncementsDetails(
           communityId,
           page,
           ANNOUNCEMENTS_PAGE_SIZE,
+          ANNOUNCEMENT_FILTERS[targetFilterIndex].searchType,
+          role,
         );
 
-        setAnnouncements(prevData => {
-          return staleOrSplice({
+        setAnnouncementsByFilter(prevData => {
+          const merged = staleOrSplice({
             newData: newAnnouncements,
-            previousData: prevData,
+            previousData: prevData[targetFilterIndex] ?? NO_ANNOUNCEMENTS,
             reloadAll,
             start: page * ANNOUNCEMENTS_PAGE_SIZE,
             total,
           });
+
+          // Put the prefix back because `staleOrSplice` can start over from an empty array
+          const prefix = targetFilterIndex === ALL_FILTER_INDEX ? NO_ANNOUNCEMENTS : recycledRef.current;
+          if (prefix.length) merged.splice(0, prefix.length, ...prefix);
+
+          // On a refresh, drop the derived lists
+          return reloadAll ? { [ALL_FILTER_INDEX]: merged } : { ...prevData, [targetFilterIndex]: merged };
         });
       } catch (e) {
         console.error('Error while loading community announcements list', e);
+      } finally {
+        setIsLoadingAnnouncements(false);
+        loadingPagesRef.current.delete(loadingPageKey);
       }
     },
-    [communityId],
+    [communityId, filterIndex, refreshDiscussionsSummary, refreshOpenCollectsCount, role],
+  );
+
+  // Skip the first focus: the parent has just fetched the summary
+  const isFirstFocusRef = React.useRef(true);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (isFirstFocusRef.current) {
+        isFirstFocusRef.current = false;
+        return;
+      }
+      refreshDiscussionsSummary();
+    }, [refreshDiscussionsSummary]),
   );
 
   useFocusEffect(
@@ -214,12 +345,14 @@ export const CommunitiesHomeScreenLoaded = function ({
     }, [communityId]),
   );
 
+  useFocusEffect(refreshOpenCollectsCount);
+
   return (
     <>
       <DecoratedPaginatedFlatList
         alwaysBounceVertical={false}
-        data={announcements}
-        onPageReached={loadData}
+        data={data}
+        onPageReached={loadPage}
         keyExtractor={keyExtractor}
         ListEmptyComponent={
           <EmptyContent
@@ -266,8 +399,9 @@ export const CommunitiesHomeScreenPlaceholder = () => (
             </View>
           </View>
         </View>
-        <View style={styles.announcementTitle}>
+        <View style={styles.announcementHeader}>
           <TitleLoader isShort={true} />
+          <SegmentedControlLoader isFullWidth />
         </View>
       </View>
       <PostDetailsLoader />
@@ -313,6 +447,12 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
     setDiscussionsSummary(fetchedDiscussionsSummary);
   }, [communityId, session, setData]);
 
+  const refreshDiscussionsSummary = React.useCallback(() => {
+    getDiscussionsSummary(session, communityId)
+      .then(setDiscussionsSummary)
+      .catch(e => console.error('Error while refreshing community discussions summary', e));
+  }, [communityId, session]);
+
   const image = React.useMemo(() => (data ? getCommunityBannerImage(data) : undefined), [data]);
 
   const spotlightedCourseId = React.useMemo(() => (data ? data.courseEntId : undefined), [data]);
@@ -328,6 +468,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
           refreshControl={refreshControl}
           {...data}
           discussionsSummary={discussionsSummary}
+          refreshDiscussionsSummary={refreshDiscussionsSummary}
           image={image!}
           membersId={data.membersId ?? []}
           session={session}
@@ -337,7 +478,7 @@ export default sessionScreen<CommunitiesHomeScreen.AllProps>(function Communitie
       ) : (
         <EmptyContentScreen />
       ),
-    [data, navigation, realRoute, discussionsSummary, image, session, spotlightedCourseId],
+    [data, navigation, realRoute, discussionsSummary, refreshDiscussionsSummary, image, session, spotlightedCourseId],
   );
 
   return <ContentLoader loadContent={loadContent} renderLoading={CommunitiesHomeScreenPlaceholder} renderContent={renderContent} />;

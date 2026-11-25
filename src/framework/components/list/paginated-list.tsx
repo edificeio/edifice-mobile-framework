@@ -7,6 +7,7 @@ import React from 'react';
 import { FlatList, FlatListProps, ListRenderItemInfo as RNListRenderItemInfo, ViewToken, VirtualizedListProps } from 'react-native';
 
 import { FlashList, FlashListProps, FlashListRef, ListRenderItemInfo as SHListRenderItemInfo } from '@shopify/flash-list';
+import { AnimatedProps, createAnimatedComponent } from 'react-native-reanimated';
 
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
 
@@ -91,6 +92,7 @@ interface CommonPaginatedListProps<TItem, TCustomPlaceholderItem = never> {
 
   placeholderData?: (typeof LOADING_ITEM_DATA | TCustomPlaceholderItem)[];
   initialLoadingState?: ContentLoaderProps['initialLoadingState'];
+  refreshControlProps?: NonNullable<ContentLoaderProps['refreshControlProps']>;
   onViewableItemsChanged?: (callback: { changed: ViewToken[]; viewableItems: ViewToken[] }) => void;
 }
 
@@ -278,6 +280,7 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
   placeholderData: _placeholderData,
   placeholderNumberOfRows: totalPlaceholderRows = DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
   ref,
+  refreshControlProps,
   renderItem: _renderItem,
   renderPlaceholderItem,
   viewabilityConfig,
@@ -356,6 +359,8 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
         data={placeholderData}
         scrollEnabled={false}
         {...flashListProps}
+        initialScrollIndex={undefined}
+        initialScrollIndexParams={undefined}
       />
     ),
     [flashListProps, keyExtractor, placeholderData, renderPlaceholderItem],
@@ -367,6 +372,7 @@ export const PaginatedFlashList = function <TItem, TCustomPlaceholderItem>({
     <ContentLoader
       initialLoadingState={initialLoadingState}
       loadContent={loadContent}
+      refreshControlProps={refreshControlProps}
       renderContent={renderContent}
       renderLoading={renderLoading}
     />
@@ -424,6 +430,7 @@ export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never
   placeholderData: _placeholderData,
   placeholderNumberOfRows: totalPlaceholderItem = DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
   ref,
+  refreshControlProps,
   renderItem: _renderItem,
   renderPlaceholderItem,
   stickyHeaderIndices,
@@ -545,8 +552,32 @@ export const PaginatedFlatList = function <TItem, TCustomPlaceholderItem = never
     <ContentLoader
       initialLoadingState={initialLoadingState}
       loadContent={loadContent}
+      refreshControlProps={refreshControlProps}
       renderContent={renderContent}
       renderLoading={renderLoading}
     />
   );
 };
+
+export type AnimatedPaginatedFlashListProps<TItem, TPlaceholderItem = never> = AnimatedProps<
+  PaginatedFlashListProps<TItem, TPlaceholderItem>
+>;
+export type AnimatedPaginatedFlatListProps<TItem, TPlaceholderItem = never> = AnimatedProps<
+  PaginatedFlatListProps<TItem, TPlaceholderItem>
+>;
+
+// `createAnimatedComponent` erases the generic signature of the wrapped component (it infers TItem/TPlaceholderItem
+// once, as `unknown`), so we restore proper genericity by casting to a hand-written generic component type.
+type AnimatedPaginatedFlashListComponent = (<TItem, TPlaceholderItem = never>(
+  props: AnimatedPaginatedFlashListProps<TItem, TPlaceholderItem>,
+) => React.ReactElement | null) & { displayName?: string };
+type AnimatedPaginatedFlatListComponent = (<TItem, TPlaceholderItem = never>(
+  props: AnimatedPaginatedFlatListProps<TItem, TPlaceholderItem>,
+) => React.ReactElement | null) & { displayName?: string };
+
+export const AnimatedPaginatedFlashList = createAnimatedComponent(
+  PaginatedFlashList,
+) as unknown as AnimatedPaginatedFlashListComponent;
+export const AnimatedPaginatedFlatList = createAnimatedComponent(
+  PaginatedFlatList,
+) as unknown as AnimatedPaginatedFlatListComponent;

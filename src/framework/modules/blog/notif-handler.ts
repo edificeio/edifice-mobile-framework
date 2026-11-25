@@ -23,14 +23,16 @@ const handleBlogPostNotificationAction: NotifHandlerThunkAction = (notification,
   try {
     const blogNotif = getAsResourceUriNotification(notification);
     if (!blogNotif) return { managed: 0 };
+    const { blogId, postId } = blogUriCaptureFunction(blogNotif.resource.uri);
+    if (!blogId || !postId) return { managed: 0 };
 
     const navAction = CommonActions.navigate({
       name: computeTabRouteName(timelineModuleConfig.routeName),
       params: {
         initial: false,
         params: {
-          notification: blogNotif,
-          useNotification: true,
+          blogId,
+          postId,
         },
         screen: blogRouteNames.blogPostDetails,
       },

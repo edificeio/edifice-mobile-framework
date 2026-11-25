@@ -212,6 +212,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
           android: textInputStyle,
           ios: undefined,
         })}
+        testID="input-comment"
       />
     ),
     [comment, isIdleExistingComment, onChangeText, props.isPublishingComment, props.isResponse, textInputStyle],
@@ -225,7 +226,10 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={styles.col}>
           {isIdleExistingComment && props.commentAuthor && props.commentDate ? (
             <View style={styles.row}>
-              <CaptionBoldText numberOfLines={1} style={{ flexShrink: 1, marginLeft: UI_SIZES.spacing.small }}>
+              <CaptionBoldText
+                numberOfLines={1}
+                style={{ flexShrink: 1, marginLeft: UI_SIZES.spacing.small }}
+                testID="label-comment-author">
                 {props.commentAuthor}
               </CaptionBoldText>
               <CaptionItalicText style={{ color: theme.palette.grey.graphite, marginLeft: UI_SIZES.spacing._LEGACY_small }}>
@@ -248,6 +252,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
               action={() => publishComment()}
               disabled={isEmpty(comment.trim()) || isCommentUnchanged()}
               loading={props.isPublishingComment}
+              testID="button-comment-send"
             />
           </View>
         ) : null}
@@ -256,12 +261,16 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
             <TouchableOpacity onPress={() => editComment()}>
-              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.get('commentfield-modify')}</SmallBoldText>
+              <SmallBoldText style={{ color: theme.palette.primary.regular }} testID="button-comment-edit">
+                {I18n.get('commentfield-modify')}
+              </SmallBoldText>
             </TouchableOpacity>
           ) : null}
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
-              <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
+              <SmallBoldText
+                style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}
+                testID="button-comment-delete">
                 {I18n.get('common-delete')}
               </SmallBoldText>
             </TouchableOpacity>

@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import styles from './style';
-
 import { I18n } from '~/app/i18n';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
@@ -11,6 +9,8 @@ import Audience from '~/framework/modules/audience/components';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { type Blog, type BlogPostWithAudience, countComments } from '~/framework/modules/blog/reducer';
 import { hasPermissionManager } from '~/framework/modules/blog/rights';
+
+import styles from './style';
 
 interface BlogPostDetailsProps {
   blog: Blog;
@@ -36,7 +36,9 @@ export function BlogPostDetails(props: BlogPostDetailsProps) {
             icon={<ContentCardIcon userIds={[post.author.userId || require('ASSETS/images/system-avatar.png')]} />}
             text={
               blog.author.username ? (
-                <SmallBoldText numberOfLines={1}>{`${I18n.get('common-by')} ${post.author.username}`}</SmallBoldText>
+                <SmallBoldText
+                  numberOfLines={1}
+                  testID="label-subject-author">{`${I18n.get('common-by')} ${post.author.username}`}</SmallBoldText>
               ) : undefined
             }
             date={post.modified}
@@ -45,8 +47,10 @@ export function BlogPostDetails(props: BlogPostDetailsProps) {
         {post.state === 'SUBMITTED' ? (
           <SmallBoldText style={styles.postNeedValidation}>{I18n.get('blog-postdetails-needvalidation')}</SmallBoldText>
         ) : null}
-        <SmallBoldText style={styles.blogTitle}>{blog.title}</SmallBoldText>
-        <HeadingSText>{post.title}</HeadingSText>
+        <SmallBoldText style={styles.blogTitle} testID="label-blog-title">
+          {blog.title}
+        </SmallBoldText>
+        <HeadingSText testID="label-subject-title">{post.title}</HeadingSText>
         {richContent}
       </View>
       {post.state === 'PUBLISHED' && blog.visibility !== 'PUBLIC' ? (

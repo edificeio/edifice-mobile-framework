@@ -5,6 +5,8 @@ import { getScaleHeight, UI_SIZES } from '~/framework/components/constants';
 
 const sizeIconAudio = getScaleHeight(36);
 const gradientBlack = 'rgba(0,0,0,.3)';
+// Ratio of the `ui-wavering` SVG viewBox (237x36)
+const wavesRatio = 237 / 36;
 const heightPreviewVideo = (10 / 16) * (UI_SIZES.screen.width - UI_SIZES.spacing.medium * 4);
 
 export default StyleSheet.create({
@@ -49,5 +51,9 @@ export default StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: 0,
+  },
+  waves: {
+    aspectRatio: wavesRatio,
+    flex: 1,
   },
 });

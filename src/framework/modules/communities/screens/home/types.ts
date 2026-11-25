@@ -18,6 +18,7 @@ export namespace CommunitiesHomeScreen {
   export type AllProps = CommunitiesHomeScreen.NavigationProps;
   export type RequiredData = Pick<CommunityResponseDto, 'title' | 'welcomeNote'> & {
     discussionsSummary: DiscussionsSummary;
+    refreshDiscussionsSummary: () => void;
     totalMembers: number;
     membersId: string[];
     session: AuthActiveAccount;

@@ -4,20 +4,22 @@
 import { Moment } from 'moment';
 import { combineReducers } from 'redux';
 
-import moduleConfig from './module-config';
-import { createBlogPostResourceRight } from './rights';
-
 import { IGlobalState, Reducers } from '~/app/store';
 import { PaginatedListItem, staleOrSplice } from '~/framework/components/list/paginated-list';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { CommentDeletedItem, CommentItem } from '~/framework/modules/comments/types';
 import { createExplorerActions, createExplorerReducer, createExplorerSelectors } from '~/framework/modules/explorer/store';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 import { resourceRightFilter } from '~/framework/util/resourceRights';
 
+import moduleConfig from './module-config';
+import { createBlogPostResourceRight } from './rights';
+
 // Types
 
 export interface Blog {
+  'allowReplies': boolean;
   'id': string;
   'visibility': string;
   'title': string;
@@ -27,6 +29,7 @@ export interface Blog {
   'publish-type': string;
   'description'?: string;
   'created': Moment;
+  'rights': string[];
   'modified': Moment;
   'author': { userId: string; username: string; login: string };
   'shared'?: ({
@@ -34,30 +37,9 @@ export interface Blog {
   } & {
     [key in 'userId' | 'groupId']: string;
   })[];
-  'fetchPosts': Omit<BlogPost, 'content'>[];
+  'fetchPosts'?: Omit<BlogPost, 'content'>[];
 }
 export type BlogList = Blog[];
-
-export interface BlogPostComment {
-  author: {
-    login: string;
-    userId: string;
-    username: string;
-  };
-  coauthor?: {
-    login: string;
-    userId: string;
-    username: string;
-  };
-  comment: string;
-  created: Moment;
-  id: string;
-  modified?: Moment;
-  state: string;
-  deleted?: boolean;
-}
-
-export type BlogPostComments = BlogPostComment[];
 
 export interface BlogPost {
   author: {
@@ -65,11 +47,12 @@ export interface BlogPost {
     userId: string;
     username: string;
   };
-  // comments?: BlogPostComments;
+  comments: (CommentItem | CommentDeletedItem)[];
   content: string;
   created: Moment;
   firstPublishDate?: Moment;
   modified: Moment;
+  pinned: boolean;
   state: string;
   title: string;
   views: number;
@@ -310,7 +293,7 @@ export const reducer = combineReducers({
     },
   ),
   tree: createSessionReducer(initialState.tree, {
-    [actionTypes.tree.compute]: (state = initialState.tree, action) => {
+    [actionTypes.tree.compute]: (_state = initialState.tree, action) => {
       const a = action as unknown as { blogs: Blog[]; folders: BlogFolder[] };
       return computeAllBlogsFlatHierarchy(a.folders, a.blogs);
     },

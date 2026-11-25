@@ -5,12 +5,12 @@
 import moment from 'moment';
 import { AnyAction, Reducer } from 'redux';
 
-import { IHomeworkDiary } from './diaryList';
-
 import { actionTypes } from '~/framework/modules/homework/actions/tasks';
 import { IOrderedArrayById } from '~/infra/collections';
 import asyncReducer, { IAction, IState } from '~/infra/redux/async';
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
+
+import { IHomeworkDiary } from './diaryList';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -35,13 +35,6 @@ export interface IHomeworkDay {
 
 // All days of a homework.
 export type IHomeworkTasks = IOrderedArrayById<IHomeworkDay> & { diaryInfo?: Partial<IHomeworkDiary> };
-
-// Task statuses of a homework.
-export interface IHomeworkTaskStatus {
-  entryId: string;
-  finished: boolean;
-}
-export type IHomeworkTaskStatuses = IHomeworkTaskStatus[];
 
 // All diaries
 export interface IAllHomeworkTasksByHomeworkIds {

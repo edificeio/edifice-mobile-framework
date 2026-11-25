@@ -1,4 +1,4 @@
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount, AuthLoggedAccount } from '~/framework/modules/auth/model';
 
 export interface IResource {
   shared?: { userId?: string; groupId?: string; [key: string]: boolean | string | undefined }[];
@@ -30,4 +30,29 @@ export const resourceRightFilter = (
   session: AuthLoggedAccount,
 ) => {
   return resources.filter(resource => resourceHasRight(resource, key, session));
+};
+
+/**
+ * Get new-generations rights from string array.
+ * @param data
+ * @param session
+ * @returns
+ */
+export const computeRights = (data: { rights: string[] }, session: AuthActiveAccount) => {
+  const rights: Set<string> = new Set();
+  for (const rightStr of data.rights) {
+    const right = rightStr.split(':'); // 0: target, 1: id, 2: right if not creator
+    switch (right[0]) {
+      case 'creator':
+        if (right[1] === session.user.id) rights.add(right[0]);
+        break;
+      case 'user':
+        if (right[1] === session.user.id) rights.add(right[2]);
+        break;
+      case 'group':
+        if (session.user.groups.includes(right[1])) rights.add(right[2]);
+        break;
+    }
+  }
+  return [...rights];
 };

@@ -2,7 +2,11 @@
  * Blog services
  */
 
-import { blogAdapter, blogFolderAdapter, blogPostAdapter, blogPostCommentsAdapter } from './adapters';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { BlogList } from '~/framework/modules/blog/reducer';
+import { sessionFetch } from '~/framework/util/transport';
+
+import { blogAdapter, blogFolderAdapter, blogPostAdapter, hydratePostComments } from './adapters';
 import {
   BlogPostCommentIdType,
   BlogPostIdType,
@@ -14,10 +18,6 @@ import {
   IEntcoreBlogPostList,
   IEntcoreCreatedBlogPost,
 } from './types';
-
-import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { BlogList } from '~/framework/modules/blog/reducer';
-import { sessionFetch } from '~/framework/util/transport';
 
 export const blogService = {
   comments: {
@@ -31,12 +31,12 @@ export const blogService = {
       const api = `/blog/comments/${blogId}/${postId}`;
       const entcoreBlogPostComments = await sessionFetch.json<IEntcoreBlogPostComments>(api);
       // Run the adapter for the received blog post comments
-      return blogPostCommentsAdapter(entcoreBlogPostComments);
+      return hydratePostComments(entcoreBlogPostComments);
     },
-    publish: async (session: AuthActiveAccount, blogPostId: BlogPostIdType, comment: string) => {
+    publish: async (session: AuthActiveAccount, blogPostId: BlogPostIdType, comment: string, replyTo?: string) => {
       const { blogId, postId } = blogPostId;
       const api = `/blog/comment/${blogId}/${postId}`;
-      const body = JSON.stringify({ comment });
+      const body = JSON.stringify({ comment, replyTo });
       return sessionFetch.json<{ number: number }>(api, { body, method: 'POST' });
     },
     update: async (session: AuthActiveAccount, blogPostCommentId: BlogPostCommentIdType, comment: string) => {

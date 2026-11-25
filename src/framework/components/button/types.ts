@@ -1,10 +1,12 @@
-import type { ColorValue, Pressable, PressableProps, TextProps, ViewProps } from 'react-native';
+import type { ColorValue, PressableProps, TextProps, ViewProps } from 'react-native';
+
+import type { PressableProps as RNGHPressableProps } from 'react-native-gesture-handler';
 
 import type { SvgIconName } from '../picture';
 
 export interface BaseButtonCommonProps extends Omit<PressableProps, 'children' | 'style' | 'testID'> {
   loading?: boolean;
-  PressableComponent?: typeof Pressable;
+  PressableComponent?: React.ComponentType<PressableProps> | React.ComponentType<RNGHPressableProps>;
   contentColor: ColorValue;
   contentColorActive?: ColorValue;
   textStyle?: TextProps['style'];

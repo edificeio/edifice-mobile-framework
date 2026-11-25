@@ -1,4 +1,5 @@
 export interface IEntcoreBlog {
+  'allowReplies': boolean;
   '_id': string;
   'visibility': string;
   'title': string;
@@ -10,6 +11,7 @@ export interface IEntcoreBlog {
   'created': { $date: number };
   'modified': { $date: number };
   'author': IEntcoreBlogPostBaseAuthor;
+  'rights': string[];
   'shared'?: ({
     [key: string]: boolean | string | undefined;
   } & {
@@ -26,7 +28,7 @@ export interface IEntcoreBlogPostBaseAuthor {
 }
 interface IEntcoreBlogPostBase {
   author: IEntcoreBlogPostBaseAuthor;
-  comments?: IEntcoreBlogPostComments;
+  comments: IEntcoreBlogPostComments;
   content: string;
   created: { $date: number };
   modified: { $date: number };
@@ -38,6 +40,7 @@ interface IEntcoreBlogPostBase {
 
 export interface IEntcoreBlogPost extends IEntcoreBlogPostBase {
   firstPublishDate?: { $date: number };
+  pinned?: boolean;
 }
 
 export type IEntcoreBlogPostList = IEntcoreBlogPost[];
@@ -60,11 +63,12 @@ export interface IEntcoreBlogPostComment {
     username: string;
   };
   comment: string;
-  created: { $date: number };
+  created: { $date: string };
   id: string;
   modified?: { $date: number };
   state: string;
   deleted?: boolean;
+  replyTo?: string;
 }
 
 export type IEntcoreBlogPostComments = IEntcoreBlogPostComment[];

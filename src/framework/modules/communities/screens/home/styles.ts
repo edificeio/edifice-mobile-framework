@@ -12,7 +12,8 @@ const LOADER_TITLE = {
 };
 
 export default StyleSheet.create({
-  announcementTitle: {
+  announcementHeader: {
+    gap: UI_SIZES.spacing.minor,
     paddingBottom: UI_SIZES.spacing.minor,
   },
   emptyContent: {

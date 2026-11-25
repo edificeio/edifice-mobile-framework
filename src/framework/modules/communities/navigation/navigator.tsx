@@ -1,9 +1,15 @@
 import * as React from 'react';
 
 import moduleConfig from '~/framework/modules/communities/module-config';
+import CommunitiesDiscussionDetailsScreen, {
+  DiscussionDetailsScreenOptions as discussionDetailsNavBar,
+} from '~/framework/modules/communities/screens/discussions-details';
 import CommunitiesDiscussionsScreen, {
   DiscussionsScreenOptions as discussionsNavBar,
-} from '~/framework/modules/communities/screens/discussions';
+} from '~/framework/modules/communities/screens/discussions-list';
+import CommunitiesDiscussionMessageEditorScreen, {
+  DiscussionMessageEditorScreenOptions as discussionMessageEditorNavBar,
+} from '~/framework/modules/communities/screens/discussions-message-editor';
 import CommunitiesDocumentsScreen, { computeNavBar as documentsNavBar } from '~/framework/modules/communities/screens/documents';
 import CommunitiesHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/communities/screens/home';
 import CommunitiesJoinConfirmScreen, {
@@ -33,6 +39,12 @@ export default () =>
         name={communitiesRouteNames.discussions}
         component={CommunitiesDiscussionsScreen}
         options={discussionsNavBar}
+        initialParams={{}}
+      />
+      <Stack.Screen
+        name={communitiesRouteNames.discussionDetails}
+        component={CommunitiesDiscussionDetailsScreen}
+        options={discussionDetailsNavBar}
         initialParams={{}}
       />
       <Stack.Screen
@@ -66,8 +78,15 @@ export default () =>
           options={joinConfirmNavBar}
         />
       </Stack.Group>
+      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+        <Stack.Screen
+          name={communitiesRouteNames.discussionMessageEditor}
+          component={CommunitiesDiscussionMessageEditorScreen}
+          options={discussionMessageEditorNavBar}
+        />
+      </Stack.Group>
     </>
   ));
 
-setModalModeForRoutes([communitiesRouteNames.joinConfirm]);
+setModalModeForRoutes([communitiesRouteNames.joinConfirm, communitiesRouteNames.discussionMessageEditor]);
 setCrossIconBlackForRoutes([communitiesRouteNames.joinConfirm]);

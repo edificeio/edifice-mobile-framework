@@ -3,7 +3,6 @@ import { View, ViewStyle } from 'react-native';
 
 import { CommunityType, InvitationStatus } from '@edifice.io/community-client-rest-rn';
 import { InvitationResponseDtoWithThumbnails } from '@edifice.io/community-client-rest-rn/utils';
-import { useFocusEffect } from '@react-navigation/native';
 import type { FlashListRef } from '@shopify/flash-list';
 import { useSelector } from 'react-redux';
 
@@ -184,25 +183,6 @@ export default sessionScreen<Readonly<CommunitiesListScreen.AllProps>>(function 
       paginatedListRef.current.scrollToOffset({ animated: false, offset: 0 });
     }
   }, [loadData]);
-
-  // loadData is read through a ref: the focus effect keeps empty deps so it doesn't re-run on
-  // every filters change, and the ref keeps it from calling a stale loadData (old filters).
-  const loadDataRef = React.useRef(loadData);
-  loadDataRef.current = loadData;
-
-  // Skip the first focus, already handled by ContentLoader
-  const isFirstFocusRef = React.useRef(true);
-
-  // Reload the list when coming back to this screen
-  useFocusEffect(
-    React.useCallback(() => {
-      if (isFirstFocusRef.current) {
-        isFirstFocusRef.current = false;
-        return;
-      }
-      loadDataRef.current(0, true).catch(e => console.error('Error while refreshing communities list', e));
-    }, []),
-  );
 
   return (
     <>
