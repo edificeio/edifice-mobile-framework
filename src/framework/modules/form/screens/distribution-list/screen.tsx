@@ -5,9 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import styles from './styles';
-import { FormDistributionListScreenDispatchProps, FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
-
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
@@ -25,6 +22,9 @@ import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/n
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+
+import styles from './styles';
+import { FormDistributionListScreenDispatchProps, FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -218,6 +218,8 @@ export default connect(
             distributions: formState.distributions.data.filter(d => d.formId === form.id),
           } as IFormDistributions;
         })
+        // A form without any distribution for the user can't be displayed (the card reads distributions[0]).
+        .filter(form => form.distributions.length > 0)
         .sort((a, b) => (a.distributions[0].dateSending < b.distributions[0].dateSending ? 1 : -1)),
       initialLoadingState: formState.distributions.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
       session,
