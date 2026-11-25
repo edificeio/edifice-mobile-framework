@@ -66,6 +66,8 @@ export default function HomeSentNotificationsScreen({ navigation, route }: Reado
   const nextPage = React.useRef<number>(0);
   const endReached = React.useRef<boolean>(false);
   const fetching = React.useRef<boolean>(false);
+  // bumped by each reload, so that a page asked before it is dropped when it lands.
+  const loadId = React.useRef<number>(0);
 
   // unset until the notification types are loaded.
   const [selection, setSelection] = React.useState<NotificationFilterSelection | null>(null);
@@ -94,36 +96,41 @@ export default function HomeSentNotificationsScreen({ navigation, route }: Reado
   }, [savedSelection]);
 
   const fetchPage = React.useCallback(
-    async (page: number) => {
+    (page: number) => {
       const types = Object.keys(selection ?? {}).filter(type => selection?.[type]);
-      const pageNotifications = await notificationsService.sentPage(page, types);
-      nextPage.current = page + 1;
-      endReached.current = pageNotifications.length < PAGE_SIZE;
-      return pageNotifications;
+      return notificationsService.sentPage(page, types);
     },
     [selection],
   );
 
   const reload = React.useCallback(async () => {
-    // a page already on its way would land after the reloaded list: skip, the next pull reloads.
-    if (fetching.current) return;
+    loadId.current += 1;
+    const id = loadId.current;
     fetching.current = true;
     try {
-      setNotifications(await fetchPage(0));
+      const pageNotifications = await fetchPage(0);
+      if (id !== loadId.current) return;
+      nextPage.current = 1;
+      endReached.current = pageNotifications.length < PAGE_SIZE;
+      setNotifications(pageNotifications);
       setLoadFailed(false);
     } catch (e) {
+      if (id !== loadId.current) return;
       // a failed reload keeps the list already shown
       console.error('Error while loading the sent notifications', e);
       setLoadFailed(true);
       if (hasNotifications.current) Toast.showError(I18n.get('timeline-error-text'));
     } finally {
-      fetching.current = false;
+      if (id === loadId.current) fetching.current = false;
     }
   }, [fetchPage]);
 
   const restartLoading = React.useCallback(() => {
     setLoading(true);
-    reload().finally(() => setLoading(false));
+    // a newer reload still on its way ends the loading itself.
+    reload().finally(() => {
+      if (!fetching.current) setLoading(false);
+    });
   }, [reload]);
 
   // the first page, then a new one each time the selection changes.
@@ -154,17 +161,23 @@ export default function HomeSentNotificationsScreen({ navigation, route }: Reado
 
   const onEndReached = React.useCallback(async () => {
     if (fetching.current || endReached.current || loading) return;
+    const id = loadId.current;
+    const page = nextPage.current;
     fetching.current = true;
     setLoadingMore(true);
     try {
-      const pageNotifications = await fetchPage(nextPage.current);
+      const pageNotifications = await fetchPage(page);
+      if (id !== loadId.current) return;
+      nextPage.current = page + 1;
+      endReached.current = pageNotifications.length < PAGE_SIZE;
       setNotifications(current => [...current, ...pageNotifications]);
     } catch (e) {
+      if (id !== loadId.current) return;
       // the same page is asked again on the next scroll.
       console.error('Error while loading the next page of sent notifications', e);
       Toast.showError(I18n.get('timeline-error-text'));
     } finally {
-      fetching.current = false;
+      if (id === loadId.current) fetching.current = false;
       setLoadingMore(false);
     }
   }, [fetchPage, loading]);
