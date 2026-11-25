@@ -41,13 +41,17 @@ export const CommunityCardSmall = ({
   return (
     <TouchableOpacity style={cardStyle} onPress={onPress} testID="community-card-small">
       <Image
-        fallback={{
-          accentColors:
-            appTheme.color && appTheme.color !== 'nabook-color'
-              ? theme.palette.complementary[appTheme.color]
-              : theme.palette.primary,
-          icon: { name: appTheme.icon as SvgIconName, type: 'Svg' },
-        }}
+        // Communities can be missing from the user's apps: let Image use its default fallback.
+        fallback={
+          appTheme
+            ? {
+                accentColors:
+                  (appTheme.color && appTheme.color !== 'nabook-color' && theme.palette.complementary[appTheme.color]) ||
+                  theme.palette.primary,
+                icon: { name: appTheme.icon as SvgIconName, type: 'Svg' },
+              }
+            : undefined
+        }
         source={imageSource}
         style={styles.imgContainer}
       />
