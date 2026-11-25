@@ -1,45 +1,32 @@
 import { IGlobalState, Reducers } from '~/app/store';
 import moduleConfig from '~/framework/modules/user/module-config';
-import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
+import createReducer from '~/framework/util/redux/reducerFactory';
 
-export interface UserState {
-  sentNotificationFilters?: Record<string, boolean>;
-}
+// State type
 
-export const userActionTypes = {
-  SET_SENT_NOTIFICATION_FILTERS: moduleConfig.namespaceActionType(
-    'SET_SENT_NOTIFICATION_FILTERS',
-  ) as `${string}_SET_SENT_NOTIFICATION_FILTERS`,
-};
+export interface UserState {}
 
-type UserAction = {
-  type: typeof userActionTypes.SET_SENT_NOTIFICATION_FILTERS;
-  payload: { sentNotificationFilters: Record<string, boolean> };
-};
+// Initial state value
 
-type ActionOf<T extends UserAction['type']> = Extract<UserAction, { type: T }>;
+export const initialState: UserState = {};
 
-const reducer = createSessionReducer<UserState, UserAction>(
-  {},
-  {
-    [userActionTypes.SET_SENT_NOTIFICATION_FILTERS]: (state, action) => ({
-      ...state,
-      sentNotificationFilters: (action as ActionOf<typeof userActionTypes.SET_SENT_NOTIFICATION_FILTERS>).payload
-        .sentNotificationFilters,
-    }),
-  },
-);
+// Actions definitions
 
-export const userActions = {
-  setSentNotificationFilters: (sentNotificationFilters: Record<string, boolean>) => ({
-    payload: { sentNotificationFilters },
-    type: userActionTypes.SET_SENT_NOTIFICATION_FILTERS,
-  }),
-};
+export const actionTypes = {};
 
-export const userSelectors = {
-  getSentNotificationFilters: (state: IGlobalState) => moduleConfig.getState(state).sentNotificationFilters,
-};
+export interface ActionPayloads {}
+
+export const actions = {};
+
+// Reducer
+
+const reducer = createReducer(initialState, {});
+
+// State getters
+
+export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as UserState;
+
+// Register the reducer
 
 Reducers.register(moduleConfig.reducerName, reducer);
 export default reducer;

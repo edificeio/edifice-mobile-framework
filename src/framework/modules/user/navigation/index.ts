@@ -1,5 +1,7 @@
 import { ParamListBase } from '@react-navigation/native';
 
+import type { HomeSentNotificationFiltersScreen } from '~/framework/modules/home/screens/sent-notification-filters/types';
+import type { HomeSentNotificationsScreen } from '~/framework/modules/home/screens/sent-notifications/types';
 import moduleConfig from '~/framework/modules/user/module-config';
 import type { UserHomeScreenNavParams } from '~/framework/modules/user/screens/home';
 import type { UserLangScreenNavParams } from '~/framework/modules/user/screens/lang/types';
@@ -11,8 +13,6 @@ import type { UserEditMoodMottoScreenNavParams } from '~/framework/modules/user/
 import type { UserStructuresScreenNavParams } from '~/framework/modules/user/screens/profile/structures';
 import type { IPushNotifsItemsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
 import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
-import type { UserSentNotificationFiltersScreen } from '~/framework/modules/user/screens/sent-notification-filters/types';
-import type { UserSentNotificationsScreen } from '~/framework/modules/user/screens/sent-notifications/types';
 import type { UserThemeScreenNavParams } from '~/framework/modules/user/screens/theme/types';
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
 
@@ -39,8 +39,8 @@ export interface UserNavigationParams extends ParamListBase {
   'home': UserHomeScreenNavParams;
   'notifPrefs': IPushNotifsTopicsListScreenNavigationParams;
   'notifPrefsDetails': IPushNotifsItemsListScreenNavigationParams;
-  'sentNotifications': UserSentNotificationsScreen.NavParams;
-  'sentNotificationsFilters': UserSentNotificationFiltersScreen.NavParams;
+  'sentNotifications': HomeSentNotificationsScreen.NavParams;
+  'sentNotificationsFilters': HomeSentNotificationFiltersScreen.NavParams;
   'profile': ProfileScreenNavigationParams;
   'structures': UserStructuresScreenNavParams;
   'editHobbies': UserEditHobbiesScreenNavParams;

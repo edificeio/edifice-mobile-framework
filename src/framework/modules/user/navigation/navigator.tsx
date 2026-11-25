@@ -4,6 +4,12 @@ import AuthChangeEmailScreen from '~/framework/modules/auth/screens/change-email
 import { requirementChangeEmailScreenOptions } from '~/framework/modules/auth/screens/change-email/screen';
 import AuthChangeMobileScreen from '~/framework/modules/auth/screens/change-mobile';
 import AuthMFAScreen, { computeNavBarModal as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
+import HomeSentNotificationFiltersScreen, {
+  HomeSentNotificationFiltersScreenOptions,
+} from '~/framework/modules/home/screens/sent-notification-filters';
+import HomeSentNotificationsScreen, {
+  HomeSentNotificationsScreenOptions,
+} from '~/framework/modules/home/screens/sent-notifications';
 import moduleConfig from '~/framework/modules/user/module-config';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
 import UserLangScreen, { computeNavBar as langNavBar } from '~/framework/modules/user/screens/lang';
@@ -23,12 +29,6 @@ import PushNotifsItemsListScreen, {
 import PushNotifsTopicsListScreen, {
   computeNavBar as pushNotifsTopicsListNavBar,
 } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
-import UserSentNotificationFiltersScreen, {
-  UserSentNotificationFiltersScreenOptions,
-} from '~/framework/modules/user/screens/sent-notification-filters';
-import UserSentNotificationsScreen, {
-  UserSentNotificationsScreenOptions,
-} from '~/framework/modules/user/screens/sent-notifications';
 import UserThemeScreen, { computeNavBar as themeNavBar } from '~/framework/modules/user/screens/theme';
 import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework/modules/user/screens/who-are-we';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
@@ -51,8 +51,8 @@ export default () =>
       />
       <Stack.Screen
         name={userRouteNames.sentNotifications}
-        component={UserSentNotificationsScreen}
-        options={UserSentNotificationsScreenOptions}
+        component={HomeSentNotificationsScreen}
+        options={HomeSentNotificationsScreenOptions}
         initialParams={{}}
       />
       <Stack.Screen
@@ -99,8 +99,8 @@ export default () =>
         />
         <Stack.Screen
           name={userRouteNames.sentNotificationsFilters}
-          component={UserSentNotificationFiltersScreen}
-          options={UserSentNotificationFiltersScreenOptions}
+          component={HomeSentNotificationFiltersScreen}
+          options={HomeSentNotificationFiltersScreenOptions}
           initialParams={{}}
         />
       </Stack.Group>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Alert, TouchableOpacity, View } from 'react-native';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
@@ -21,19 +21,19 @@ import { NotificationList } from '~/framework/modules/home/components/notificati
 import { isUserbookNotification } from '~/framework/modules/home/components/notification/util';
 import { useRefresh } from '~/framework/modules/home/hooks';
 import { notificationsService } from '~/framework/modules/home/service';
-import { loadSentNotificationFiltersAction } from '~/framework/modules/user/actions';
+import { getSentNotificationsFilters, setSentNotificationsFilters } from '~/framework/modules/home/storage';
+import type { NotificationFilterSelection } from '~/framework/modules/home/templates/notification-filters';
 import { userRouteNames } from '~/framework/modules/user/navigation';
-import { userSelectors } from '~/framework/modules/user/reducer';
 import type { ITimelineNotification } from '~/framework/util/notifications';
 import { defaultNotificationActionStack, handleNotificationAction } from '~/framework/util/notifications/routing';
 
 import styles from './styles';
-import type { UserSentNotificationsScreen } from './types';
+import type { HomeSentNotificationsScreen } from './types';
 
 // the server sends pages of 25: a shorter page is the last one.
 const PAGE_SIZE = 25;
 
-export const UserSentNotificationsScreenOptions = screenOptions(() => ({
+export const HomeSentNotificationsScreenOptions = screenOptions(() => ({
   title: I18n.get('user-sentnotifications-title'),
 }));
 
@@ -48,7 +48,7 @@ const renderHeaderActions = (onPressInfo: () => void, onPressFilter: () => void)
   />
 );
 
-export default function UserSentNotificationsScreen({ navigation }: Readonly<UserSentNotificationsScreen.AllProps>) {
+export default function HomeSentNotificationsScreen({ navigation, route }: Readonly<HomeSentNotificationsScreen.AllProps>) {
   const dispatch = useDispatch<AppDispatch>();
 
   const [notifications, setNotifications] = React.useState<ITimelineNotification[]>([]);
@@ -67,21 +67,41 @@ export default function UserSentNotificationsScreen({ navigation }: Readonly<Use
   const endReached = React.useRef<boolean>(false);
   const fetching = React.useRef<boolean>(false);
 
-  const sentNotificationFilters = useSelector(userSelectors.getSentNotificationFilters);
-  const appliedFilters = React.useRef<Record<string, boolean> | null>(null);
+  // unset until the notification types are loaded.
+  const [selection, setSelection] = React.useState<NotificationFilterSelection | null>(null);
+
+  // the types are loaded once: a page then only asks for its notifications.
+  const loadSelection = React.useCallback(async () => {
+    try {
+      const authorizedTypes = await dispatch(loadAuthorizedNotificationTypesAction());
+      setSelection(getSentNotificationsFilters(authorizedTypes));
+    } catch (e) {
+      console.error('Error while loading the notification types', e);
+      setLoadFailed(true);
+      setLoading(false);
+    }
+  }, [dispatch]);
+
+  React.useEffect(() => {
+    loadSelection();
+  }, [loadSelection]);
+
+  const savedSelection = route.params?.selection;
+  React.useEffect(() => {
+    if (!savedSelection) return;
+    setSentNotificationsFilters(savedSelection);
+    setSelection(savedSelection);
+  }, [savedSelection]);
 
   const fetchPage = React.useCallback(
     async (page: number) => {
-      const authorizedTypes = await dispatch(loadAuthorizedNotificationTypesAction());
-      const filters = dispatch(loadSentNotificationFiltersAction(authorizedTypes));
-      if (page === 0) appliedFilters.current = filters;
-      const types = authorizedTypes.filter(type => filters[type] !== false);
+      const types = Object.keys(selection ?? {}).filter(type => selection?.[type]);
       const pageNotifications = await notificationsService.sentPage(page, types);
       nextPage.current = page + 1;
       endReached.current = pageNotifications.length < PAGE_SIZE;
       return pageNotifications;
     },
-    [dispatch],
+    [selection],
   );
 
   const reload = React.useCallback(async () => {
@@ -106,14 +126,16 @@ export default function UserSentNotificationsScreen({ navigation }: Readonly<Use
     reload().finally(() => setLoading(false));
   }, [reload]);
 
+  // the first page, then a new one each time the selection changes.
   React.useEffect(() => {
-    reload().finally(() => setLoading(false));
-  }, [reload]);
+    if (selection) restartLoading();
+  }, [restartLoading, selection]);
 
-  React.useEffect(() => {
-    if (!sentNotificationFilters || appliedFilters.current === null || sentNotificationFilters === appliedFilters.current) return;
-    restartLoading();
-  }, [restartLoading, sentNotificationFilters]);
+  const retry = React.useCallback(() => {
+    if (selection) return restartLoading();
+    setLoading(true);
+    loadSelection();
+  }, [loadSelection, restartLoading, selection]);
 
   const { onRefresh, refreshing } = useRefresh(reload);
 
@@ -121,7 +143,10 @@ export default function UserSentNotificationsScreen({ navigation }: Readonly<Use
   const closeInfo = React.useCallback(() => infoRef.current?.dismiss(), []);
 
   const openInfo = React.useCallback(() => infoRef.current?.present(), []);
-  const openFilters = React.useCallback(() => navigation.navigate(userRouteNames.sentNotificationsFilters, {}), [navigation]);
+  const openFilters = React.useCallback(
+    () => navigation.navigate(userRouteNames.sentNotificationsFilters, { selection: selection ?? undefined }),
+    [navigation, selection],
+  );
 
   React.useEffect(() => {
     navigation.setOptions({ headerRight: renderHeaderActions(openInfo, openFilters) });
@@ -207,7 +232,7 @@ export default function UserSentNotificationsScreen({ navigation }: Readonly<Use
 
   function renderList() {
     // with nothing loaded, the empty list would tell the user they sent nothing.
-    if (loadFailed && !loading && !notifications.length) return <EmptyErrorScreen onRetry={restartLoading} />;
+    if (loadFailed && !loading && !notifications.length) return <EmptyErrorScreen onRetry={retry} />;
     return (
       <NotificationList
         notifications={notifications}

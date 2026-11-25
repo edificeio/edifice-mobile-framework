@@ -1,8 +1,8 @@
-import moduleConfig from './module-config';
-import { INotifFilterSettings } from './reducer/notif-settings/notif-filter-settings';
-
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { Storage } from '~/framework/util/storage';
+
+import moduleConfig from './module-config';
+import { INotifFilterSettings } from './reducer/notif-settings/notif-filter-settings';
 
 export interface TimelineStorageData {}
 
@@ -10,6 +10,7 @@ export const storage = Storage.create<TimelineStorageData>(moduleConfig).setAppI
 
 export interface TimelinePreferencesData {
   'notif-filters': INotifFilterSettings;
+  'sent-notifications-filters': INotifFilterSettings;
 }
 
 const getOldStorageKeys = (session: AuthLoggedAccount) => ({
@@ -35,3 +36,12 @@ export const preferences = Storage.preferences<TimelinePreferencesData>(moduleCo
     Storage.global.remove(oldKeys[version]);
   }
 });
+
+// a type never saved stays shown.
+export const getSentNotificationsFilters = (types: readonly string[]): INotifFilterSettings => {
+  const saved = preferences.getJSON('sent-notifications-filters') ?? {};
+  return Object.fromEntries(types.map(type => [type, saved[type] ?? true]));
+};
+
+export const setSentNotificationsFilters = (selection: INotifFilterSettings) =>
+  preferences.setJSON('sent-notifications-filters', selection);
