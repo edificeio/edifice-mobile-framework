@@ -121,7 +121,7 @@ export const loadFlashMessagesAction = () => async (dispatch: ThunkDispatch<any,
 export const deleteNotificationAction = (notificationId: string) => async (dispatch: ThunkDispatch<any, any, any>) => {
   try {
     dispatch(notificationsActions.deleteRequest(notificationId));
-    await notificationsService.delete(notificationId);
+    await notificationsService.deleteForSelf(notificationId);
     dispatch(notificationsActions.deleteReceipt(notificationId));
   } catch (e) {
     dispatch(notificationsActions.deleteError(notificationId));

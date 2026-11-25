@@ -29,14 +29,8 @@ export const notifFiltersService = {
   },
 };
 
-export const NOTIFICATIONS_DEFAULT_VERSION = '3.0';
-
-// The server drops the user's own notifications before paginating; filtering them here would skew the page count.
-export const NOTIFICATIONS_WITHOUT_OWN_VERSION = '4.0';
-
 // the timeline and the sent notifications share this endpoint and its payload, only the query and headers differ.
-const fetchNotificationsPage = async (
-  caller: string,
+const fetchLastNotificationsPage = async (
   query: queryString.StringifiableRecord,
   headers?: Record<string, string>,
 ): Promise<ITimelineNotification[]> => {
@@ -47,34 +41,41 @@ const fetchNotificationsPage = async (
   }>(api, { headers });
 
   if (entcoreNotifications.status !== 'ok') {
-    throw new Error(`[notificationsService.${caller}] got status not ok from ${api}`);
+    throw new Error(`[notificationsService] got status not ok from ${api}`);
   }
   return entcoreNotifications.results.map(n => notificationAdapter(n) as ITimelineNotification);
 };
 
-export const notificationsService = {
-  delete: async (id: string) => {
-    const api = `/timeline/${id}`;
-    return sessionFetch.json(api, { method: 'PUT' });
-  },
+const LAST_NOTIFICATIONS_API_VERSION_1D = '3.0';
 
-  // deletes a notification the user sent, for everyone who can see it (`delete` only hides it for the user).
-  deleteSent: async (id: string): Promise<void> => {
+export const notificationsService = {
+  deleteForEveryone: async (id: string): Promise<void> => {
     const api = `/timeline/${id}`;
     await sessionFetch.json(api, { method: 'DELETE' });
   },
 
-  page: (page: number, filters: string[], apiVersion: string = NOTIFICATIONS_DEFAULT_VERSION): Promise<ITimelineNotification[]> =>
-    fetchNotificationsPage('page', { page, type: filters }, { Accept: `application/json;version=${apiVersion}` }),
+  // hides a notification for the user only.
+  deleteForSelf: async (id: string) => {
+    const api = `/timeline/${id}`;
+    return sessionFetch.json(api, { method: 'PUT' });
+  },
+
+  // `_` keeps a cached page from being served.
+  getSentNotificationsPage: (page: number, filters: readonly string[]): Promise<ITimelineNotification[]> =>
+    fetchLastNotificationsPage({ _: Date.now(), mine: 1, page, type: filters }),
+
+  page: (
+    page: number,
+    filters: string[],
+    apiVersion: string = LAST_NOTIFICATIONS_API_VERSION_1D,
+  ): Promise<ITimelineNotification[]> =>
+    fetchLastNotificationsPage({ page, type: filters }, { Accept: `application/json;version=${apiVersion}` }),
 
   report: async (id: string) => {
     const api = `/timeline/${id}/report`;
     const method = 'PUT';
     return sessionFetch.json(api, { method });
   },
-
-  sentPage: (page: number, filters: readonly string[]): Promise<ITimelineNotification[]> =>
-    fetchNotificationsPage('sentPage', { _: Date.now(), mine: 1, page, type: filters }),
 };
 
 // Flash Messages

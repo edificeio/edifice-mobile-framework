@@ -98,7 +98,7 @@ export default function HomeSentNotificationsScreen({ navigation, route }: Reado
   const fetchPage = React.useCallback(
     (page: number) => {
       const types = Object.keys(selection ?? {}).filter(type => selection?.[type]);
-      return notificationsService.sentPage(page, types);
+      return notificationsService.getSentNotificationsPage(page, types);
     },
     [selection],
   );
@@ -204,7 +204,7 @@ export default function HomeSentNotificationsScreen({ navigation, route }: Reado
   const deleteNotification = React.useCallback(async (id: string) => {
     setNotifications(current => current.map(item => (item.id === id ? { ...item, deleted: true } : item)));
     try {
-      await notificationsService.deleteSent(id);
+      await notificationsService.deleteForEveryone(id);
       setNotifications(current => current.filter(item => item.id !== id));
       Toast.showSuccess(I18n.get('user-sentnotifications-delete-success'));
     } catch (e) {

@@ -25,7 +25,7 @@ import { isUserbookNotification } from '~/framework/modules/home/components/noti
 import { useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
 import timelineConfig from '~/framework/modules/home/module-config';
 import { getTimelineWorkflowInformation } from '~/framework/modules/home/rights';
-import { NOTIFICATIONS_WITHOUT_OWN_VERSION, notificationsService } from '~/framework/modules/home/service';
+import { notificationsService } from '~/framework/modules/home/service';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import type { ITimelineNotification } from '~/framework/util/notifications';
@@ -35,6 +35,9 @@ import styles from './styles';
 import { HomeNotificationsScreenProps } from './types';
 
 const EMPTY_TEXTS_I18N = { text: 'timeline-emptyscreen-text', title: 'timeline-emptyscreen-title' };
+
+// the back leaves out the user's own notifications before paginating.
+const LAST_NOTIFICATIONS_API_VERSION_2D = '4.0';
 
 // ToDo: bring back the badge of the unread count once the back exposes.
 export const HomeNotificationsScreenOptions = (): MaterialTopTabNavigationOptions => ({
@@ -54,7 +57,7 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
     if (!notifications.endReached) dispatch(loadNotificationsPageAction());
   }, [dispatch, notifications.endReached]);
 
-  const reload = React.useCallback(() => dispatch(startLoadNotificationsAction(NOTIFICATIONS_WITHOUT_OWN_VERSION)), [dispatch]);
+  const reload = React.useCallback(() => dispatch(startLoadNotificationsAction(LAST_NOTIFICATIONS_API_VERSION_2D)), [dispatch]);
 
   const reloading = useHomeReload(reload);
 
