@@ -33,7 +33,7 @@ export function useMediaDisplay(media: Media) {
   const aggregatedApps = useSelector(selectAggregatedApps);
   const matchingEntApp = isResourceMedia(media) ? media.appName : FILE_MEDIA_MATCHING_APP;
 
-  const colorName: keyof typeof theme.palette.complementary | undefined = aggregatedApps[matchingEntApp].color;
+  const colorName: keyof typeof theme.palette.complementary | undefined = aggregatedApps[matchingEntApp]?.color;
   const color =
     (colorName && colorName !== 'nabook-color' && theme.palette.complementary[colorName]) || DEFAULT_MEDIA_DISPLAY_COLOR_SHADES;
 
