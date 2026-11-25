@@ -4509,13 +4509,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@screeb/react-native@npm:4.4.4":
-  version: 4.4.4
-  resolution: "@screeb/react-native@npm:4.4.4"
+"@screeb/react-native@npm:4.5.0":
+  version: 4.5.0
+  resolution: "@screeb/react-native@npm:4.5.0"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10/0681b7458cd18f7eaecce5c2cd55be6bbdf79cdc7abfde6d12e659cfb0537425a7a5b995d73488fa9738923fd99272a9cbfbb913a5f1f0ce7acbb4a2de75ebcf
+  checksum: 10/8a23514e2321b8d2c784aa8493129651564f8c7448876d72d7b6e545478e5d754ddae3fd3717327af614471d04309c4754b622864fcc1e0d76d6ad7069865d26
   languageName: node
   linkType: hard
 
@@ -5895,7 +5895,7 @@ __metadata:
     "@react-navigation/elements": "npm:2.9.25"
     "@react-navigation/native": "npm:7.3.3"
     "@react-navigation/native-stack": "npm:7.17.5"
-    "@screeb/react-native": "npm:4.4.4"
+    "@screeb/react-native": "npm:4.5.0"
     "@shopify/flash-list": "npm:2.3.2"
     "@skele/components": "npm:1.0.0-alpha.40"
     "@trivago/prettier-plugin-sort-imports": "npm:6.0.2"
