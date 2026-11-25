@@ -1,174 +1,160 @@
-# Migration : `wiki`
+# Bascule : `wiki`
 
-> Statut : spec, **en attente des préalables `explorer` et `audience`** — mis à jour le 2026-11-17
+> Statut : à faire (fiche de bascule ; préalable `explorer` fait le 2026-11-25, bascule à lancer) — mis à jour le 2026-11-25
+>
+> Fiche du module : sa bascule (étape 1), puis son assainissement (étape 2, §9). Le pourquoi de la migration, les règles et la définition de « terminé » sont dans [INTENT.md](../INTENT.md) et ne se répètent pas ici ; le patron est dans [BASCULE.md](../BASCULE.md). Une page : ce qui est propre à ce module.
+>
+> Remplace la fiche « spec » du 2026-11-17 (plan en 8 phases, d'avant le découpage bascule / assainissement). Ses décisions sont reprises en §6 ; ses corrections « au passage » vont au backlog (§5). L'ancienne version est dans git (`5f34cd48e`).
 
-## 1. Périmètre
+## 1. Ce que fait le module
 
-Module fonctionnel `wiki` (app ENT `Wiki`), en **lecture seule** : explorateur des wikis (dossiers + wikis), sommaire d'un wiki (vignette, description, liste des pages en arbre), lecture d'une page (auteur, date, contenu riche, page précédente / suivante, liste des pages en bottom sheet), vue marquée (audience).
+Lecture des wikis de l'ENT (app `Wiki`) : explorateur des dossiers et wikis, sommaire d'un wiki (vignette, description, pages en arbre), lecture d'une page (auteur, date, contenu riche, page précédente / suivante, liste des pages en bottom sheet), avec ses commentaires (ajout, réponse, modification, suppression ; arrivés d'upstream). Vue marquée (`audience`).
 
-Aujourd'hui **absent de l'app** : `NavigableModule`, pas dans `src/app/config/modules.ts`.
+On y entre par « Mes applis », par une notification `WIKI.*`, par l'ouverture d'une ressource `wiki` (`intents.resource`), et depuis la tuile « cours » de `communities` (ancien, non chargé).
 
-Dans le périmètre : déclaration, données, écrans, conversion de la bottom sheet.
+## 2. Taille et dépendances
 
-Hors périmètre, reporté :
+Repris de [SUIVI.md](SUIVI.md) le 2026-11-25.
 
-- Ouverture des notifications `WIKI.*` (`notif-handler.ts`) : pas d'équivalent dans le nouveau système (later.md, STATUS question 1).
-- Intent `registerIntent('Wiki', OPEN_RESOURCE)` (→ `wiki/summary`) : remplacé par `intents.resource` (`resourceType: 'wiki'`) le 2026-11-24, à déclarer à la bascule (`ToDo(wiki-migration)` dans `index.ts`, [framework.md](../framework.md)).
-- Création (écran `wiki/create` vide, composants `image-input`) : jamais branchée (question 4).
+| Fichiers | Lignes | Écrans | Modales | `connect(` | Notifications |
+| ---: | ---: | ---: | ---: | ---: | :---: |
+| 73 | 2 718 | 3 (+ `wiki/create`, vide) | 1 (`wiki/create`, `containedModal`) | 0 | oui |
 
-## 2. Existant
-
-### 2.1 Module ancien (`src/framework/modules/wiki`, 2 652 lignes)
-
-| Fichier            | Rôle                                                                                                                                                                                                                                                                                                                                 |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `module-config.ts` | `name: 'wiki'`, `entcoreScope: ['wiki', 'explorer']`, `matchEntcoreApp: 'Wiki'`, `entcoreTrackingName: 'Wiki'`, `storageName: 'wiki'` (aucun storage), `displayOrder: 0`, `fileManager.ressource` (image, caméra / galerie). `wikiAudienceConfig` (`module: 'wiki'`, `resourceType: 'page'`).                                        |
-| `index.ts`         | `NavigableModule` (reducer casté) + `registerIntent('Wiki', OPEN_RESOURCE)` + `setUpNotifHandlers()`.                                                                                                                                                                                                                                |
-| `navigation/`      | Routes `wiki` (explorateur), `wiki/summary`, `wiki/reader`, `wiki/create` (`containedModal`). Déjà en kebab-case.                                                                                                                                                                                                                    |
-| `model/index.ts`   | `Wiki`, `WikiPageMetaData`, `WikiPage`. Repose sur `Resource` / `ResourceHistory` de `explorer/model/types`, **qui n'existent plus** (erreurs tsc).                                                                                                                                                                                  |
-| `store.ts`         | Redux : `explorer`, `wikis` par id, `pages` par id ; actions `loadWiki` / `loadPage` ; sélecteurs (`moduleConfig.getState`).                                                                                                                                                                                                         |
-| `service/`         | `GET /wiki/{id}`, `GET /wiki/{id}/page/{pageId}` (`sessionFetch`, dates en `Temporal.Instant`). Contient des **règles métier** : droits calculés depuis `rights` (`creator` / `user` / `group`), pages masquées visibles seulement par `creator` / `manager`, ordre des pages en arbre (position, profondeur). Lit `getSession()`.   |
-| `rights.ts`        | `hasWikiCreationRights` (`WikiController                                                                                                                                                                                                                                                                                             | createWiki`), pour l'écran vide de l'explorateur. |
-| `notif-handler.ts` | `WIKI` `SHARED` / `PAGE-DELETED` → `wiki/summary` ; `PAGE-UPDATED` / `PAGE-CREATED` / `PAGE-VISIBLE` → `wiki/reader`, dans l'onglet de `timeline`.                                                                                                                                                                                   |
-| `screens/home/`    | Explorateur : template `ResourceExplorer`, titre par `createResourceExplorerNavBar`, écrans vides selon le dossier et le droit de création. Menu « nouveau cours » commenté.                                                                                                                                                         |
-| `screens/summary/` | Sommaire : `ContentLoader`, `ResourceHeader`, `PageList` ; titre par `setOptions` après chargement (et lu dans le store par `computeNavBar`).                                                                                                                                                                                        |
-| `screens/reader/`  | Lecture d'une page : `PageHeader` (visible / masquée), avatar, date, `RichEditorViewer`, précédente / suivante par `navigation.replace` (`reverseAnimation` → `animationTypeForReplace`), `PageListBottomSheet` (`@gorhom`), `useAudience().markView()`.                                                                             |
-| `screens/create/`  | Écran vide, **inatteignable** (seul accès dans le menu commenté).                                                                                                                                                                                                                                                                    |
-| `components/`      | `page-list` (+ `page-list-bottom-sheet`), `page-header`, `resource-header` (+ loader), `resource-description` (+ loader), `resource-thumbnail`, `select-button`, `icon-chip`. **Orphelins** : `image-input` (+ `image-input-button`, seul utilisateur de `FileManager.pick` / `fileManager.ressource`), `resource-thumbnail-loader`. |
-
-### 2.2 Consommateurs externes
-
-| Consommateur                                                             | Importe / référence                                      | Cible                                                                                                              |
-| ------------------------------------------------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `src/framework/modules/communities/components/home-screen-tiles/courses` | `wikiRouteNames.summary` (`navigate(…, { resourceId })`) | `communities` ancien, non chargé : façade `@deprecated` de `navigation/index.ts` (route `wiki/summary` inchangée). |
-| `src/app/override/modules.ts`, `__overrides__/*/modules.ts` (11)         | `require('~/framework/modules/wiki')`                    | Ancien registre, plus importé. Les 11 listes ont `wiki`. Nettoyage (fichiers overridés).                           |
-| `src/app/intents.ts`                                                     | `'wiki'` / `'Wiki'` (noms d'app)                         | Inchangé.                                                                                                          |
-
-### 2.3 Dépendances transverses
-
-| Dépendance                                                                                                              | État                                                   | Piste                                                                                                                                                                            |
-| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `~/framework/modules/explorer` (store, service, template `ResourceExplorer`, `createResourceExplorerNavBar`)            | **Ancien, à migrer** (`Module` sans écran, 452 lignes) | Partagé avec `blog`, `homework`, `scrapbook`. Template typé ancienne navigation (props `navigation` / `route`, `screenOptions`, `moduleConfig.namespaceActionType`). Question 2. |
-| `useAudience` (`~/framework/modules/audience`)                                                                          | Ancien (STATUS question ouverte n° 2)                  | Hook seul (`audienceService.view.post` + `useFocusEffect`), sans navigation : fonctionne tel quel. Question 3.                                                                   |
-| `BottomSheetModal` (`~/framework/components/modals/bottom-sheet`, `@gorhom`)                                            | Conversion imposée                                     | Modale `formSheet` (§4 n° 3).                                                                                                                                                    |
-| `~/framework/modules/auth/redux/reducer` (`getSession`)                                                                 | Façade `@deprecated`                                   | Session passée par l'action (`useSession` / getter de `~/modules/auth`).                                                                                                         |
-| `navBarOptions` (`titleTestID`, `backButtonTestID`), `screenOptions`                                                    | Ancien                                                 | `defineScreen` options ; `testID` du titre et du retour à reproduire (question 6).                                                                                               |
-| `toURISource` (`~/framework/modules/media`), `sessionImageSource`                                                       | Façade `media` / transport                             | `~/modules/media` (API publique), à vérifier en phase 5.                                                                                                                         |
-| `ContentLoader`, `RichEditorViewer`, `SingleAvatar`, `GhostButton`, `FlatList`, `EmptyScreen`, `useCurvedNavBarFeature` | Composants du framework                                | Tels quels.                                                                                                                                                                      |
-| `fileManager` de la config                                                                                              | Clé `fileManager` faite (2026-11-17)                   | Seul `image-input` (orphelin) s'en sert : question 4.                                                                                                                            |
-| `Temporal`                                                                                                              | Déjà utilisé                                           | Rien à faire.                                                                                                                                                                    |
+- **Modules anciens importés** : aucun. `timeline` (`module-config`, dans `notif-handler.ts`) part avec le geste 19. Le reste est basculé ou en façade :
+  - `explorer` (basculé, `CoreModule`) : template `ResourceExplorer`, `explorerScreenHeader`, `RootFolderId`. Le store de `wiki` a encore une slice `explorer` sur les anciennes fabriques, supprimées : 3 erreurs `tsc` (`store.ts`), plus 5 sur les anciens types du template (`screens/home/`). Nouveau contrat à appliquer ([explorer.md](explorer.md) décisions 6 et 7).
+  - `comments` (basculé, `CoreModule`) : `ResourceWithCommentsTemplate` (navigue lui-même vers `comments/reply`), `CommentsTreeProps`, types de `comments/types`. `model/index.ts` et `service/index.ts` importent encore `comments/templates/comments-thread` et `comments/components/comments-thread`, absents depuis upstream ([comments.md](comments.md)).
+  - `audience` : façade `@deprecated` `~/framework/modules/audience` (`useAudience`, type `AudienceReferer`), qui marche.
+  - `media` : façade `~/framework/modules/media` (`toURISource`), qui marche.
+  - `auth` : `~/framework/modules/auth/model` (`rights.ts`, `service/`), `getSession` de `~/framework/modules/auth/redux/reducer` (`service/`, `screens/home/`) : geste 14.
+- **Importeurs** :
+  - `src/framework/modules/communities/components/home-screen-tiles/courses/component.tsx` : `wikiRouteNames.summary` (`navigate(…, { resourceId })`). Ancien, non chargé : **façade** `navigation/index.ts` (geste 15), route `wiki/summary` inchangée.
+  - `src/app/override/modules.ts` et `__overrides__/*/modules.ts` (11, fichiers overridés) : `require('~/framework/modules/wiki')`, ancien registre, plus lu. Non touchés.
+  - `src/app/ent-app-names.ts` : `'wiki'` (nom d'app). Inchangé.
 
 ## 3. Comportements à conserver
 
-**Faciles à oublier**
+Aucun flow Maestro aujourd'hui. Sur cette branche, l'ancienne génération n'est pas jouable (`wiki` non chargé) : les flows se jouent avant sur un build de la branche de développement, après sur la bascule. Les `testID` du module le permettent (liste plus bas).
 
-- Droits sur un wiki calculés côté app depuis `rights` (`creator:<id>`, `user:<id>:<right>`, `group:<id>:<right>`).
-- Pages masquées (`isVisible: false`) listées seulement pour `creator` / `manager` ; sinon filtrées.
-- Ordre des pages : tri par `position`, puis parcours en profondeur des enfants (triés par `position`), avec `depth`. Précédente / suivante suivent cet ordre.
-- Changer de page **remplace** l'écran de lecture (pas d'empilement), animation inversée pour « précédente ».
-- La liste des pages de la lecture surligne la page courante et s'ouvre sous le bouton de sélection (`additionalTopInset`).
-- Vue marquée une fois par focus, après chargement de la page (`useAudience`).
-- Titre de l'en-tête : nom du wiki (sommaire), titre de la page (lecture), nom du dossier ou `wiki-home-title` (explorateur).
-- Auteur affiché : dernier contributeur, sinon auteur ; date : `updatedAt`, sinon `createdAt` (`I18n.date`).
-- Explorateur vide : à la racine, bouton vers `/wiki` si droit `createWiki` ; dans un dossier, écran « dossier vide ».
-- Tirer pour rafraîchir sur le sommaire et la lecture (`ContentLoader`).
+| # | Comportement | Flow ou recette | Passe sur l'ancienne | Passe après |
+| --- | --- | --- | :---: | :---: |
+| 1 | « Mes applis » → Wiki ouvre l'explorateur ; titre `wiki-home-title`, puis nom du dossier ouvert ; racine vide : bouton vers `/wiki` si droit `createWiki`, sinon texte seul ; dossier vide : écran « dossier vide » | `wiki-01-explorateur.yaml` | — | — |
+| 2 | Toucher un wiki ouvre le sommaire : titre = nom du wiki ; vignette, description dépliable (`wiki-expansion-indicator`), pages en arbre (`list-item-number-<n>`), pages masquées seulement pour `creator` / `manager` ; tirer pour rafraîchir | `wiki-02-sommaire.yaml` | — | — |
+| 3 | Toucher une page ouvre la lecture : titre = titre de la page ; badge visible / masquée ; auteur = dernier contributeur sinon auteur ; date = `updatedAt` sinon `createdAt` ; contenu riche ; vue marquée une fois par focus, après le chargement | `wiki-03-lecture.yaml` | — | — |
+| 4 | Précédente / suivante **remplacent** l'écran de lecture (pas d'empilement : un seul retour vers le sommaire), animation inversée pour « précédente » ; boutons désactivés aux extrémités, dans l'ordre de l'arbre | `wiki-04-precedente-suivante.yaml` | — | — |
+| 5 | `page-select-button` ouvre la liste des pages (bottom sheet sous le bouton), page courante surlignée ; choisir une page remplace la lecture | `wiki-05-liste-pages.yaml` | — | — |
+| 6 | Commentaires de la page : champ si droit `comment` ou `creator` ; publier, répondre (modale `comments/reply`), modifier, supprimer ; défilement vers le commentaire publié | recette manuelle (écrit sur le serveur) : publier puis supprimer un commentaire sur un wiki de test | — | — |
+| 7 | Notification `WIKI` `SHARED` / `PAGE-DELETED` → sommaire ; `PAGE-UPDATED` / `PAGE-CREATED` / `PAGE-VISIBLE` → lecture | non jouable sur la branche (intents pas encore lus, [STATUS.md](STATUS.md) B1) : relecture de `intents.ts` | — | — |
 
-**Données** : `GET /wiki/{id}`, `GET /wiki/{id}/page/{pageId}`, `/explorer/…`. Pas de storage.
+`testID` du module (inchangés) : `page-list-title`, `page-list-title-loader`, `page-list-content-loader`, `wiki-description`, `wiki-expansion-indicator`, `list-item-number-<n>`, `page-select-button`, `page-select-button-loader`, `page-title`, `page-title-loader`, `page-author-avatar`, `page-author-avatar-loader`, `page-author-name`, `page-author-info-loader`, `page-date`, `page-content`, `page-content-loader`, `previous-page-button`, `next-page-button`, `visibility-indicator`. Abandonnés (décision 2026-11-17, §6) : `wiki-back-button`, `wiki-title` (sommaire), passés à `navBarOptions` qui disparaît. Stockage : aucun (`storageName: 'wiki'` inutilisé). i18n : clés `wiki-*` inchangées.
 
-**testID** (E2E, nombreux ; ceux de l'en-tête `wiki-back-button`, `wiki-title`, `page-back-button` sont abandonnés, §7) : `page-list-title`, `page-list-title-loader`, `page-list-content-loader`, `wiki-description`, `wiki-expansion-indicator`, `list-item-number-<n>`, `page-select-button`, `page-select-button-loader`, `page-title`, `page-title-loader`, `page-author-avatar`, `page-author-avatar-loader`, `page-author-name`, `page-author-info-loader`, `page-date`, `page-content`, `page-content-loader`, `previous-page-button`, `next-page-button`, `visibility-indicator`.
+## 4. Dans la bascule
 
-**i18n** : 21 clés `wiki-*` inchangées. Tracking : `entTrackingName: 'Wiki'`. Audience : `module: 'wiki'`, `resourceType: 'page'`.
+- **`index.ts`** (gestes 1, 2, 3, 17) : `export default new EntModule({ name: 'wiki', scope: ['wiki'], matchEntcoreApp: 'Wiki', entTrackingName: 'Wiki', redux: { reducer }, screens, entries: { myApps: { route: 'wiki/explorer' } }, intents })`. `module-config.ts` supprimé : `displayOrder`, `storageName` disparaissent ; `explorer` sort du `scope` (déclaré par le `CoreModule` `explorer`, comme pour `blog`) ; pas de `fileManager` (décision 4). `wikiAudienceConfig` (lu par la lecture) déménage dans `screens/reader/screen.tsx`, même valeur. `hasRight` par défaut. Ligne dans `src/app/config/modules.ts`.
+- **Intents** (`intents.ts` à la racine, `ConfigForIntents`, modèle `blog`) :
+  - `resource` : `[{ resourceType: 'wiki', callback: (resource, navigation) => (navigation.push('wiki/summary', { resourceId: resource.resourceId }), true) }]` (ancien `StackActions.push`) ; le `ToDo(wiki-migration)` de l'ancien `index.ts` part avec lui.
+  - `notification` (geste 19) : les deux gestionnaires de `notif-handler.ts`, un pour un. `notificationIntent({ type: 'WIKI', eventType: ['SHARED', 'PAGE-DELETED'] })` → `navigation.navigate('wiki/summary', { resourceId })` ; `notificationIntent({ type: 'WIKI', eventType: ['PAGE-UPDATED', 'PAGE-CREATED', 'PAGE-VISIBLE'] })` → `navigation.navigate('wiki/reader', { pageId, resourceId })`. Regex et `getAsResourceUriNotification` gardés ; `{ managed: 0 }` → `false`, `{ managed: 1 }` → `true`. Partent : `trackInfo`, l'onglet de `timeline`, `handleNotificationNavigationAction`, et le param `notification` (aucun écran ne le lit, absent des params typés). `notif-handler.ts` supprimé.
+- **Navigation** (gestes 4, 5) : `navigator.tsx` supprimé ; `navigation/index.ts` devient une façade `@deprecated` (`wikiRouteNames.summary` seulement, pour `communities`). `setModalModeForRoutes` disparaît.
 
-## 4. Ancienneté de conception à corriger au passage
+  | Ancienne | Nouvelle | Écran | Type |
+  | --- | --- | --- | --- |
+  | `wiki` (accueil) | `wiki/explorer` (décision 1) | `screens/home/` | écran |
+  | `wiki/summary` | `wiki/summary` | `screens/summary/` | écran |
+  | `wiki/reader` | `wiki/reader` | `screens/reader/` | écran |
+  | `wiki/create` | supprimée (décision 4) | `screens/create/` | modale (`containedModal`) |
 
-| #   | Constat                                                                                                                                                    | Correction proposée                                                                                                                                                                                         | Statut             |
-| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| 1   | `model/` dépend de `Resource` / `ResourceHistory` d'`explorer`, supprimés ; `WikiPage` n'a plus `creatorId`, `updatedAt`… (22 erreurs tsc dans le module). | Types propres au wiki dans `model/index.ts` (métadonnées et historique), le module compile sans erreur.                                                                                                     | à faire au portage |
-| 2   | Règles métier dans le service (droits, pages masquées, ordre en arbre), qui lit `getSession()`.                                                            | Règles pures dans `model/` (`rights.ts`, `pages.ts`), session en paramètre ; l'adapter ne fait que traduire. Tests Jest.                                                                                    | réglé par la cible |
-| 3   | Liste des pages en bottom sheet `@gorhom` (`PageListBottomSheet`, `ref.present()`).                                                                        | Modale `formSheet` `wiki/pages` (params `resourceId`, `currentPageId`) ; au choix d'une page : fermer puis remplacer la lecture. L'ouverture « sous le bouton » (`additionalTopInset`) devient des détents. | à faire au portage |
-| 4   | Titres par `navigation.setOptions` après chargement, et lecture du store par `getStore()` dans les options.                                                | Titre lu dans le store par un autre moyen ; **jamais `headerTitle`** (perd le titre natif). Moyen : §8 question 7.                                                                                          | à faire au portage |
-| 5   | Reducer casté (`as unknown as Reducer<…>`) dans `index.ts`.                                                                                                | `createSessionReducer` qui accepte toute action (CONVENTIONS « Données et état »), sans cast.                                                                                                               | réglé par la cible |
-| 6   | Écran vide `wiki/create`, `image-input` / `image-input-button`, `resource-thumbnail-loader`, `fileManager.ressource` : orphelins.                          | Question 4.                                                                                                                                                                                                 | à valider          |
-| 7   | Écran vide d'un dossier : `buttonText` passé deux fois (le premier, conditionnel, est écrasé : le bouton s'affiche même sans droit de création).           | Garder seulement la version conditionnelle (bouton si droit de création).                                                                                                                                   | à faire au portage |
-| 8   | Commentaires « Create page button for next version », menu « nouveau cours » commenté.                                                                     | Rien (portés tels quels).                                                                                                                                                                                   | noté               |
+  Télémétrie : seul l'accueil change (`wiki` → `wiki/explorer`).
+- **Écrans** (gestes 6, 9, 18) : `defineScreen`, props `StaticScreenProps<Params>`, `useNavigation()` dans les composants (`WikiSummaryScreenLoaded`, `WikiReaderScreenLoaded` ne reçoivent plus `navigation`). Params en `type` au lieu d'`interface` (`StaticScreenProps` exige un `Record`, comme `blog` et `audience`). Types `NavigationProps`, `NavBarConfig`, `AllProps` retirés.
+  - accueil : nouveau contrat d'`explorer` : le template reçoit `context`, `onOpenResource`, `emptyComponent` et lit la route par `useRoute` (plus de `navigation`, `route`, `moduleConfig`, `selectors`) ; `options: explorerScreenHeader(wikiExplorerContext, 'wiki-home-title')` ; `withSession` (le droit de création lisait `getSession()`). Type de la route : selon la correction d'`explorer` (décision 2). `popupActions` supprimé (décision 4).
+  - sommaire : `computeNavBar` → `options` (titre lu dans le store comme avant, `headerShadowVisible: false`) ; `navBarOptions` et ses `testID` partent.
+  - lecture : `screenOptions` (`~/app/navigation/util`) → `options` (`animationTypeForReplace` selon `reverseAnimation`, titre lu dans le store) ; `navigation.replace('wiki/reader', …)` gardé.
+  - titre pas encore chargé (arrivée par notification ou intent) : `title: ''` afficherait le nom de la route (CONVENTIONS « UI ») : dans ce cas `headerTitle: () => ''`, et le `setOptions` qui pose le titre après le chargement remet `headerTitle: undefined` (modèle `blog-post-details`). Régression du nouveau système, à vérifier dans l'app. Le reste (titre lu dans le store sans `getStore()`) attend l'assainissement (§5, 2).
+- **Store** (exigé par le contrat d'`explorer` et par `redux: { reducer }`, comme `blog`) : la slice `explorer`, `actions.explorer` et `selectors.explorer` partent ; `moduleConfig.namespaceActionType` / `getState` remplacés par deux fonctions locales aux mêmes valeurs (`'WIKI_' + type`, `state.wiki`) : types d'actions inchangés ; reducers sans union d'actions si Redux 5 l'exige (CONVENTIONS « Données et état »), cast de `index.ts` retiré.
+- **`auth`** (geste 14) : `~/framework/modules/auth/model` → `~/modules/auth/model` ; `getSession` du service → `~/modules/auth/store/accounts`.
+- **Types cassés par `explorer` et `comments`** (décision 3) : `model/index.ts` écrit ses métadonnées et son historique, commentaires par `comments/types` ; corrige 12 erreurs `tsc` (`model/`, `screens/*/types.ts`, `screens/reader/screen.tsx`, `service/index.ts`).
+- **Orphelins** (décision 4) : `screens/create/`, `image-input`, `image-input-button`, `resource-thumbnail-loader` supprimés.
+- **Façades** : `navigation/index.ts` (`wikiRouteNames.summary`), pour `communities`.
+- **Fichiers touchés hors du module** : `src/app/config/modules.ts` (1).
+- Non touchés, marchent dans la nouvelle navigation : `PageListBottomSheet` (`@gorhom`, `BottomSheetModalProvider` monté), `ContentLoader`, `RichEditorViewer`, `ResourceWithCommentsTemplate`, façades `audience` et `media`.
 
-## 5. Cible
+## 5. Hors de la bascule
 
-Proposée, à confirmer par §8.
+### Backlog
 
-### 5.1 Config
+| # | Point | Sujet |
+| --- | --- | --- |
+| 1 | Liste des pages en bottom sheet `@gorhom` (`PageListBottomSheet`, `ref.present()`) → modale `formSheet` `wiki/pages` (params `resourceId`, `currentPageId`) ; « sous le bouton » (`additionalTopInset`) devient des détents. Décidé le 2026-11-17 | `ui` |
+| 2 | Titre lu dans le store par les options (`getStore().getState()`, pas recalculé) et par `setOptions` après chargement. Jamais `headerTitle`. Ex-question 7 du 2026-11-17 : recommandation A, param facultatif `title` passé par l'appelant + `setParams({ title })` après chargement. Rejoint [explorer.md](explorer.md) §5, 10 | `ui` |
+| 3 | **Bug** : écran vide d'un dossier, `buttonText` passé deux fois (le conditionnel est écrasé) : le bouton « créer » s'affiche sans droit de création. Correction décidée le 2026-11-17 | `dette` |
+| 4 | Règles métier dans le service (droits depuis `rights`, pages masquées pour `creator` / `manager`, ordre en arbre) qui lit `getSession()` → règles pures dans `model/`, session en paramètre d'`actions.ts`, tests ; `getModuleTransport('wiki')` ; `adapter.ts` | `structure` |
+| 5 | `rights.ts` (`hasWikiCreationRights`) → règle de `model/business.ts` | `structure` / `droits` |
+| 6 | Erreurs `tsc` déjà présentes : `icon-chip` (nom d'icône en `string`), `page-header` (styles ×2), `page-list/index.ts` (exporte `PageListTitle`, absent), `resource-description` (ref, surcharge), `service/index.ts` l. 63 (pages) ; ESLint du module : 58 erreurs, 2 warnings | `erreurs` |
+| 7 | Façades `~/framework/modules/audience` (`useAudience`, `AudienceReferer`) et `~/framework/modules/media` (`toURISource`) → nouveaux chemins | `api-publique` |
+| 8 | `components/resource-thumbnail/` a `index.ts` **et** `index.tsx`, identiques | `dette` |
+| 9 | `set.prototype.isdisjointfrom` (polyfill) pour les pages masquées : `some` suffit (`blog` l'a évité) | `dette` |
+| 10 | Commentaires : une requête `/userbook/api/person` par auteur pour son type de compte (même chose dans `blog`, [later.md](later.md)) | `dette` |
+| 11 | `WikiReaderContent` : `useSelector(…)!` sur le wiki, `page` supposé chargé | `dette` |
+| 12 | `useCallback` en ligne dans le JSX (`onPressItem`), flèches en ligne (`GhostButton`), `{...props}` dans `renderContent` de la lecture | `performance` |
+| 13 | `screens/home/styles.ts` vide (`StyleSheet.create({})`), styles à relever par le sujet | `styles` |
+| 14 | Code commenté : menu « nouveau cours », bouton « nouvelle page » (« next version ») | `dette` |
+| 15 | Accueil : route `wiki/explorer` mais dossier `screens/home/` ; écran qui consomme un template : un seul fichier `screens/explorer.tsx` (CONVENTIONS « Dossier d'un écran », règle des routes) | `structure` |
 
-```ts
-export default new EntModule({
-  name: 'wiki',
-  scope: ['wiki'], // `explorer` est déclaré par le CoreModule `explorer` ([explorer.md](explorer.md) §5.1) : à confirmer à la reprise
-  matchEntcoreApp: 'Wiki',
-  entTrackingName: 'Wiki',
-  entries: { myApps: { route: 'wiki' } }, // explorateur, params facultatifs (`folderId`) ; pas d'onglet
-  screens: { wiki, 'wiki/summary', 'wiki/reader' },
-  modals: { 'wiki/pages' }, // formSheet (§4 n° 3)
-  redux: { reducer },
-});
-```
+### Noté, non traité
 
-Pas de droits supplémentaires, pas de hook de session, pas de storage. `fileManager` : selon la question 4.
+- Contrat de route du template d'`explorer` (`NavParams` en `interface`, `route.name` exigé) : corrigé à part le 2026-11-25 (décision 2, [explorer.md](explorer.md) décision 14). L'accueil déclarera `StaticScreenProps<ResourceExplorerTemplate.NavParams | undefined>` et ne passera pas de `route`.
+- Types de compte des auteurs des commentaires demandés un par un (`wiki`, `blog`) : candidat à un service partagé, [later.md](later.md).
+- Listes `__overrides__/*/modules.ts` : ancien registre, chantier de la liste des modules par marque ([later.md](later.md)).
 
-### 5.2 Structure
+## 6. Décisions
 
-Celle de `myapps` (CONVENTIONS « Structure d'un module ») :
+Décisions du 2026-11-17 (ancienne fiche), relues pour la bascule :
 
-- `model/` : `index.ts` (types), `rights.ts` (droits depuis `rights`, `hasWikiCreationRights`, qui voit les pages masquées), `pages.ts` (ordre en arbre, précédente / suivante). Tests.
-- `service/` : `types.ts` (`namespace API`, nom gardé : décidé le 2026-11-19), `adapter.ts` (→ modèle, `Temporal`), `index.ts` (`getModuleTransport('wiki')`). Tests de l'adapter.
-- `store/` : Redux `createSessionReducer` : `wikis`, `pages` ; `state.ts`, `action-creators.ts`, `selectors.ts`. Plus de slice `explorer` : les dossiers et wikis de l'explorateur sont dans le store d'`explorer`, sous l'app `Wiki` ([explorer.md](explorer.md) §5.3).
-- `actions.ts` : charger un wiki, charger une page.
-- `screens/` : `home/`, `summary/`, `reader/` gardés ; `pages.tsx` nouveau (formSheet).
-- `components/` : inchangés (sauf orphelins, question 4).
+- 2026-11-17 (règle) : Redux gardé. Toujours valable.
+- 2026-11-17 (développeur) : emplacement sur place, `src/framework/modules/wiki/`. Toujours valable (CONVENTIONS « Portage »).
+- 2026-11-17 (développeur) : `explorer` puis `audience` migrés d'abord. Fait (`explorer` basculé le 2026-11-23, `audience` le 2026-11-23).
+- 2026-11-18 (développeur, [explorer.md](explorer.md)) : plus de slice `explorer` dans `wiki` ; le template lit le store d'`explorer` par app. Appliqué dans la bascule (§4, « Store »).
+- 2026-11-17 (développeur) : `testID` de l'en-tête abandonnés (`wiki-back-button`, `page-back-button`, `wiki-title`) : bouton retour et titre du nouvel en-tête. Appliqué dans la bascule.
+- 2026-11-17 (développeur) : jamais `headerTitle` pour le titre lu dans le store (règle de CONVENTIONS « UI »). Le moyen (ex-question 7) va à l'assainissement (§5, 2).
+- 2026-11-17 (développeur) : corrections « au passage » (bottom sheet en `formSheet` avec détents, titres, bouton du dossier vide). Toujours décidées, mais faites en assainissement : la bascule ne les porte plus ([INTENT.md](../INTENT.md) §4, 2026-11-19). §5, 1 à 3.
+- 2026-11-17 (développeur) : orphelins non portés (`wiki/create`, `image-input`, `image-input-button`, `resource-thumbnail-loader`, clé `fileManager`). Supprimés dans la bascule (décision 4 du 2026-11-25).
+- 2026-11-17 (règle, revue le 2026-11-24) : notifications converties en `intents.notification` (geste 19), intent en `intents.resource`.
 
-### 5.3 Façades
+Décisions du 2026-11-25 (développeur, questions de la fiche de bascule) :
 
-`navigation/index.ts` (`wikiRouteNames`, lu par `communities`) : façade `@deprecated` tant que `communities` n'est pas migré.
+1. **Route d'accueil `wiki/explorer`**, comme `blog/explorer`. Option écartée : `wiki/home`. Le dossier `screens/home/` garde son nom pendant la bascule ; l'écart avec la règle des routes va au backlog (§5, 15).
+2. **`explorer` corrigé d'abord**, dans un changement à part, avant la bascule : le template s'utilise avec les props normales d'un écran (`StaticScreenProps`). Forme revue le même jour : décision 5. Le contournement de `blog` est retiré avec. Option écartée : contourner comme `blog`. Forme : décision 5.
+3. **Types cassés par `explorer` et `comments` corrigés dans la bascule**, types seuls : métadonnées et historique dans `model/index.ts`, commentaires typés par `comments/types`, `resourceId: string`. Exception à BASCULE (« erreurs déjà présentes »), déjà prévue par later.md et [explorer.md](explorer.md).
+4. **Orphelins supprimés dans la bascule** (applique la décision du 2026-11-17) : `screens/create/` (route `wiki/create`), `popupActions` de l'accueil, `components/image-input/`, `components/image-input-button/`, `components/resource-thumbnail-loader/` ; pas de clé `fileManager`. Preuve : aucun import hors de ces dossiers (`grep` du 2026-11-25).
 
-## 6. Plan par phases
+5. **Forme de la correction d'`explorer`** (2026-11-25, développeur, après deux essais) : le template lit la route de l'écran par `useRoute` ; plus de prop `route`. L'écran déclare `StaticScreenProps<ResourceExplorerTemplate.NavParams | undefined>`. `NavParams` en `type`. Options écartées : prop `routeName` typée ; `route` en prop avec `name: string`. Détail : [explorer.md](explorer.md) décision 14.
 
-| #     | Phase                    | Contenu                                                                                                                                                                                                                                                                                   | Vérification                                |
-| ----- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| 0 bis | Préalables : modules     | **Arrêt de cette migration** (§7) : `/migrate-module src/framework/modules/explorer`, puis `/migrate-module src/framework/modules/audience`, chacun sa fiche. `explorer` bloque le store (phase 2) et l'explorateur (phase 5) ; `audience` bloque la vue marquée de la lecture (phase 5). | selon leurs fiches                          |
-| 1     | Déplacements             | `git mv` seuls : `store.ts` → `store/index.ts`, `rights.ts` → `model/rights.ts`. À committer seul.                                                                                                                                                 | tsc : même nombre d'erreurs                 |
-| 2     | Données                  | `model/` (types §4 n° 1, règles §4 n° 2), `service/` (`getModuleTransport('wiki')`, adapter), `store/`, `actions.ts`. Tests Jest : droits, pages masquées, ordre des pages, adapter.                                                                                                      | tsc, eslint, `yarn test`                    |
-| 3     | Déclaration + chargement | `index.ts` en `EntModule` (§5.1), ajout dans `src/app/config/modules.ts`.                                                                                                                                                                                                                 | tsc ; « Mes applis » montre Wiki et l'ouvre |
-| 4     | Façades                  | `navigation/index.ts` (`wikiRouteNames`) pour `communities`.                                                                                                                                                                                                                              | tsc, aucun import cassé                     |
-| 5     | Écrans                   | `defineScreen` : `wiki` (explorateur, sous-dossiers), `wiki/summary`, `wiki/reader` (`replace` + `animationTypeForReplace`), titres (§4 n° 4, question 7), `testID` conservés sauf ceux de l'en-tête.                                                                                     | parcours dans l'app                         |
-| 6     | Modales                  | `wiki/pages` en `formSheet` (§4 n° 3).                                                                                                                                                                                                                                                    | parcours dans l'app                         |
-| 7     | Points reportés          | `ToDo(wiki-migration)` + later.md : notifications, intent.                                                                                                                                                                                                                                | `grep -rn "ToDo(wiki-migration)" src`       |
-| 8     | Nettoyage                | Suppression de `module-config.ts`, `navigator.tsx`, `notif-handler.ts` (gardé dans git), `page-list-bottom-sheet`, orphelins (question 4), façades sans importeur. Listes `__overrides__/*/modules.ts` : à décider.                                                                       | `grep -rn` des anciens chemins              |
+### Questions ouvertes
 
-## 7. Décisions
+Aucune.
 
-- 2026-11-17 (règle) : notifications et intent reportés (later.md, STATUS question 1).
-- 2026-11-17 (règle) : **Redux** gardé (CONVENTIONS « garder le gestionnaire d'état du module »).
-- 2026-11-18 (utilisateur, [explorer.md](explorer.md) §7, remplace « le state de l'explorateur y est aussi ») : le state de l'explorateur est dans le store d'`explorer`, par app ; `wiki` n'a plus de slice `explorer` et passe seulement `app="Wiki"` au template et à `resourceExplorerScreenOptions`.
-- 2026-11-17 (règle) : bottom sheet de la liste des pages → `formSheet` (CONVENTIONS « UI »).
-- 2026-11-17 (utilisateur) : **emplacement sur place**, `src/framework/modules/wiki/`. Raison : règle d'ARCHITECTURE §2 (module fonctionnel), diffs lisibles.
-- 2026-11-17 (utilisateur) : **`explorer` migré d'abord** (préalable, sa propre fiche) : `CoreModule` `explorer` (scope, store) et template pour la nouvelle navigation. Raison : petit, partagé par `blog`, `homework`, `scrapbook`.
-- 2026-11-17 (utilisateur) : **`audience` migré d'abord** (préalable, sa propre fiche), plutôt que `useAudience` tel quel. Tranche la question ouverte n° 2 de STATUS pour `wiki` (« avant »).
-- 2026-11-17 (utilisateur) : **orphelins non portés** (`wiki/create`, `image-input`, `image-input-button`, `resource-thumbnail-loader`), supprimés au nettoyage (restent dans git) ; pas de clé `fileManager`.
-- 2026-11-17 (utilisateur) : **arrêt de cette migration** pour migrer d'abord `explorer` puis `audience`, chacun avec son `/migrate-module`. `wiki` reprend à la phase 1 (plan à valider à la reprise).
-- 2026-11-17 (utilisateur) : **corrections au passage** §4 n° 3 (détents du `formSheet`), n° 4 (titres) et n° 7 (bouton du dossier vide).
-- 2026-11-17 (utilisateur) : **`testID` de l'en-tête abandonnés** (`wiki-back-button`, `page-back-button`, `wiki-title`) : on prend le comportement du framework (bouton retour et `header-title` du nouveau header). Tests E2E concernés à mettre à jour.
-- 2026-11-17 (utilisateur) : **jamais `headerTitle`** pour afficher le titre lu dans le store : on perdrait le titre natif. Le moyen reste à trouver (§8 question 7). Règle ajoutée à [CONVENTIONS.md](../CONVENTIONS.md) (« UI »).
+## 7. Vérification
 
-## 8. Questions ouvertes
+Base mesurée le 2026-11-25 sur `5f34cd48e` (arbre propre, override `neo/test` du développeur). Sorties dans le scratchpad de la session.
 
-Questions 1 à 6 tranchées le 2026-11-17 (§7).
+| Contrôle | Avant | Après |
+| --- | --- | --- |
+| `tsc` dans le dossier du module (comparé fichier par fichier) | 32 erreurs (dépôt : 771) | |
+| ESLint sur le dossier | 58 erreurs, 2 warnings | |
+| `yarn lint-all` | 1 980 erreurs, 84 warnings | |
+| `yarn test` | 489 / 489 (suite `src/modules/media/source.test.ts` en échec au chargement : ESM de `react-native`, sans lien) | |
+| Compteurs de [SUIVI.md](SUIVI.md) | `à faire`, 4 écrans anciens, 9 fichiers en navigation ancienne | |
+| Flows Maestro ou recette manuelle | aucun flow | |
+| Parcours joué dans l'app (iOS, Android) | — | |
 
-7. **Titre lu dans le store, sans `headerTitle`** (§4 n° 4). Le titre du sommaire (nom du wiki) et de la lecture (titre de la page) n'est connu qu'après chargement quand on arrive par une notification ou un intent ; depuis l'explorateur ou le sommaire, l'appelant le connaît déjà.
+Ce qui ne peut pas encore être joué dans l'app : l'ouverture des notifications (intents pas encore lus) ; la tuile « cours » de `communities` (ancien).
 
-- A) Param facultatif `title` passé par l'appelant, lu par `options: ({ route }) => ({ title: route.params?.title })` ; après chargement, `navigation.setParams({ title })` (les options se recalculent, titre natif gardé, typé).
-- B) Dans l'écran, `useLayoutEffect` qui fait `navigation.setOptions({ title })` depuis un sélecteur du store (le motif « `setOptions` dans un effet » que CONVENTIONS évite).
-- C) Évolution du framework : `defineScreen` accepte une fonction de titre qui lit le store (abonnement fait par le framework) ; utile aux autres modules (phase 0).
-- Recommandation : A, à confirmer à la reprise (pas de changement du framework, titre natif ; le titre est aussi dans le store pour le reste de l'écran).
+## 8. Mesure
 
-## 9. Avancement
+Session du 2026-11-25 : relevé et fiche. Questions posées : 4, puis 1 (forme de la correction d'`explorer`) ; le développeur a revu deux fois la forme retenue (prop `routeName`, puis `route.name` d'une `route` en prop, enfin `useRoute`). Temps : non mesuré.
 
-- 2026-11-17 : analyse et plan (statut `spec`). Base : tsc 776 erreurs (22 dans `framework/modules/wiki`), eslint 2 090 erreurs / 88 warnings, `yarn test` 431/431 (mesurée plus tôt dans la session, même commit `a28c54847`, arbre propre). Override `dev/default` appliqué par le skill.
-- 2026-11-17 : questions 1 à 6 tranchées. **Migration arrêtée** pour les préalables : `explorer` puis `audience` (chacun `/migrate-module`). À la reprise : question 7, validation du plan, puis phase 1. Aucun code modifié.
+## 9. Assainissement
+
+Tenu par `/sanitize-module`, un sujet par PR. Sujets tirés de §5.
+
+| Sujet | Statut | Décisions | Recette à jouer dans l'app | PR / commit |
+| --- | --- | --- | --- | --- |
+| | | | | |

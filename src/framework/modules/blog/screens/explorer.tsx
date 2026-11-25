@@ -15,14 +15,6 @@ import ResourceExplorer, {
 import { withSession } from '~/modules/auth/hoc';
 import { I18n } from '~/util/i18n';
 
-// ToDo(blog-migration): the params of a route must be a `Record<string, unknown>`, which the `interface` of the template is not, and
-// the template needs `route.name`, which `StaticScreenProps` doesn't give (later.md)
-type BlogExplorerScreenProps = {
-  route: StaticScreenProps<
-    Pick<ResourceExplorerTemplate.NavParams, keyof ResourceExplorerTemplate.NavParams> | undefined
-  >['route'] & { name: string };
-};
-
 const blogExplorerContext = {
   application: 'blog',
   resource_type: 'blog',
@@ -30,7 +22,7 @@ const blogExplorerContext = {
 
 // # Screen
 
-const BlogExplorerScreen = withSession<BlogExplorerScreenProps>(function ({ route, session }) {
+const BlogExplorerScreen = withSession<StaticScreenProps<ResourceExplorerTemplate.NavParams | undefined>>(function ({ session }) {
   const navigation = useNavigation();
   const hasBlogCreationRights = getBlogWorkflowInformation(session) && getBlogWorkflowInformation(session).blog.create;
 
@@ -56,9 +48,7 @@ const BlogExplorerScreen = withSession<BlogExplorerScreenProps>(function ({ rout
     );
   }, [hasBlogCreationRights]);
 
-  return (
-    <ResourceExplorer route={route} onOpenResource={onOpenResource} emptyComponent={emptyComponent} context={blogExplorerContext} />
-  );
+  return <ResourceExplorer onOpenResource={onOpenResource} emptyComponent={emptyComponent} context={blogExplorerContext} />;
 });
 BlogExplorerScreen.displayName = 'BlogExplorerScreen';
 

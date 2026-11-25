@@ -75,18 +75,18 @@ Exemple : `src/modules/myapps` (décidé le 2026-11-06 ; voir §5.2 et §5.3 de 
 
 ## Trois types de composants
 
-Décidé le 2026-11-23. Ce qu'un composant reçoit dit ce qu'il est.
+Décidé le 2026-11-23 (route du template revue le 2026-11-25). Ce qu'un composant reçoit dit ce qu'il est.
 
 | Type | Reçoit | Navigation | Où | Modèle |
 | --- | --- | --- | --- | --- |
 | **Écran** | sa `route` seulement (et ses params, `route.params`) | oui | `screens/<écran>/screen.tsx`, déclaré par `defineScreen` / `defineModal` | `src/framework/modules/support/screens/create-ticket/` |
-| **Template** | la `route` de l'écran qui l'affiche, et ses props propres | oui | `templates/<template>/` | `src/modules/auth/templates/` (navigation par `useNavigation()` ; ils ne reçoivent pas encore la `route`) |
+| **Template** | ses props propres ; il lit la route de l'écran qui l'affiche par `useRoute()` | oui | `templates/<template>/` | `src/framework/modules/explorer/templates/resource-explorer/` (`useRoute`, `push(route.name, …)`) ; `src/modules/auth/templates/` (navigation par `useNavigation()`) |
 | **Composant d'interface** | ses props propres | non | `components/<composant>/` (module) ou `src/framework/components/` | `src/modules/myapps/components/` |
 
 - **Écran** : un point d'entrée de la navigation. Il assemble les données (store, service, session) et l'interface d'une route, et décide où l'on va ensuite. Personne ne l'appelle avec des props : tout ce dont il a besoin passe par les params de sa route, typés (`StaticScreenProps<Params>`). Les props ajoutées par le framework (`session` par `withSession`) ne sont pas des props d'appel. La navigation : `useNavigation()`, jamais une prop `navigation`.
-- **Template** : un contenu d'écran réutilisable tel quel, par plusieurs écrans (souvent d'autres modules). L'écran qui l'affiche lui passe sa `route` et ce qui le personnalise (contexte, titres, `emptyComponent`, `onOpenResource`…). Il peut utiliser la navigation directement (`useNavigation()`, `useIsFocused`, `push(route.name, …)`), mais ne reçoit jamais `navigation` en prop. Un écran qui consomme un template tient en un fichier (« Dossier d'un écran »).
+- **Template** : un contenu d'écran réutilisable tel quel, par plusieurs écrans (souvent d'autres modules). L'écran qui l'affiche lui passe seulement ce qui le personnalise (contexte, titres, `emptyComponent`, `onOpenResource`…). S'il a besoin de la route de cet écran (ses params, son nom pour `push(route.name, …)`), il la lit par `useRoute()`, typé par ses params (`useRoute<RouteProp<Record<string, Params | undefined>>>()`) : jamais en prop, car `StaticScreenProps` ne type pas `route.name`, et le typer par les noms de routes rend circulaires les types des modules, inférés des props de leurs écrans. L'écran déclare simplement `StaticScreenProps<Params>`, avec les params du template (un `type`, pas une `interface`). Le template peut utiliser la navigation directement (`useNavigation()`, `useIsFocused`), mais ne reçoit jamais `navigation` ni `route` en prop (décidé le 2026-11-25, [explorer.md](journal/explorer.md) décision 14). Un écran qui consomme un template tient en un fichier (« Dossier d'un écran »).
 - **Composant d'interface** : une brique réutilisable, qui ne connaît ni la route ni la navigation. Tout passe par ses props, et ce qui doit naviguer remonte par une prop d'événement (`onPress`, `onOpen…`) que l'écran ou le template traite. Règles d'écriture : `.claude/rules/COMPONENTS.md`.
-- Un composant partagé par plusieurs écrans **du même module**, sans `route`, est un composant d'interface, pas un template (« Dossier d'un écran »).
+- Un composant partagé par plusieurs écrans **du même module**, qui ne lit pas la route, est un composant d'interface, pas un template (« Dossier d'un écran »).
 - Code existant qui ne suit pas cette répartition (composant d'interface qui navigue, écran qui reçoit des props d'appel) : porté tel quel pendant la bascule, noté dans la fiche du module (§5) ou dans [later.md](journal/later.md) pour le framework, corrigé en assainissement.
 
 ## Styles

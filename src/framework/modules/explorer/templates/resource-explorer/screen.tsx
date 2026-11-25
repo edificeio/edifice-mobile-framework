@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ParamListBase, useIsFocused, useNavigation } from '@react-navigation/native';
+import { ParamListBase, RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -20,13 +20,10 @@ export { explorerScreenHeader } from './options';
 
 const PAGE_SIZE = 24;
 
-export function ResourceExplorerTemplate({
-  context,
-  emptyComponent,
-  onOpenResource,
-  route,
-  route: { params: { folderId = RootFolderId.ROOT } = {} },
-}: ResourceExplorerTemplate.Props) {
+export function ResourceExplorerTemplate({ context, emptyComponent, onOpenResource }: ResourceExplorerTemplate.Props) {
+  // The route of the screen that shows the template: its params give the folder shown, its name is pushed again to open a folder
+  const route = useRoute<RouteProp<Record<string, ResourceExplorerTemplate.NavParams | undefined>>>();
+  const { folderId = RootFolderId.ROOT } = route.params ?? {};
   const folder = useSelector(selectExplorerFolder(context, folderId));
   const content = folder?.content ?? emptyFolderData;
   const dispatch = useDispatch<Dispatch<ExplorerAction>>();

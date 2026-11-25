@@ -12,6 +12,15 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-25 — Fiche de bascule de `wiki`, correction du template d'`explorer` (`feat/navigation`)
+
+- Fait : fiche [wiki.md](wiki.md) réécrite au format de la bascule (relevé, 7 comportements, gestes, backlog de 15 points) ; questions tranchées. Préalable fait à part, non commité : le template d'`explorer` lit la route de l'écran par `useRoute` (plus de prop `route`), l'écran déclare `StaticScreenProps<NavParams | undefined>` ; `NavParams` en `type` ; contournement de `blog` retiré.
+- Décidé (développeur) : route d'accueil `wiki/explorer` ; `explorer` corrigé avant `wiki`, route lue par `useRoute` dans le template (après deux versions retirées à la relecture : prop `routeName`, puis `route` en prop avec `name: string`) ; types cassés par `explorer` / `comments` corrigés dans la bascule ; orphelins supprimés dans la bascule ([wiki.md](wiki.md) §6, [explorer.md](explorer.md) décision 14).
+- Vérifié : `tsc` 771 → 771, identique par fichier ; nom de route typé essayé en chemin (`keyof AllModulesNavigationParams`, routes du template) : types des modules circulaires (TS2456, TS4109) ; ESLint `explorer` et `blog` 0 ; `lint-all` 1 980 → 1 980 ; Jest 489 / 489 (suite `media/source.test.ts` en échec au chargement, avant comme après). **Pas testé dans l'app.**
+- En suspens : `yarn migration-status --check` échoue déjà sur `HEAD` (`suivi.json` d'avant le rebase : lignes, écrans et navigation anciens remontés par upstream) ; `SUIVI.md` à régénérer avec la bascule de `wiki`. Relevé : types de compte des auteurs de commentaires ([later.md](later.md)).
+- Règle générale (développeur) : un template lit la route de son écran par `useRoute`, jamais en prop ; [CONVENTIONS.md](../CONVENTIONS.md) « Trois types de composants » mis à jour.
+- Prochaine étape : relecture et commit de la correction d'`explorer` ; puis `/migrate-module src/framework/modules/wiki/` pour la bascule.
+
 ## 2026-11-25 — Rebase de la branche de migration sur `feat/rn86` (`009dddad9`)
 
 - Fait : rebase des 40 commits, conflits résolus étape par étape (i18n déplacé, `myapps`, `auth` (`AccountTypeText` dans `src/modules/auth/components`), `explorer`, `audience`). Dernière étape, `blog` : les 8 commits d'upstream portés sur le module assaini ([blog.md](blog.md), décision 18) ; `comments` basculé pour les réponses ([comments.md](comments.md)).
