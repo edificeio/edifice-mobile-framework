@@ -191,7 +191,8 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
   };
 
   renderCourse = (course, isHalfCourse: boolean = false) => {
-    const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
+    // classes or groups can be missing from the backend course.
+    const className = course.classes?.[0] ?? course.groups?.[0];
     const isActive = moment().isBetween(course.startDate, course.endDate);
 
     return (
