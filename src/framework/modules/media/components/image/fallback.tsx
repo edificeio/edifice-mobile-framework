@@ -29,14 +29,17 @@ export const ImageFallback: React.FC<ImageFallbackProps> = ({
   style,
   testID,
 }) => {
-  const backgroundColor = isFallbackAPicture(fallback) ? DEFAULT_FALLBACK.accentColors.pale : fallback.accentColors.pale;
+  // accentColors can be undefined at runtime when the app color has no matching complementary palette.
+  const backgroundColor = isFallbackAPicture(fallback)
+    ? DEFAULT_FALLBACK.accentColors.pale
+    : (fallback.accentColors?.pale ?? DEFAULT_FALLBACK.accentColors.pale);
 
   const picture: PictureProps = React.useMemo(() => {
     if (isFallbackAPicture(fallback)) return fallback;
     else
       return {
         ...fallback.icon,
-        fill: fallback.accentColors.regular ?? DEFAULT_FALLBACK.accentColors.regular,
+        fill: fallback.accentColors?.regular ?? DEFAULT_FALLBACK.accentColors.regular,
       };
   }, [fallback]);
 
