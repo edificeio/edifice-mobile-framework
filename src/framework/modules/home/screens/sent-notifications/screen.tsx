@@ -46,7 +46,7 @@ export const HomeSentNotificationsScreenOptions = screenOptions(() => ({
 const openInBrowser: NotifHandlerThunkAction = notification => async () => {
   const notifWithUri = getAsResourceUriNotification(notification);
   if (!notifWithUri) return { managed: 0 };
-  openUrl(notifWithUri.resource.uri);
+  await openUrl(notifWithUri.resource.uri);
   return { managed: 1 };
 };
 
