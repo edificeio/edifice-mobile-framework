@@ -7,7 +7,7 @@ import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 import { I18n } from '~/app/i18n';
 import { screenOptions } from '~/app/navigation/util';
 import theme from '~/app/theme';
-import { hasMediaContent } from '~/framework/components/inputs/rich-text/native-viewer';
+import { hasNonTextContent } from '~/framework/components/inputs/rich-text/native-viewer';
 import {
   DEFAULT_FLATLIST_PLACEHOLDER_ROWS,
   PaginatedFlashList,
@@ -206,14 +206,12 @@ export default withSession<CommunitiesDiscussionDetailsScreen.AllProps>(function
 
   const keyExtractor = React.useCallback((item: DiscussionMessage) => item.id, []);
 
-  // Distinct types so recycled cells are only reused between messages of the same kind (the unread separator changes the height).
-  // FlashList also estimates the height of the messages not measured yet from the latest measured ones of the same type:
-  // mixing text and media messages would make these estimates very wrong, and the list jumps when the user scrolls up.
+  // Distinct types so recycled cells are only reused between messages of the same kind
   const getItemType = React.useCallback(
     (item: DiscussionMessage, index: number) => {
       if (index === firstUnreadIndex) return 'unread-separator';
       if (item.type === CommentsThreadInternals.ITEM_COMMENT_DELETED) return 'deleted';
-      return hasMediaContent(item.content) ? 'media-message' : 'message';
+      return hasNonTextContent(item.content) ? 'non-text-message' : 'text-message';
     },
     [firstUnreadIndex],
   );

@@ -30,6 +30,7 @@ export type RichContentSegment =
   | { type: RichContentSegmentType.HTML; html: string }
   | { type: RichContentSegmentType.IFRAME; src: string }
   | ({ type: RichContentSegmentType.IMAGE } & RichContentImage)
+  | { type: RichContentSegmentType.LATEX; latex: string }
   // A pane needs a second split to render its content (e.g medias), so it has segments too
   | { type: RichContentSegmentType.PANE; paneType: RichContentPaneType; segments: RichContentSegment[] }
   // Each cell content is split too. A column width is undefined when the html does not declare it.
@@ -42,6 +43,7 @@ export enum RichContentSegmentType {
   HTML = 'html',
   IFRAME = 'iframe',
   IMAGE = 'image',
+  LATEX = 'latex',
   PANE = 'pane',
   TABLE = 'table',
   VIDEO = 'video',

@@ -1,15 +1,6 @@
-/**
- * Splits ENT rich content (html) into segments that can be rendered natively:
- * - text goes to `EnrichedText` (html segments),
- * - images, videos, audios, iframes, attachments and tables become dedicated segments: `react-native-enriched-html` does
- *   not support most of them, and cannot authenticate image requests.
- *
- * A light regex tokenizer is used instead of a sax parser: ENT html is not strict xml (unclosed void tags),
- * and we only need to locate top-level media blocks, not build a tree.
- */
 import { Platform } from 'react-native';
 
-import { decode } from 'html-entities';
+import { decode, encode } from 'html-entities';
 
 import {
   ImageSize,
@@ -22,7 +13,8 @@ import {
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { extractVideoResolution } from '~/framework/util/htmlParser/content';
 
-import { getAttributes, getBackgroundColor, ParsedTag, TAG_REGEX, toParsedTag } from './html-tokenizer';
+import { getAttributes, getBackgroundColor, ParsedTag, TAG_REGEX, toParsedTag, VOID_TAGS } from './html-tokenizer';
+import { getBlockLatex, getInlineLatex, LATEX_CONTENT_REGEX, splitInlineLatex } from './latex-splitter';
 import { buildTableSegment } from './table-builder';
 
 const LINK_TAG_REGEX = /<a\b((?:[^>"']|"[^"]*"|'[^']*')*)>([\s\S]*?)<\/a>/gi;
@@ -32,7 +24,13 @@ const MARK_CLOSING_TAG_REGEX = /<\/mark\s*>/gi;
 // Left in place of an extracted `<img>`, to tell paragraphs emptied by the extraction from real empty lines
 const IMAGE_MARKER = '<!--rich-img-->';
 const IMAGE_ONLY_PARAGRAPH_REGEX = new RegExp(String.raw`<p\b[^>]*>\s*(?:${IMAGE_MARKER}\s*)+</p>`, 'gi');
-const VOID_TAGS = new Set(['area', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']);
+const MEDIA_CONTENT_REGEX = /<(?:audio|iframe|img|video)\b|class\s*=\s*["'][^"']*\b(?:attachments|download-attachments)\b/i;
+const TABLE_CONTENT_REGEX = /<table\b/i;
+// Tiptap math nodes are empty tags that carry their formula in `data-latex`
+const EMPTY_SPAN_REGEX = /<span\b((?:[^>"']|"[^"]*"|'[^']*')*)>\s*<\/span\s*>/gi;
+
+export const hasNonTextContent = (html: string): boolean =>
+  [MEDIA_CONTENT_REGEX, TABLE_CONTENT_REGEX, LATEX_CONTENT_REGEX].some(regex => regex.test(html));
 
 const WRAPPER_CLASSES: Record<string, RichContentSegmentType> = {
   'attachments': RichContentSegmentType.ATTACHMENTS,
@@ -133,7 +131,7 @@ const buildMediaSegment = (
 };
 
 /**
- * Tiptap highlights are `<mark>` tags, unknown to `EnrichedText` (the tag is dropped, the color lost).
+ * Tiptap colored highlights are `<mark>` tags, unknown to `EnrichedText` (the tag is dropped, the color lost).
  * They are converted to `<span style="background-color: …">`, which `EnrichedText` renders as a custom style.
  */
 const convertHighlights = (html: string): string =>
@@ -146,6 +144,16 @@ const convertHighlights = (html: string): string =>
     .replace(MARK_CLOSING_TAG_REGEX, '</span>');
 
 /**
+ * Tiptap inline formulas are empty `<span data-type="inline-math" data-latex="…">`: `EnrichedText` would display nothing.
+ * Formulas left in the html by `splitInlineLatex` (list items, quotes…) are displayed as inline LaTeX code.
+ */
+const convertInlineLatex = (html: string): string =>
+  html.replace(EMPTY_SPAN_REGEX, (spanTag: string, rawAttributes: string) => {
+    const latex = getInlineLatex(getAttributes(rawAttributes));
+    return latex ? `<code>${encode(latex)}</code>` : spanTag;
+  });
+
+/**
  * Workaround for `react-native-enriched-html` 1.2.0 on iOS (`HtmlParser.mm`, `initiallyProcessHtml`): html shorter than
  * 13 characters without whitespaces (the length of `<html></html>`) never reaches the normalizer and is displayed
  * as raw text (ex: `<p>ok</p>`). Wrapped in `<html>`, it is parsed as the library's own html instead.
@@ -156,13 +164,21 @@ const IOS_MIN_PARSED_HTML_LENGTH = 13;
 const toParsableHtml = (html: string): string =>
   Platform.OS === 'ios' && html.replace(/\s/g, '').length < IOS_MIN_PARSED_HTML_LENGTH ? `<html>${html}</html>` : html;
 
+const pushEnrichedHtmlSegment = (segments: RichContentSegment[], rawHtml: string) => {
+  // Formulas are converted first: a list item that only contains a formula has no text before the conversion
+  const html = convertInlineLatex(rawHtml);
+  // Skip segments that only contain empty markup (ex: left between two media blocks)
+  const hasText = html.replace(STRIP_TAGS_REGEX, '').replace(/&nbsp;|\s|\u200B/g, '').length > 0;
+  if (hasText) segments.push({ html: toParsableHtml(convertHighlights(html)), type: RichContentSegmentType.HTML });
+};
+
 const pushHtmlSegment = (segments: RichContentSegment[], rawHtml: string) => {
   // A `<p>` that only contained images would be rendered as an empty line by EnrichedText: remove it.
   // Other empty paragraphs are kept: they are the empty lines typed by the user.
   const html = rawHtml.replace(IMAGE_ONLY_PARAGRAPH_REGEX, '').replaceAll(IMAGE_MARKER, '');
-  // Skip segments that only contain empty markup (ex: left between two media blocks)
-  const hasText = html.replace(STRIP_TAGS_REGEX, '').replace(/&nbsp;|\s|\u200B/g, '').length > 0;
-  if (hasText) segments.push({ html: toParsableHtml(convertHighlights(html)), type: RichContentSegmentType.HTML });
+  splitInlineLatex(html).forEach(part =>
+    typeof part === 'string' ? pushEnrichedHtmlSegment(segments, part) : segments.push(part),
+  );
 };
 
 // Images rendered outside of `EnrichedText`: its native loaders cannot authenticate requests (no header, no cookie)
@@ -172,13 +188,12 @@ const getAuthenticatedImage = (rawAttributes: string, platformUrl?: string): Ric
   return { declaredSize: parseSize(attributes.width, attributes.height), src: getAbsoluteUrl(decode(attributes.src), platformUrl) };
 };
 
+// Elements to identify the currently open block to skip its content until its closing tag
 interface SplitState {
   html: string;
-  // Currently opened media block: its type, the tag that opened it and the nesting depth of that tag
+  latexBlock?: { depth: number; latex: string; start: number };
   mediaBlock?: { depth: number; start: number; tagName: string; type: RichContentSegmentType };
-  // Currently opened information pane: `div` nesting depth, to find its closing tag
   paneBlock?: { contentStart: number; depth: number; start: number; type: RichContentPaneType };
-  // Currently opened table: `table` nesting depth, to find its closing tag
   tableBlock?: { contentStart: number; depth: number; start: number };
   pendingHtml: string;
   pendingImages: RichContentImage[];
@@ -219,6 +234,19 @@ const handleTableTag = (state: SplitState, tableBlock: NonNullable<SplitState['t
   state.tableBlock = undefined;
 };
 
+const closeLatexBlockIfDone = (state: SplitState, latexBlock: NonNullable<SplitState['latexBlock']>, end: number) => {
+  if (latexBlock.depth !== 0) return;
+  state.segments.push({ latex: latexBlock.latex, type: RichContentSegmentType.LATEX });
+  state.textStart = end;
+  state.latexBlock = undefined;
+};
+
+// The formula is on the opening tag: the content of the block (if any) is skipped
+const handleLatexTag = (state: SplitState, latexBlock: NonNullable<SplitState['latexBlock']>, tag: ParsedTag) => {
+  if (tag.tagName === 'div' && !tag.isSelfClosing) latexBlock.depth += tag.isClosing ? -1 : 1;
+  closeLatexBlockIfDone(state, latexBlock, tag.end);
+};
+
 const closeMediaBlockIfDone = (state: SplitState, mediaBlock: NonNullable<SplitState['mediaBlock']>, end: number) => {
   if (mediaBlock.depth !== 0) return;
   const segment = buildMediaSegment(mediaBlock.type, state.html.slice(mediaBlock.start, end), state.platformUrl);
@@ -232,16 +260,24 @@ const handleMediaTag = (state: SplitState, mediaBlock: NonNullable<SplitState['m
   closeMediaBlockIfDone(state, mediaBlock, tag.end);
 };
 
-const openPane = (state: SplitState, tag: ParsedTag, type: RichContentPaneType) => {
+const openPaneBlock = (state: SplitState, tag: ParsedTag, type: RichContentPaneType) => {
   flush(state, tag.start);
   state.topLevelDepth = 0;
   state.paneBlock = { contentStart: tag.end, depth: 1, start: tag.start, type };
 };
 
-const openTable = (state: SplitState, tag: ParsedTag) => {
+const openTableBlock = (state: SplitState, tag: ParsedTag) => {
   flush(state, tag.start);
   state.topLevelDepth = 0;
   state.tableBlock = { contentStart: tag.end, depth: 1, start: tag.start };
+};
+
+const openLatexBlock = (state: SplitState, tag: ParsedTag, latex: string) => {
+  flush(state, tag.start);
+  state.topLevelDepth = 0;
+  const latexBlock = { depth: tag.isSelfClosing ? 0 : 1, latex, start: tag.start };
+  state.latexBlock = latexBlock;
+  closeLatexBlockIfDone(state, latexBlock, tag.end);
 };
 
 const openMediaBlock = (state: SplitState, tag: ParsedTag, type: RichContentSegmentType) => {
@@ -268,13 +304,14 @@ const handleBlockTag = (state: SplitState, tag: ParsedTag) => {
   if (state.topLevelDepth === 0 && state.pendingImages.length) flush(state, tag.end);
 };
 
-// Tag outside of any pane or media block: may open one, or be an image or a block that contains images
 const handleContentTag = (state: SplitState, tag: ParsedTag) => {
   const attributes = tag.isClosing ? undefined : getAttributes(tag.rawAttributes);
   const paneType = attributes && !tag.isSelfClosing ? getPaneType(tag.tagName, attributes) : undefined;
-  const mediaBlockType = attributes && !paneType ? getMediaBlockType(tag.tagName, attributes) : undefined;
-  if (paneType) openPane(state, tag, paneType);
-  else if (tag.tagName === 'table' && attributes && !tag.isSelfClosing) openTable(state, tag);
+  const mathLatex = attributes && !paneType ? getBlockLatex(tag.tagName, attributes) : undefined;
+  const mediaBlockType = attributes && !paneType && !mathLatex ? getMediaBlockType(tag.tagName, attributes) : undefined;
+  if (paneType) openPaneBlock(state, tag, paneType);
+  else if (tag.tagName === 'table' && attributes && !tag.isSelfClosing) openTableBlock(state, tag);
+  else if (mathLatex) openLatexBlock(state, tag, mathLatex);
   else if (mediaBlockType) openMediaBlock(state, tag, mediaBlockType);
   else if (tag.tagName === 'img') handleImageTag(state, tag);
   else if (!tag.isSelfClosing && !VOID_TAGS.has(tag.tagName)) handleBlockTag(state, tag);
@@ -283,6 +320,7 @@ const handleContentTag = (state: SplitState, tag: ParsedTag) => {
 const handleTag = (state: SplitState, tag: ParsedTag) => {
   if (state.paneBlock) handlePaneTag(state, state.paneBlock, tag);
   else if (state.tableBlock) handleTableTag(state, state.tableBlock, tag);
+  else if (state.latexBlock) handleLatexTag(state, state.latexBlock, tag);
   else if (state.mediaBlock) handleMediaTag(state, state.mediaBlock, tag);
   else handleContentTag(state, tag);
 };
@@ -295,13 +333,10 @@ const handleTag = (state: SplitState, tag: ParsedTag) => {
 export const splitRichContent = (html: string, platformUrl?: string): RichContentSegment[] => {
   const state: SplitState = { html, pendingHtml: '', pendingImages: [], platformUrl, segments: [], textStart: 0, topLevelDepth: 0 };
   for (const match of html.matchAll(TAG_REGEX)) handleTag(state, toParsedTag(match));
-  // An unclosed media block, pane or table is rendered as html: EnrichedText strips the tags it does not support
   if (state.mediaBlock) state.textStart = state.mediaBlock.start;
+  if (state.latexBlock) state.textStart = state.latexBlock.start;
   if (state.paneBlock) state.textStart = state.paneBlock.start;
   if (state.tableBlock) state.textStart = state.tableBlock.start;
   flush(state, html.length);
   return state.segments;
 };
-
-const MEDIA_CONTENT_REGEX = /<(?:audio|iframe|img|table|video)\b|class\s*=\s*["'][^"']*\b(?:attachments|download-attachments)\b/i;
-export const hasMediaContent = (html: string): boolean => MEDIA_CONTENT_REGEX.test(html);

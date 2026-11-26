@@ -6219,6 +6219,7 @@ __metadata:
     react-native-draggable-flatlist: "npm:4.0.3"
     react-native-dropdown-picker: "npm:5.4.7-beta.1"
     react-native-enriched-html: "npm:1.2.0"
+    react-native-enriched-markdown: "npm:1.2.0"
     react-native-error-boundary: "npm:3.1.0"
     react-native-file-viewer: "npm:2.1.5"
     react-native-fs: "npm:2.20.0"
@@ -14253,6 +14254,20 @@ __metadata:
     react: "*"
     react-native: ">=0.82.0"
   checksum: 10/129e8bb72f80f694ba5ac02980d9c7fcd94be9ccde097252d9a2fadb07842c214db7ae9d734a61512c3de38a0e2ac38d3e6270608ced2488228f78ca6aedc69f
+  languageName: node
+  linkType: hard
+
+"react-native-enriched-markdown@npm:1.2.0":
+  version: 1.2.0
+  resolution: "react-native-enriched-markdown@npm:1.2.0"
+  peerDependencies:
+    katex: ">=0.16.0"
+    react: "*"
+    react-native: "*"
+  peerDependenciesMeta:
+    katex:
+      optional: true
+  checksum: 10/bf6959975a4fbf9477183c579b23d366381c0c7e9401f358d860dcd2bf3160087e974755f221c08eb16d82e9a3a9786bd055aa7e4704466d0854a8a8d1f46009
   languageName: node
   linkType: hard
 

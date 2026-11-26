@@ -11,6 +11,7 @@ import { selectors } from '~/framework/modules/auth/redux/reducer';
 import { openMedias } from '~/framework/modules/media';
 import { openUrl } from '~/framework/util/linking';
 
+import LatexContent from './components/latex-content';
 import Pane from './components/pane';
 import AttachmentPreview from './components/preview/attachment';
 import ImagePreview from './components/preview/image';
@@ -27,10 +28,6 @@ const onOpenLink = (url: string) => {
 
 const onLinkPress = ({ url }: OnLinkPressEvent) => onOpenLink(url);
 
-/**
- * Read-only rich content viewer without WebView, made to be rendered many times in a list.
- * Text is rendered natively by `react-native-enriched-html`, images and other medias by preview components.
- */
 const RichEditorNativeViewer = ({ content }: Readonly<RichEditorNativeViewerProps>) => {
   const navigation = useNavigation<NavigationProp<NavigationRootParams>>();
   const platformUrl = useSelector((state: IGlobalState) => selectors.session(state)?.platform.url);
@@ -53,6 +50,8 @@ const RichEditorNativeViewer = ({ content }: Readonly<RichEditorNativeViewerProp
         );
       case RichContentSegmentType.IMAGE:
         return <ImagePreview key={index} src={segment.src} declaredSize={segment.declaredSize} onPress={onOpenMedia} />;
+      case RichContentSegmentType.LATEX:
+        return <LatexContent key={index} latex={segment.latex} />;
       case RichContentSegmentType.PANE:
         return (
           <Pane key={index} type={segment.paneType}>
