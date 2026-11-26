@@ -24,8 +24,13 @@ import { notificationsService } from '~/framework/modules/home/service';
 import { getSentNotificationsFilters, setSentNotificationsFilters } from '~/framework/modules/home/storage';
 import type { NotificationFilterSelection } from '~/framework/modules/home/templates/notification-filters';
 import { userRouteNames } from '~/framework/modules/user/navigation';
-import type { ITimelineNotification } from '~/framework/util/notifications';
-import { defaultNotificationActionStack, handleNotificationAction } from '~/framework/util/notifications/routing';
+import { openUrl } from '~/framework/util/linking';
+import { getAsResourceUriNotification, type ITimelineNotification } from '~/framework/util/notifications';
+import {
+  defaultNotificationActions,
+  handleNotificationAction,
+  type NotifHandlerThunkAction,
+} from '~/framework/util/notifications/routing';
 
 import styles from './styles';
 import type { HomeSentNotificationsScreen } from './types';
@@ -36,6 +41,16 @@ const PAGE_SIZE = 25;
 export const HomeSentNotificationsScreenOptions = screenOptions(() => ({
   title: I18n.get('user-sentnotifications-title'),
 }));
+
+// redirects without going to home first.
+const openInBrowser: NotifHandlerThunkAction = notification => async () => {
+  const notifWithUri = getAsResourceUriNotification(notification);
+  if (!notifWithUri) return { managed: 0 };
+  openUrl(notifWithUri.resource.uri);
+  return { managed: 1 };
+};
+
+const SENT_NOTIFICATION_ACTION_STACK = [defaultNotificationActions.moduleRedirection, openInBrowser];
 
 const EMPTY_TEXTS_I18N = { text: 'user-sentnotifications-emptyscreen-text', title: 'user-sentnotifications-emptyscreen-title' };
 
@@ -190,7 +205,7 @@ export default function HomeSentNotificationsScreen({ navigation, route }: Reado
       dispatch(
         handleNotificationAction(
           notification,
-          defaultNotificationActionStack,
+          SENT_NOTIFICATION_ACTION_STACK,
           navigation,
           navigation.dispatch,
           'Sent Notification',
