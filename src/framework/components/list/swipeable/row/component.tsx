@@ -18,6 +18,10 @@ const NO_DRAG_OFFSET = 9999;
 
 const NO_ACTIONS: readonly SwipeRowAction[] = [];
 
+// keeps ItemT through React.memo.
+// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/37087#issuecomment-542793243
+const typedMemo: <T>(component: T) => T = React.memo;
+
 const SwipeRow = <ItemT,>({
   extraData,
   getSwipeActions,
@@ -122,5 +126,4 @@ const SwipeRow = <ItemT,>({
 };
 
 // only the row whose open state changes renders again.
-// the cast keeps ItemT: React.memo returns a component that is no longer generic.
-export default React.memo(SwipeRow) as typeof SwipeRow;
+export default typedMemo(SwipeRow);
