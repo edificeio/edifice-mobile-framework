@@ -1,15 +1,16 @@
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
-import { PageListProps, WikiListItemProps } from './types';
-
 import theme from '~/app/theme';
 import { FlatListProps } from '~/framework/components/list/flat-list';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 import IconChip from '~/framework/modules/wiki/components/icon-chip';
+import type { WikiPageMetaData } from '~/framework/modules/wiki/model';
 
-const WikiListItem: React.FC<WikiListItemProps> = props => {
+import styles from './styles';
+import { WikiListItemProps, WikiPageListProps } from './types';
+
+const WikiListItem = React.memo(function (props: WikiListItemProps) {
   const { borderless, currentPageId, depth, id, index, isVisible, name, onPressItem: onPress, parentId, wikiData } = props;
   const isCurrentPage = currentPageId === id;
 
@@ -42,37 +43,38 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
         : [styles.listItemLayoutChild, borderless ? styles.listItemLayoutChildBorderless : styles.listItemLayoutChildBordered],
       isParentWithChildren
         ? [
-          styles.listItemLayoutParentWithChildren,
-          borderless ? styles.listItemLayoutParentWithChildrenBorderless : styles.listItemLayoutParentWithChildrenBordered,
-        ]
+            styles.listItemLayoutParentWithChildren,
+            borderless ? styles.listItemLayoutParentWithChildrenBorderless : styles.listItemLayoutParentWithChildrenBordered,
+          ]
         : undefined,
       isFirstChild
         ? [
-          styles.listItemLayoutChildFirst,
-          borderless ? styles.listItemLayoutChildFirstBorderless : styles.listItemLayoutChildFirstBordered,
-        ]
+            styles.listItemLayoutChildFirst,
+            borderless ? styles.listItemLayoutChildFirstBorderless : styles.listItemLayoutChildFirstBordered,
+          ]
         : undefined,
       isLastChild
         ? [
-          styles.listItemLayoutChildLast,
-          borderless ? styles.listItemLayoutChildLastBorderless : styles.listItemLayoutChildLastBordered,
-        ]
+            styles.listItemLayoutChildLast,
+            borderless ? styles.listItemLayoutChildLastBorderless : styles.listItemLayoutChildLastBordered,
+          ]
         : undefined,
     ],
     [borderless, isFirstChild, isLastChild, isParent, isParentWithChildren],
   );
 
+  const itemStyle = React.useMemo(
+    () => [listItemLayoutStyle, currentPageAttributes.style],
+    [currentPageAttributes.style, listItemLayoutStyle],
+  );
+
+  const onPressItem = React.useCallback(() => {
+    onPress?.(id);
+  }, [onPress, id]);
+
   return (
-    <View
-      style={React.useMemo(
-        () => [listItemLayoutStyle, currentPageAttributes.style],
-        [currentPageAttributes.style, listItemLayoutStyle],
-      )}
-      testID={`list-item-number-${index}`}>
-      <TouchableOpacity
-        onPress={React.useCallback(() => {
-          onPress?.(id);
-        }, [onPress, id])}>
+    <View style={itemStyle} testID={`list-item-number-${index}`}>
+      <TouchableOpacity onPress={onPressItem}>
         <View style={styles.listItemContent}>
           {isCurrentPage ? (
             <BodyBoldText numberOfLines={1} ellipsizeMode="tail" style={hiddenListItemTextStyle}>
@@ -95,11 +97,14 @@ const WikiListItem: React.FC<WikiListItemProps> = props => {
       </TouchableOpacity>
     </View>
   );
-};
+});
+WikiListItem.displayName = 'WikiListItem';
 
 const ItemSeparatorComponent = () => <View style={styles.spacingItem} />;
 
-export const PageList: React.FC<PageListProps> = ({
+const keyExtractor: NonNullable<FlatListProps<WikiPageMetaData>['keyExtractor']> = item => item.id;
+
+export const WikiPageList: React.FC<WikiPageListProps> = ({
   borderless = false,
   currentPageId,
   ListComponent,
@@ -145,9 +150,7 @@ export const PageList: React.FC<PageListProps> = ({
       ListEmptyComponent={ListEmptyComponent}
       refreshControl={refreshControl}
       renderItem={renderItem}
-      keyExtractor={React.useCallback<
-        NonNullable<FlatListProps<NonNullable<PageListProps['wikiData']['pages'][0]>>['keyExtractor']>
-      >(item => item.id, [])}
+      keyExtractor={keyExtractor}
     />
   );
 };

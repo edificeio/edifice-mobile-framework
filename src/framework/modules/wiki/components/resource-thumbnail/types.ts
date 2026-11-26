@@ -1,5 +1,5 @@
 import { ImageSourcePropType } from 'react-native';
 
-export interface ResourceThumbnailProps {
+export interface WikiResourceThumbnailProps {
   source?: ImageSourcePropType | undefined;
 }

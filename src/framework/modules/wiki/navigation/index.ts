@@ -1,20 +1,8 @@
-import type { ParamListBase } from '@react-navigation/native';
-
-import moduleConfig from '~/framework/modules/wiki/module-config';
-import { WikiCreateScreen } from '~/framework/modules/wiki/screens/create';
-import type { WikiHomeScreen } from '~/framework/modules/wiki/screens/home';
-import type { WikiReaderScreen } from '~/framework/modules/wiki/screens/reader';
-import type { WikiSummaryScreen } from '~/framework/modules/wiki/screens/summary';
-
+// ToDo(wiki-migration): remove once `communities` (home screen tile « courses ») no longer imports it
+/**
+ * Route names of `wiki` read by the modules of the legacy navigation.
+ * @deprecated write the route in plain text (`navigation.navigate('wiki/summary', { resourceId })`).
+ */
 export const wikiRouteNames = {
-  create: `${moduleConfig.routeName}/create` as 'create',
-  home: `${moduleConfig.routeName}` as 'home',
-  reader: `${moduleConfig.routeName}/reader` as 'reader',
-  summary: `${moduleConfig.routeName}/summary` as 'summary',
+  summary: 'wiki/summary' as const,
 };
-export interface WikiNavigationParams extends ParamListBase {
-  create: WikiCreateScreen.NavParams;
-  home: WikiHomeScreen.NavParams;
-  summary: WikiSummaryScreen.NavParams;
-  reader: WikiReaderScreen.NavParams;
-}

@@ -1,3 +1,3 @@
-import PageHeader from './component';
+import WikiPageHeader from './component';
 
-export default PageHeader;
+export default WikiPageHeader;

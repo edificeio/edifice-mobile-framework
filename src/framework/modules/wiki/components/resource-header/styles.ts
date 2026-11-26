@@ -10,6 +10,12 @@ const styles = StyleSheet.create({
   resourceHeaderContainer: {
     position: 'relative',
   },
+  resourceHeaderContainerWithDescription: {
+    marginBottom: UI_SIZES.spacing.big,
+  },
+  resourceHeaderContainerWithoutDescription: {
+    marginBottom: UI_SIZES.spacing.large + UI_SIZES.spacing.tiny,
+  },
   svgShapeLeft: {
     left: 0,
     position: 'absolute',

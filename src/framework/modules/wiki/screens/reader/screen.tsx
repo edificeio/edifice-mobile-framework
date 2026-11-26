@@ -1,50 +1,52 @@
 import * as React from 'react';
-import { LayoutChangeEvent, View } from 'react-native';
+import { View } from 'react-native';
 
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { StaticScreenProps } from '@react-navigation/native';
 import { FlashListProps } from '@shopify/flash-list';
-import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
 import { Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
-import { screenOptions } from '~/app/navigation/util';
-import { getStore, IGlobalState } from '~/app/store';
+import { defineScreen, StackNavigation, useNavigation } from '~/app/navigation-new';
 import { SingleAvatar } from '~/framework/components/avatar';
 import { AvatarSizes } from '~/framework/components/avatar/styles';
 import GhostButton from '~/framework/components/buttons/ghost';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text/viewer';
 import { RichEditorViewerProps } from '~/framework/components/inputs/rich-text/viewer/types';
-import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { BodyBoldText, HeadingMText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
-import { useAudience } from '~/framework/modules/audience';
 import { ResourceWithCommentsTemplate } from '~/framework/modules/comments';
 import { CommentsTreeProps } from '~/framework/modules/comments/components/comments-tree';
-import PageHeader from '~/framework/modules/wiki/components/page-header';
-import { PageHeaderPlaceholder } from '~/framework/modules/wiki/components/page-header/component';
+import {
+  deleteWikiPageComment,
+  editWikiPageComment,
+  loadWiki,
+  loadWikiPage,
+  postWikiPageComment,
+} from '~/framework/modules/wiki/actions';
+import WikiPageHeader from '~/framework/modules/wiki/components/page-header';
+import { WikiPageHeaderPlaceholder } from '~/framework/modules/wiki/components/page-header/component';
 import { HeaderStatus } from '~/framework/modules/wiki/components/page-header/types';
-import PageListBottomSheet from '~/framework/modules/wiki/components/page-list/page-list-bottom-sheet';
-import SelectButton from '~/framework/modules/wiki/components/select-button';
-import { Wiki, WikiPage } from '~/framework/modules/wiki/model';
-import { wikiAudienceConfig } from '~/framework/modules/wiki/module-config';
-import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
-import service from '~/framework/modules/wiki/service';
-import { actions, selectors, WikiAction, WikiPageAction } from '~/framework/modules/wiki/store';
+import WikiSelectButton from '~/framework/modules/wiki/components/select-button';
+import { Wiki, WikiPage, WikiPageMetaData } from '~/framework/modules/wiki/model';
+import { canCommentWiki } from '~/framework/modules/wiki/model/business';
+import { getAdjacentPageIds } from '~/framework/modules/wiki/model/pages';
+import { selectPage, selectWiki, WikiDispatch } from '~/framework/modules/wiki/store';
+import { useAudience } from '~/modules/audience/hooks';
+import type { AudienceReferer } from '~/modules/audience/model';
+import { withSession } from '~/modules/auth/hoc';
+import type { AuthActiveAccount } from '~/modules/auth/model';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';
-import type { WikiReaderScreen } from './types';
 
-export const computeNavBar = screenOptions<'wiki/reader'>(
-  ({ route }: NativeStackScreenProps<WikiNavigationParams, typeof wikiRouteNames.reader>) => {
-    const wikiPageData = selectors.page(route.params.pageId)(getStore().getState());
-    return {
-      animationTypeForReplace: route.params.reverseAnimation ? 'pop' : 'push',
-      title: wikiPageData?.title ?? '',
-    };
-  },
-);
+type WikiReaderScreenParams = {
+  resourceId: Wiki['assetId'];
+  pageId: WikiPageMetaData['id'];
+  reverseAnimation?: boolean;
+};
+
+const wikiAudienceConfig: Pick<AudienceReferer, 'module' | 'resourceType'> = { module: 'wiki', resourceType: 'page' };
 
 /**
  * PLACEHOLDERS
@@ -52,15 +54,13 @@ export const computeNavBar = screenOptions<'wiki/reader'>(
 
 const WikiReaderPageSelectPlaceholder = () => (
   <Placeholder>
-    <View style={styles.selectButtonWrapper} testID="page-select-button-loader">
-      {/* <PlaceholderLine noMargin height={BUTTON_PLACEHOLDER_HEIGHT} /> */}
-    </View>
+    <View style={styles.selectButtonWrapper} testID="page-select-button-loader" />
   </Placeholder>
 );
 
 const WikiReaderHeaderPlaceholder = () => (
   <Placeholder>
-    <PageHeaderPlaceholder>
+    <WikiPageHeaderPlaceholder>
       <PlaceholderLine
         noMargin
         height={TextSizeStyle.Bigger.lineHeight}
@@ -74,7 +74,7 @@ const WikiReaderHeaderPlaceholder = () => (
           <PlaceholderLine width={40} noMargin height={TextSizeStyle.Normal.lineHeight - 4} style={styles.headerPlaceholderInfo} />
         </View>
       </View>
-    </PageHeaderPlaceholder>
+    </WikiPageHeaderPlaceholder>
   </Placeholder>
 );
 
@@ -109,31 +109,24 @@ const WikiPageNavigationWrapper = ({
   page,
   wiki,
 }: React.PropsWithChildren<{ page: WikiPage; wiki: Wiki; onGoToPage: (id: WikiPage['id'], reverse?: boolean) => void }>) => {
-  const pageListBottomSheetRef = React.useRef<BottomSheetModalMethods>(null);
-  const openPagesBottomSheet = React.useCallback(() => {
-    pageListBottomSheetRef.current?.present();
-  }, []);
-  const [buttonHeight, setButtonHeight] = React.useState<number | null>(null);
-  const onSelectButtonLayout = React.useCallback((event: LayoutChangeEvent) => {
-    const { height } = event.nativeEvent.layout;
-    setButtonHeight(height);
-  }, []);
+  const navigation = useNavigation();
+  // The list of the pages gives back the page chosen (nothing if the user closes it): shown in place of this one
+  const openPages = React.useCallback(async () => {
+    const pageId = await navigation.navigateAsync('wiki/pages', { currentPageId: page.id, resourceId: wiki.assetId });
+    if (pageId) onGoToPage(pageId);
+  }, [navigation, onGoToPage, page.id, wiki.assetId]);
 
-  const selectButtonWrapperHeight = React.useMemo(() => {
-    if (buttonHeight) return buttonHeight + styles.selectButtonWrapper.marginVertical * 2;
-  }, [buttonHeight]);
   return (
     <>
-      <SelectButton
+      <WikiSelectButton
         text={I18n.get('wiki-select-page-button')}
-        action={openPagesBottomSheet}
+        action={openPages}
         iconLeft="ui-text-page"
         iconRight="ui-unfold"
         wrapperStyle={styles.selectButtonWrapper}
         testID="page-select-button"
-        onLayout={onSelectButtonLayout}
       />
-      <PageHeader status={page.isVisible ? HeaderStatus.VISIBLE : HeaderStatus.HIDDEN}>
+      <WikiPageHeader status={page.isVisible ? HeaderStatus.VISIBLE : HeaderStatus.HIDDEN}>
         <HeadingMText testID="page-title">{page.title}</HeadingMText>
         <View style={styles.headerAuthorInfo}>
           <SingleAvatar userId={page.updaterId ?? page.creatorId} size="sm" testID="page-author-avatar" border />
@@ -146,16 +139,8 @@ const WikiPageNavigationWrapper = ({
             </SmallText>
           </View>
         </View>
-      </PageHeader>
+      </WikiPageHeader>
       {children}
-      <PageListBottomSheet
-        currentPageId={page.id}
-        ListComponent={FlatList}
-        onPress={onGoToPage}
-        ref={pageListBottomSheetRef}
-        additionalTopInset={selectButtonWrapperHeight}
-        wikiData={wiki}
-      />
     </>
   );
 };
@@ -163,21 +148,19 @@ const WikiPageNavigationWrapper = ({
 const WikiReaderContent = ({
   onGoToPage,
   onLoad,
-  pageId,
-  resourceId,
-}: Pick<WikiReaderScreen.NavParams, 'pageId' | 'resourceId'> &
-  Pick<RichEditorViewerProps, 'onLoad'> & {
-    onGoToPage: (id: WikiPage['id'], reverse?: boolean) => void;
-  }) => {
-  const wiki = useSelector(selectors.wiki(resourceId))!;
-  const page = useSelector(selectors.page(pageId));
-
-  const pageIndex = React.useMemo(() => wiki.pages.findIndex(p => p.id === page.id), [page, wiki.pages]);
-  const prevPageId = React.useMemo(() => (pageIndex > 0 ? wiki.pages.at(pageIndex - 1)?.id : undefined), [pageIndex, wiki.pages]);
-  const nextPageId = React.useMemo(
-    () => (pageIndex !== -1 ? wiki.pages.at(pageIndex + 1)?.id : undefined),
-    [pageIndex, wiki.pages],
+  page,
+  wiki,
+}: Pick<RichEditorViewerProps, 'onLoad'> & {
+  onGoToPage: (id: WikiPage['id'], reverse?: boolean) => void;
+  page: WikiPage;
+  wiki: Wiki;
+}) => {
+  const { nextId: nextPageId, previousId: prevPageId } = React.useMemo(
+    () => getAdjacentPageIds(wiki.pages, page.id),
+    [page.id, wiki.pages],
   );
+  const goToPreviousPage = React.useCallback(() => onGoToPage(prevPageId!, true), [onGoToPage, prevPageId]);
+  const goToNextPage = React.useCallback(() => onGoToPage(nextPageId!), [onGoToPage, nextPageId]);
 
   return (
     <WikiPageNavigationWrapper wiki={wiki} page={page} onGoToPage={onGoToPage}>
@@ -191,9 +174,7 @@ const WikiReaderContent = ({
           disabled={!prevPageId}
           testID="previous-page-button"
           text={I18n.get('wiki-page-previous')}
-          action={() => {
-            onGoToPage(prevPageId!, true);
-          }}
+          action={goToPreviousPage}
         />
         <GhostButton
           style={styles.bottomNavigationRight}
@@ -202,9 +183,7 @@ const WikiReaderContent = ({
           disabled={!nextPageId}
           testID="next-page-button"
           text={I18n.get('wiki-page-next')}
-          action={() => {
-            onGoToPage(nextPageId!);
-          }}
+          action={goToNextPage}
         />
       </View>
     </WikiPageNavigationWrapper>
@@ -212,18 +191,23 @@ const WikiReaderContent = ({
 };
 
 export function WikiReaderScreenLoaded({
-  navigation,
+  page,
   refreshControl,
-  route: {
-    params: { pageId, resourceId },
-  },
-}: WikiReaderScreen.AllProps & { refreshControl: FlashListProps<any>['refreshControl'] }) {
-  const wiki = useSelector(selectors.wiki(resourceId));
-  const page = useSelector(selectors.page(pageId));
+  session,
+  wiki,
+}: {
+  page: WikiPage;
+  refreshControl: FlashListProps<any>['refreshControl'];
+  session: AuthActiveAccount;
+  wiki: Wiki;
+}) {
+  // A native stack navigation: changing of page replaces the screen (`replace`)
+  const navigation = useNavigation<StackNavigation>();
+  const resourceId = wiki.assetId;
 
   const switchToPage = React.useCallback(
     (id: WikiPage['id'], reverse?: boolean) => {
-      navigation.replace(wikiRouteNames.reader, { pageId: id, resourceId, reverseAnimation: reverse });
+      navigation.replace('wiki/reader', { pageId: id, resourceId, reverseAnimation: reverse });
     },
     [navigation, resourceId],
   );
@@ -239,39 +223,31 @@ export function WikiReaderScreenLoaded({
     ),
     [page, switchToPage, wiki],
   );
-  const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, WikiAction | WikiPageAction>>();
+  const dispatch = useDispatch<WikiDispatch>();
 
   const [autoScrollItem, setAutoScrollItem] = React.useState<ArrayElement<CommentsTreeProps['data']>['id'] | undefined>(undefined);
 
-  const refreshPage = React.useCallback(async () => {
-    const newPageData = await service.page.get({ id: resourceId, pageId: pageId });
-    dispatch(actions.loadPage(resourceId, newPageData));
-  }, [dispatch, pageId, resourceId]);
-
-  const canAddComment = wiki.rights.findIndex(e => e === 'comment' || e === 'creator') !== -1;
+  const canAddComment = canCommentWiki(wiki.rights);
   const onSubmit = React.useCallback<NonNullable<CommentsTreeProps['onSubmit']>>(
     async (data, replyTo) => {
-      const { _id: newCommentId } = await service.page.postComment({ id: wiki.assetId, pageId: page.id }, data.content, replyTo);
-      await refreshPage();
+      const newCommentId = await dispatch(postWikiPageComment(session, wiki.assetId, page.id, data.content, replyTo));
       setAutoScrollItem(newCommentId);
     },
-    [page.id, refreshPage, wiki.assetId],
+    [dispatch, page.id, session, wiki.assetId],
   );
 
   const onEdit = React.useCallback<NonNullable<CommentsTreeProps['onEdit']>>(
     async (data, id) => {
-      await service.page.editComment({ id: wiki.assetId, pageId: page.id }, id, data.content);
-      await refreshPage();
+      await dispatch(editWikiPageComment(session, wiki.assetId, page.id, id, data.content));
     },
-    [page.id, refreshPage, wiki.assetId],
+    [dispatch, page.id, session, wiki.assetId],
   );
 
   const onDelete = React.useCallback<NonNullable<CommentsTreeProps['onDelete']>>(
     async id => {
-      await service.page.deleteComment({ id: wiki.assetId, pageId: page.id }, id);
-      await refreshPage();
+      await dispatch(deleteWikiPageComment(session, wiki.assetId, page.id, id));
     },
-    [page.id, refreshPage, wiki.assetId],
+    [dispatch, page.id, session, wiki.assetId],
   );
 
   return (
@@ -285,40 +261,58 @@ export function WikiReaderScreenLoaded({
         onDelete={onDelete}
         focusItem={autoScrollItem}
         refreshControl={refreshControl}
-        ListHeaderComponent={
-          <WikiReaderContent onGoToPage={switchToPage} pageId={pageId} resourceId={resourceId} onLoad={onLoad} />
-        }
+        ListHeaderComponent={<WikiReaderContent onGoToPage={switchToPage} page={page} wiki={wiki} onLoad={onLoad} />}
       />
       {!loaded && <View style={styles.webViewPlaceholder}>{renderPlaceholder()}</View>}
     </>
   );
 }
 
-export default function WikiReaderScreen({
-  navigation,
-  route,
+const WikiReaderScreen = withSession<StaticScreenProps<WikiReaderScreenParams>>(function ({
   route: {
     params: { pageId, resourceId },
   },
-  ...props
-}: WikiReaderScreen.AllProps) {
-  const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, WikiAction | WikiPageAction>>();
+  session,
+}) {
+  const navigation = useNavigation();
+  const dispatch = useDispatch<WikiDispatch>();
+  const wiki = useSelector(selectWiki(resourceId));
+  const page = useSelector(selectPage(pageId));
+
+  // The title of the page, once loaded, replaces the empty one of the options (CONVENTIONS « UI »)
+  const pageTitle = page?.title;
+  React.useLayoutEffect(() => {
+    if (pageTitle !== undefined) navigation.setOptions({ headerTitle: undefined, title: pageTitle });
+  }, [navigation, pageTitle]);
 
   const { markView } = useAudience({ ...wikiAudienceConfig, resourceId: pageId });
 
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(async () => {
-    const newWikiData = await service.wiki.get({ id: resourceId });
-    const newPageData = await service.page.get({ id: resourceId, pageId: pageId });
-    dispatch(actions.loadWiki(newWikiData));
-    dispatch(actions.loadPage(resourceId, newPageData));
-    navigation.setOptions({ title: newPageData.title });
+    await dispatch(loadWiki(session, resourceId));
+    await dispatch(loadWikiPage(session, resourceId, pageId));
     markView();
-  }, [resourceId, pageId, dispatch, navigation, markView]);
+  }, [dispatch, session, resourceId, pageId, markView]);
 
   const renderContent = React.useCallback<NonNullable<ContentLoaderProps['renderContent']>>(
-    refreshControl => <WikiReaderScreenLoaded navigation={navigation} route={route} refreshControl={refreshControl} {...props} />,
-    [navigation, props, route],
+    refreshControl =>
+      wiki && page ? (
+        <WikiReaderScreenLoaded wiki={wiki} page={page} refreshControl={refreshControl} session={session} />
+      ) : (
+        <EmptyContentScreen />
+      ),
+    [page, session, wiki],
   );
 
   return <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={WikiReaderScreenPlaceholder} />;
-}
+});
+WikiReaderScreen.displayName = 'WikiReaderScreen';
+
+export default defineScreen({
+  options: ({ route }) => ({
+    animationTypeForReplace: route.params.reverseAnimation ? 'pop' : 'push',
+    // The title of the page is set by the screen: hidden until then (`title: ''` would show the name of the route)
+    headerTitle: () => '',
+    title: '',
+  }),
+  screen: WikiReaderScreen,
+});

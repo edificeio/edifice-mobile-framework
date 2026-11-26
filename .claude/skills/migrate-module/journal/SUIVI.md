@@ -1,32 +1,34 @@
 # Suivi calculé de la migration
 
-> Généré par `yarn migration-status` le 2026-11-24, branche `feat/ia/migration-outillage`, commit `fded2e138`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
+> Généré par `yarn migration-status` le 2026-11-25, branche `feat/navigation`, commit `bbf8088cd`. **Ne pas modifier à la main** : relancer la commande. Le contexte et les décisions sont dans [STATUS.md](STATUS.md) ; le sens des colonnes est en bas de page.
 
 ## En bref
 
 | Indicateur | Valeur |
 | --- | ---: |
-| Modules sur la nouvelle génération | 10 / 42 |
-| Modules restant sur l'ancienne | 32 |
-| Lignes dans les modules anciens | 58977 |
-| Écrans anciens à porter (`<Stack.Screen>`) | 91 |
-| Fichiers sur l'ancienne navigation | 205 |
+| Modules sur la nouvelle génération | 12 / 43 |
+| Modules restant sur l'ancienne | 31 |
+| Lignes dans les modules anciens | 58419 |
+| Écrans anciens à porter (`<Stack.Screen>`) | 89 |
+| Fichiers sur l'ancienne navigation | 201 |
 | Fichiers avec `connect(` | 50 |
 
 ## Modules sur la nouvelle génération
 
 | Module | Statut | Fichiers | Lignes | Écrans anciens | Écrans nouveaux | Navigation ancienne | `connect(` | Modules anciens importés | Notif. | Flows |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | :---: | ---: |
-| `audience` | basculé, sans test | 32 | 1605 | 0 | 2 | 0 | 0 | — | — | 0 |
-| `auth` | bascule incomplète | 169 | 9932 | 0 | 22 | 1 | 0 | — | — | 0 |
+| `audience` | basculé, sans test | 32 | 1609 | 0 | 2 | 0 | 0 | — | — | 0 |
+| `auth` | bascule incomplète | 171 | 9973 | 0 | 22 | 1 | 0 | — | — | 0 |
 | `editor` | basculé, sans test | 1 | 18 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `media` | bascule incomplète | 63 | 3599 | 0 | 2 | 1 | 0 | — | — | 0 |
-| `myapps` | basculé, testable | 73 | 3134 | 0 | 5 | 0 | 0 | — | — | 6 |
+| `myapps` | basculé, testable | 80 | 3579 | 0 | 6 | 0 | 0 | — | — | 6 |
 | `notifications` | basculé, sans test | 2 | 65 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `user` | basculé, sans test | 2 | 53 | 0 | 1 | 0 | 0 | — | — | 0 |
-| `blog` | basculé, sans test | 47 | 2757 | 0 | 6 | 0 | 0 | — | oui | 0 |
-| `explorer` | bascule incomplète | 14 | 517 | 0 | 0 | 1 | 0 | — | — | 0 |
+| `blog` | basculé, sans test | 47 | 2521 | 0 | 6 | 0 | 0 | — | oui | 0 |
+| `comments` | basculé, sans test | 23 | 1973 | 0 | 1 | 0 | 0 | — | — | 0 |
+| `explorer` | bascule incomplète | 14 | 514 | 0 | 0 | 1 | 0 | — | — | 0 |
 | `support` | basculé, testable | 10 | 535 | 0 | 1 | 0 | 0 | `workspace` | — | 1 |
+| `wiki` | basculé, sans test | 55 | 2546 | 0 | 4 | 0 | 0 | — | oui | 0 |
 
 ## Modules sur l'ancienne génération
 
@@ -44,7 +46,7 @@
 | `connectors/pronote` | à faire | 7 | 253 | 2 | 0 | 2 | 0 | — | — | 0 |
 | `collaborativewall` | à faire | 15 | 302 | 2 | 0 | 4 | 0 | — | oui | 0 |
 | `scrapbook` | à faire | 16 | 383 | 2 | 0 | 3 | 0 | — | oui | 0 |
-| `nabook` | à faire | 16 | 799 | 1 | 0 | 3 | 0 | — | oui | 0 |
+| `nabook` | à faire | 16 | 798 | 1 | 0 | 3 | 0 | — | oui | 0 |
 | `widgets/cantine` | à faire | 14 | 963 | 1 | 0 | 3 | 0 | — | — | 0 |
 | `viescolaire/edt` | à faire | 18 | 1100 | 1 | 0 | 3 | 1 | `viescolaire/dashboard` | — | 0 |
 | `widgets/screen-time` | à faire | 19 | 1195 | 1 | 0 | 3 | 0 | — | — | 0 |
@@ -57,12 +59,11 @@
 | `viescolaire/diary` | à faire | 35 | 2237 | 4 | 0 | 10 | 2 | `viescolaire/dashboard`, `viescolaire/edt` | — | 0 |
 | `schoolbook` | à faire | 20 | 2394 | 3 | 0 | 5 | 3 | — | oui | 0 |
 | `workspace` | à faire | 25 | 2398 | 2 | 0 | 5 | 2 | — | oui | 0 |
-| `homework` | à faire | 36 | 2626 | 6 | 0 | 7 | 4 | `workspace` | oui | 0 |
-| `wiki` | à faire | 73 | 2718 | 4 | 0 | 9 | 0 | — | oui | 0 |
+| `homework` | à faire | 36 | 2619 | 6 | 0 | 7 | 4 | `workspace` | oui | 0 |
 | `form` | à faire | 46 | 4249 | 2 | 0 | 5 | 2 | — | oui | 0 |
-| `user` | à faire | 74 | 4410 | 15 | 0 | 28 | 6 | `mails`, `workspace` | oui | 0 |
-| `communities` | à faire | 144 | 6147 | 7 | 0 | 16 | 0 | `wiki` | oui | 0 |
+| `user` | à faire | 74 | 4409 | 15 | 0 | 28 | 6 | `mails`, `workspace` | oui | 0 |
 | `viescolaire/presences` | à faire | 115 | 6374 | 6 | 0 | 15 | 6 | `viescolaire/competences`, `viescolaire/dashboard` | oui | 0 |
+| `communities` | à faire | 188 | 8316 | 9 | 0 | 21 | 0 | — | oui | 0 |
 | `mails` | à faire | 114 | 9363 | 5 | 0 | 15 | 3 | `user`, `workspace` | oui | 0 |
 
 ## Dossiers sans déclaration de module
@@ -72,10 +73,10 @@
 | `audience` | — | 5 | 28 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `auth` | — | 30 | 2489 | 0 | 0 | 7 | 3 | `user` | — | 0 |
 | `connectors/common` | — | 3 | 84 | 0 | 0 | 2 | 0 | — | — | 0 |
-| `debug` | — | 13 | 535 | 0 | 0 | 4 | 0 | — | — | 0 |
+| `debug` | — | 13 | 528 | 0 | 0 | 4 | 0 | — | — | 0 |
 | `media` | — | 7 | 32 | 0 | 0 | 0 | 0 | — | — | 0 |
 | `splashads` | — | 7 | 229 | 0 | 0 | 2 | 0 | — | — | 0 |
-| `timeline` | — | 45 | 2598 | 5 | 0 | 7 | 2 | `user` | oui | 0 |
+| `timeline` | — | 45 | 2611 | 5 | 0 | 7 | 2 | `user` | oui | 0 |
 | `viescolaire/common` | — | 14 | 1077 | 0 | 0 | 0 | 2 | `viescolaire/dashboard`, `viescolaire/diary`, `viescolaire/edt` | — | 0 |
 
 ## Lire ce tableau

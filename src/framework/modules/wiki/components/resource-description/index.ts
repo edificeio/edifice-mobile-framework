@@ -1,3 +1,3 @@
-import ResourceDescription from './component';
+import WikiResourceDescription from './component';
 
-export default ResourceDescription;
+export default WikiResourceDescription;

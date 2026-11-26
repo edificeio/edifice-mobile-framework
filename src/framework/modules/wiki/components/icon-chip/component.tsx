@@ -1,10 +1,10 @@
 import React from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 
+import { Svg } from '~/framework/components/picture';
+
 import { ICON_HEIGHT, ICON_WIDTH, styles } from './styles';
 import { IconChipProps } from './types';
-
-import { Svg } from '~/framework/components/picture';
 
 const IconChip: React.FC<IconChipProps> = ({ icon, iconColor, iconContainerColor, testId }) => {
   const iconContainerStyle: StyleProp<ViewStyle> = React.useMemo(

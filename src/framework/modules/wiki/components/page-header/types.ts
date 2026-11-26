@@ -5,7 +5,7 @@ export enum HeaderStatus {
   HIDDEN = 'hidden',
 }
 
-export interface PageHeaderProps extends Pick<ViewProps, 'style'> {
+export interface WikiPageHeaderProps extends Pick<ViewProps, 'style'> {
   status?: HeaderStatus;
   children?: React.ReactNode;
 }

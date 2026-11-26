@@ -16,14 +16,9 @@ export default StyleSheet.create({
   listContentPlaceholder: {
     marginTop: UI_SIZES.spacing.medium,
   },
-  newPageButton: {
-    alignSelf: 'baseline',
-    marginBottom: UI_SIZES.spacing.big,
-    marginLeft: UI_SIZES.spacing.big,
-    marginTop: UI_SIZES.spacing.minor,
-  },
   page: {
     backgroundColor: theme.ui.background.card,
+    flex: 1,
   },
   pageListTitle: {
     marginBottom: UI_SIZES.spacing.medium,

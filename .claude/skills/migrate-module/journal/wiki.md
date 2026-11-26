@@ -1,6 +1,6 @@
 # Bascule : `wiki`
 
-> Statut : à faire (fiche de bascule ; préalable `explorer` fait le 2026-11-25, bascule à lancer) — mis à jour le 2026-11-25
+> Statut : basculé, puis assaini (tous les sujets), pas testé dans l'app, non commité — mis à jour le 2026-11-25
 >
 > Fiche du module : sa bascule (étape 1), puis son assainissement (étape 2, §9). Le pourquoi de la migration, les règles et la définition de « terminé » sont dans [INTENT.md](../INTENT.md) et ne se répètent pas ici ; le patron est dans [BASCULE.md](../BASCULE.md). Une page : ce qui est propre à ce module.
 >
@@ -74,11 +74,22 @@ Aucun flow Maestro aujourd'hui. Sur cette branche, l'ancienne génération n'est
 - **Orphelins** (décision 4) : `screens/create/`, `image-input`, `image-input-button`, `resource-thumbnail-loader` supprimés.
 - **Façades** : `navigation/index.ts` (`wikiRouteNames.summary`), pour `communities`.
 - **Fichiers touchés hors du module** : `src/app/config/modules.ts` (1).
+- **Ajouts découverts pendant la bascule** (2026-11-25, à relire) :
+  - **Lecture** : `useNavigation<StackNavigation>()` (`~/app/navigation-new`) pour `replace` : le `useNavigation()` par défaut n'a pas les méthodes d'une pile.
+  - **Options** des écrans typées par `defineScreen` (params inférés de l'écran), sans cast. `computeNavBar` et `screenOptions` partent avec leurs `testID` d'en-tête (`wiki-back-button`, `wiki-title`, abandonnés).
+  - **`resource-thumbnail`** : `moduleConfig.name` remplacé par `'wiki'` (seul autre lecteur de `module-config.ts`).
+  - **`wikiAudienceConfig`** déménage dans `screens/reader/screen.tsx` (non exporté), même valeur ; type `AudienceReferer` pris à la façade d'`audience`, comme avant.
+  - **Store** : `getWikiState` lit `state.wiki` (`IGlobalState` est `any`) ; reducers sans union d'actions, chaque handler retrouve son action par `as`.
+  - **Accueil** : écran `WikiHomeScreenComponent` (le nom `WikiHomeScreen` est celui du namespace des types) ; le template lit la route par `useRoute` ([explorer.md](explorer.md) décision 14), l'écran ne lui passe que `context`, `onOpenResource`, `emptyComponent`. Le bloc commenté du menu « nouveau cours » part avec `popupActions` (décision 4).
+  - Rien n'est indexé dans git : les suppressions sont dans l'arbre de travail.
 - Non touchés, marchent dans la nouvelle navigation : `PageListBottomSheet` (`@gorhom`, `BottomSheetModalProvider` monté), `ContentLoader`, `RichEditorViewer`, `ResourceWithCommentsTemplate`, façades `audience` et `media`.
 
 ## 5. Hors de la bascule
 
 ### Backlog
+
+Assaini le 2026-11-25 (§9) : tout est traité, sauf 10 (requêtes `/userbook/api/person` une par auteur : [later.md](later.md)) et 17 (`useNavigation<StackNavigation>()` gardé, pas de type de pile commun). Ajouté pendant l'assainissement : `SelectButton` pose le même `testID` (`page-select-button`) sur le `TouchableOpacity` et sur le `DefaultButton` qu'il contient ; gardé (identifiants de test inchangés).
+
 
 | # | Point | Sujet |
 | --- | --- | --- |
@@ -96,6 +107,8 @@ Aucun flow Maestro aujourd'hui. Sur cette branche, l'ancienne génération n'est
 | 12 | `useCallback` en ligne dans le JSX (`onPressItem`), flèches en ligne (`GhostButton`), `{...props}` dans `renderContent` de la lecture | `performance` |
 | 13 | `screens/home/styles.ts` vide (`StyleSheet.create({})`), styles à relever par le sujet | `styles` |
 | 14 | Code commenté : menu « nouveau cours », bouton « nouvelle page » (« next version ») | `dette` |
+| 16 | **Bug possible** : l'écran vide « racine » n'apparaît que si `route.params.folderId === RootFolderId.ROOT` ; ouvert depuis « Mes applis », l'accueil n'a pas de `folderId` (le template prend `ROOT` par défaut) : une racine vide montrerait l'écran « dossier vide ». Porté tel quel (`route.params?.folderId`), à vérifier dans l'app | `dette` |
+| 17 | Lecture : `useNavigation<StackNavigation>()` pour `replace` ; à revoir si la navigation des modules expose un type de pile commun | `structure` |
 | 15 | Accueil : route `wiki/explorer` mais dossier `screens/home/` ; écran qui consomme un template : un seul fichier `screens/explorer.tsx` (CONVENTIONS « Dossier d'un écran », règle des routes) | `structure` |
 
 ### Noté, non traité
@@ -127,29 +140,45 @@ Décisions du 2026-11-25 (développeur, questions de la fiche de bascule) :
 
 5. **Forme de la correction d'`explorer`** (2026-11-25, développeur, après deux essais) : le template lit la route de l'écran par `useRoute` ; plus de prop `route`. L'écran déclare `StaticScreenProps<ResourceExplorerTemplate.NavParams | undefined>`. `NavParams` en `type`. Options écartées : prop `routeName` typée ; `route` en prop avec `name: string`. Détail : [explorer.md](explorer.md) décision 14.
 
+Décisions du 2026-11-25 (développeur, plan d'ensemble de l'assainissement) :
+
+6. **Assainir par-dessus la bascule non commitée** : la bascule et l'assainissement sont dans le même arbre de travail. Option écartée : commiter la bascule d'abord (recommandée).
+7. **`structure` (service) et `structure` (modèle + actions) en une seule PR** : les règles métier sont dans le service, qui lit la session ; les sortir en même temps que l'adapter évite un adapter qui reçoit la session.
+8. **Scope `userbook` ajouté** (`scope: ['wiki', 'userbook']`, comme `blog` et `myapps`) : `/userbook/api/person` passe par `getModuleTransport('wiki')`. Sans effet visible (scope déjà demandé par ces modules).
+9. **Titre du sommaire et de la lecture par `useLayoutEffect`** : `setOptions({ headerTitle: undefined, title })` depuis un sélecteur ; les options n'ont que le titre masqué par défaut ; plus de `getStore()` dans les options ni de `setOptions` dans le chargement. Réactif au rafraîchissement. Devenue règle de CONVENTIONS « UI ». Options écartées : `getStore()` dans les options ; param `title` + `setParams`.
+10. **Paquet `set.prototype.isdisjointfrom` retiré** (seul `wiki` l'importait), remplacé par `some`.
+11. **Bug de la racine vide corrigé** (§5, 16) : `folderId` absent = racine, comme le template ; une racine vide montre l'écran racine, un sous-dossier vide « dossier vide ». Vérifié avant : le template prend `ROOT` par défaut sans l'écrire dans la route, l'entrée « Mes applis » ouvre sans params ; `blog` n'est pas concerné (son écran vide ne dépend pas du dossier).
+12. **Squelette inutile de `ResourceHeader` retiré** : l'état `isLoading` mis à vrai puis aussitôt à faux rendait un squelette à chaque ouverture.
+13. **Liste des pages en `formSheet` avec `sheetAllowedDetents: 'fitToContents'`**, comme les autres sheets de l'app. Option écartée : `[0.5, 1]` (recommandée pour une longue liste) ; à vérifier dans l'app avec un wiki de nombreuses pages.
+14. **Composants propres à `wiki` préfixés par `Wiki`** (2026-11-26, développeur, à la relecture) : `WikiPageHeader` (et `WikiPageHeaderPlaceholder`), `WikiPageList`, `WikiResourceDescription`, `WikiResourceDescriptionLoader`, `WikiResourceHeader`, `WikiResourceHeaderLoader`, `WikiResourceThumbnail`, `WikiSelectButton`, avec leurs types de props. Les **dossiers ne sont pas préfixés** (`components/page-header/`…) : ils sont déjà dans le dossier du module (précisé par le développeur le même jour, après un premier renommage des dossiers retiré). Devenue règle de CONVENTIONS « Nommage et rédaction ». Exception : `IconChip`, composant d'interface dont l'apparence n'a rien de propre à `wiki`, placé là parce que seul `wiki` l'utilise. Gardés : les sous-composants internes à un fichier (`ExpandButton`, `VisibilityIndicator`…) et l'enum `HeaderStatus`.
+
+Choix annoncés, sans effet visible : valeurs des types d'actions gardées (`WIKI_LOAD_WIKI`, `WIKI_LOAD_PAGE`) ; `createdAt` des métadonnées de page retiré (jamais rempli ni lu) ; `useNavigation<StackNavigation>()` gardé dans la lecture ; types de compte des auteurs laissés dans le service de `wiki` (mise en commun : [later.md](later.md)). Bug du bouton « créer » d'un dossier vide corrigé (décidé le 2026-11-17).
+
 ### Questions ouvertes
 
 Aucune.
 
 ## 7. Vérification
 
-Base mesurée le 2026-11-25 sur `5f34cd48e` (arbre propre, override `neo/test` du développeur). Sorties dans le scratchpad de la session.
+Base mesurée le 2026-11-25 sur `bbf8088cd` (arbre propre, override `neo/test` du développeur). Sorties dans le scratchpad de la session.
 
 | Contrôle | Avant | Après |
 | --- | --- | --- |
-| `tsc` dans le dossier du module (comparé fichier par fichier) | 32 erreurs (dépôt : 771) | |
-| ESLint sur le dossier | 58 erreurs, 2 warnings | |
-| `yarn lint-all` | 1 980 erreurs, 84 warnings | |
-| `yarn test` | 489 / 489 (suite `src/modules/media/source.test.ts` en échec au chargement : ESM de `react-native`, sans lien) | |
-| Compteurs de [SUIVI.md](SUIVI.md) | `à faire`, 4 écrans anciens, 9 fichiers en navigation ancienne | |
-| Flows Maestro ou recette manuelle | aucun flow | |
-| Parcours joué dans l'app (iOS, Android) | — | |
+| `tsc` (comparé fichier par fichier) | 771 (31 dans `wiki`) | 747 (7 dans `wiki`, toutes déjà présentes : §5, 6) ; **aucune erreur nouvelle** |
+| ESLint sur le dossier | 58 erreurs, 2 warnings | 20 erreurs, 2 warnings (fichiers non touchés ; les 2 warnings sont les regex reprises de `notif-handler.ts`) |
+| `yarn lint-all` | 1 980 erreurs, 84 warnings | 1 942 erreurs, 84 warnings |
+| `yarn test` | 489 / 489 (suite `media/source.test.ts` en échec au chargement) | 489 / 489 (idem) ; aucun test ne couvre `wiki` |
+| `yarn migration-status --check` | — | vert |
+| Compteurs de [SUIVI.md](SUIVI.md) | `à faire`, 4 écrans anciens, 9 fichiers en navigation ancienne | `basculé, sans test`, 0 écran ancien, 3 écrans nouveaux, navigation ancienne 0, aucun module ancien importé |
+| `testID`, clés i18n, stockage | — | `testID` inchangés sauf ceux de l'en-tête (abandonnés, §6) ; clés i18n inchangées hors des composants orphelins supprimés (`pickfile-*`, `wiki-image-delete`) ; pas de stockage |
+| Flows Maestro ou recette manuelle | aucun flow | recette §3 à jouer |
+| Parcours joué dans l'app (iOS, Android) | — | **pas testé dans l'app** |
 
 Ce qui ne peut pas encore être joué dans l'app : l'ouverture des notifications (intents pas encore lus) ; la tuile « cours » de `communities` (ancien).
 
 ## 8. Mesure
 
-Session du 2026-11-25 : relevé et fiche. Questions posées : 4, puis 1 (forme de la correction d'`explorer`) ; le développeur a revu deux fois la forme retenue (prop `routeName`, puis `route.name` d'une `route` en prop, enfin `useRoute`). Temps : non mesuré.
+Session du 2026-11-25 : relevé et fiche, puis correction d'`explorer` (commit `bbf8088cd`), puis bascule. Questions posées : 4, puis 1 (forme de la correction d'`explorer`) ; le développeur a revu deux fois la forme retenue (prop `routeName`, puis `route.name` d'une `route` en prop, enfin `useRoute`). Temps : non mesuré. À apprendre : la forme d'un template (route par `useRoute`) a été revue deux fois avant d'être réglée dans CONVENTIONS ; `useNavigation()` n'a pas `replace` / `push` sans type de pile.
 
 ## 9. Assainissement
 
@@ -157,4 +186,12 @@ Tenu par `/sanitize-module`, un sujet par PR. Sujets tirés de §5.
 
 | Sujet | Statut | Décisions | Recette à jouer dans l'app | PR / commit |
 | --- | --- | --- | --- | --- |
-| | | | | |
+| `connect`, `try-action`, `classes`, `temporal` | sans objet | aucun `connect(`, `tryAction`, classe ni `moment` | — | — |
+| `droits` | sans objet | `rights.ts` décide du bouton de l'écran vide, pas de la disponibilité : devenu `hasWikiCreationRights` de `model/business.ts` (`structure`) | — | non commité |
+| `structure` (service + modèle + actions) | fait | 7, 8. `service/adapter.ts` (traduction seule), `getModuleTransport('wiki').accountFetch(session, …)`, scope `userbook` ; règles pures `model/pages.ts` (`orderWikiPages`, `arrangeWikiPages`, `getAdjacentPageIds`) et `model/business.ts` (`hasWikiCreationRights`, `canSeeHiddenPages`, `canCommentWiki`), polyfill remplacé par `some` ; `actions.ts` (chargement, commentaires, session en paramètre) ; `store/` (types d'actions gardés) ; `withSession` sur le sommaire et la lecture ; accueil en `screens/explorer.tsx` ; params des écrans dans leur fichier. Absorbé : `screens/home/styles.ts` vide supprimé, `createdAt` des pages retiré (TS2322). Cast gardé et expliqué pour les commentaires supprimés (type de `comments`, [later.md](later.md)). Tests : `model/pages.test.ts`, `model/business.test.ts`, `service/adapter.test.ts` (corps envoyés identiques), `actions.test.ts` (24 tests) | ouvrir un wiki avec sous-pages et pages masquées (créateur, puis lecteur) : même ordre, mêmes pages ; commenter, répondre, modifier, supprimer | non commité |
+| `performance` | fait | `useCallback` sortis du JSX (sommaire, liste, en-tête de page), boutons précédente / suivante, élément de liste en `React.memo`, `keyExtractor` hors du composant, en-tête et écran vide du sommaire mémoïsés | défilement de la liste des pages, précédente / suivante | non commité |
+| `styles` | fait | marges de `ResourceHeader` en deux styles statiques, tableau statique de `PageHeaderPlaceholder` hors du composant. Restent (pas d'équivalent exact) : ombres en dur (`elevation: 4`, `shadowOpacity: 0.15`) de `resource-description` et de son squelette | en-tête du sommaire avec et sans description | non commité |
+| `dette` | fait | 10, 11, 12 ; bug du bouton « créer » (décidé le 2026-11-17 : seulement avec le droit, clé i18n traduite) ; `PageView` → `View` (`flex: 1`, fond `card`) ; `index.tsx` en double supprimé ; `!` retirés (la lecture reçoit le wiki et la page vérifiés, sinon `EmptyContentScreen`) ; code commenté et style `newPageButton` supprimés ; prop `canAddDescription` et type `testId` inutilisés retirés ; paquet `set.prototype.isdisjointfrom` retiré (`package.json`, `yarn.lock`, `--mode=update-lockfile`) | racine vide (avec et sans droit `createWiki`) : écran racine ; sous-dossier vide : « dossier vide », bouton « créer » seulement avec le droit ; sommaire sans squelette à l'ouverture | non commité |
+| `erreurs` | fait | `tsc` du module 7 → 1, ESLint 20 → 0 : icône typée `SvgIconName`, styles animés sans annotation `ViewProps['style']`, export `PageListTitle` absent retiré, `containerRef` mort retiré, variables de style mortes, imports, regex. Reste `resource-description` l. 26 (`ref` de `ExpandButton`) : typage de `useLayout` du framework ([later.md](later.md)) | — | non commité |
+| `api-publique` | fait | imports par les façades d'`audience` (`useAudience`, `AudienceReferer`) et de `media` (`toURISource`) remplacés par `~/modules/audience/hooks`, `~/modules/audience/model`, `~/modules/media/util`. Façade `wikiRouteNames` gardée pour `communities` | — | non commité |
+| `ui` | fait | 9, 13. Liste des pages en modale `wiki/pages` (`formSheet`, `fitToContents`, grabber), qui rend la page choisie (`navigateAsync` / `useScreenPromise`) ; la lecture la montre à sa place (`replace`). `page-list-bottom-sheet` supprimé. Titres du sommaire et de la lecture par `useLayoutEffect` depuis le store, options sans `getStore()` | « choisir une page » : sheet à la hauteur de la liste (à vérifier avec beaucoup de pages), page courante surlignée, choisir une page la remplace (la sheet se ferme d'abord) ; fermer sans choisir ne change rien ; titres au chargement et après un rafraîchissement | non commité |

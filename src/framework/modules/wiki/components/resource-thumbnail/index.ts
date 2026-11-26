@@ -1,3 +1,3 @@
-import ResourceThumbnail from './component';
+import WikiResourceThumbnail from './component';
 
-export default ResourceThumbnail;
+export default WikiResourceThumbnail;

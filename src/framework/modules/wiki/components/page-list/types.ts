@@ -20,7 +20,7 @@ export interface WikiListItemProps {
   index: number;
 }
 
-export interface PageListProps {
+export interface WikiPageListProps {
   borderless?: boolean;
   currentPageId?: string;
   ListComponent: typeof FlatList | typeof RNFlatlist;

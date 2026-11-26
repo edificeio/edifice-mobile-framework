@@ -94,4 +94,11 @@ export namespace API {
       _id: string;
     }
   }
+  export namespace Userbook {
+    /** `/userbook/api/person?id=…`: a user, found or not. */
+    export interface PersonResponse {
+      status: 'ok';
+      result: { type: ('External' | 'Guest' | 'Personnel' | 'Relative' | 'Student' | 'Teacher')[] }[];
+    }
+  }
 }

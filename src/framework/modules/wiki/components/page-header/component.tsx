@@ -10,7 +10,7 @@ import { SmallBoldText } from '~/framework/components/text';
 import { I18n } from '~/util/i18n';
 
 import { styles } from './styles';
-import { HeaderStatus, PageHeaderProps } from './types';
+import { HeaderStatus, WikiPageHeaderProps } from './types';
 
 const commonSvgBackgroundProps = {
   fill: theme.palette.grey.fog,
@@ -33,23 +33,21 @@ const commonSvgLineProps = {
   x2: 375,
 };
 
-const SvgBackground = ({ height = undefined }: { height?: number }) => (
-  <>
-    <RNSvg
-      height={'100%'}
-      width={'100%'}
-      style={React.useMemo(() => ({ minHeight: height }), [height])}
-      viewBox="0 0 375 164"
-      preserveAspectRatio="xMidYMid slice">
-      <Path d="M-7.5 -5H52.5L-67.5 169H-127.5L-7.5 -5Z" {...commonSvgBackgroundProps} />
-      <Path d="M82.5 -5H142.5L22.5 169H-37.5L82.5 -5Z" {...commonSvgBackgroundProps} />
-      <Path d="M172.5 -5H232.5L112.5 169H52.5L172.5 -5Z" {...commonSvgBackgroundProps} />
-      <Path d="M262.5 -5H322.5L202.5 169H142.5L262.5 -5Z" {...commonSvgBackgroundProps} />
-      <Path d="M352.5 -5H412.5L292.5 169H232.5L352.5 -5Z" {...commonSvgBackgroundProps} />
-      <Path d="M442.5 -5H502.5L382.5 169H322.5L442.5 -5Z" {...commonSvgBackgroundProps} />
-    </RNSvg>
-  </>
-);
+const SvgBackground = ({ height = undefined }: { height?: number }) => {
+  const style = React.useMemo(() => ({ minHeight: height }), [height]);
+  return (
+    <>
+      <RNSvg height={'100%'} width={'100%'} style={style} viewBox="0 0 375 164" preserveAspectRatio="xMidYMid slice">
+        <Path d="M-7.5 -5H52.5L-67.5 169H-127.5L-7.5 -5Z" {...commonSvgBackgroundProps} />
+        <Path d="M82.5 -5H142.5L22.5 169H-37.5L82.5 -5Z" {...commonSvgBackgroundProps} />
+        <Path d="M172.5 -5H232.5L112.5 169H52.5L172.5 -5Z" {...commonSvgBackgroundProps} />
+        <Path d="M262.5 -5H322.5L202.5 169H142.5L262.5 -5Z" {...commonSvgBackgroundProps} />
+        <Path d="M352.5 -5H412.5L292.5 169H232.5L352.5 -5Z" {...commonSvgBackgroundProps} />
+        <Path d="M442.5 -5H502.5L382.5 169H322.5L442.5 -5Z" {...commonSvgBackgroundProps} />
+      </RNSvg>
+    </>
+  );
+};
 
 const SvgUpperLine = () => (
   <RNSvg width="100%" height="2px" viewBox="0 0 375 2" preserveAspectRatio="none" style={styles.svgUpperLine}>
@@ -117,7 +115,7 @@ const animationConfig = {
   Easing: Easing.out(Easing.ease),
 };
 
-const PageHeader: React.FC<PageHeaderProps> = ({ children, status, style }) => {
+const WikiPageHeader: React.FC<WikiPageHeaderProps> = ({ children, status, style }) => {
   const hiddenOpacity = useAnimatedValue(status === HeaderStatus.VISIBLE ? 0 : 1);
   const animatedPaddingTop = useAnimatedValue(getPaddingTop(status));
   const animatedMarginVertical = useAnimatedValue(getMarginVertical(status));
@@ -127,12 +125,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({ children, status, style }) => {
     [],
   );
 
-  const hiddenHeaderStyle: ViewProps['style'] = React.useMemo(
+  const hiddenHeaderStyle = React.useMemo(
     () => [styles.backgroundContainer, styles.backgroundContainerHidden, { opacity: hiddenOpacity }],
     [hiddenOpacity],
   );
 
-  const hiddenIndicatorStyle: ViewProps['style'] = React.useMemo(
+  const hiddenIndicatorStyle = React.useMemo(
     () => ({
       ...styles.visibilityIndicatorContainer,
       opacity: hiddenOpacity,
@@ -180,8 +178,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({ children, status, style }) => {
     [setMeasuredHeight],
   );
 
+  const headerStyle = React.useMemo(() => [containerStyle, style], [containerStyle, style]);
+
   return (
-    <Animated.View style={React.useMemo(() => [containerStyle, style], [containerStyle, style])}>
+    <Animated.View style={headerStyle}>
       <Animated.View style={visibleHeaderStyle} />
       <Animated.View style={hiddenHeaderStyle}>
         <View style={styles.backgroundPatternContainer}>
@@ -200,8 +200,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({ children, status, style }) => {
   );
 };
 
-export const PageHeaderPlaceholder = ({ children }: Pick<ViewProps, 'children'>) => (
-  <View style={[styles.container, styles.placeholderStyle, styles.content]}>{children}</View>
+const placeholderContainerStyle = [styles.container, styles.placeholderStyle, styles.content];
+
+export const WikiPageHeaderPlaceholder = ({ children }: Pick<ViewProps, 'children'>) => (
+  <View style={placeholderContainerStyle}>{children}</View>
 );
 
-export default PageHeader;
+export default WikiPageHeader;

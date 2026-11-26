@@ -1,21 +1,7 @@
-import { StyleSheet, ViewStyle } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-
-const listItemBaseStyle: ViewStyle = {
-  backgroundColor: theme.palette.grey.white,
-  borderColor: theme.palette.grey.cloudy,
-  borderLeftWidth: UI_SIZES.border.thin,
-  borderRightWidth: UI_SIZES.border.thin,
-  marginHorizontal: UI_SIZES.spacing.big,
-  paddingHorizontal: UI_SIZES.spacing.medium,
-  paddingVertical: UI_SIZES.spacing.small,
-};
-
-const childItemBaseStyle = {
-  marginLeft: UI_SIZES.spacing.major,
-};
 
 const styles = StyleSheet.create({
   bottomSheetFocusedItem: {

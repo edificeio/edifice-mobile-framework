@@ -12,6 +12,23 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-25 — Assainissement de `wiki` : tous les sujets (`feat/navigation`)
+
+- Fait (non commité, par-dessus la bascule, décision 6) : `structure` (service + modèle + actions, une PR : adapter, `getModuleTransport('wiki')`, scope `userbook`, `model/pages.ts` et `model/business.ts` testés, `actions.ts`, `store/`, accueil en `screens/explorer.tsx`), `performance`, `styles`, `dette` (bug de la racine vide, bouton « créer » seulement avec le droit, squelette inutile de `ResourceHeader`, `PageView`, doublon d'`index`, `!`, code mort, paquet `set.prototype.isdisjointfrom` retiré), `erreurs`, `api-publique` (plus de façade d'`audience` ni de `media`), `ui` (modale `wiki/pages` en `formSheet` par `navigateAsync`, titres par `useLayoutEffect`). Sans objet : `connect`, `try-action`, `classes`, `temporal`, `droits`.
+- Décidé (développeur) : décisions 6 à 13 de la fiche ; règle générale « titre lu dans le store par `useLayoutEffect`, jamais `getStore()` dans les options » ajoutée à CONVENTIONS « UI ». Pris seul, sans effet visible : erreurs de `ref` liées à `useLayout` laissées (framework), cast expliqué pour les commentaires supprimés.
+- Vérifié : `tsc` 747 → 741, aucune erreur nouvelle par fichier (`wiki` : 7 → 1, celle de `useLayout`) ; ESLint du module 20 → 0 ; `lint-all` 1 942 → 1 922 ; Jest 489 → 513 (24 tests `wiki`) ; `--check` vert ; `testID` inchangés. **Pas testé dans l'app.**
+- Relevé : [later.md](later.md), `useLayout` typé avec le composant `View` ; type des commentaires supprimés de `comments`.
+- Relecture (2026-11-26, développeur) : composants propres à `wiki` préfixés par `Wiki`, sauf `IconChip` ; les dossiers gardent leur nom, sans préfixe (fiche décision 14). Règle générale ajoutée à CONVENTIONS « Nommage et rédaction ». Revérifié : `tsc` identique par fichier (741, l'erreur de `useLayout` suit son fichier), ESLint du module 0, 24 tests `wiki`, `--check` vert.
+- Prochaine étape : relecture PR par PR (fiche §9), recettes §9 dans l'app, commits (bascule, puis un par sujet).
+
+## 2026-11-25 — Bascule de `wiki` (`feat/navigation`)
+
+- Fait (non commité) : `wiki` en `EntModule` sur place ([wiki.md](wiki.md) §4) : `index.ts`, `intents.ts` (`resource` → `wiki/summary`, deux `notificationIntent`), écrans `wiki/explorer`, `wiki/summary`, `wiki/reader` en `defineScreen`, `withSession` sur l'accueil, store sans slice `explorer`, imports `auth` repointés, types du modèle écrits dans `wiki` (décision 3), façade `navigation/index.ts`. Supprimés : `module-config.ts`, `navigator.tsx`, `notif-handler.ts`, `screens/create/`, `image-input`, `image-input-button`, `resource-thumbnail-loader`. Ligne dans `src/app/config/modules.ts`.
+- Décidé : rien de nouveau (fiche validée avant). Ajouts découverts : `useNavigation<StackNavigation>()` pour `replace`, titre masqué tant que la donnée n'est pas chargée (modèle `blog`).
+- Vérifié : `tsc` 771 → 747, aucune erreur nouvelle par fichier ; ESLint du module 58 → 20 erreurs ; `lint-all` 1 980 → 1 942 ; Jest 489 / 489 ; `--check` vert ; `SUIVI.md` régénéré (`wiki` `basculé, sans test`, navigation ancienne 0). **Pas testé dans l'app.**
+- En suspens : bug possible de l'écran vide à la racine (fiche §5, 16) ; `explorer/templates/resource-explorer/deprecated.ts` cite encore `wiki` dans son `ToDo` (plus importé par `wiki`).
+- Prochaine étape : relecture, recette §3 dans l'app, commit unique de la bascule.
+
 ## 2026-11-25 — Fiche de bascule de `wiki`, correction du template d'`explorer` (`feat/navigation`)
 
 - Fait : fiche [wiki.md](wiki.md) réécrite au format de la bascule (relevé, 7 comportements, gestes, backlog de 15 points) ; questions tranchées. Préalable fait à part, non commité : le template d'`explorer` lit la route de l'écran par `useRoute` (plus de prop `route`), l'écran déclare `StaticScreenProps<NavParams | undefined>` ; `NavParams` en `type` ; contournement de `blog` retiré.

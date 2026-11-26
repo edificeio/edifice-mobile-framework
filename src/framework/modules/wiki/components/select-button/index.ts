@@ -1,3 +1,3 @@
-import SelectButton from './component';
+import WikiSelectButton from './component';
 
-export default SelectButton;
+export default WikiSelectButton;

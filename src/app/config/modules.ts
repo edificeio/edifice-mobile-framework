@@ -16,4 +16,5 @@ export default [
   import('~/modules/notifications'),
   import('~/framework/modules/support'),
   import('~/modules/user'),
+  import('~/framework/modules/wiki'),
 ] as const;

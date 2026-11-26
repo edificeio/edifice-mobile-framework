@@ -3,6 +3,13 @@ import { Pressable, TextLayoutEvent, View } from 'react-native';
 
 import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
 
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { Svg } from '~/framework/components/picture';
+import { BodyText, SmallBoldText } from '~/framework/components/text';
+import { useLayout } from '~/framework/hooks/layout';
+import { I18n } from '~/util/i18n';
+
 import {
   CARD_EXPANDED_MARGIN_BOTTOM,
   CARD_EXPANDED_MARGIN_TOP,
@@ -10,14 +17,7 @@ import {
   CARD_UNEXPANDED_MARGIN_TOP,
   styles,
 } from './styles';
-import { ExpandButtonProps, ResourceDescriptionProps } from './types';
-
-import { I18n } from '~/util/i18n';
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { Svg } from '~/framework/components/picture';
-import { BodyText, SmallBoldText } from '~/framework/components/text';
-import { useLayout } from '~/framework/hooks/layout';
+import { ExpandButtonProps, WikiResourceDescriptionProps } from './types';
 
 const DEFAULT_NUMBER_OF_LINES = 3;
 
@@ -37,14 +37,13 @@ const ExpandButton = React.forwardRef<View, ExpandButtonProps>(({ isExpanded }, 
   );
 });
 
-const ResourceDescription: React.FC<ResourceDescriptionProps> = ({
+const WikiResourceDescription: React.FC<WikiResourceDescriptionProps> = ({
   content = '',
   expanded = false,
   numberOfLines = DEFAULT_NUMBER_OF_LINES,
   onPress,
-}: ResourceDescriptionProps) => {
+}: WikiResourceDescriptionProps) => {
   const expandRef = React.useRef<View>(null);
-  const containerRef = React.useRef<View>(null);
 
   const [fullTextLayout, setFullTextLayout] = React.useState<TextLayoutEvent['nativeEvent'] | null>(null);
   const fullTextHeight = React.useMemo(
@@ -114,7 +113,7 @@ const ResourceDescription: React.FC<ResourceDescriptionProps> = ({
   return (
     <Animated.View style={[styles.cardContainer, animatedStyle]} testID={'wiki-description'}>
       <Pressable onPress={onToggle} disabled={!isExpandable}>
-        <Animated.View ref={containerRef}>
+        <Animated.View>
           {displayedContent}
           {isExpandable !== false && <ExpandButton ref={expandRef} isExpanded={expanded} />}
         </Animated.View>
@@ -123,4 +122,4 @@ const ResourceDescription: React.FC<ResourceDescriptionProps> = ({
   );
 };
 
-export default ResourceDescription;
+export default WikiResourceDescription;

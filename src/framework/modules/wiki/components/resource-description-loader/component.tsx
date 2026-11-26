@@ -7,7 +7,7 @@ import { getScaleWidth } from '~/framework/components/constants';
 
 import { styles } from './styles';
 
-const ResourceDescriptionLoader: React.FC = () => {
+const WikiResourceDescriptionLoader: React.FC = () => {
   return (
     <View style={styles.cardContainer} testID="wiki-description-loader">
       <Placeholder>
@@ -19,4 +19,4 @@ const ResourceDescriptionLoader: React.FC = () => {
   );
 };
 
-export default ResourceDescriptionLoader;
+export default WikiResourceDescriptionLoader;

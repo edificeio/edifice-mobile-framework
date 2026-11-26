@@ -1,3 +1,3 @@
-import { PageList, PageListTitle } from './component';
+import { WikiPageList } from './component';
 
-export { PageList, PageListTitle };
+export { WikiPageList };

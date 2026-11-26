@@ -1,3 +1,3 @@
-import ResourceDescriptionLoader from './component';
+import WikiResourceDescriptionLoader from './component';
 
-export default ResourceDescriptionLoader;
+export default WikiResourceDescriptionLoader;

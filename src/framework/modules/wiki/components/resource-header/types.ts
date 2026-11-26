@@ -1,7 +1,6 @@
 import { ImageSourcePropType } from 'react-native';
 
-export interface ResourceHeaderProps {
+export interface WikiResourceHeaderProps {
   image?: ImageSourcePropType | undefined;
   description?: string;
-  canAddDescription: boolean;
 }

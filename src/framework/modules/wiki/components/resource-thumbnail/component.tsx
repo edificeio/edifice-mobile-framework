@@ -1,13 +1,12 @@
 import * as React from 'react';
 
-import { styles } from './styles';
-import { ResourceThumbnailProps } from './types';
-
 import ModuleImage from '~/framework/components/picture/module-image';
-import moduleConfig from '~/framework/modules/wiki/module-config';
 
-const ResourceThumbnail: React.FC<ResourceThumbnailProps> = ({ source }) => {
-  return <ModuleImage moduleName={moduleConfig.name} source={source} style={styles.resourceThumbnailContainer} />;
+import { styles } from './styles';
+import { WikiResourceThumbnailProps } from './types';
+
+const WikiResourceThumbnail: React.FC<WikiResourceThumbnailProps> = ({ source }) => {
+  return <ModuleImage moduleName="wiki" source={source} style={styles.resourceThumbnailContainer} />;
 };
 
-export default ResourceThumbnail;
+export default WikiResourceThumbnail;

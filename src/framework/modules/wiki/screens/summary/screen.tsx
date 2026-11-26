@@ -1,120 +1,118 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { StaticScreenProps } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
 import { Placeholder, PlaceholderLine } from 'rn-placeholder';
 
-import { I18n } from '~/util/i18n';
-import { getStore, IGlobalState } from '~/app/store';
+import { defineScreen, useNavigation } from '~/app/navigation-new';
 import { getScaleImageSize, getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
-import { PageView } from '~/framework/components/page';
 import { HeadingMText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderProps } from '~/framework/hooks/loader';
-import { toURISource } from '~/framework/modules/media';
-import { PageList } from '~/framework/modules/wiki/components/page-list';
-import { PageListProps } from '~/framework/modules/wiki/components/page-list/types';
-import ResourceHeader from '~/framework/modules/wiki/components/resource-header';
-import ResourceHeaderLoader from '~/framework/modules/wiki/components/resource-header-loader';
+import { loadWiki } from '~/framework/modules/wiki/actions';
+import { WikiPageList } from '~/framework/modules/wiki/components/page-list';
+import { WikiPageListProps } from '~/framework/modules/wiki/components/page-list/types';
+import WikiResourceHeader from '~/framework/modules/wiki/components/resource-header';
+import WikiResourceHeaderLoader from '~/framework/modules/wiki/components/resource-header-loader';
 import { Wiki } from '~/framework/modules/wiki/model';
-import { WikiNavigationParams, wikiRouteNames } from '~/framework/modules/wiki/navigation';
-import service from '~/framework/modules/wiki/service';
-import { actions, selectors, WikiAction } from '~/framework/modules/wiki/store';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { selectWiki, WikiDispatch } from '~/framework/modules/wiki/store';
 import { sessionImageSource } from '~/framework/util/transport';
+import { withSession } from '~/modules/auth/hoc';
+import { toURISource } from '~/modules/media/util';
+import { I18n } from '~/util/i18n';
 
 import styles from './styles';
-import type { WikiSummaryScreen } from './types';
+
+type WikiSummaryScreenParams = {
+  resourceId: Wiki['assetId'];
+};
 
 const TITLE_PLACEHOLDER_HEIGHT = getScaleWidth(30);
 const LINE_PLACEHOLDER_HEIGHT = getScaleWidth(48);
 
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<WikiNavigationParams, typeof wikiRouteNames.summary>): NativeStackNavigationOptions => {
-  const wikiData = selectors.wiki(route.params.resourceId)(getStore().getState());
-  return {
-    ...navBarOptions({
-      backButtonTestID: 'wiki-back-button',
-      navigation,
-      route,
-      title: wikiData?.name ?? '',
-      titleTestID: 'wiki-title',
-    }),
-    headerShadowVisible: false,
-  };
-};
-
 export function WikiSummaryScreenLoaded({
-  navigation,
   refreshControl,
   wiki,
-}: Pick<WikiSummaryScreen.AllProps, 'navigation'> & {
+}: {
   wiki: Wiki;
   refreshControl: Parameters<ContentLoaderProps['renderContent']>[0];
 }) {
+  const navigation = useNavigation();
   const imageSourceProps = React.useMemo(() => {
     return wiki.thumbnail ? sessionImageSource(toURISource(wiki.thumbnail)) : undefined;
   }, [wiki.thumbnail]);
 
+  const hasPages = wiki.pages.length > 0;
+  const listHeader = React.useMemo(
+    () => (
+      <>
+        <WikiResourceHeader image={imageSourceProps} description={wiki.description} />
+        {hasPages && (
+          <HeadingMText style={styles.pageListTitle} testID="page-list-title">
+            {I18n.get('wiki-pagelist-title')}
+          </HeadingMText>
+        )}
+      </>
+    ),
+    [hasPages, imageSourceProps, wiki.description],
+  );
+
+  const listEmpty = React.useMemo(
+    () => (
+      <EmptyScreen
+        svgImage="empty-wiki-summary"
+        title={I18n.get('wiki-empty-summary-title')}
+        text={I18n.get('wiki-empty-summary-text')}
+        customStyle={styles.emptyPage}
+        imageHeight={getScaleImageSize(UI_SIZES.elements.image.small)}
+      />
+    ),
+    [],
+  );
+
+  const onPressItem = React.useCallback<NonNullable<WikiPageListProps['onPressItem']>>(
+    pageId => navigation.navigate('wiki/reader', { pageId, resourceId: wiki.assetId }),
+    [navigation, wiki.assetId],
+  );
+
   return (
-    <PageList
+    <WikiPageList
       refreshControl={refreshControl}
       wikiData={wiki}
       ListComponent={FlatList}
-      ListHeaderComponent={
-        <>
-          <ResourceHeader canAddDescription={true} image={imageSourceProps} description={wiki.description} />
-          {wiki.pages.length > 0 && (
-            <HeadingMText style={styles.pageListTitle} testID="page-list-title">
-              {I18n.get('wiki-pagelist-title')}
-            </HeadingMText>
-          )}
-        </>
-      }
-      ListEmptyComponent={
-        <EmptyScreen
-          svgImage="empty-wiki-summary"
-          title={I18n.get('wiki-empty-summary-title')}
-          text={I18n.get('wiki-empty-summary-text')}
-          customStyle={styles.emptyPage}
-          imageHeight={getScaleImageSize(UI_SIZES.elements.image.small)}
-        />
-      }
-      onPressItem={React.useCallback<NonNullable<PageListProps['onPressItem']>>(
-        pageId => navigation.navigate({ name: wikiRouteNames.reader, params: { pageId, resourceId: wiki.assetId } }),
-        [navigation, wiki.assetId],
-      )} /* Create page button for next version
-  ListFooterComponent={
-    <TertiaryButton style={styles.newPageButton} iconLeft="ui-plus" text={I18n.get('wiki-pagelist-newpage')} />
-  }
-    */
+      ListHeaderComponent={listHeader}
+      ListEmptyComponent={listEmpty}
+      onPressItem={onPressItem}
     />
   );
 }
 
-export default function WikiSummaryScreen({
-  navigation,
+const WikiSummaryScreen = withSession<Readonly<StaticScreenProps<WikiSummaryScreenParams>>>(function ({
   route: {
     params: { resourceId },
   },
-}: Readonly<WikiSummaryScreen.AllProps>) {
-  const wikiData = useSelector(selectors.wiki(resourceId));
-  const dispatch = useDispatch<ThunkDispatch<IGlobalState, any, WikiAction>>();
+  session,
+}) {
+  const navigation = useNavigation();
+  const wikiData = useSelector(selectWiki(resourceId));
+  const dispatch = useDispatch<WikiDispatch>();
+
+  // The name of the wiki, once loaded, replaces the empty title of the options (CONVENTIONS « UI »)
+  const wikiName = wikiData?.name;
+  React.useLayoutEffect(() => {
+    if (wikiName !== undefined) navigation.setOptions({ headerTitle: undefined, title: wikiName });
+  }, [navigation, wikiName]);
+
   const loadContent: ContentLoaderProps['loadContent'] = React.useCallback(async () => {
-    const data = await service.wiki.get({ id: resourceId });
-    dispatch(actions.loadWiki(data));
-    navigation.setOptions({ title: data.name });
-  }, [dispatch, navigation, resourceId]);
+    await dispatch(loadWiki(session, resourceId));
+  }, [dispatch, resourceId, session]);
 
   const renderLoading: ContentLoaderProps['renderLoading'] = React.useCallback(
     () => (
       <>
-        <ResourceHeaderLoader />
+        <WikiResourceHeaderLoader />
         <View style={styles.listContainerPlaceholder}>
           <Placeholder>
             <PlaceholderLine
@@ -136,18 +134,25 @@ export default function WikiSummaryScreen({
 
   const renderContent: ContentLoaderProps['renderContent'] = React.useCallback(
     refreshControl => {
-      return wikiData ? (
-        <WikiSummaryScreenLoaded navigation={navigation} wiki={wikiData} refreshControl={refreshControl} />
-      ) : (
-        <EmptyContentScreen />
-      );
+      return wikiData ? <WikiSummaryScreenLoaded wiki={wikiData} refreshControl={refreshControl} /> : <EmptyContentScreen />;
     },
-    [navigation, wikiData],
+    [wikiData],
   );
 
   return (
-    <PageView style={styles.page}>
+    <View style={styles.page}>
       <ContentLoader loadContent={loadContent} renderContent={renderContent} renderLoading={renderLoading} />
-    </PageView>
+    </View>
   );
-}
+});
+WikiSummaryScreen.displayName = 'WikiSummaryScreen';
+
+export default defineScreen({
+  options: () => ({
+    headerShadowVisible: false,
+    // The name of the wiki is set by the screen: hidden until then (`title: ''` would show the name of the route)
+    headerTitle: () => '',
+    title: '',
+  }),
+  screen: WikiSummaryScreen,
+});

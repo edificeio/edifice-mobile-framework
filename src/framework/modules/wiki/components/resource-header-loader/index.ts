@@ -1,3 +1,3 @@
-import ResourceHeaderLoader from './component';
+import WikiResourceHeaderLoader from './component';
 
-export default ResourceHeaderLoader;
+export default WikiResourceHeaderLoader;
