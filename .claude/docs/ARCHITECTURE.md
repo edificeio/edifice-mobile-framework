@@ -188,16 +188,30 @@ Navigation **statique** (`createStaticNavigation`) : les modules déclarent leur
 
 ```
 navigation-new/
-├── index.tsx              Conteneur, reset vers l'accueil à chaque nouvelle connexion
-├── root-stack.tsx         Stack racine : modales + écrans selon l'état d'auth
-├── tabs.tsx               Onglets (`getTabScreenName`), masqués si le module n'est pas disponible
-├── open-module.ts         `useOpenModule` / `useCanOpenModule`
-├── tab-stack.tsx          Un stack par onglet, avec tous les écrans non modaux
-├── screen.tsx             `defineScreen` / `defineModal`
-├── header/              Items du header : `headerLeftActions` / `headerRightActions`, helpers `headerAction`, `headerMenu`…
-├── options.tsx, layout.tsx, theme.ts, telemetry.ts, confirm-remove.tsx
-└── types.ts               Types déduits (`StackNavigation`, `RootNavigation`, `TabNavigation`)
+├── index.tsx              Conteneur, reset vers l'accueil à chaque nouvelle connexion ; point d'entrée (réexporte tout, sauf `theme`)
+├── types.ts               Types déduits (`StackNavigation`, `RootNavigation`, `TabNavigation`)
+├── theme.ts               Thème du conteneur
+├── native-modal.tsx       `NativeModal` : le `Modal` de React Native, fermé quand son écran perd le focus
+├── navigators/             (`index.ts`)
+│   ├── root-stack.tsx     Stack racine : modales + écrans selon l'état d'auth
+│   ├── tabs.tsx           Onglets (`getTabScreenName`), masqués si le module n'est pas disponible
+│   └── tab-stack.tsx      Un stack par onglet, avec tous les écrans non modaux
+├── screen/                Code commun aux écrans (`index.ts`)
+│   ├── screen.ts          `defineScreen`
+│   ├── modal.tsx          Modales : `defineModal`, `modalOptions`, `modalCloseButtonOptions`, `useIsModal`
+│   ├── sheet.tsx          Sheets : `SheetView`, `useSheetMaxHeight`, `sheetSpacingStyles`
+│   ├── options.tsx        Options des écrans des stacks et des onglets
+│   └── layout.tsx         `BaseStackScreenLayout` (enveloppe de chaque écran)
+├── hooks/                 (`index.ts`)
+│   ├── navigation.ts      `useNavigation` (avec `navigateAsync`), `useIsFocused`…
+│   ├── promise.ts         `navigateAsync` / `useScreenPromise`
+│   ├── confirm-remove.tsx `useConfirmRemove`, `useConfirmDisptach`, `useConfirmChangeTab`
+│   ├── open-module.ts     `useOpenModule` / `useCanOpenModule`
+│   └── telemetry.ts       `useScreenTelemetry`
+└── header/                Items du header : `headerLeftActions` / `headerRightActions`, helpers `headerAction`, `headerMenu`… (`index.tsx`)
 ```
+
+**Les modules importent de `~/app/navigation-new`**, jamais d'un fichier du dossier. `index.tsx` réexporte tout (`export *`) : `types.ts`, `native-modal.tsx` et l'index de chaque sous-dossier (`header/`, `hooks/`, `navigators/`, `screen/`), qui exporte lui-même tout son dossier ; `theme.ts` n'est pas réexporté. Le code de l'app qui construit une navigation (ancienne navigation, conteneur de `auth`, notifications) importe encore de l'index d'un sous-dossier (`~/app/navigation-new/hooks`, `…/screen`, `…/navigators`) et de `…/theme`. Dans le dossier, les fichiers s'importent directement entre eux (pas par un index), pour que les index ne créent pas de cycle d'imports.
 
 **Raison d'être de la migration : le typage automatique de la navigation.** Les noms de route et leurs params sont déduits des composants d'écran déclarés par les modules (`StaticParamList`, `StackNavigation`, `RootNavigation`, `TabNavigation`). **Favorise toujours ce typage**, pas de types de params écrits à la main, pas de `any`, pas de casts.
 
@@ -215,7 +229,7 @@ Règles :
 
 - Déclarer chaque écran avec `defineScreen` ou `defineModal` dans son propre fichier. `options` est **toujours une fonction** (évite des valeurs non initialisées à l'import : i18n, thème).
 - Un écran ne reçoit que `route`. Naviguer par hooks, pas par la prop `navigation`. Les params sont déduits des props du composant.
-- Hooks de navigation (`useNavigation`, `useFocusEffect`, `useIsFocused`, `useScrollToTop`) : les importer de `~/app/navigation-new` (`hooks.ts`), qui les transmet depuis react-navigation. Son `useNavigation` ajoute `navigateAsync` (implémentée avec `useScreenPromise` dans `promise.ts`).
+- Hooks de navigation (`useNavigation`, `useFocusEffect`, `useIsFocused`, `useScrollToTop`) : les importer de `~/app/navigation-new` (`hooks/navigation.ts`), qui les transmet depuis react-navigation. Son `useNavigation` ajoute `navigateAsync` (implémentée avec `useScreenPromise` dans `hooks/promise.ts`).
 - Écran (modale ou non) qui rend un résultat : `const result = await navigation.navigateAsync('module/screen', params)` (pas de callback dans les params, ils doivent rester sérialisables). L'écran déclare ses params `StaticScreenProps<ScreenPromiseParams<Params, Result>>` : `result` est typé `Result | undefined`, et seuls ces écrans sont acceptés. Dans l'écran : `const { resolve, reject } = useScreenPromise(route)` ; l'un comme l'autre quitte l'écran (`goBack`). La promesse est réglée au démontage de l'écran, avec la dernière issue donnée, ou `undefined` si l'utilisateur l'a quitté lui-même. Un écran d'onglet reste monté quand l'utilisateur change d'onglet : la promesse attend jusque-là.
 - Un onglet ne change pas tout seul quand on navigue vers un autre module : cibler l'onglet avec `getTabScreenName` (action JUMP_TO).
 - Ouvrir un module : `const openModule = useOpenModule(); openModule('blog')`, pour un module qui a `entries.myApps` (onglet du module s'il en a un, sinon la route de `entries.myApps` dans l'onglet courant ; `false` si le module n'est pas disponible). `useCanOpenModule()` fait le même test sans naviguer. Seulement depuis un écran des onglets, pas depuis une modale.
@@ -224,7 +238,7 @@ Règles :
 
 ### 3.3 Cohabitation
 
-Les deux systèmes existent en même temps : l'ancien `index.tsx` importe encore `../navigation-new/confirm-remove` et `telemetry`. La majorité des imports récents ciblent `navigation-new` (36 fichiers contre 6 pour `app/navigation`). Ne vise pas à migrer un module sans demande explicite.
+Les deux systèmes existent en même temps : l'ancien `index.tsx` importe encore `ConfirmRemoveProvider` et `useScreenTelemetry` de `~/app/navigation-new/hooks`. La majorité des imports récents ciblent `navigation-new` (36 fichiers contre 6 pour `app/navigation`). Ne vise pas à migrer un module sans demande explicite.
 
 ## 4. Notifications (ancien système uniquement)
 

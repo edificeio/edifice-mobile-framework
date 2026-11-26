@@ -1,5 +1,5 @@
 /**
- * Screens opened as a promise (modals or not): `navigateAsync` (added to `useNavigation`, see `hooks.ts`) on the side of the screen
+ * Screens opened as a promise (modals or not): `navigateAsync` (added to `useNavigation`, see `navigation.ts`) on the side of the screen
  * that opens the other one, `useScreenPromise` on the side of the opened screen.
  */
 import React from 'react';
@@ -8,7 +8,7 @@ import { useNavigation as useReactNavigation } from '@react-navigation/native';
 
 import type { AllModulesNavigationParams } from '~/app/module';
 
-import type { ScreenPromiseName, ScreenPromiseResult } from './types';
+import type { ScreenPromiseName, ScreenPromiseResult } from '../types';
 
 /** Params given to `navigateAsync`: the ones of the screen, without the id of the promise, which it sets itself. */
 type NavigateAsyncParams<Name extends ScreenPromiseName> =

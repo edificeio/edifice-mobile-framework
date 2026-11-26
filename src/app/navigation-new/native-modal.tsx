@@ -14,7 +14,7 @@
 import React from 'react';
 import { Modal, type ModalProps } from 'react-native';
 
-import { useIsFocused } from './hooks';
+import { useIsFocused } from './hooks/navigation';
 
 /** Why the modal asks to close: the back button of Android, or its screen lost the focus (then the modal is already hiding). */
 export type NativeModalCloseReason = 'back' | 'blur';

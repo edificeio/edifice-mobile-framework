@@ -7,8 +7,7 @@ import * as React from 'react';
 import type { StaticScreenProps } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 
-import { defineModal, type ScreenPromiseParams, useScreenPromise } from '~/app/navigation-new';
-import { SheetView } from '~/app/navigation-new/layout';
+import { defineModal, type ScreenPromiseParams, SheetView, useScreenPromise, useSheetMaxHeight } from '~/app/navigation-new';
 import FlatList from '~/framework/components/list/flat-list';
 import { WikiPageList } from '~/framework/modules/wiki/components/page-list';
 import type { WikiPageListProps } from '~/framework/modules/wiki/components/page-list/types';
@@ -27,10 +26,14 @@ function WikiPagesScreen({ route }: StaticScreenProps<ScreenPromiseParams<WikiPa
 
   const onPressItem = React.useCallback<NonNullable<WikiPageListProps['onPressItem']>>(pageId => resolve(pageId), [resolve]);
 
+  // As high as the pages, then the list scrolls (`useSheetMaxHeight`)
+  const sheetMaxHeight = useSheetMaxHeight();
+  const sheetStyle = React.useMemo(() => ({ maxHeight: sheetMaxHeight }), [sheetMaxHeight]);
+
   if (!wiki) return null;
 
   return (
-    <SheetView>
+    <SheetView style={sheetStyle}>
       <WikiPageList
         borderless={true}
         currentPageId={route.params.currentPageId}

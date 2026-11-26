@@ -5,7 +5,7 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { SheetView } from '~/app/navigation-new/layout';
+import { SheetView } from '~/app/navigation-new';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg, SvgIconName } from '~/framework/components/picture';

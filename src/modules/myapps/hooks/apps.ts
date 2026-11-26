@@ -7,7 +7,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AllModulesNames, useModule, useUserAvailableModules } from '~/app/module';
-import { useCanOpenModule, useOpenModule } from '~/app/navigation-new/open-module';
+import { useCanOpenModule, useOpenModule } from '~/app/navigation-new';
 import { openUrl } from '~/framework/util/linking';
 import type { AuthActiveAccount } from '~/modules/auth/model';
 import { useSession } from '~/modules/auth/store/accounts';

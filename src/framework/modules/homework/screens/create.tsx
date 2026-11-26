@@ -6,8 +6,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { useConfirmRemove } from '~/app/navigation-new/confirm-remove';
 import { headerAction, modalScreenOptions } from '~/app/navigation/util';
+import { useConfirmRemove } from '~/app/navigation-new';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';

@@ -1,7 +1,6 @@
 import { SharedTransition } from 'react-native-reanimated';
 
-import { modalOptions } from './options';
-import type { ScreenComponent, ScreenConfig, ScreenOptionsProps, ScreenTelemetryConfig } from './types';
+import type { ScreenComponent, ScreenConfig, ScreenTelemetryConfig } from '../types';
 
 /**
  * Config of a screen like `createNativeStackScreen` takes it, except that `options` can only be a function.
@@ -26,18 +25,4 @@ export const defineScreen = <Component extends ScreenComponent>(config: StrictSc
 
 export const sharedTransitions = {
   default: SharedTransition.duration(500).springify(),
-};
-
-/**
- * Same as `defineScreen`, for a modal screen : modal default options are applied under the ones declared by the screen.
- */
-export const defineModal = <Component extends ScreenComponent>(config: StrictScreenConfig<Component>) => {
-  const { options } = config;
-  return {
-    ...config,
-    options: (props: ScreenOptionsProps) => ({
-      ...modalOptions(props),
-      ...options?.(props as never),
-    }),
-  } as ScreenConfig<Component>;
 };

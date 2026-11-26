@@ -12,7 +12,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
-import { useConfirmRemove } from '~/app/navigation-new/confirm-remove';
+import { useConfirmRemove } from '~/app/navigation-new';
 import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { FlatListProps } from '~/framework/components/list/flat-list';

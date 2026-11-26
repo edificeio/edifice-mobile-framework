@@ -20,9 +20,9 @@ import { useCoreModuleModals, useCoreModuleScreens, useModuleModals } from '~/ap
 import requirementsModule from '~/modules/auth/requirements';
 import { useAuthStage } from '~/modules/auth/store/accounts';
 
-import { BaseStackScreenLayout } from './layout';
-import { hiddenStackScreenOptions, rootStackOptions, visibleStackScreenOptions } from './options';
 import { useTabNavigation } from './tabs';
+import { BaseStackScreenLayout } from '../screen/layout';
+import { hiddenStackScreenOptions, rootStackOptions, visibleStackScreenOptions } from '../screen/options';
 
 type RootStackGroups = Record<
   string,

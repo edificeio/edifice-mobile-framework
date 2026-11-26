@@ -4,7 +4,7 @@ import type { createNativeStackScreen } from '@react-navigation/native-stack';
 import type { Action, Reducer } from 'redux';
 
 import type importModules from '~/app/config/modules';
-import type { RootNavigation, ScreenComponent, ScreenTelemetryConfig } from '~/app/navigation-new/types';
+import type { RootNavigation, ScreenComponent, ScreenTelemetryConfig } from '~/app/navigation-new';
 import type { SvgIconName } from '~/framework/components/picture';
 import type { IModuleFileManagerConfig } from '~/framework/util/fileHandler/types';
 import type { IAbstractNotification } from '~/framework/util/notifications';

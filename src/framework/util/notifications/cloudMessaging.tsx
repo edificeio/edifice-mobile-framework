@@ -12,7 +12,7 @@ import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { navigationRef } from '~/app/navigation';
-import { useConfirmDisptach } from '~/app/navigation-new/confirm-remove';
+import { useConfirmDisptach } from '~/app/navigation-new/hooks';
 import { IGlobalState } from '~/app/store';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 

@@ -16,8 +16,8 @@ import { SharedTransitionBoundary } from 'react-native-reanimated';
 
 import { AllModulesStaticScreens } from '~/app/module';
 
-import { BaseStackScreenLayout } from './layout';
-import { tabStackOptions } from './options';
+import { BaseStackScreenLayout } from '../screen/layout';
+import { tabStackOptions } from '../screen/options';
 
 /**
  * Gather all static tabs from modules.

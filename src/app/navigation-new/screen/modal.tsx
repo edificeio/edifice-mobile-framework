@@ -1,105 +1,56 @@
+/**
+ * Modals of the navigation
+ *
+ * Tools for the screens presented as a modal (`defineModal`, `presentation` other than `card`): their default options and close
+ * button (`modalOptions`, `modalCloseButtonOptions`), and whether a screen is in a modal (`useIsModal`, given by
+ * `BaseStackScreenLayout`). A modal that is not a screen is a `NativeModal` (`../native-modal.tsx`); the sheets have their own tools
+ * (`sheet.tsx`).
+ */
+import React from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
-import { BottomTabBarButtonProps, BottomTabNavigatorProps } from '@react-navigation/bottom-tabs';
-import { HeaderTitle, PlatformPressable } from '@react-navigation/elements';
-import { NativeStackNavigationOptions, NativeStackNavigatorProps } from '@react-navigation/native-stack';
+import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
+import type { StackPresentationTypes } from 'react-native-screens';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { I18n } from '~/util/i18n';
 
-import { ScreenOptionsProps } from './types';
+import { androidHeaderRightSpacerStyle } from './options';
+import type { StrictScreenConfig } from './screen';
+import type { ScreenComponent, ScreenConfig, ScreenOptionsProps } from '../types';
+
+/** The presentations shown as a modal (a `formSheet` or a `pageSheet` too). */
+export const modalPresentations: (StackPresentationTypes | 'card')[] = [
+  'containedModal',
+  'containedTransparentModal',
+  'formSheet',
+  'fullScreenModal',
+  'modal',
+  'pageSheet',
+  'transparentModal',
+];
+
+const IsModalContext = React.createContext(false);
 
 /**
- * All screens have these options
- */
-const commonScreenOptions: NativeStackNavigatorProps['screenOptions'] & BottomTabNavigatorProps['screenOptions'] = {};
-
-/**
- * All stack navigator have these options
- */
-const commonStackOptions: NativeStackNavigatorProps['screenOptions'] = {
-  ...commonScreenOptions,
-  scrollEdgeEffects: { bottom: 'automatic', left: 'automatic', right: 'automatic', top: 'automatic' },
-};
-
-/**
- * Every stack screen that **hides** navBar have these options
- */
-export const hiddenStackScreenOptions: NativeStackNavigatorProps['screenOptions'] = {
-  headerShown: false,
-};
-
-/**
- * Android: the centered title is a React view, as wide as the room left between the header items, so it touches the one on the
- * right when it is long. The header item on the left (back or close button) is `headerButtonSizeAndroid` wide: an empty item of
- * the same width on the right keeps the title centered, with the same margins on both sides.
- * It is only a default: a screen giving its own `headerRight` replaces it.
- */
-const androidHeaderRightSpacerStyle = StyleSheet.create({
-  closeButton: { width: UI_SIZES.navigation.headerButtonSizeAndroid + UI_SIZES.spacing.minor },
-  default: { width: UI_SIZES.navigation.headerButtonSizeAndroid },
-});
-
-/**
- * Every stack screen that **shows** navBar have these options
+ * Tells whether the screen is presented as a modal (`modal`, `formSheet`, `pageSheet`...) or as a card.
+ * A screen of a navigator nested in a modal (e.g. the sign-in screens in the add-account modal) is in a modal too.
+ * Use it to adjust insets and margins: a modal has no status bar nor home indicator zone under it, a card does.
  *
- * E2E TESTS (Appium): the identifiers of the header are the same on iOS and Android, in modals or not
- * (see also the comment of `modalCloseButtonOptions`).
- * - Title: `header-title`.
- *   - iOS: the title is the NATIVE one (UIKit truncates it correctly, a React title would overflow under the header items).
- *     It can't carry a `testID`, so its identifier is set natively by `ios/appe/UINavigationBarTitleIdentifier.m`.
- *   - Android: `headerTitleAlign: 'center'` makes react-navigation render the title as a React view (`ScreenStackHeaderCenterView`),
- *     never as the native one. It is given here with a `testID` (`HeaderTitle` of react-navigation forwards it to its text).
- *     A default empty `headerRight` balances the left button, so the title is centered and keeps equal margins when it is long.
- *   - A screen that gives its own `headerTitle` replaces this one on Android: it must then set its own `testID="header-title"`
- *     (an empty title doesn't need one). On iOS a custom `headerTitle` is a React view too, so it needs it as well.
- * - Back button: `BackButton`. It is the NATIVE button (we don't render it, so we can't give it a `testID`):
- *   on iOS UIKit already names it `BackButton`, on Android the patch of `react-native-screens`
- *   (`patches/react-native-screens+*.patch`) does.
+ * The presentation is a screen option, and options are not reachable from the screens (`useNavigation` can only set them):
+ * `BaseStackScreenLayout` gives them through this context.
  */
-export const visibleStackScreenOptions: NativeStackNavigatorProps['screenOptions'] = {
-  headerBackButtonDisplayMode: 'minimal',
-  headerTitleAlign: 'center',
-  ...(Platform.OS === 'android' && {
-    headerRight: () => <View style={androidHeaderRightSpacerStyle.default} />,
-    headerTitle: titleProps => <HeaderTitle {...titleProps} testID="header-title" />,
-  }),
-};
-/**
- * Only the root stack navigator have these options
- */
-export const rootStackOptions: NativeStackNavigatorProps['screenOptions'] = {
-  ...commonStackOptions,
-};
+export const useIsModal = () => React.useContext(IsModalContext);
 
 /**
- * The modals group & the tabStack group must have the same options
+ * Provides `useIsModal` to the screen it wraps. Used by `BaseStackScreenLayout`.
+ * It is a component (not a hook) because the screen layout is called as a function by the navigator, hooks can't be used there.
  */
-export const tabStackOptions: NativeStackNavigatorProps['screenOptions'] = {
-  ...commonStackOptions,
-  ...visibleStackScreenOptions,
-};
-
-/**
- * Button of the tab bar without the ripple of Android: the default one (`PlatformPressable`) draws it with no option to remove it,
- * so its color is made transparent. It does nothing more than the default one (the tab press feedback is in the tab listeners).
- */
-const TabBarButton = (props: BottomTabBarButtonProps) => <PlatformPressable {...props} pressColor="transparent" />;
-
-export const tabsOptions: BottomTabNavigatorProps['screenOptions'] = ({ theme: navTheme }) => ({
-  ...commonScreenOptions,
-  freezeOnBlur: true,
-  headerShown: false,
-  lazy: true,
-  popToTopOnBlur: true,
-  tabBarButton: TabBarButton,
-  tabBarStyle: {
-    backgroundColor: navTheme.colors.background,
-    borderTopColor: navTheme.colors.border,
-    borderTopWidth: UI_SIZES.border.thin,
-  },
-});
+export function IsModalProvider({ children, presentedAsModal }: React.PropsWithChildren<{ presentedAsModal: boolean }>) {
+  const insideModal = useIsModal();
+  return <IsModalContext.Provider value={presentedAsModal || insideModal}>{children}</IsModalContext.Provider>;
+}
 
 /**
  * Android system "close" icon (`abc_ic_clear_material` from appcompat), 24dp.
@@ -208,3 +159,17 @@ export const modalOptions = (props: ScreenOptionsProps): NativeStackNavigationOp
   // Default sheet options for Android. iOS uses the native radii by default.
   sheetCornerRadius: Platform.OS === 'android' ? UI_SIZES.radius.mediumPlus : undefined,
 });
+
+/**
+ * Same as `defineScreen`, for a modal screen : modal default options are applied under the ones declared by the screen.
+ */
+export const defineModal = <Component extends ScreenComponent>(config: StrictScreenConfig<Component>) => {
+  const { options } = config;
+  return {
+    ...config,
+    options: (props: ScreenOptionsProps) => ({
+      ...modalOptions(props),
+      ...options?.(props as never),
+    }),
+  } as ScreenConfig<Component>;
+};

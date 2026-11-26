@@ -9,8 +9,7 @@ import { useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import { Carousel, type CarouselRef, type CarouselRenderItemInfo } from 'react-native-reanimated-carousel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { defineModal, type RootNavigation } from '~/app/navigation-new';
-import { modalCloseButtonOptions } from '~/app/navigation-new/options';
+import { defineModal, modalCloseButtonOptions, type RootNavigation } from '~/app/navigation-new';
 import { UI_SIZES } from '~/framework/components/constants';
 import { FileMedia, isPlayableMedia } from '~/modules/media/types';
 import { I18n } from '~/util/i18n';

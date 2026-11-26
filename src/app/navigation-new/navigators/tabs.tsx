@@ -23,9 +23,9 @@ import { useSession } from '~/modules/auth/store/accounts';
 import { type EntAppDisplay, useModuleAppDisplay } from '~/modules/myapps/hooks';
 import { I18n } from '~/util/i18n';
 
-import { useConfirmChangeTab } from './confirm-remove';
-import { tabsOptions } from './options';
 import { createTabStackNavigation } from './tab-stack';
+import { useConfirmChangeTab } from '../hooks/confirm-remove';
+import { tabsOptions } from '../screen/options';
 
 type TabScreenName<Name extends string> = `$tab/${Name}`;
 

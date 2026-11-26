@@ -8,7 +8,7 @@ import { CommonActions, TabActions, useNavigation } from '@react-navigation/nati
 import { AllModulesWithMyAppsEntryNames, getModuleByName, isModuleAvailableForUser, useModulesRecord } from '~/app/module';
 import { useSession } from '~/modules/auth/store/accounts';
 
-import { getTabScreenName } from './tabs';
+import { getTabScreenName } from '../navigators/tabs';
 
 /** Gives the module of a name (in O(1)), if it has an entry in « Mes applis » (`entries.myApps`) and the user can use it (`isModuleAvailableForUser`). */
 const useFindOpenableModule = () => {

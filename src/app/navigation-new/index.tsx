@@ -4,6 +4,10 @@
  * All navigation-powered structure of the app
  *
  * RootStack (all modules' modals) -> Tabs -> TabStack (all modules' screns)
+ *
+ * Entry point of the navigation: the modules import from `~/app/navigation-new`, never from a file of this folder. It re-exports
+ * `types.ts`, `native-modal.tsx` and the index of each subfolder (which exports its whole folder); `theme.ts` is not re-exported.
+ * Inside this folder, files import each other directly (not through an index), so that the indexes don't make import cycles.
  */
 
 import React from 'react';
@@ -20,32 +24,16 @@ import { ToastContainer } from '~/framework/components/toast';
 import { CloudMessagingProvider } from '~/framework/util/notifications/cloudMessaging';
 import { selectActiveAccount, useAccountsStore } from '~/modules/auth/store/accounts';
 
-import { ConfirmRemoveProvider } from './confirm-remove';
-import { useRootStackNavigation } from './root-stack';
-import { useScreenTelemetry } from './telemetry';
+import { ConfirmRemoveProvider, useScreenTelemetry } from './hooks';
+import { useRootStackNavigation } from './navigators';
 import { navigationLightTheme } from './theme';
 
-export { useIsModal } from './layout';
-export * from './screen';
 export * from './types';
-export * from './confirm-remove';
-export { NativeModal, type NativeModalCloseReason, type NativeModalProps } from './native-modal';
-export {
-  headerAction,
-  HeaderActionButton,
-  headerCustom,
-  headerLeftActions,
-  headerMenu,
-  headerRightActions,
-  headerSpacing,
-  menuAction,
-  menuSubmenu,
-} from './header';
-export type { HeaderActionButtonProps, HeaderIcon, HeaderItem, HeaderMenuEntry, HeaderMenuIcon } from './header';
-export { getTabScreenName } from './tabs';
-export { useCanOpenModule, useOpenModule } from './open-module';
-export { useFocusEffect, useIsFocused, useNavigation, useScrollToTop } from './hooks';
-export { type NavigateAsync, useScreenPromise } from './promise';
+export * from './header';
+export * from './hooks';
+export * from './native-modal';
+export * from './navigators';
+export * from './screen';
 
 export interface AppNavigationProps {
   /** Called once the navigation is ready, after the telemetry. Must be stable (the navigation is not meant to re-render). */

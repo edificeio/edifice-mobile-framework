@@ -5,6 +5,8 @@ import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react
 import { useSelector } from 'react-redux';
 
 import { EntModule, TabModule } from '~/app/module';
+import { useConfirmChangeTab } from '~/app/navigation-new/hooks';
+import { getTabLabel } from '~/app/navigation-new/navigators';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps, Svg } from '~/framework/components/picture';
 import { CaptionText } from '~/framework/components/text';
@@ -13,14 +15,12 @@ import { ModuleScreens } from '~/framework/navigation/moduleScreens';
 import { tabModules } from '~/framework/navigation/tabModules';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModuleConfig } from '~/framework/util/moduleTool';
-import { getTabLabel } from '~/app/navigation-new/tabs';
 import { useEntApps } from '~/modules/myapps/hooks';
 
 import { defaultTabOptions, tabBarIconSize, TabScreenLayout } from './layout';
 import { createLeafStackNavigator } from './leaf-stack';
 import { renderCoreModulesScreens } from './root-navigation';
 import { AllModulesNavigationParams } from './types';
-import { useConfirmChangeTab } from '../navigation-new/confirm-remove';
 
 const MainTabs = createBottomTabNavigator();
 const LeafStack = createLeafStackNavigator<AllModulesNavigationParams>();

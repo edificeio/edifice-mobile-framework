@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FlatList } from 'react-native-gesture-handler';
 
-import { sheetSpacingStyles, useFormSheetStyleFix } from '~/app/navigation-new/layout';
+import { sheetSpacingStyles, useFormSheetStyleFix } from '~/app/navigation-new';
 import { AccountList } from '~/modules/auth/components/account-list';
 import { getOrderedAccounts } from '~/modules/auth/model';
 import { useAccountsStore } from '~/modules/auth/store/accounts';

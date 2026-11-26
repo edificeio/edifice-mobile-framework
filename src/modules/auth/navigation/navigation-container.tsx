@@ -18,9 +18,8 @@ import {
 import { createNativeStackNavigator, type NativeStackNavigatorProps } from '@react-navigation/native-stack';
 
 import { useTelemetryDelegatedRoutes } from '~/app/module/hooks';
-import { BaseStackScreenLayout } from '~/app/navigation-new/layout';
-import { visibleStackScreenOptions } from '~/app/navigation-new/options';
-import { useScreenTelemetry } from '~/app/navigation-new/telemetry';
+import { useScreenTelemetry } from '~/app/navigation-new/hooks';
+import { BaseStackScreenLayout, visibleStackScreenOptions } from '~/app/navigation-new/screen';
 import { navigationLightTheme } from '~/app/navigation-new/theme';
 import AuthAccountsScreen from '~/modules/auth/screens/accounts';
 import signInModule from '~/modules/auth/sign-in';

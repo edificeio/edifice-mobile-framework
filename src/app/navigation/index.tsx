@@ -19,6 +19,7 @@ import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navig
 import { useSelector } from 'react-redux';
 
 import { useAvailableModules } from '~/app/modules';
+import { ConfirmRemoveProvider, useScreenTelemetry } from '~/app/navigation-new/hooks';
 import { ToastContainer } from '~/framework/components/toast';
 import { getAuthReduxNavigationState } from '~/framework/modules/auth/new-navigation';
 import { selectors } from '~/framework/modules/auth/redux/reducer';
@@ -29,8 +30,6 @@ import { LeafStackScreenLayout } from './leaf-stack';
 import { MainNavigation, MainNavigationOptions } from './main-navigation';
 import { renderCoreModulesScreens } from './root-navigation';
 import { AllModulesNavigationParams, NavigationRootParams } from './types';
-import { ConfirmRemoveProvider } from '../navigation-new/confirm-remove';
-import { useScreenTelemetry } from '../navigation-new/telemetry';
 
 // Note: import tabModules register to initialize it
 // remove when all modules will be ported to new module system

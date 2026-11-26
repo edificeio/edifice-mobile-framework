@@ -7,9 +7,9 @@ import type {
 
 import type { AllModulesNavigationParams } from '~/app/module';
 
-import type { useRootStackNavigation } from './root-stack';
-import type { createTabStackNavigation } from './tab-stack';
-import type { useTabNavigation } from './tabs';
+import type { useRootStackNavigation } from './navigators/root-stack';
+import type { createTabStackNavigation } from './navigators/tab-stack';
+import type { useTabNavigation } from './navigators/tabs';
 
 /**
  * Type of the root navigator, built from all modules screens and modals.

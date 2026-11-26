@@ -3,8 +3,7 @@ import React from 'react';
 import { StaticScreenProps } from '@react-navigation/native';
 import type { NativeStackNavigatorProps } from '@react-navigation/native-stack';
 
-import { defineModal } from '~/app/navigation-new';
-import { modalCloseButtonOptions } from '~/app/navigation-new/options';
+import { defineModal, modalCloseButtonOptions } from '~/app/navigation-new';
 import { useAuthFlows } from '~/modules/auth/flows';
 import { AuthNavigationWrapper } from '~/modules/auth/navigation/navigation-container';
 import { getAddAccountNavigationState } from '~/modules/auth/navigation/sign-in-navigation-state';
