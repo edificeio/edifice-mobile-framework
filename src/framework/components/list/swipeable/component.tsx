@@ -5,12 +5,13 @@ import { useFocusEffect, useScrollToTop } from '@react-navigation/native';
 import { FlashList, FlashListRef, ListRenderItemInfo } from '@shopify/flash-list';
 import { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
 
+import { SwipeRowsContext } from '~/framework/components/list/swipeable/context';
 import { SwipeRow } from '~/framework/components/list/swipeable/row';
 
 import styles from './styles';
-import { SwipeableFlashListProps } from './types';
+import { SwipeableFlashListProps, SwipeRowsContextValue } from './types';
 
-export default function SwipeableFlashList<ItemT>({
+const SwipeableFlashList = <ItemT,>({
   extraData,
   getSwipeActions,
   keyExtractor,
@@ -19,20 +20,28 @@ export default function SwipeableFlashList<ItemT>({
   onSwipeActiveChange,
   renderItem,
   ...listProps
-}: Readonly<SwipeableFlashListProps<ItemT>>) {
+}: Readonly<SwipeableFlashListProps<ItemT>>) => {
   const listRef = React.useRef<FlashListRef<ItemT>>(null);
 
   const scrollToTopRef = React.useRef({ scrollToTop: () => listRef.current?.scrollToOffset({ animated: false, offset: 0 }) });
   useScrollToTop(scrollToTopRef);
 
-  // the last row stays above the bottom of the screen.
-  const footer = React.useMemo(() => <View style={styles.footer}>{ListFooterComponent}</View>, [ListFooterComponent]);
+  // the last row stays above the bottom of the screen, with or without a footer, as in the FlatList wrapper.
+  const footer = React.useMemo(() => {
+    const FooterComponent = ListFooterComponent;
+    if (!FooterComponent || React.isValidElement(FooterComponent)) return <View style={styles.footer}>{FooterComponent}</View>;
+    return (
+      <View style={styles.footer}>
+        <FooterComponent />
+      </View>
+    );
+  }, [ListFooterComponent]);
 
   const rowRefs = React.useRef<Record<string, SwipeableMethods | null>>({});
   const openRowKey = React.useRef<string | null>(null);
   const [openRowId, setOpenRowId] = React.useState<string | null>(null);
 
-  const setRowRef = React.useCallback((id: string, row: SwipeableMethods | null) => {
+  const registerRow = React.useCallback((id: string, row: SwipeableMethods | null) => {
     rowRefs.current[id] = row;
     if (row || openRowKey.current !== id) return;
     openRowKey.current = null;
@@ -53,9 +62,9 @@ export default function SwipeableFlashList<ItemT>({
     [closeRow],
   );
 
-  const onRowOpen = React.useCallback((id: string) => setOpenRowId(id), []);
+  const onRowOpened = React.useCallback((id: string) => setOpenRowId(id), []);
 
-  const onRowClose = React.useCallback(
+  const onRowClosed = React.useCallback(
     (id: string) => {
       if (openRowKey.current === id) openRowKey.current = null;
       setOpenRowId(current => (current === id ? null : current));
@@ -67,69 +76,61 @@ export default function SwipeableFlashList<ItemT>({
   const onSwipeActive = React.useCallback((active: boolean) => onSwipeActiveChange?.(active), [onSwipeActiveChange]);
 
   // the open row is read at tap time, so that opening a row does not render the others again.
-  const hasOpenRow = React.useCallback(() => openRowKey.current !== null, []);
+  const hasOpenedRow = React.useCallback(() => openRowKey.current !== null, []);
 
-  const closeOpenRow = React.useCallback(() => {
+  const closeOpenedRow = React.useCallback(() => {
     if (openRowKey.current) closeRow(openRowKey.current);
   }, [closeRow]);
 
-  const onListScrollBeginDrag = React.useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      closeOpenRow();
-      onScrollBeginDrag?.(event);
-    },
-    [closeOpenRow, onScrollBeginDrag],
+  const swipeRows = React.useMemo<SwipeRowsContextValue>(
+    () => ({ closeOpenedRow, hasOpenedRow, onRowClosed, onRowOpened, onRowWillOpen, onSwipeActive, registerRow }),
+    [closeOpenedRow, hasOpenedRow, onRowClosed, onRowOpened, onRowWillOpen, onSwipeActive, registerRow],
   );
 
-  useFocusEffect(React.useCallback(() => closeOpenRow, [closeOpenRow]));
+  const onListScrollBeginDrag = React.useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      closeOpenedRow();
+      onScrollBeginDrag?.(event);
+    },
+    [closeOpenedRow, onScrollBeginDrag],
+  );
+
+  useFocusEffect(React.useCallback(() => closeOpenedRow, [closeOpenedRow]));
 
   const renderRow = React.useCallback(
-    ({ index, item }: ListRenderItemInfo<ItemT>) => {
+    ({ index, item, target }: ListRenderItemInfo<ItemT>) => {
       const id = keyExtractor(item);
       return (
         <SwipeRow
           id={id}
+          extraData={extraData}
           index={index}
           item={item}
           isRowOpened={openRowId === id}
           getSwipeActions={getSwipeActions}
-          hasOpenRow={hasOpenRow}
           renderItem={renderItem}
-          onClose={onRowClose}
-          onCloseOpenRow={closeOpenRow}
-          onOpen={onRowOpen}
-          onRef={setRowRef}
-          onSwipeActive={onSwipeActive}
-          onWillOpen={onRowWillOpen}
+          target={target}
         />
       );
     },
-    [
-      closeOpenRow,
-      getSwipeActions,
-      hasOpenRow,
-      keyExtractor,
-      onRowClose,
-      onRowOpen,
-      onRowWillOpen,
-      onSwipeActive,
-      openRowId,
-      renderItem,
-      setRowRef,
-    ],
+    [extraData, getSwipeActions, keyExtractor, openRowId, renderItem],
   );
 
   const listExtraData = React.useMemo(() => [openRowId, extraData], [extraData, openRowId]);
 
   return (
-    <FlashList
-      {...listProps}
-      ref={listRef}
-      extraData={listExtraData}
-      ListFooterComponent={footer}
-      keyExtractor={keyExtractor}
-      renderItem={renderRow}
-      onScrollBeginDrag={onListScrollBeginDrag}
-    />
+    <SwipeRowsContext.Provider value={swipeRows}>
+      <FlashList
+        {...listProps}
+        ref={listRef}
+        extraData={listExtraData}
+        keyExtractor={keyExtractor}
+        ListFooterComponent={footer}
+        renderItem={renderRow}
+        onScrollBeginDrag={onListScrollBeginDrag}
+      />
+    </SwipeRowsContext.Provider>
   );
-}
+};
+
+export default SwipeableFlashList;

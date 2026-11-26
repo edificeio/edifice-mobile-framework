@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { RefreshControl, View } from 'react-native';
 
+import { ListRenderItemInfo } from '@shopify/flash-list';
+
 import { I18n } from '~/app/i18n';
 import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import { SwipeableFlashList, SwipeableFlashListRenderItemInfo } from '~/framework/components/list/swipeable';
+import { SwipeableFlashList } from '~/framework/components/list/swipeable';
 import { NotificationCard, UserbookNotificationCard } from '~/framework/modules/home/components/notification/card';
 import {
   NotificationsPlaceholder,
@@ -41,7 +43,7 @@ const NotificationList = ({
   const shownNotifications = React.useMemo(() => notifications.filter(item => !item.deleted), [notifications]);
 
   const renderItem = React.useCallback(
-    ({ item }: SwipeableFlashListRenderItemInfo<ITimelineNotification>) => {
+    ({ item }: ListRenderItemInfo<ITimelineNotification>) => {
       const onPress = canOpenNotification(item) ? () => onPressItem(item) : undefined;
       if (isUserbookNotification(item)) return <UserbookNotificationCard notification={item} onPress={onPress} />;
       return <NotificationCard notification={item} onPress={onPress} />;

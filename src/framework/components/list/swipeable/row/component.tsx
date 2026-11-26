@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import ReanimatedSwipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { SharedValue } from 'react-native-reanimated';
 
+import { useSwipeRows } from '~/framework/components/list/swipeable/context';
 import { ACTION_WIDTH, SwipeAction } from '~/framework/components/list/swipeable/row/action';
 
 import styles from './styles';
@@ -17,43 +18,39 @@ const NO_DRAG_OFFSET = 9999;
 
 const NO_ACTIONS: readonly SwipeRowAction[] = [];
 
-function SwipeRow<ItemT>({
+const SwipeRow = <ItemT,>({
+  extraData,
   getSwipeActions,
-  hasOpenRow,
   id,
   index,
   isRowOpened,
   item,
-  onClose,
-  onCloseOpenRow,
-  onOpen,
-  onRef,
-  onSwipeActive,
-  onWillOpen,
   renderItem,
-}: Readonly<SwipeRowProps<ItemT>>) {
-  const swipeable = React.useRef<SwipeableMethods | null>(null);
+  target,
+}: Readonly<SwipeRowProps<ItemT>>) => {
+  const { closeOpenedRow, hasOpenedRow, onRowClosed, onRowOpened, onRowWillOpen, onSwipeActive, registerRow } = useSwipeRows();
+  const swipeableRef = React.useRef<SwipeableMethods | null>(null);
 
   // a recycled row starts closed.
   React.useLayoutEffect(() => {
-    swipeable.current?.reset();
+    swipeableRef.current?.reset();
   }, [id]);
 
   const setRef = React.useCallback(
     (ref: SwipeableMethods | null) => {
-      swipeable.current = ref;
-      onRef(id, ref);
+      swipeableRef.current = ref;
+      registerRow(id, ref);
     },
-    [id, onRef],
+    [id, registerRow],
   );
-  const willOpen = React.useCallback(() => onWillOpen(id), [id, onWillOpen]);
-  const closeSwipeable = React.useCallback(() => onClose(id), [id, onClose]);
+  const willOpen = React.useCallback(() => onRowWillOpen(id), [id, onRowWillOpen]);
+  const closeSwipeable = React.useCallback(() => onRowClosed(id), [id, onRowClosed]);
   const lockPager = React.useCallback(() => onSwipeActive(true), [onSwipeActive]);
 
   const onOpened = React.useCallback(() => {
     onSwipeActive(false);
-    onOpen(id);
-  }, [id, onOpen, onSwipeActive]);
+    onRowOpened(id);
+  }, [id, onRowOpened, onSwipeActive]);
 
   // the row closes once the action is done, whatever its outcome.
   const actions = React.useMemo(
@@ -64,14 +61,15 @@ function SwipeRow<ItemT>({
           try {
             await action.onPress();
           } finally {
-            swipeable.current?.close();
+            swipeableRef.current?.close();
           }
         },
       })),
     [getSwipeActions, item],
   );
 
-  const content = React.useMemo(() => renderItem({ index, item }), [index, item, renderItem]);
+  // built here from props, so that this row does not render again when another one opens.
+  const content = React.useMemo(() => renderItem({ extraData, index, item, target }), [extraData, index, item, renderItem, target]);
 
   const renderRightActions = React.useCallback(
     (progress: SharedValue<number>) => (
@@ -96,7 +94,7 @@ function SwipeRow<ItemT>({
   // a tap first puts back the row left open, wherever it lands, and opens nothing.
   // the swipe actions sit outside this view, so they still get their taps.
   const row = (
-    <View style={styles.row} onStartShouldSetResponderCapture={hasOpenRow} onResponderRelease={onCloseOpenRow}>
+    <View style={styles.row} onStartShouldSetResponderCapture={hasOpenedRow} onResponderRelease={closeOpenedRow}>
       {content}
     </View>
   );
@@ -121,7 +119,8 @@ function SwipeRow<ItemT>({
       {row}
     </ReanimatedSwipeable>
   );
-}
+};
 
 // only the row whose open state changes renders again.
+// the cast keeps ItemT: React.memo returns a component that is no longer generic.
 export default React.memo(SwipeRow) as typeof SwipeRow;
