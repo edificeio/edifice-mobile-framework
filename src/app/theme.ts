@@ -100,6 +100,8 @@ export interface ITheme {
   palette: {
     primary: IShades;
     secondary: IShades;
+    // titles, chevrons, links and actions; primary unless the override declares it
+    accent: IShades;
     // same in every app
     cantine: {
       allergens: ColorValue;
@@ -255,7 +257,8 @@ export interface ITheme {
   };
 }
 
-type ThemeInitializer = Omit<ITheme, 'ui' | 'color' | 'media' | 'moods' | 'is1D'> & {
+type ThemeInitializer = Omit<ITheme, 'ui' | 'color' | 'media' | 'moods' | 'is1D' | 'palette'> & {
+  palette: Omit<ITheme['palette'], 'accent'> & { accent?: IShades };
   init(): ITheme;
 };
 
@@ -285,6 +288,8 @@ export const defaultTheme: ThemeInitializer = {
   init() {
     (this as Partial<ITheme>).is1D = this.level === THEME_LEVEL.FIRST_DEGREE;
     (this as Partial<ITheme>).moods = MOODS[this.level];
+    // primary when the override declares no accent
+    this.palette.accent ??= this.palette.primary;
     (this as Partial<ITheme>).media = {
       attachment: { name: 'ui-attachment', type: 'Svg' },
       audio: { name: 'ui-audio', type: 'Svg' },

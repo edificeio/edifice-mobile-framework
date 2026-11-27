@@ -77,7 +77,7 @@ export function BaseStackScreenLayout({
   return (
     <Wrapper>
       <ErrorBoundary FallbackComponent={ErrorScreenView}>
-        <React.Suspense fallback={<ActivityIndicator color={theme.palette.primary.regular} />}>{children}</React.Suspense>
+        <React.Suspense fallback={<ActivityIndicator color={theme.palette.accent.regular} />}>{children}</React.Suspense>
       </ErrorBoundary>
       {isModal && <ToastContainer />}
     </Wrapper>

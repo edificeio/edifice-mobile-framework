@@ -112,7 +112,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         <View style={styles.container}>
           <PFLogo pf={this.props.route.params.platform} />
           <SmallText style={styles.text}>{I18n.get('auth-wayf-loading-text')}</SmallText>
-          <ActivityIndicator size="large" color={theme.palette.primary.regular} />
+          <ActivityIndicator size="large" color={theme.palette.accent.regular} />
         </View>
       );
     },

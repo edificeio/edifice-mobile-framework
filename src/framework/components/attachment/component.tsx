@@ -37,9 +37,9 @@ export const Attachment = ({ name, onRemove, type, uploadSuccess = true }: IAtta
     <View style={styles.mainContainer}>
       <View style={styles.iconContainer}>
         {uploadSuccess ? (
-          <Icon name={iconName} size={24} color={theme.palette.primary.regular} />
+          <Icon name={iconName} size={24} color={theme.palette.accent.regular} />
         ) : (
-          <ActivityIndicator color={theme.palette.primary.regular} />
+          <ActivityIndicator color={theme.palette.accent.regular} />
         )}
       </View>
       <SmallText numberOfLines={1} ellipsizeMode="middle" style={UI_STYLES.flex1}>

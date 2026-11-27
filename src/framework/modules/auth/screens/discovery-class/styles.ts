@@ -38,7 +38,7 @@ export default StyleSheet.create({
     textAlign: 'center',
   },
   title: {
-    color: theme.palette.primary.regular,
+    color: theme.palette.accent.regular,
     marginBottom: UI_SIZES.spacing.medium,
     textAlign: 'center',
   },

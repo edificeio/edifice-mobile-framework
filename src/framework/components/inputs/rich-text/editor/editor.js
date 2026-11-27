@@ -143,7 +143,7 @@ function createHTML(options = {}) {
 
         h1 {font-size: ${TextSizeStyle.Huge.fontSize}px; line-height: ${TextSizeStyle.Huge.lineHeight}px;}
         h2 {font-size: ${TextSizeStyle.Bigger.fontSize}px; line-height: ${TextSizeStyle.Bigger.lineHeight}px;}
-        h1, h2, a {color: ${theme.palette.primary.regular}}
+        h1, h2, a {color: ${theme.palette.accent.regular}}
         strong, b {font-weight: 700;}
         em {font-style: italic;}
         .download-attachments, .attachments {background-color: ${theme.palette.grey.fog}; padding: ${UI_SIZES.spacing.small}px; border-radius: ${UI_SIZES.radius.newCard}px; border: ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl};}

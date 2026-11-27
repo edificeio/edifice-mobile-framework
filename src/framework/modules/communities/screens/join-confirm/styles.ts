@@ -25,7 +25,7 @@ export default StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.small,
   },
   welcomeNoteTitle: {
-    color: theme.palette.primary.regular,
+    color: theme.palette.accent.regular,
   },
   welcomeNoteTitleContainer: {
     flexDirection: 'row',

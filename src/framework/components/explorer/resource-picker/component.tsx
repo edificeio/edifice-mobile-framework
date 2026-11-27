@@ -73,7 +73,7 @@ const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, o
           rightElement={
             <Svg
               name="ui-rafterRight"
-              fill={theme.palette.primary.regular}
+              fill={theme.palette.accent.regular}
               width={UI_SIZES.elements.icon.small}
               height={UI_SIZES.elements.icon.small}
             />

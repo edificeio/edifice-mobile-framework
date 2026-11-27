@@ -18,7 +18,7 @@ export const HeaderBottomSheetModal = (props: HeaderBottomSheetModalProps) => {
             name={props.iconLeft}
             width={UI_SIZES.elements.icon.small}
             height={UI_SIZES.elements.icon.small}
-            fill={theme.palette.primary[props.iconLeftDisabled ? 'light' : 'regular']}
+            fill={theme.palette.accent[props.iconLeftDisabled ? 'light' : 'regular']}
           />
         ) : null}
       </TouchableOpacity>
@@ -31,7 +31,7 @@ export const HeaderBottomSheetModal = (props: HeaderBottomSheetModalProps) => {
             name={props.iconRight}
             width={UI_SIZES.elements.icon.small}
             height={UI_SIZES.elements.icon.small}
-            fill={theme.palette.primary[props.iconRightDisabled ? 'light' : 'regular']}
+            fill={theme.palette.accent[props.iconRightDisabled ? 'light' : 'regular']}
           />
         ) : null}
       </TouchableOpacity>

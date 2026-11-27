@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   newEULALabel: {
-    color: theme.palette.primary.regular,
+    color: theme.palette.accent.regular,
     marginTop: UI_SIZES.spacing.large,
     textAlign: 'center',
   },

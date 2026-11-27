@@ -256,12 +256,12 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
             <TouchableOpacity onPress={() => editComment()}>
-              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.get('commentfield-modify')}</SmallBoldText>
+              <SmallBoldText style={{ color: theme.palette.accent.regular }}>{I18n.get('commentfield-modify')}</SmallBoldText>
             </TouchableOpacity>
           ) : null}
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
-              <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
+              <SmallBoldText style={{ color: theme.palette.accent.regular, marginLeft: UI_SIZES.spacing.medium }}>
                 {I18n.get('common-delete')}
               </SmallBoldText>
             </TouchableOpacity>
@@ -271,7 +271,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
-              <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
+              <SmallBoldText style={{ color: theme.palette.accent.regular, marginLeft: UI_SIZES.spacing.medium }}>
                 {I18n.get('common-delete')}
               </SmallBoldText>
             </TouchableOpacity>

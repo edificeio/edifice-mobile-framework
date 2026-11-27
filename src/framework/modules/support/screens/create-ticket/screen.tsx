@@ -151,7 +151,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
                 actions={fns.map(fn => fn(moduleConfig.name, 'attachments', attachOpts))}>
                 <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
                   <SmallActionText style={styles.actionText}>{I18n.get('support-createticket-addfiles')}</SmallActionText>
-                  <Svg name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
+                  <Svg name="ui-attachment" width={18} height={18} fill={theme.palette.accent.regular} />
                 </View>
               </BottomMenu>
               {attachments.map((attachment, index) => (

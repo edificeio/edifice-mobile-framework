@@ -16,7 +16,7 @@ const DISABLED_ICON_COLOR = theme.palette.grey.stone;
 
 const WeekPicker = ({
   disabled = false,
-  iconColor = theme.palette.primary.regular,
+  iconColor = theme.palette.accent.regular,
   onWeekChange,
   selectedWeekStart,
   style,

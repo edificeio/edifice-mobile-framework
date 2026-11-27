@@ -470,7 +470,7 @@ export const MailsContactField = (props: MailsContactFieldProps) => {
             <View style={[styles.results, styles.loading]}>
               <Svg
                 name="ui-loader"
-                fill={theme.palette.primary.regular}
+                fill={theme.palette.accent.regular}
                 width={UI_SIZES.elements.icon.medium}
                 height={UI_SIZES.elements.icon.medium}
               />

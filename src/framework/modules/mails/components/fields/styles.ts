@@ -79,7 +79,7 @@ export default StyleSheet.create({
     flex: 1,
   },
   textButton: {
-    color: theme.palette.primary.regular,
+    color: theme.palette.accent.regular,
   },
   viewResults: {
     position: 'absolute',

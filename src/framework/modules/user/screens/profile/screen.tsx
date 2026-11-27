@@ -243,7 +243,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
             name="ui-rafterRight"
             width={UI_SIZES.dimensions.width.mediumPlus}
             height={UI_SIZES.dimensions.height.mediumPlus}
-            fill={theme.palette.primary.regular}
+            fill={theme.palette.accent.regular}
           />
         </TouchableOpacity>
       );

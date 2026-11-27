@@ -68,7 +68,7 @@ const EmptyScreen = ({
       {title ? (
         <HeadingSText
           numberOfLines={2}
-          style={[styles.title, { color: textColor ?? theme.palette.primary.regular }, customTitleStyle]}>
+          style={[styles.title, { color: textColor ?? theme.palette.accent.regular }, customTitleStyle]}>
           {title}
         </HeadingSText>
       ) : null}
