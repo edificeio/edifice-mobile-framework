@@ -4,41 +4,22 @@ import theme, { defaultTheme } from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  // eslint-disable-next-line react-native/no-color-literals
-  detailsBarButton: {
-    color: 'blue',
-    fontSize: 18,
-    marginRight: 8,
-  },
   detailsBarContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 8,
     width: '100%',
   },
-  detailsBarLevel: {},
-  logContainer: {
-    flexDirection: 'row',
-    padding: UI_SIZES.spacing.minor,
-  },
   logDetailsContainer: {
     justifyContent: 'center',
     padding: 8,
   },
-  logMessageContainer: {
-    paddingLeft: UI_SIZES.spacing.tiny,
-    width: '80%',
-  },
   logSeverity: {
     fontWeight: 'bold',
   },
-  logTimeAndSeverityContainer: {
-    alignItems: 'center',
-    flexDirection: 'column',
-    width: '20%',
-  },
   page: {
     backgroundColor: theme.palette.grey.white,
+    flex: 1,
   },
   pausedBanner: {
     alignItems: 'center',

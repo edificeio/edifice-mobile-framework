@@ -8,9 +8,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import GridList from '~/framework/components/GridList';
 import { HeadingSText, SmallText } from '~/framework/components/text';
-import { DebugOptions } from '~/framework/modules/debug';
 import appConf from '~/framework/util/appConf';
 import TouchableSelectorPictureCard from '~/modules/auth/sign-in/components/picture-card';
+import { DebugOptions } from '~/modules/debug/components';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';

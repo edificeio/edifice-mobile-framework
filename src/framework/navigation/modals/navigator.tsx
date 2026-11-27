@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
 import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pdf/pdf-reader';
-import { infosNavBar, InfosScreen, logNavBar, LogScreen, networkNavBar, NetworkScreen } from '~/framework/modules/debug';
 import AttachmentsImportScreen, {
   computeNavBar as AttachmentsImportAddNavBar,
 } from '~/framework/modules/mails/components/attachments/modal-import';
@@ -37,9 +36,6 @@ export default (
         component={FileImportScreen}
         initialParams={{}}
       />
-      <RootStack.Screen name={ModalsRouteNames.Infos} options={infosNavBar} component={InfosScreen} />
-      <RootStack.Screen name={ModalsRouteNames.Log} options={logNavBar} component={LogScreen} />
-      <RootStack.Screen name={ModalsRouteNames.Network} options={networkNavBar} component={NetworkScreen} />
       <RootStack.Screen
         name={ModalsRouteNames.SplashAds}
         options={SplashadsNavBar}
@@ -53,9 +49,6 @@ export default (
 setModalModeForRoutes([
   ModalsRouteNames.AttachmentsImport,
   ModalsRouteNames.FileImport,
-  ModalsRouteNames.Infos,
-  ModalsRouteNames.Log,
-  ModalsRouteNames.Network,
   ModalsRouteNames.Pdf,
   ModalsRouteNames.RichTextEditor,
   ModalsRouteNames.SplashAds,

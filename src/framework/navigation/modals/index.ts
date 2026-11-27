@@ -11,9 +11,6 @@ import { SplashadsScreenNavParams } from '~/framework/modules/splashads/screen/t
 export enum ModalsRouteNames {
   AttachmentsImport = 'attachments-import',
   FileImport = 'file-import',
-  Infos = 'infos',
-  Log = 'log',
-  Network = 'network',
   Pdf = 'pdf',
   RichTextEditor = 'rich-editor',
   SplashAds = 'splashads',

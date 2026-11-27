@@ -23,16 +23,10 @@ import { useSession } from '~/modules/auth/store/accounts';
 import { type EntAppDisplay, useModuleAppDisplay } from '~/modules/myapps/hooks';
 import { I18n } from '~/util/i18n';
 
+import { getTabScreenName, type TabScreenName } from './names';
 import { createTabStackNavigation } from './tab-stack';
 import { useConfirmChangeTab } from '../hooks/confirm-remove';
 import { tabsOptions } from '../screen/options';
-
-type TabScreenName<Name extends string> = `$tab/${Name}`;
-
-/**
- * Name of the tab screen of a module. Use it to navigate to the tab itself.
- */
-export const getTabScreenName = <Name extends AnyTabModule['name']>(name: Name): TabScreenName<Name> => `$tab/${name}`;
 
 /**
  * Label of the tab of a module: an arbitrary rule, kept here. In order:

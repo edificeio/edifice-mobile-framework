@@ -6,8 +6,12 @@
  * RootStack (all modules' modals) -> Tabs -> TabStack (all modules' screns)
  *
  * Entry point of the navigation: the modules import from `~/app/navigation-new`, never from a file of this folder. It re-exports
- * `types.ts`, `native-modal.tsx` and the index of each subfolder (which exports its whole folder); `theme.ts` is not re-exported.
+ * `types.ts`, `native-modal.tsx` and the index of each subfolder (which exports its whole folder), except `navigators/` and `theme.ts`.
  * Inside this folder, files import each other directly (not through an index), so that the indexes don't make import cycles.
+ *
+ * `navigators/` must not be re-exported here: an `export *` is evaluated as soon as this file is (unlike an import used only inside a
+ * function, deferred by Metro's inline requires). `root-stack.tsx` imports `~/modules/auth/requirements`, whose screens call
+ * `defineScreen` from this file while loading: re-exported, it would run before `./screen` and crash the app at startup.
  */
 
 import React from 'react';
@@ -25,14 +29,13 @@ import { CloudMessagingProvider } from '~/framework/util/notifications/cloudMess
 import { selectActiveAccount, useAccountsStore } from '~/modules/auth/store/accounts';
 
 import { ConfirmRemoveProvider, useScreenTelemetry } from './hooks';
-import { useRootStackNavigation } from './navigators';
+import { TABS_SCREEN_NAME, useRootStackNavigation } from './navigators';
 import { navigationLightTheme } from './theme';
 
 export * from './types';
 export * from './header';
 export * from './hooks';
 export * from './native-modal';
-export * from './navigators';
 export * from './screen';
 
 export interface AppNavigationProps {
@@ -57,7 +60,7 @@ const useResetOnSignIn = (navigationRef: NavigationContainerRefWithCurrent<React
       if (current === undefined || current === previous) return;
       // The first sign-in of the session starts the navigation from the home anyway
       if (previous !== undefined && navigationRef.isReady()) {
-        navigationRef.reset({ index: 0, routes: [{ name: '$tabs' }] });
+        navigationRef.reset({ index: 0, routes: [{ name: TABS_SCREEN_NAME }] });
       }
       previous = current;
     });

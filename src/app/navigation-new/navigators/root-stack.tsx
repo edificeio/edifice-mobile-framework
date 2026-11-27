@@ -20,6 +20,7 @@ import { useCoreModuleModals, useCoreModuleScreens, useModuleModals } from '~/ap
 import requirementsModule from '~/modules/auth/requirements';
 import { useAuthStage } from '~/modules/auth/store/accounts';
 
+import { GUEST_START_SCREEN, TABS_SCREEN_NAME } from './names';
 import { useTabNavigation } from './tabs';
 import { BaseStackScreenLayout } from '../screen/layout';
 import { hiddenStackScreenOptions, rootStackOptions, visibleStackScreenOptions } from '../screen/options';
@@ -36,8 +37,6 @@ type RootStackGroups = Record<
 const useIsSignedOut = () => useAuthStage() === 'signedOut';
 const useHasRequirement = () => useAuthStage() === 'requirement';
 const useIsSignedIn = () => useAuthStage() === 'signedIn';
-
-const GUEST_START_SCREEN: keyof ReturnType<typeof useCoreModuleScreens> = 'auth/$load-account';
 
 export const useRootStackNavigation = () => {
   const coreModals = useCoreModuleModals();
@@ -86,10 +85,10 @@ export const useRootStackNavigation = () => {
           // 'simple_push' as a fallback use a rectangle container instead of rounded one, preventing the issue.
           // ToDo: check with react-navigation@8 or native-tabs if this fix is still necessary.
           screenOptions: { ...hiddenStackScreenOptions, animation: 'simple_push' },
-          screens: { $tabs: tabs },
+          screens: { [TABS_SCREEN_NAME]: tabs },
         },
       }) satisfies RootStackGroups,
-    [coreModals, guestScreens, tabs, userModals],
+    [coreModals, coreScreens, guestScreens, tabs, userModals],
   );
 
   // Order of groups does matter, even if they're declared as object !

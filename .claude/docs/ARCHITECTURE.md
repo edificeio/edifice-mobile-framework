@@ -188,13 +188,14 @@ Navigation **statique** (`createStaticNavigation`) : les modules déclarent leur
 
 ```
 navigation-new/
-├── index.tsx              Conteneur, reset vers l'accueil à chaque nouvelle connexion ; point d'entrée (réexporte tout, sauf `theme`)
+├── index.tsx              Conteneur, reset vers l'accueil à chaque nouvelle connexion ; point d'entrée (réexporte tout, sauf `navigators/` et `theme`)
 ├── types.ts               Types déduits (`StackNavigation`, `RootNavigation`, `TabNavigation`)
 ├── theme.ts               Thème du conteneur
 ├── native-modal.tsx       `NativeModal` : le `Modal` de React Native, fermé quand son écran perd le focus
 ├── navigators/             (`index.ts`)
+│   ├── names.tsx          Noms de routes calculés et leurs constantes (`getTabScreenName`, `GUEST_START_SCREEN`) ; sans import à l'exécution
 │   ├── root-stack.tsx     Stack racine : modales + écrans selon l'état d'auth
-│   ├── tabs.tsx           Onglets (`getTabScreenName`), masqués si le module n'est pas disponible
+│   ├── tabs.tsx           Onglets, masqués si le module n'est pas disponible
 │   └── tab-stack.tsx      Un stack par onglet, avec tous les écrans non modaux
 ├── screen/                Code commun aux écrans (`index.ts`)
 │   ├── screen.ts          `defineScreen`
@@ -211,7 +212,7 @@ navigation-new/
 └── header/                Items du header : `headerLeftActions` / `headerRightActions`, helpers `headerAction`, `headerMenu`… (`index.tsx`)
 ```
 
-**Les modules importent de `~/app/navigation-new`**, jamais d'un fichier du dossier. `index.tsx` réexporte tout (`export *`) : `types.ts`, `native-modal.tsx` et l'index de chaque sous-dossier (`header/`, `hooks/`, `navigators/`, `screen/`), qui exporte lui-même tout son dossier ; `theme.ts` n'est pas réexporté. Le code de l'app qui construit une navigation (ancienne navigation, conteneur de `auth`, notifications) importe encore de l'index d'un sous-dossier (`~/app/navigation-new/hooks`, `…/screen`, `…/navigators`) et de `…/theme`. Dans le dossier, les fichiers s'importent directement entre eux (pas par un index), pour que les index ne créent pas de cycle d'imports.
+**Les modules importent de `~/app/navigation-new`**, jamais d'un fichier du dossier. `index.tsx` réexporte tout (`export *`) : `types.ts`, `native-modal.tsx` et l'index de chaque sous-dossier (`header/`, `hooks/`, `screen/`), qui exporte lui-même tout son dossier ; `navigators/` et `theme.ts` ne sont pas réexportés. **`navigators/` ne doit pas l'être** : un `export *` est évalué dès que l'index l'est (contrairement à un import utilisé seulement dans une fonction, que les inline requires de Metro diffèrent) ; `root-stack.tsx` importe le module `~/modules/auth/requirements`, dont les écrans appellent `defineScreen` de l'index au chargement : réexporté avant `./screen`, il fait planter l'app au démarrage (« undefined is not a function », 2026-11-27). Le code de l'app qui construit une navigation (ancienne navigation, conteneur de `auth`, notifications) importe encore de l'index d'un sous-dossier (`~/app/navigation-new/hooks`, `…/screen`, `…/navigators`) et de `…/theme`. Dans le dossier, les fichiers s'importent directement entre eux (pas par un index), pour que les index ne créent pas de cycle d'imports. Un fichier de `header/`, `hooks/` ou `screen/` (réexportés par l'index) n'importe rien de `navigators/` à part `names.tsx`, qui ne charge rien (2026-11-27).
 
 **Raison d'être de la migration : le typage automatique de la navigation.** Les noms de route et leurs params sont déduits des composants d'écran déclarés par les modules (`StaticParamList`, `StackNavigation`, `RootNavigation`, `TabNavigation`). **Favorise toujours ce typage**, pas de types de params écrits à la main, pas de `any`, pas de casts.
 

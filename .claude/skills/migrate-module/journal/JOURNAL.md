@@ -12,6 +12,30 @@ Entrées les plus récentes **en tête**. Une entrée par session, même courte.
 
 ---
 
+## 2026-11-27 — Crash au démarrage : cycle d'imports dans `navigation-new` (`feat/navigation`)
+
+- Constat (développeur, simulateur) : « undefined is not a function » à `defineScreen(` dans `requirements/screens/reset-password.tsx` (×11), puis « Cannot read property 'name' of undefined » dans `src/app/module/loader.tsx` (conséquence).
+- Cause : depuis `d8dd372f7` (« chore: tidy up navigation »), `src/app/navigation-new/index.tsx` fait `export * from './navigators'` avant `export * from './screen'`. Un `export *` est évalué tout de suite (les inline requires de Metro ne diffèrent que les imports utilisés dans une fonction) : `root-stack` charge `~/modules/auth/requirements` (import non inliné), dont les écrans appellent `defineScreen` de la racine encore à moitié évaluée. Pas lié à `debug`.
+- Fait (non commité, changement du framework à part) : A′, `navigators/` n'est plus réexporté par la racine (aucun importeur ne s'en servait) ; commentaire dans l'index ; ARCHITECTURE §3.2, `framework.md` (« Signaux connus »), [later.md](later.md) (deux défauts de conception).
+- Vérifié : simulation de l'évaluation à partir d'un bundle de dev (`npx react-native bundle --dev true`, scripts dans le scratchpad) : avant, 6 réentrées dans la racine depuis `requirements` (la première est la pile du crash) ; après, aucune. `tsc` 709, identique par fichier ; ESLint de l'index 0 ; Jest 520 ; `--check` vert. **Pas encore rejoué dans l'app.**
+- Ensuite (développeur) : relancé dans l'app, le crash a disparu. Revue des réexports restants (détecteur sur le bundle, depuis chaque module de `src/` pris comme premier chargé, validé sur l'état d'avant) : aucun cycle ne revient dans `navigation-new`. Fragilité latente corrigée à la demande du développeur : `getTabScreenName`, `TabScreenName` et `GUEST_START_SCREEN` déplacés dans `navigators/names.tsx` (imports de types seulement) ; `hooks/open-module.ts` ne dépend plus de `tabs.tsx` (qui charge `myapps`). `$tabs` reste en clair (CONVENTIONS « Routes écrites en clair »). Revérifié : `tsc` 709 identique par fichier, ESLint des fichiers touchés sans erreur nouvelle (`react-hooks/exhaustive-deps` de `root-stack.tsx`, ligne 91, déjà sur `HEAD`), Jest 520, `--check` vert, bundle : 0 cycle. ARCHITECTURE §3.2 à jour.
+- Prochaine étape : commit du correctif du framework avant ceux de `debug`.
+
+## 2026-11-27 — Assainissement de `debug` : tous les sujets (`feat/navigation`)
+
+- Fait (non commité, par-dessus la bascule) : `structure` (+ `api-publique` absorbé : `components/index.ts`, `components/options/`, `components/log-item/`, `model/` testé, `util.ts`, écrans en dossiers), `performance`, `styles`, `dette` (`PageView`, boucle du journal, `Log.share()`, `testID`), `erreurs` (« Close » en `TerciaryButton`). Sans objet : `connect`, `try-action`, `classes`, `ui`, `temporal`, `droits`.
+- Décidé (développeur) : journal relu chaque seconde (le direct reste) ; `TerciaryButton` pour « Close » ; `Log.share()` (titre Android « Share log file ») ; « Platform : undefined » laissé ([debug.md](debug.md) §6).
+- Vérifié (override `neo/test`, mis par le développeur) : `tsc` 709, identique par fichier après chaque sujet ; ESLint du module 1 → 0 ; `lint-all` 1 979 → 1 978 ; Jest 513 → 520 (7 tests `debug`), la suite `media/source.test.ts` échouait déjà ; `--check` vert ; `testID` seulement ajoutés. **Pas testé dans l'app.**
+- Relevé : [debug.md](debug.md) §5 « Noté, non traité » (relecture après « effacer » qui recrée le fichier par `console.error`, côté `~/app/log`).
+- Prochaine étape : relecture PR par PR (fiche §9), recettes §9 dans l'app, commits (bascule, puis un par sujet).
+
+## 2026-11-27 — Bascule de `debug` (`feat/navigation`)
+
+- Fait (non commité, renommages indexés par `git mv`) : `debug` en `CoreModule` dans `src/modules/debug` ([debug.md](debug.md) §4) : modales `debug/infos`, `debug/log`, `debug/network` en `defineModal` (`fullScreenModal`), `DebugOptions` sur les nouvelles routes, `useSession()` dans `InfosScreen`. Supprimés : `module-config.ts`, `components/index.ts` (mort, TS1192), `types.ts` (types d'`audience` recopiés, mort). Façade `src/framework/modules/debug/index.ts` (`DebugOptions`, pour l'ancien `user`). Hors du module : registre, import du template `platforms` d'`auth`, écrans et enum retirés de l'ancien navigateur des modales globales.
+- Décidé (développeur) : emplacement `src/modules/` en exception pour `debug` seulement ; `useSession()` sans `withSession` (écran ouvert déconnecté) ; `types.ts` supprimé ; `debug` est un `CoreModule` toujours présent, d'autres modules peuvent en dépendre ; le registre ne compte plus dans le seuil « plus de trois fichiers hors du module » (BASCULE).
+- Vérifié : `tsc` 713 → 709, aucune erreur nouvelle par fichier ; ESLint du module 6 → 1 (déjà là) ; `lint-all` 1 984 → 1 979 ; Jest 513 / 513 (la suite `media/source.test.ts` échouait déjà) ; `SUIVI.md` régénéré (`debug` `basculé, sans test`, navigation ancienne 0) ; `--check` vert après régénération (il échouait déjà sur `HEAD`, `suivi.json` en retard) ; aucun `testID` ni clé de stockage. **Pas testé dans l'app.**
+- Prochaine étape : relecture, recette §3 de la fiche sur un build où `isDebugEnabled` est vrai, commit unique de la bascule.
+
 ## 2026-11-26 — Revue de `wiki`, hauteur de la liste des pages (`feat/navigation`)
 
 - Fait (non commité) : revue du commit `94c41f16c` (7 points, aucun corrigé sur décision du développeur, sauf la sheet). Hook `useSheetMaxHeight` ajouté à `~/app/navigation-new/sheet` ; la sheet `wiki/pages` l'utilise : à la hauteur des pages, puis la liste défile ([wiki.md](wiki.md) décision 15). Signal ajouté à [framework.md](../framework.md).

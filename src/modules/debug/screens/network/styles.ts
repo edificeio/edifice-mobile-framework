@@ -5,5 +5,6 @@ import theme from '~/app/theme';
 export default StyleSheet.create({
   page: {
     backgroundColor: theme.palette.grey.white,
+    flex: 1,
   },
 });
