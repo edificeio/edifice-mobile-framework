@@ -29,39 +29,47 @@ export const notifFiltersService = {
   },
 };
 
-export const NOTIFICATIONS_DEFAULT_VERSION = '3.0';
+// the timeline and the sent notifications share this endpoint and its payload, only the query and headers differ.
+const fetchLastNotificationsPage = async (
+  query: queryString.StringifiableRecord,
+  headers?: Record<string, string>,
+): Promise<ITimelineNotification[]> => {
+  const api = queryString.stringifyUrl({ query, url: '/timeline/lastNotifications' });
+  const entcoreNotifications = await sessionFetch.json<{
+    results: IEntcoreTimelineNotification[];
+    status: string;
+  }>(api, { headers });
 
-// The server drops the user's own notifications before paginating; filtering them here would skew the page count.
-export const NOTIFICATIONS_WITHOUT_OWN_VERSION = '4.0';
+  if (entcoreNotifications.status !== 'ok') {
+    throw new Error(`[notificationsService] got status not ok from ${api}`);
+  }
+  return entcoreNotifications.results.map(n => notificationAdapter(n) as ITimelineNotification);
+};
+
+const LAST_NOTIFICATIONS_API_VERSION_1D = '3.0';
 
 export const notificationsService = {
-  delete: async (id: string) => {
+  deleteForEveryone: async (id: string): Promise<void> => {
+    const api = `/timeline/${id}`;
+    await sessionFetch.json(api, { method: 'DELETE' });
+  },
+
+  // hides a notification for the user only.
+  deleteForSelf: async (id: string) => {
     const api = `/timeline/${id}`;
     return sessionFetch.json(api, { method: 'PUT' });
   },
 
-  page: async (page: number, filters: string[], apiVersion: string = NOTIFICATIONS_DEFAULT_VERSION) => {
-    const url = '/timeline/lastNotifications';
-    const query = {
-      page,
-      type: filters,
-    };
-    const api = queryString.stringifyUrl({ query, url });
-    const headers = {
-      Accept: `application/json;version=${apiVersion}`,
-    };
-    const entcoreNotifications = await sessionFetch.json<{
-      results: IEntcoreTimelineNotification[];
-      status: string;
-      number: number;
-    }>(api, { headers });
+  // `_` keeps a cached page from being served.
+  getSentNotificationsPage: (page: number, filters: readonly string[]): Promise<ITimelineNotification[]> =>
+    fetchLastNotificationsPage({ _: Date.now(), mine: 1, page, type: filters }),
 
-    if (entcoreNotifications.status !== 'ok') {
-      throw new Error('[notificationsService.page] got status not ok from ' + api);
-    }
-    // Run the notification adapter for each received notification
-    return entcoreNotifications.results.map(n => notificationAdapter(n) as ITimelineNotification);
-  },
+  page: (
+    page: number,
+    filters: string[],
+    apiVersion: string = LAST_NOTIFICATIONS_API_VERSION_1D,
+  ): Promise<ITimelineNotification[]> =>
+    fetchLastNotificationsPage({ page, type: filters }, { Accept: `application/json;version=${apiVersion}` }),
 
   report: async (id: string) => {
     const api = `/timeline/${id}/report`;

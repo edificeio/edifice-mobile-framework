@@ -51,7 +51,7 @@ export const getRegisteredNotifHandlers = () => registeredNotifHandlers;
 
 // Notif Handler Action
 
-const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
+export const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   // Check for all module notif-handler that are registered.
   moduleRedirection: (n, trackCategory, navigation, navDispatch, allowSwitchTab) => async dispatch => {
     const rets = await Promise.all(

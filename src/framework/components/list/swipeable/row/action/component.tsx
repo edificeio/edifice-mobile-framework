@@ -12,10 +12,13 @@ import { SwipeActionProps } from './types';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export const SwipeAction = React.memo(({ color, filled, icon, label, onPress, progress }: SwipeActionProps) => {
+// the button grows from this scale to its full size as the row uncovers it.
+const HIDDEN_ACTION_SCALE = 0.7;
+
+const SwipeAction = ({ color, filled, icon, label, onPress, progress, testID }: Readonly<SwipeActionProps>) => {
   const actionStyle = useAnimatedStyle(() => {
     const shown = Math.min(progress.value, 1);
-    return { opacity: shown, transform: [{ scale: 0.7 + 0.3 * shown }] };
+    return { opacity: shown, transform: [{ scale: HIDDEN_ACTION_SCALE + (1 - HIDDEN_ACTION_SCALE) * shown }] };
   });
 
   const buttonStyle = React.useMemo(
@@ -25,7 +28,7 @@ export const SwipeAction = React.memo(({ color, filled, icon, label, onPress, pr
 
   return (
     <View style={styles.action}>
-      <AnimatedPressable accessibilityRole="button" onPress={onPress} style={buttonStyle}>
+      <AnimatedPressable accessibilityRole="button" onPress={onPress} style={buttonStyle} testID={testID}>
         <Svg
           name={icon}
           width={ACTION_ICON_SIZE}
@@ -38,4 +41,6 @@ export const SwipeAction = React.memo(({ color, filled, icon, label, onPress, pr
       </Animated.View>
     </View>
   );
-});
+};
+
+export default React.memo(SwipeAction);

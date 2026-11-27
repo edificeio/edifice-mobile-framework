@@ -11,6 +11,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import { UI_STYLES } from '~/framework/components/constants';
+import type { SwipeRowAction } from '~/framework/components/list/swipeable';
 import { BodyText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { withSession } from '~/framework/modules/auth/util';
@@ -24,7 +25,7 @@ import { isUserbookNotification } from '~/framework/modules/home/components/noti
 import { useHomeReload, useRefresh } from '~/framework/modules/home/hooks';
 import timelineConfig from '~/framework/modules/home/module-config';
 import { getTimelineWorkflowInformation } from '~/framework/modules/home/rights';
-import { NOTIFICATIONS_WITHOUT_OWN_VERSION, notificationsService } from '~/framework/modules/home/service';
+import { notificationsService } from '~/framework/modules/home/service';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModalsRouteNames } from '~/framework/navigation/modals';
 import type { ITimelineNotification } from '~/framework/util/notifications';
@@ -32,6 +33,11 @@ import { defaultNotificationActionStack, handleNotificationAction } from '~/fram
 
 import styles from './styles';
 import { HomeNotificationsScreenProps } from './types';
+
+const EMPTY_TEXTS_I18N = { text: 'timeline-emptyscreen-text', title: 'timeline-emptyscreen-title' };
+
+// the back leaves out the user's own notifications before paginating.
+const LAST_NOTIFICATIONS_API_VERSION_2D = '4.0';
 
 // ToDo: bring back the badge of the unread count once the back exposes.
 export const HomeNotificationsScreenOptions = (): MaterialTopTabNavigationOptions => ({
@@ -51,7 +57,7 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
     if (!notifications.endReached) dispatch(loadNotificationsPageAction());
   }, [dispatch, notifications.endReached]);
 
-  const reload = React.useCallback(() => dispatch(startLoadNotificationsAction(NOTIFICATIONS_WITHOUT_OWN_VERSION)), [dispatch]);
+  const reload = React.useCallback(() => dispatch(startLoadNotificationsAction(LAST_NOTIFICATIONS_API_VERSION_2D)), [dispatch]);
 
   const reloading = useHomeReload(reload);
 
@@ -111,6 +117,7 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
             onPress: async () => {
               try {
                 await dispatch(deleteNotificationAction(id));
+                Toast.showSuccess(I18n.get('home-notifications-delete-success'));
               } catch {
                 Toast.showError(I18n.get('timeline-error-text'));
               } finally {
@@ -153,6 +160,29 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
     [],
   );
 
+  const getSwipeActions = React.useCallback(
+    (notification: ITimelineNotification): SwipeRowAction[] => {
+      const deleteAction: SwipeRowAction = {
+        color: theme.palette.status.failure.regular,
+        filled: true,
+        icon: 'ui-delete',
+        label: I18n.get('common-delete'),
+        onPress: () => onDeleteItem(notification.id),
+        testID: 'home-notifications-delete',
+      };
+      if (!canReport) return [deleteAction];
+      const reportAction: SwipeRowAction = {
+        color: theme.palette.primary.dark,
+        icon: 'ui-alert-triangle',
+        label: I18n.get('timeline-reportaction-button'),
+        onPress: () => onReportItem(notification),
+        testID: 'home-notifications-report',
+      };
+      return [reportAction, deleteAction];
+    },
+    [canReport, onDeleteItem, onReportItem],
+  );
+
   const openFilters = React.useCallback(() => navParent.navigate(ModalsRouteNames.NotificationFilters), [navParent]);
 
   const isListLoading = notifications.isPristine || reloading || applyingFilters;
@@ -180,11 +210,11 @@ export const HomeNotificationsScreen = withSession<HomeNotificationsScreenProps>
         refreshing={refreshing}
         onRefresh={onRefresh}
         onEndReached={onEndReached}
-        onDeleteItem={onDeleteItem}
         onPressItem={onPressItem}
-        onReportItem={onReportItem}
+        getSwipeActions={getSwipeActions}
         onSwipeActiveChange={onRowSwipeActiveChange}
-        canReport={canReport}
+        emptyTextsI18n={EMPTY_TEXTS_I18N}
+        preview
       />
     </View>
   );

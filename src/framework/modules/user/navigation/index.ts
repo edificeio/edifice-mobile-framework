@@ -1,5 +1,7 @@
 import { ParamListBase } from '@react-navigation/native';
 
+import type { HomeSentNotificationFiltersScreen } from '~/framework/modules/home/screens/sent-notification-filters/types';
+import type { HomeSentNotificationsScreen } from '~/framework/modules/home/screens/sent-notifications/types';
 import moduleConfig from '~/framework/modules/user/module-config';
 import type { UserHomeScreenNavParams } from '~/framework/modules/user/screens/home';
 import type { UserLangScreenNavParams } from '~/framework/modules/user/screens/lang/types';
@@ -27,6 +29,8 @@ export const userRouteNames = {
   notifPrefs: `${moduleConfig.routeName}/notifPrefs` as 'notifPrefs',
   notifPrefsDetails: `${moduleConfig.routeName}/notifPrefs/details` as 'notifPrefsDetails',
   profile: `${moduleConfig.routeName}/profile` as 'profile',
+  sentNotifications: `${moduleConfig.routeName}/sent-notifications` as 'sentNotifications',
+  sentNotificationsFilters: `${moduleConfig.routeName}/sent-notifications/filters` as 'sentNotificationsFilters',
   structures: `${moduleConfig.routeName}/profile/structures` as 'structures',
   theme: `${moduleConfig.routeName}/theme` as 'theme',
   whoAreWe: `${moduleConfig.routeName}/who-are-we` as 'whoAreWe',
@@ -35,6 +39,8 @@ export interface UserNavigationParams extends ParamListBase {
   'home': UserHomeScreenNavParams;
   'notifPrefs': IPushNotifsTopicsListScreenNavigationParams;
   'notifPrefsDetails': IPushNotifsItemsListScreenNavigationParams;
+  'sentNotifications': HomeSentNotificationsScreen.NavParams;
+  'sentNotificationsFilters': HomeSentNotificationFiltersScreen.NavParams;
   'profile': ProfileScreenNavigationParams;
   'structures': UserStructuresScreenNavParams;
   'editHobbies': UserEditHobbiesScreenNavParams;

@@ -3,6 +3,7 @@
  */
 import { ThunkDispatch } from 'redux-thunk';
 
+import type { AppDispatch } from '~/app/store';
 import moduleConfig from '~/framework/modules/home/module-config';
 import { TimelineState } from '~/framework/modules/home/reducer';
 import { actions as flashMessagesActions } from '~/framework/modules/home/reducer/flash-messages';
@@ -92,6 +93,16 @@ export const loadNotificationsPageAction =
   };
 
 /**
+ * Every notification type the user is allowed to see, loaded first if needed.
+ */
+export const loadAuthorizedNotificationTypesAction =
+  () =>
+  async (dispatch: AppDispatch): Promise<string[]> => {
+    const state = await dispatch($prepareNotificationsAction());
+    return state.notifDefinitions.notifFilters.data.map(filter => filter.type);
+  };
+
+/**
  * Load the flash messages alone, for a screen that shows them without the notifications.
  */
 export const loadFlashMessagesAction = () => async (dispatch: ThunkDispatch<any, any, any>) => {
@@ -110,7 +121,7 @@ export const loadFlashMessagesAction = () => async (dispatch: ThunkDispatch<any,
 export const deleteNotificationAction = (notificationId: string) => async (dispatch: ThunkDispatch<any, any, any>) => {
   try {
     dispatch(notificationsActions.deleteRequest(notificationId));
-    await notificationsService.delete(notificationId);
+    await notificationsService.deleteForSelf(notificationId);
     dispatch(notificationsActions.deleteReceipt(notificationId));
   } catch (e) {
     dispatch(notificationsActions.deleteError(notificationId));

@@ -4,6 +4,12 @@ import AuthChangeEmailScreen from '~/framework/modules/auth/screens/change-email
 import { requirementChangeEmailScreenOptions } from '~/framework/modules/auth/screens/change-email/screen';
 import AuthChangeMobileScreen from '~/framework/modules/auth/screens/change-mobile';
 import AuthMFAScreen, { computeNavBarModal as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
+import HomeSentNotificationFiltersScreen, {
+  HomeSentNotificationFiltersScreenOptions,
+} from '~/framework/modules/home/screens/sent-notification-filters';
+import HomeSentNotificationsScreen, {
+  HomeSentNotificationsScreenOptions,
+} from '~/framework/modules/home/screens/sent-notifications';
 import moduleConfig from '~/framework/modules/user/module-config';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
 import UserLangScreen, { computeNavBar as langNavBar } from '~/framework/modules/user/screens/lang';
@@ -41,6 +47,12 @@ export default () =>
         name={userRouteNames.notifPrefs}
         component={PushNotifsTopicsListScreen}
         options={pushNotifsTopicsListNavBar}
+        initialParams={{}}
+      />
+      <Stack.Screen
+        name={userRouteNames.sentNotifications}
+        component={HomeSentNotificationsScreen}
+        options={HomeSentNotificationsScreenOptions}
         initialParams={{}}
       />
       <Stack.Screen
@@ -85,6 +97,12 @@ export default () =>
           options={editMoodMottoNavBar}
           initialParams={{}}
         />
+        <Stack.Screen
+          name={userRouteNames.sentNotificationsFilters}
+          component={HomeSentNotificationFiltersScreen}
+          options={HomeSentNotificationFiltersScreenOptions}
+          initialParams={{}}
+        />
       </Stack.Group>
       <Stack.Screen name={'user/change-password'} component={UserChangePasswordScreen} options={UserChangePasswordScreenOptions} />
       <Stack.Screen name={'user/change-email'} component={AuthChangeEmailScreen} options={requirementChangeEmailScreenOptions} />
@@ -101,5 +119,6 @@ setModalModeForRoutes([
   userRouteNames.editHobbies,
   userRouteNames.editDescription,
   userRouteNames.editMoodMotto,
+  userRouteNames.sentNotificationsFilters,
   userRouteNames.space,
 ]);
