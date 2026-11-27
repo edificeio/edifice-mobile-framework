@@ -14,6 +14,12 @@ import { appReadyAction, getState as getAppStartupState } from '~/framework/navi
 import { tryAction } from '~/framework/util/redux/actions';
 
 import AppNavigation from './navigation';
+import SplashOverlay from './splash-overlay';
+
+// The overlay displays the same splash with its background image, so the native one can go away without fading.
+const hideNativeSplash = () => {
+  BootSplash.hide({ fade: false });
+};
 
 /**
  * Logic code that is run for the app start
@@ -43,5 +49,10 @@ export function AppStartupHandler() {
   useAppStartup(useDispatch());
   const isAppReady = useSelector(getAppStartupState).isReady;
 
-  return isAppReady ? <AppNavigation /> : null;
+  return (
+    <>
+      {isAppReady ? <AppNavigation /> : null}
+      <SplashOverlay onImageLoaded={hideNativeSplash} visible={!isAppReady} />
+    </>
+  );
 }
