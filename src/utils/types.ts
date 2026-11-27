@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 export type ArrayElement<A> = A extends readonly (infer T)[] ? T : never;
 
 export type DeepPartial<T> = T extends object
@@ -11,3 +13,7 @@ export type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type ValueOf<T> = T[keyof T];
 
 export type ValueFromUnion<T, K extends KeysOfUnion<T>> = T extends Record<K, unknown> ? T[K] : never;
+
+// React.memo that keeps the generic type parameters of the component.
+// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/37087#issuecomment-542793243
+export const typedMemo: <T>(component: T) => T = React.memo;

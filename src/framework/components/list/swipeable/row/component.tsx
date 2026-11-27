@@ -6,6 +6,7 @@ import { SharedValue } from 'react-native-reanimated';
 
 import { useSwipeRows } from '~/framework/components/list/swipeable/context';
 import { ACTION_WIDTH, SwipeAction } from '~/framework/components/list/swipeable/row/action';
+import { typedMemo } from '~/utils/types';
 
 import styles from './styles';
 import { SwipeRowAction, SwipeRowProps } from './types';
@@ -17,10 +18,6 @@ const CLOSE_DRAG_OFFSET = 10;
 const NO_DRAG_OFFSET = 9999;
 
 const NO_ACTIONS: readonly SwipeRowAction[] = [];
-
-// keeps ItemT through React.memo.
-// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/37087#issuecomment-542793243
-const typedMemo: <T>(component: T) => T = React.memo;
 
 const SwipeRow = <ItemT,>({
   extraData,
@@ -80,7 +77,7 @@ const SwipeRow = <ItemT,>({
       <View style={styles.actions}>
         {actions.map(action => (
           <SwipeAction
-            key={action.testID ?? action.label}
+            key={action.testID}
             color={action.color}
             filled={action.filled}
             icon={action.icon}

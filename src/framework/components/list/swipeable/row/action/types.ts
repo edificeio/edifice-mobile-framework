@@ -12,5 +12,5 @@ export interface SwipeActionProps {
   onPress: () => void;
   // goes from 0 to 1 as the row uncovers the action.
   progress: SharedValue<number>;
-  testID?: string;
+  testID: string;
 }

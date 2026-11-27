@@ -11,7 +11,7 @@ export interface SwipeRowAction {
   label: string;
   // the row closes once the returned promise settles.
   onPress: () => void | Promise<unknown>;
-  testID?: string;
+  testID: string;
 }
 
 // the row builds its own content and actions, so that its props stay the same while another row opens.
