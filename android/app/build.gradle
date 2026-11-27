@@ -27,15 +27,6 @@ def reactNativeArchitectures() {
     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
-def runTasks = gradle.startParameter.taskNames
-
-if ('assembleDebug' in runTasks) {
-    exec {
-        workingDir '../..'
-        commandLine 'watchman watch-del-all && react-native start --reset-cache'
-    }
-}
-
 android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
