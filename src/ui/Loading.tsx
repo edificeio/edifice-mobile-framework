@@ -11,6 +11,6 @@ interface LoadingProps {
 
 export const Loading = ({ customColor, customStyle, small }: LoadingProps) => (
   <View style={customStyle || { alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-    <ActivityIndicator size={small ? 'small' : 'large'} color={customColor || theme.palette.primary.regular} />
+    <ActivityIndicator size={small ? 'small' : 'large'} color={customColor || theme.palette.accent.regular} />
   </View>
 );

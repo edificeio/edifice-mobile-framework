@@ -76,7 +76,7 @@ const DateTimePickerAndroid = (props: DateTimePickerProps) => {
           name={props.mode === 'date' ? 'ui-calendarLight' : 'ui-clock'}
           width={20}
           height={20}
-          fill={props.iconColor ?? theme.palette.primary.regular}
+          fill={props.iconColor ?? theme.palette.accent.regular}
         />
         <SmallText style={styles.buttonText}>{date.format(props.mode === 'date' ? 'L' : 'LT')}</SmallText>
       </TouchCardWithoutPadding>

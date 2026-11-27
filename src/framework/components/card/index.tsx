@@ -123,7 +123,7 @@ export const TouchableContentCard = (props: ITouchableContentCardProps) => {
   const realHeaderIndicator = headerIndicator ?? (
     <Icon
       name="arrow_right"
-      color={theme.palette.primary.regular}
+      color={theme.palette.accent.regular}
       style={{
         paddingLeft: UI_SIZES.spacing.minor,
         paddingVertical: UI_SIZES.spacing.minor,
@@ -139,7 +139,7 @@ export const ContentView = (props: IContentCardProps) => {
 /** Pre-configured title for ContentCard */
 export const ContentCardTitle = (props: TextProps) => {
   const { style, ...otherProps } = props;
-  const Comp = React.useMemo(() => styled(BodyText)({ color: theme.palette.primary.regular }), []);
+  const Comp = React.useMemo(() => styled(BodyText)({ color: theme.palette.accent.regular }), []);
   return <Comp numberOfLines={2} ellipsizeMode="tail" {...otherProps} style={style} />;
 };
 
@@ -331,7 +331,7 @@ export function TouchableOverviewCard(props: OverviewCardProps & TouchableOpacit
           width={UI_SIZES.dimensions.width.larger}
           height={UI_SIZES.dimensions.width.larger} // width again to ensure it's a square !
           name="ui-rafterRight"
-          fill={theme.palette.primary.regular}
+          fill={theme.palette.accent.regular}
         />
       }
       {...props}

@@ -27,6 +27,6 @@ export const LoadingIndicator = ({ customColor, customStyle, small, withVertical
         ...(withVerticalMargins ? { marginBottom: pageGutterSize, marginTop: UI_SIZES.spacing.minor } : {}),
       }
     }>
-    <ActivityIndicator size={small ? 'small' : 'large'} color={customColor || theme.palette.primary.regular} />
+    <ActivityIndicator size={small ? 'small' : 'large'} color={customColor || theme.palette.accent.regular} />
   </View>
 );

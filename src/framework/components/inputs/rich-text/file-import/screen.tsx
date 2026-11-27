@@ -323,7 +323,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
       case UploadStatus.KO:
         return <IconButton icon="ui-restore" color={theme.palette.status.failure.regular} action={() => retryFile(index)} />;
       case UploadStatus.PENDING:
-        return <ActivityIndicator size={UI_SIZES.elements.icon.small} color={theme.palette.primary.regular} />;
+        return <ActivityIndicator size={UI_SIZES.elements.icon.small} color={theme.palette.accent.regular} />;
       default:
         return null;
     }

@@ -12,7 +12,7 @@ const FilterButton: React.FunctionComponent<FilterButtonProps> = ({ action, text
   return (
     <TouchableOpacity onPress={action} style={styles.mainContainer}>
       <SmallActionText>{text}</SmallActionText>
-      <Svg name="ui-rafterDown" width={16} height={16} fill={theme.palette.primary.regular} />
+      <Svg name="ui-rafterDown" width={16} height={16} fill={theme.palette.accent.regular} />
     </TouchableOpacity>
   );
 };

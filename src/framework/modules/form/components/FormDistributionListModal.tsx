@@ -105,7 +105,7 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
     return (
       <TouchableOpacity onPress={() => openSentDistribution(distribution.id)} style={styles.itemContainer}>
         <SmallText>{text}</SmallText>
-        <Svg width={20} height={20} name="ui-eye" fill={theme.palette.primary.regular} style={styles.itemIconMargin} />
+        <Svg width={20} height={20} name="ui-eye" fill={theme.palette.accent.regular} style={styles.itemIconMargin} />
       </TouchableOpacity>
     );
   };

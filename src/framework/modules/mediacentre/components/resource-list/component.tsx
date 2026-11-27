@@ -37,9 +37,9 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   return (
     <View>
       <TouchableOpacity onPress={handlePressShowAll} style={styles.headerContainer}>
-        {iconName ? <Svg name={iconName} fill={theme.palette.primary.regular} width={20} /> : null}
-        <BodyText style={{ color: theme.palette.primary.regular }}>{I18n.get(`mediacentre-section-${type}`)}</BodyText>
-        <Svg name="ui-rafterRight" fill={theme.palette.primary.regular} width={20} height={20} />
+        {iconName ? <Svg name={iconName} fill={theme.palette.accent.regular} width={20} /> : null}
+        <BodyText style={{ color: theme.palette.accent.regular }}>{I18n.get(`mediacentre-section-${type}`)}</BodyText>
+        <Svg name="ui-rafterRight" fill={theme.palette.accent.regular} width={20} height={20} />
       </TouchableOpacity>
       <FlatList
         horizontal

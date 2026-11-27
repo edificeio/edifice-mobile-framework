@@ -23,7 +23,7 @@ const ResourceSection: React.FunctionComponent<ResourceSectionProps> = ({
   resources,
   type,
 }) => {
-  const headingColor = disableShowAll ? theme.ui.text.regular : theme.palette.primary.regular;
+  const headingColor = disableShowAll ? theme.ui.text.regular : theme.palette.accent.regular;
 
   const renderResource = ({ item }: { item: Resource }) => (
     <ResourceCard

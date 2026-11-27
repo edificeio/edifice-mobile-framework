@@ -203,7 +203,7 @@ const SchoolbookWordDetailsCard = (
         headerIndicator={
           isTeacher ? (
             <TouchableOpacity style={styles.acknowledgementsContainer} onPress={action}>
-              <SmallBoldText style={{ color: theme.palette.primary.regular }}>
+              <SmallBoldText style={{ color: theme.palette.accent.regular }}>
                 {acknowledgementsString(word?.ackNumber, word?.total)}
               </SmallBoldText>
               <Picture
@@ -211,7 +211,7 @@ const SchoolbookWordDetailsCard = (
                 name="pictos-arrow-right"
                 width={UI_SIZES.dimensions.width.large}
                 height={UI_SIZES.dimensions.height.large}
-                fill={theme.palette.primary.regular}
+                fill={theme.palette.accent.regular}
                 style={{ marginLeft: UI_SIZES.spacing.minor }}
               />
             </TouchableOpacity>
@@ -245,7 +245,7 @@ const SchoolbookWordDetailsCard = (
                   {`${I18n.get(isTeacher ? 'schoolbook-worddetails-for' : 'schoolbook-worddetails-from')} `}
                   <CaptionBoldText
                     style={{
-                      color: !isTeacher || hasSingleRecipientForTeacher ? theme.ui.text.regular : theme.palette.primary.regular,
+                      color: !isTeacher || hasSingleRecipientForTeacher ? theme.ui.text.regular : theme.palette.accent.regular,
                     }}>
                     {isTeacher ? recipientsString(report) : word?.ownerName}
                   </CaptionBoldText>
@@ -263,10 +263,10 @@ const SchoolbookWordDetailsCard = (
                 name="pictos-answer"
                 width={UI_SIZES.dimensions.width.large}
                 height={UI_SIZES.dimensions.height.large}
-                fill={theme.palette.primary.regular}
+                fill={theme.palette.accent.regular}
                 style={{ marginRight: UI_SIZES.spacing.minor }}
               />
-              <SmallBoldText style={{ color: theme.palette.primary.regular }}>
+              <SmallBoldText style={{ color: theme.palette.accent.regular }}>
                 {responsesString(schoolbookWordResponsesNumber)}
               </SmallBoldText>
             </TouchableOpacity>

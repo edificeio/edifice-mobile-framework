@@ -44,6 +44,6 @@ export default StyleSheet.create({
   },
   title: {
     alignSelf: 'center',
-    color: theme.palette.primary.regular,
+    color: theme.palette.accent.regular,
   },
 });

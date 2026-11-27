@@ -37,6 +37,6 @@ export default StyleSheet.create({
   },
   summaryText: {
     alignSelf: 'center',
-    color: theme.palette.primary.regular,
+    color: theme.palette.accent.regular,
   },
 });
