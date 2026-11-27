@@ -22,7 +22,7 @@ import { Storage } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
 import { ZendeskProvider } from '~/framework/util/zendesk';
 
-import { DeviceTrust } from './device-trust';
+//import { DeviceTrust } from './device-trust';
 import { I18n } from './i18n';
 import { ModuleCompat } from './module/compat';
 import configureStore from './store';
@@ -113,19 +113,19 @@ function App() {
   useNotificationEvent();
   if (!store) return null;
   const content = (
-    <DeviceTrust>
-      <NetworkMonitorProvider>
-        <GestureHandlerRootView style={UI_STYLES.flex1}>
-          <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
-            <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-              <Redux.Provider store={store}>
-                <AppStartupHandler />
-              </Redux.Provider>
-            </SafeAreaProvider>
-          </KeyboardProvider>
-        </GestureHandlerRootView>
-      </NetworkMonitorProvider>
-    </DeviceTrust>
+    //<DeviceTrust>
+    <NetworkMonitorProvider>
+      <GestureHandlerRootView style={UI_STYLES.flex1}>
+        <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
+          <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+            <Redux.Provider store={store}>
+              <AppStartupHandler />
+            </Redux.Provider>
+          </SafeAreaProvider>
+        </KeyboardProvider>
+      </GestureHandlerRootView>
+    </NetworkMonitorProvider>
+    //</DeviceTrust>
   );
   return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
 }

@@ -1,11 +1,8 @@
 import { StyleSheet } from 'react-native';
 
-// react-native-bootsplash draws the logo in a 288dp box (compat_splash_screen.xml), the size of the Android 12+
-// splash icon. The poc override shrinks it with an inset (bootsplash_logo.xml) so it fits the system circle mask.
-// Same box and inset here, so the logo does not move when this overlay takes over from the native splash.
-const SPLASH_LOGO_BOX_SIZE = 288;
-const SPLASH_LOGO_INSET_RATIO = 0.12;
-const SPLASH_LOGO_SIZE = SPLASH_LOGO_BOX_SIZE * (1 - 2 * SPLASH_LOGO_INSET_RATIO);
+// Same size as the logo of the native splash (compat_splash_screen.xml, in the override and in react-native-bootsplash),
+// so the logo does not move when this overlay takes over.
+const SPLASH_LOGO_SIZE = 288;
 
 export const styles = StyleSheet.create({
   background: {

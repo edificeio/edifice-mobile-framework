@@ -49,7 +49,8 @@ const SplashOverlay = ({ onImageLoaded, visible }: Readonly<SplashOverlayProps>)
   return isMounted ? (
     // Catches touches until unmounted: the app is already rendered underneath.
     <Animated.View style={[styles.background, animatedStyle]}>
-      <ImageBackground onLoadEnd={onLoadEnd} resizeMode="cover" source={BACKGROUND_SOURCE} style={styles.background}>
+      {/* Stretched like the native splash (gravity="fill"), so the gradient does not shift when this overlay takes over */}
+      <ImageBackground onLoadEnd={onLoadEnd} resizeMode="stretch" source={BACKGROUND_SOURCE} style={styles.background}>
         <Image resizeMode="contain" source={LOGO_SOURCE} style={styles.logo} />
       </ImageBackground>
     </Animated.View>
