@@ -127,7 +127,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
             data.length === 1 ? (
               <TouchableOpacity onPress={onAddAccount} style={styles.addAccount}>
                 <View style={styles.addAccountRound}>
-                  <Svg name="ui-plus" fill={theme.palette.primary.regular} height={getScaleWidth(48)} width={getScaleWidth(48)} />
+                  <Svg name="ui-plus" fill={theme.palette.accent.regular} height={getScaleWidth(48)} width={getScaleWidth(48)} />
                 </View>
                 <SmallBoldText style={styles.addAccountText}>{I18n.get('auth-accountbutton-add')}</SmallBoldText>
               </TouchableOpacity>

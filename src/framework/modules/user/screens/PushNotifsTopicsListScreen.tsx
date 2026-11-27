@@ -172,7 +172,7 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
                   },
                 )}
               </SmallActionText>
-              <Icon name="arrow_down" color={theme.palette.primary.regular} style={styles.iconItem} />
+              <Icon name="arrow_down" color={theme.palette.accent.regular} style={styles.iconItem} />
             </View>
           }
         />

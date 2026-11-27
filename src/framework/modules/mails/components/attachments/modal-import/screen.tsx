@@ -367,7 +367,7 @@ export default function AttachmentsImportScreen(props: AttachmentsImportScreenPr
       case UploadAttachmentStatus.KO:
         return <IconButton icon="ui-restore" color={theme.palette.status.failure.regular} action={() => retryFile(index)} />;
       case UploadAttachmentStatus.PENDING:
-        return <ActivityIndicator size={UI_SIZES.elements.icon.small} color={theme.palette.primary.regular} />;
+        return <ActivityIndicator size={UI_SIZES.elements.icon.small} color={theme.palette.accent.regular} />;
       default:
         return null;
     }

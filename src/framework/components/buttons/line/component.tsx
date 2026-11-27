@@ -71,14 +71,14 @@ export const LineButton = ({
     if (!showArrow || !onPress) return;
     if (loading)
       return (
-        <ActivityIndicator color={theme.palette.primary.regular} size={UI_SIZES.dimensions.width.mediumPlus} style={styles.arrow} />
+        <ActivityIndicator color={theme.palette.accent.regular} size={UI_SIZES.dimensions.width.mediumPlus} style={styles.arrow} />
       );
     return (
       <Svg
         name="ui-rafterRight"
         width={UI_SIZES.dimensions.width.mediumPlus}
         height={UI_SIZES.dimensions.width.mediumPlus}
-        fill={theme.palette.primary.regular}
+        fill={theme.palette.accent.regular}
         style={styles.arrow}
       />
     );

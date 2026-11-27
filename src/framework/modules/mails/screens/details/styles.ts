@@ -78,7 +78,7 @@ export default StyleSheet.create({
   },
 
   senderName: {
-    color: theme.palette.primary.regular,
+    color: theme.palette.accent.regular,
   },
 
   topInfos: {

@@ -197,7 +197,7 @@ class Attachment extends React.PureComponent<
               {downloadState === DownloadState.Downloading ? (
                 <ActivityIndicator
                   size="small"
-                  color={theme.palette.primary.regular}
+                  color={theme.palette.accent.regular}
                   style={{ height: 18, marginRight: UI_SIZES.spacing.tiny }}
                 />
               ) : downloadState === DownloadState.Success ? (

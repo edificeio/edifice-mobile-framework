@@ -19,7 +19,7 @@ export default StyleSheet.create({
     width: getScaleWidth(88),
   },
   addAccountText: {
-    color: theme.palette.primary.regular,
+    color: theme.palette.accent.regular,
   },
 
   bottomContainer: {

@@ -389,7 +389,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
           </View>
           <View style={styles.feedbackContainer}>
             {isVerifyingActive ? (
-              <ActivityIndicator size="large" color={theme.palette.primary.regular} />
+              <ActivityIndicator size="large" color={theme.palette.accent.regular} />
             ) : isCodeStateDisplayed ? (
               <>
                 <Picture

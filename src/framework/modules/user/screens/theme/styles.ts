@@ -12,6 +12,6 @@ export default StyleSheet.create({
     marginVertical: UI_SIZES.spacing.medium,
   },
   title: {
-    color: theme.palette.primary.regular,
+    color: theme.palette.accent.regular,
   },
 });

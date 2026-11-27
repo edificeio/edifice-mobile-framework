@@ -227,7 +227,7 @@ export const SmallInverseBoldText = styled(SmallBoldText)({
 });
 
 export const SmallActionText = styled(SmallText)({
-  color: theme.palette.primary.regular,
+  color: theme.palette.accent.regular,
 });
 
 /**
@@ -245,5 +245,5 @@ export const NestedItalicText = styled.Text({
 });
 
 export const NestedActionText = styled.Text({
-  color: theme.palette.primary.regular,
+  color: theme.palette.accent.regular,
 });

@@ -180,7 +180,7 @@ function renderParseText(
 ): JSX.Element {
   // -1 - Default opts
   textStyles = {
-    [HtmlParserJsxTextVariant.Link]: { color: theme.palette.primary.regular },
+    [HtmlParserJsxTextVariant.Link]: { color: theme.palette.accent.regular },
     ...textStyles,
   };
   // 0 - If the text is acually an inline image, render it elsewhere.

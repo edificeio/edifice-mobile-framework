@@ -130,7 +130,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
                 name="ui-attachment"
                 width={20}
                 height={20}
-                fill={theme.palette.primary.regular}
+                fill={theme.palette.accent.regular}
                 style={styles.iconAttMarginRight}
               />
               <SmallActionText>{I18n.get('presences-declareabsence-attachment')}</SmallActionText>

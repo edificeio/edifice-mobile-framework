@@ -104,7 +104,7 @@ export const FormFileCard = ({ isDisabled, onChangeAnswer, onEditQuestion, quest
             actions={fns.map(fn => fn(moduleConfig.name, 'file', attachOpts))}>
             <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
               <SmallActionText style={styles.actionText}>{I18n.get('form-distribution-filecard-addfiles')}</SmallActionText>
-              <Svg name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
+              <Svg name="ui-attachment" width={18} height={18} fill={theme.palette.accent.regular} />
             </View>
           </BottomMenu>
           <FlatList data={files} keyExtractor={attachment => attachment.filename} renderItem={renderAttachmentItem} />

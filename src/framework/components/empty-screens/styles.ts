@@ -17,7 +17,7 @@ export default StyleSheet.create({
     gap: UI_SIZES.spacing.tiny,
   },
   title: {
-    color: theme.palette.primary.regular,
+    color: theme.palette.accent.regular,
     textAlign: 'center',
   },
 });

@@ -156,7 +156,7 @@ const SwipeAction = <ItemT extends { key: string }>(
             <Svg
               width={props.actionIconSize ?? 16}
               height={props.actionIconSize ?? 16}
-              fill={props.actionColor || (props.backgroundColor ? theme.ui.text.inverse : theme.palette.primary.regular)}
+              fill={props.actionColor || (props.backgroundColor ? theme.ui.text.inverse : theme.palette.accent.regular)}
               name={props.actionIcon}
             />
           ) : // <SmallText>{props.actionIcon}</SmallText>
@@ -164,7 +164,7 @@ const SwipeAction = <ItemT extends { key: string }>(
           {props.actionText ? (
             <SmallText
               style={{
-                color: props.actionColor || (props.backgroundColor ? theme.ui.text.inverse : theme.palette.primary.regular),
+                color: props.actionColor || (props.backgroundColor ? theme.ui.text.inverse : theme.palette.accent.regular),
                 lineHeight: undefined,
                 marginLeft: UI_SIZES.spacing.small,
               }}>

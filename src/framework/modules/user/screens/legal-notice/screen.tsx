@@ -61,7 +61,7 @@ function UserLegalNoticeScreen(
       <TouchableOpacity onPress={() => openLegalItem(legalItem.item)} key={legalItem.item}>
         <ListItem
           leftElement={<SmallText>{I18n.get(`user-legalnotice-${legalItem.item.toLowerCase()}`)}</SmallText>}
-          rightElement={<Icon name="arrow_down" color={theme.palette.primary.regular} style={styles.itemIcon} />}
+          rightElement={<Icon name="arrow_down" color={theme.palette.accent.regular} style={styles.itemIcon} />}
           testID={legalItem.testID}
         />
       </TouchableOpacity>
