@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { createContext } from 'react';
 import { Platform, StatusBar as RNStatusBar, useWindowDimensions, View } from 'react-native';
 
 import { StaticScreenProps, useNavigation } from '@react-navigation/native';
-import { PanGesture } from 'react-native-gesture-handler';
 import { OrientationLocker } from 'react-native-orientation-locker';
 import { useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
-import { Carousel, type CarouselRef, type CarouselRenderItemInfo } from 'react-native-reanimated-carousel';
+import { Carousel, type CarouselPanGesture, type CarouselRef, type CarouselRenderItemInfo } from 'react-native-reanimated-carousel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { defineModal, modalCloseButtonOptions, type RootNavigation } from '~/app/navigation-new';
@@ -14,16 +12,21 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { FileMedia, isPlayableMedia } from '~/modules/media/types';
 import { I18n } from '~/util/i18n';
 
-import CarouselItem from './component';
-import { useCarouselFileHandler, useCarouselOrientation, useDownloadMedia, useTogglePagination } from './hooks';
+import CarouselPagination from './component';
+import CarouselItem from './components/items';
+import { PAGINATION_COMPONENT_HEIGHT } from './components/pagination/styles';
+import { PAGINATION_ANIMATION_DURATION, PAGINATION_ANIMATION_OFFSET, PAGINATION_ANIMATION_START_INDEX_DELAY } from './constants';
+import { PdfContext, PlayerContext, type PlayerContextValue } from './context';
+import { useDownloadMedia } from './hooks/download-media';
+import { useFileHandler } from './hooks/file-handler';
+import { useOrientation } from './hooks/orientation';
+import { useTogglePagination } from './hooks/toggle-pagination';
 import { getCarouselHeaderOptions, getNavActions } from './navbar';
-import CarouselPagination from './pagination/component';
-import { PAGINATION_COMPONENT_HEIGHT } from './pagination/styles';
 import styles from './styles';
-import { getMediaSource } from './util';
+import { getMediaSource } from './utils';
 
 /**
- * Useful things to know about this multimedia carousel screen:
+ * Useful things to know about this carousel screen:
  *
  * The react-native-reanimated-carousel library creates duplicate components with the same indexes
  * This means, for a given item in the carousel, in some cases the lib can create up to 2 components with the same index and item source, but different internal states (zoom and loading state for instance).
@@ -44,21 +47,12 @@ export type MediaCarouselParams = {
 };
 
 const isAndroid = Platform.OS === 'android';
-export const PAGINATION_ANIMATION_DURATION = 300;
-export const PAGINATION_ANIMATION_OFFSET = 200;
-const PAGINATION_ANIMATION_START_INDEX_DELAY = 1000;
 const CAROUSEL_WINDOW_SIZE = 6;
 const SWIPE_GESTURE_DISABLE_AREA_FILLER = UI_SIZES.spacing.big;
 const SWIPE_GESTURE_DISABLE_AREA = PAGINATION_COMPONENT_HEIGHT + SWIPE_GESTURE_DISABLE_AREA_FILLER;
 
-export const PlayerContext = createContext<{
-  pauseCurrentPlayingMedia?: () => void;
-  savedStates: Map<number, { position: number; paused: boolean }>;
-}>({ savedStates: new Map() });
-export const PdfContext = createContext<{ disableCarouselSwipe?: () => void; setResetComponent?: () => void }>({});
-
 const MediaCarouselScreen = (props: StaticScreenProps<MediaCarouselParams>) => {
-  const playerContextValue = React.useRef({ savedStates: new Map<number, { position: number; paused: boolean }>() });
+  const playerContextValue = React.useRef<PlayerContextValue>({ savedStates: new Map() });
   return (
     <PlayerContext value={playerContextValue.current}>
       <PdfContext value={{}}>
@@ -71,7 +65,7 @@ const MediaCarouselScreen = (props: StaticScreenProps<MediaCarouselParams>) => {
 const CarouselScreen = ({ route }: StaticScreenProps<MediaCarouselParams>) => {
   const navigation = useNavigation<RootNavigation>();
   const media = React.useMemo<FileMedia[]>(() => route.params.media ?? [], [route.params.media]);
-  const startIndex = route.params.startIndex ?? 0;
+  const { startIndex = 0 } = route.params;
   const [currentIndex, setCurrentIndex] = React.useState(startIndex);
   const [erroredIndexes, setErroredIndexes] = React.useState<Set<number>>(() => new Set());
   const setHasMediaError = React.useCallback((index: number) => {
@@ -90,8 +84,8 @@ const CarouselScreen = ({ route }: StaticScreenProps<MediaCarouselParams>) => {
   const paginationTranslateY = useSharedValue(0);
   const mediaLengthShared = useSharedValue(media.length);
   const containerWidthShared = useSharedValue(0);
-  const { onOrientationChange, orientation } = useCarouselOrientation();
-  const { onShare } = useCarouselFileHandler(media[currentIndex]);
+  const { onOrientationChange, orientation } = useOrientation();
+  const { onShare } = useFileHandler(media[currentIndex]);
   const downloadMedia = useDownloadMedia();
   const togglePaginationComponent = useTogglePagination(media, paginationTranslateY, setIsPaginationVisible);
   const carouselRef = React.useRef<CarouselRef>(null);
@@ -103,7 +97,7 @@ const CarouselScreen = ({ route }: StaticScreenProps<MediaCarouselParams>) => {
   const statusbarHeight = RNStatusBar.currentHeight ?? 0;
   const androidStatusBarHeight = isAndroid ? statusbarHeight : 0;
 
-  const configurePanGesture = React.useCallback((panGesture: PanGesture) => {
+  const configurePanGesture = React.useCallback((panGesture: CarouselPanGesture) => {
     if (isAndroid) {
       panGesture.minDistance(50).failOffsetY([-20, 20]).activeOffsetX([-30, 30]);
     }
@@ -175,6 +169,40 @@ const CarouselScreen = ({ route }: StaticScreenProps<MediaCarouselParams>) => {
     [androidStatusBarHeight, carouselDimensions.height, carouselDimensions.width, insets.bottom, insets.top],
   );
 
+  const itemSources = React.useMemo(() => media.map(getMediaSource), [media]);
+
+  const renderItem = React.useCallback(
+    ({ index, item }: CarouselRenderItemInfo<FileMedia>) => (
+      <CarouselItem
+        containerHeight={carouselDimensions.height}
+        containerWidth={carouselDimensions.width}
+        hideNavBar={hideNavBar}
+        index={index}
+        isCurrentItem={index === currentIndex}
+        isNavBarVisible={isNavBarVisible}
+        item={item}
+        itemSource={itemSources[index]}
+        onInitialAVMediaLoad={index === startIndex ? onInitialAVMediaLoad : undefined}
+        setHasMediaError={setHasMediaError}
+        setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled}
+        showNavBar={showNavBar}
+        toggleNavBarVisibility={toggleNavBarVisibility}
+      />
+    ),
+    [
+      carouselDimensions,
+      currentIndex,
+      hideNavBar,
+      isNavBarVisible,
+      itemSources,
+      onInitialAVMediaLoad,
+      setHasMediaError,
+      showNavBar,
+      startIndex,
+      toggleNavBarVisibility,
+    ],
+  );
+
   React.useEffect(() => {
     const isLandscape = orientation !== 'PORTRAIT';
 
@@ -239,27 +267,7 @@ const CarouselScreen = ({ route }: StaticScreenProps<MediaCarouselParams>) => {
         onConfigurePanGesture={configurePanGesture}
         progress={paginationProgress}
         onSnapToItem={onSnapToItem}
-        renderItem={(info: CarouselRenderItemInfo<FileMedia>) => {
-          const source = getMediaSource(info.item);
-          const isInitialItem = info.index === startIndex;
-
-          return (
-            <CarouselItem
-              containerHeight={carouselDimensions.height}
-              containerWidth={carouselDimensions.width}
-              currentIndex={currentIndex}
-              hideNavBar={hideNavBar}
-              info={info}
-              isNavBarVisible={isNavBarVisible}
-              itemSource={source}
-              onInitialAVMediaLoad={isInitialItem ? onInitialAVMediaLoad : undefined}
-              setHasMediaError={setHasMediaError}
-              setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled}
-              showNavBar={showNavBar}
-              toggleNavBarVisibility={toggleNavBarVisibility}
-            />
-          );
-        }}
+        renderItem={renderItem}
         ref={carouselRef}
         renderWindowSize={media.length === 1 ? 1 : Math.min(CAROUSEL_WINDOW_SIZE, media.length - 1)}
       />

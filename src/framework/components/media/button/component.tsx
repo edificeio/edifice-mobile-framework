@@ -7,13 +7,12 @@ import { TouchableOpacity, View } from 'react-native';
 import theme from '~/app/theme';
 import { getScaleImageSize } from '~/framework/components/constants';
 import MediaIcon from '~/framework/components/media/icon';
-import { openMediaPlayer } from '~/framework/components/media/player';
-import { MediaPlayerParams } from '~/framework/components/media/player/types';
 import { Svg } from '~/framework/components/picture';
 import { SmallItalicText } from '~/framework/components/text';
 import { MediaType } from '~/framework/modules/media';
 import { Image } from '~/framework/util/media-deprecated';
-import { sessionURISource } from '~/framework/util/transport';
+import { useOpenMedia } from '~/modules/media/hooks';
+import type { FileMedia } from '~/modules/media/types';
 import { I18n } from '~/util/i18n';
 
 import styles from './styles';
@@ -39,12 +38,11 @@ const MediaButton = (props: IPlayerProps) => {
     aspectRatio: ratio || 16 / 10,
   };
 
+  const { openCarousel } = useOpenMedia();
+
+  // The carousel plays the medias, and signs their source.
   const showMediaPlayer = () => {
-    openMediaPlayer({
-      referer: props.referer,
-      source: sessionURISource(props.source),
-      type: props.type,
-    } as MediaPlayerParams);
+    openCarousel({ media: [{ mime: 'application/octet-stream', src: source, type } as FileMedia] });
   };
 
   const getPreviewVideo = () => {

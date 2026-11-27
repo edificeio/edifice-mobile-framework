@@ -1,9 +1,6 @@
 import * as React from 'react';
 
-import CarouselScreen from '~/framework/components/carousel';
-import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel/screen';
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
-import MediaPlayer from '~/framework/components/media/player';
 import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pdf/pdf-reader';
 import { infosNavBar, InfosScreen, logNavBar, LogScreen, networkNavBar, NetworkScreen } from '~/framework/modules/debug';
 import AttachmentsImportScreen, {
@@ -34,7 +31,6 @@ export default (
       screenOptions={{
         presentation: 'fullScreenModal',
       }}>
-      <RootStack.Screen name={ModalsRouteNames.Carousel} options={CarouselNavBar} component={CarouselScreen} />
       <RootStack.Screen
         name={ModalsRouteNames.FileImport}
         options={FileAddNavBar}
@@ -42,7 +38,6 @@ export default (
         initialParams={{}}
       />
       <RootStack.Screen name={ModalsRouteNames.Infos} options={infosNavBar} component={InfosScreen} />
-      <RootStack.Screen name={ModalsRouteNames.MediaPlayer} options={{ headerShown: false }} component={MediaPlayer} />
       <RootStack.Screen name={ModalsRouteNames.Log} options={logNavBar} component={LogScreen} />
       <RootStack.Screen name={ModalsRouteNames.Network} options={networkNavBar} component={NetworkScreen} />
       <RootStack.Screen
@@ -57,11 +52,9 @@ export default (
 
 setModalModeForRoutes([
   ModalsRouteNames.AttachmentsImport,
-  ModalsRouteNames.Carousel,
   ModalsRouteNames.FileImport,
   ModalsRouteNames.Infos,
   ModalsRouteNames.Log,
-  ModalsRouteNames.MediaPlayer,
   ModalsRouteNames.Network,
   ModalsRouteNames.Pdf,
   ModalsRouteNames.RichTextEditor,

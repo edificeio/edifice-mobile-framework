@@ -155,7 +155,9 @@ class SignInWayfScreenTemplate extends React.Component<SignInWayfScreenTemplateP
     // case WAYFPageMode.WEBVIEW: Display WebView
     () => {
       return (
-        // @ts-expect-error `WebView` props are typed `never` with the current react-native-webview/react types (same error everywhere WebView is used)
+        // react-native-webview 14.0.1 declares `WebView<P = undefined>`: with the ref typed `WebView`, the props become `WebViewProps & undefined`, i.e. `never`.
+        // Fixed upstream in 16.0.0 (`P = {}`, issue react-native-webview#3970): remove this suppression on the next update of react-native-webview.
+        // @ts-expect-error props typed `never` by react-native-webview 14.0.1 (see above)
         <WebView
           ref={(ref: WebView) => this.setWebView(ref)}
           incognito

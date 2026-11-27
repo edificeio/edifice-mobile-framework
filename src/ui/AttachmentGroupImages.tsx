@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { I18n } from '~/util/i18n';
 import { navigationRef } from '~/app/navigation';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
-import { convertLocalAttachmentToFileMedia } from '~/framework/components/carousel/utils/adapter';
 import { UI_SIZES } from '~/framework/components/constants';
 import { cameraActionFm, galleryActionFm } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
@@ -15,6 +13,8 @@ import { LocalFile } from '~/framework/util/fileHandler/models';
 import { mapLocalFileToLegacy } from '~/framework/util/fileHandler/utils/mapLocalFileToLegacy';
 import { formatSource, Image } from '~/framework/util/media-deprecated';
 import { isEmpty } from '~/framework/util/object';
+import { MediaType } from '~/modules/media/types';
+import { I18n } from '~/util/i18n';
 
 import { ILocalAttachment } from './Attachment';
 
@@ -86,7 +86,9 @@ export class AttachmentGroupImages extends React.PureComponent<{
 
   onOpenImage = () => {
     const { images } = this.props;
-    navigationRef.navigate('media/carousel', { media: convertLocalAttachmentToFileMedia(images) });
+    navigationRef.navigate('media/carousel', {
+      media: images.map(image => ({ mime: image.mime, src: { uri: image.uri }, type: MediaType.IMAGE })),
+    });
   };
 
   renderItemSeparator = () => <View style={styles.itemSeperator} />;

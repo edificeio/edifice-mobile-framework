@@ -223,6 +223,17 @@ export const renderMediaPreview = (medias: INotificationMedia[], referer: Audien
 /** The url without its parameters. */
 const normalizeUrl = (url: string) => url.split('?')[0];
 
+// The src of a notification media is a plain url or an `{ src: ImageURISource, alt }` object.
+const getNotificationMediaUrl = (src: INotificationMedia['src']): string => {
+  if (typeof src === 'string') return src;
+  return src.src.uri ?? '';
+};
+
+const NOTIFICATION_MEDIA_MIME: Partial<Record<INotificationMedia['type'], string>> = {
+  audio: 'audio/*',
+  image: 'image/*',
+};
+
 /**
  * The medias extracted from a html content (`extractMediaFromHtml`), as medias the carousel can show. The sources are not signed: the
  * components that show them do it.
@@ -232,17 +243,18 @@ export const convertNotificationToFileMedia = (notificationMedias: INotification
     .filter(media => ['image', 'audio', 'video', 'iframe'].includes(media.type))
     .map(media => {
       if (media.type === 'iframe') {
-        const src = typeof media.src === 'string' && media.src.startsWith('//') ? 'https:' + media.src : (media.src as string);
+        const url = getNotificationMediaUrl(media.src);
+        const src = url.startsWith('//') ? 'https:' + url : url;
         return { mime: MediaType.EMBEDDED, name: media.name, src, type: MediaType.EMBEDDED } as unknown as FileMedia;
       }
       return {
-        mime: media.type === 'image' ? 'image/*' : media.type === 'audio' ? 'audio/*' : 'video/*',
+        mime: NOTIFICATION_MEDIA_MIME[media.type] ?? 'video/*',
         name: media.name,
         poster:
           media.type === 'video' && media['document-id'] && media['video-resolution']
             ? computeVideoThumbnail(media['document-id'], extractVideoResolution(media['video-resolution']) || undefined)
             : undefined,
-        src: normalizeUrl(toURISource(media.src.toString()).uri || ''),
+        src: normalizeUrl(toURISource(getNotificationMediaUrl(media.src)).uri || ''),
         type: media.type,
       } as FileMedia;
     });

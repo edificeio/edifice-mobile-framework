@@ -7,12 +7,11 @@ import Pdf, { PdfProps } from 'react-native-pdf';
 
 import { NavigationRootParams } from '~/app/navigation/types';
 import theme from '~/app/theme';
-import { convertPdfUrlToFileMedia } from '~/framework/components/carousel/utils/adapter';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/redux/reducer';
-import { toURISource } from '~/framework/modules/media';
+import { MediaType, toURISource } from '~/framework/modules/media';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -94,7 +93,7 @@ export function openPDFReader(
 ) {
   if (!navParams.src) return;
   navigation.navigate('media/carousel', {
-    media: [convertPdfUrlToFileMedia(navParams.src)],
+    media: [{ mime: 'application/pdf', src: navParams.src, type: MediaType.ATTACHMENT }],
     title: navParams.title,
   });
   // navigation.navigate(ModalsRouteNames.Pdf, navParams);

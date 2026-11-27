@@ -7,7 +7,7 @@ import { defineModal, type ScreenPromiseParams, useScreenPromise } from '~/app/n
 import theme from '~/app/theme';
 import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
 import type { SyncedFile } from '~/framework/util/fileHandler';
-import { useCarouselFileHandler } from '~/modules/media/screens/carousel/hooks';
+import { useFileHandler } from '~/modules/media/screens/carousel/hooks/file-handler';
 import type { FileMedia } from '~/modules/media/types';
 import { I18n } from '~/util/i18n';
 
@@ -26,7 +26,7 @@ const DownloadModal = ({ route }: StaticScreenProps<ScreenPromiseParams<MediaDow
   const { media } = route.params;
   const [progress, setProgress] = React.useState(0);
 
-  const { cancelDownload, download, isCancelledRef } = useCarouselFileHandler(media, res => {
+  const { cancelDownload, download, isCancelledRef } = useFileHandler(media, res => {
     if (res.contentLength > 0) setProgress(res.bytesWritten / res.contentLength);
   });
 

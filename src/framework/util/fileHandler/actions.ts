@@ -4,7 +4,6 @@
 import FileViewer from 'react-native-file-viewer';
 
 import { navigationRef } from '~/app/navigation';
-import { convertLegacyMediaToFileMedia, convertPlayableSourceToFileMedia } from '~/framework/components/carousel/utils/adapter';
 import { assertSession } from '~/framework/modules/auth/redux/reducer';
 import { MediaType, toURISource } from '~/framework/modules/media';
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler/models';
@@ -14,8 +13,8 @@ import fileTransferService, {
   IUploadCallbaks,
   IUploadParams,
 } from '~/framework/util/fileHandler/service';
-import type { IMedia } from '~/framework/util/media-deprecated';
-import { sessionURISource } from '~/framework/util/transport';
+import { convertToMedia, type IMedia } from '~/framework/util/media-deprecated';
+import { isFileMedia } from '~/modules/media/types';
 
 export const startUploadFileAction =
   <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
@@ -159,41 +158,31 @@ export const openDocument = async (document: IDistantFile | LocalFile | IMedia, 
   }
 
   let success = false;
+  // Audios and videos are played by the carousel, which signs their source.
+  const playableMime = onlineMedia?.mime ?? localFile?.filetype ?? 'application/octet-stream';
 
   switch (mediaType) {
     case 'image':
       navigationRef.navigate('media/carousel', {
-        media: convertLegacyMediaToFileMedia([
+        media: convertToMedia([
           onlineMedia ?? {
             mime: localFile?.filetype,
             src: localFile?._filepathNative!,
             type: MediaType.IMAGE,
           },
-        ]),
+        ]).filter(isFileMedia),
       });
       success = true;
       break;
     case 'audio':
       navigationRef.navigate('media/carousel', {
-        media: [
-          convertPlayableSourceToFileMedia(
-            sessionURISource(toURISource(onlineMedia?.src ?? localFile?._filepathNative)),
-            MediaType.AUDIO,
-            document.filetype,
-          ),
-        ],
+        media: [{ mime: playableMime, src: toURISource(onlineMedia?.src ?? localFile?._filepathNative), type: MediaType.AUDIO }],
       });
       success = true;
       break;
     case 'video':
       navigationRef.navigate('media/carousel', {
-        media: [
-          convertPlayableSourceToFileMedia(
-            sessionURISource(toURISource(onlineMedia?.src ?? localFile?._filepathNative)),
-            MediaType.VIDEO,
-            document.filetype,
-          ),
-        ],
+        media: [{ mime: playableMime, src: toURISource(onlineMedia?.src ?? localFile?._filepathNative), type: MediaType.VIDEO }],
       });
       success = true;
       break;

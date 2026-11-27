@@ -1,17 +1,17 @@
 import React from 'react';
 import { FlatList, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
-import { I18n } from '~/util/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionChoice, IQuestionResponse } from '~/framework/modules/form/model';
-import { openCarousel } from '~/framework/modules/form/utils/image';
 import { sessionImageSource } from '~/framework/util/transport';
+import { I18n } from '~/util/i18n';
 
 import { FormAnswerText } from './FormAnswerText';
 import { FormCheckbox } from './FormCheckbox';
+import { useOpenChoiceImage } from './hooks';
 
 const styles = StyleSheet.create({
   choiceContainer: {
@@ -52,6 +52,7 @@ export const FormMultipleAnswerCard = ({
   question,
   responses,
 }: IFormMultipleAnswerCardProps) => {
+  const openChoiceImage = useOpenChoiceImage();
   const [selectedChoices, setSelectedChoices] = React.useState<number[]>(responses.map(response => response.choiceId!));
   const [customAnswer, setCustomAnswer] = React.useState<string>(responses.find(r => r.customAnswer?.length)?.customAnswer ?? '');
   const { choices, mandatory, title } = question;
@@ -114,7 +115,7 @@ export const FormMultipleAnswerCard = ({
                 />
               ) : null}
               {item.image ? (
-                <TouchableOpacity onPress={() => openCarousel(item.image)} style={styles.imageContainer}>
+                <TouchableOpacity onPress={() => openChoiceImage(item.image)} style={styles.imageContainer}>
                   <Image source={sessionImageSource({ height: 75, uri: item.image, width: 75 })} />
                 </TouchableOpacity>
               ) : null}

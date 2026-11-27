@@ -1,97 +1,161 @@
 import * as React from 'react';
-import { ImageURISource } from 'react-native';
+import { Platform, View } from 'react-native';
 
-import { isAudioContent, isImageContent, isPdfContent, isVideoContent } from '~/modules/media/types';
+import Animated, { Extrapolation, interpolate, useAnimatedStyle } from 'react-native-reanimated';
 
-import ImageItem from './image-item/component';
-import PdfItem from './pdf-item/component';
-import PlayerItem from './player-item/component';
-import { CarouselItemProps } from './types';
-import UnknownItem from './unknown-item/component';
-import UnviewableItem from './unviewable-item/component';
+import { UI_SIZES } from '~/framework/components/constants';
+import { PAGINATION_ANIMATION_OFFSET } from '~/modules/media/screens/carousel/constants';
+import { getPosterSource } from '~/modules/media/screens/carousel/utils';
+import { FileMedia, isImageContent, isPlayableMedia } from '~/modules/media/types';
 
-const CarouselItem = ({
-  containerHeight,
-  containerWidth,
-  currentIndex,
-  hideNavBar,
-  info,
-  isNavBarVisible,
-  itemSource,
-  onInitialAVMediaLoad,
-  setHasMediaError,
-  setIsCarouselSwipeEnabled,
-  showNavBar,
-  toggleNavBarVisibility,
-}: CarouselItemProps) => {
-  const [isImageError, setIsImageError] = React.useState(false);
-  const [isPdfError, setIsPdfError] = React.useState(false);
-  const [isPlayerError, setIsPlayerError] = React.useState(false);
-  const [isPdfLoadTimeout, setIsPdfLoadTimeout] = React.useState(false);
-  const [isPlayerLoadTimeout, setIsPlayerLoadTimeout] = React.useState(false);
-  const media = info!.item;
-  const isCurrentItem = info!.index === currentIndex;
+import { CustomPagination } from './components/pagination/custom-pagination';
+import PaginationBackground from './components/pagination/pagination-background/component';
+import PaginationItem from './components/pagination/pagination-item/component';
+import styles, {
+  ACTIVE_ITEM_WIDTH,
+  INACTIVE_ITEM_WIDTH,
+  ITEM_GAP,
+  PAGINATION_COMPONENT_HEIGHT,
+} from './components/pagination/styles';
+import { CarouselPaginationProps } from './components/pagination/types';
 
-  if (!info || !media.src) {
-    setHasMediaError(info!.index);
-    return <UnknownItem />;
+const MAX_PAGINATION_ITEMS = 12;
+
+const getPaginationItemAnimatedStyle = (progress: number, index: number, length: number) => {
+  'worklet';
+  let distanceToActiveItem = Math.abs(progress - index);
+  if (index === 0 && progress > length - 1) {
+    distanceToActiveItem = Math.abs(progress - length);
   }
 
-  if (isImageError || isPdfError || isPlayerError || isPlayerLoadTimeout || isPdfLoadTimeout || !media.mime)
-    return <UnviewableItem media={media} />;
-
-  if (!media.mime && media.src) return <UnviewableItem media={media} />;
-
-  if (isImageContent(media)) {
-    return (
-      <ImageItem
-        containerHeight={containerHeight}
-        containerWidth={containerWidth}
-        hideNavBar={hideNavBar}
-        showNavBar={showNavBar}
-        isNavBarVisible={isNavBarVisible}
-        isShown={isCurrentItem}
-        setIsImageError={setIsImageError}
-        source={itemSource as ImageURISource}
-        toggleNavBarVisibility={toggleNavBarVisibility}
-      />
-    );
-  }
-
-  if (isAudioContent(media) || isVideoContent(media)) {
-    return (
-      <PlayerItem
-        hideNavBar={hideNavBar}
-        isCurrentItem={isCurrentItem}
-        isPlayerLoadTimeout={isPlayerLoadTimeout}
-        item={media}
-        itemIndex={info.index}
-        onInitialMediaLoad={onInitialAVMediaLoad}
-        setIsPlayerError={setIsPlayerError}
-        setIsPlayerLoadTimeout={setIsPlayerLoadTimeout}
-        showNavBar={showNavBar}
-        source={itemSource}
-      />
-    );
-  }
-
-  if (isPdfContent(media)) {
-    return (
-      <PdfItem
-        hideNavBar={hideNavBar}
-        isNavBarVisible={isNavBarVisible}
-        isPdfLoadTimeout={isPdfLoadTimeout}
-        isShown={isCurrentItem}
-        setIsCarouselSwipeEnabled={setIsCarouselSwipeEnabled}
-        setIsPdfError={setIsPdfError}
-        setIsPdfLoadTimeout={setIsPdfLoadTimeout}
-        source={itemSource}
-        toggleNavBar={toggleNavBarVisibility}
-      />
-    );
-  }
-
-  return <UnviewableItem media={media} />;
+  return {
+    marginHorizontal: interpolate(distanceToActiveItem, [1, 0], [0, ITEM_GAP], Extrapolation.CLAMP),
+    opacity: interpolate(distanceToActiveItem, [0, 10], [1, 0], Extrapolation.CLAMP),
+  };
 };
 
-export default React.memo(CarouselItem);
+const CarouselPagination = ({
+  bottomInset,
+  carouselRef,
+  containerWidth,
+  containerWidthShared,
+  isInitialAVMediaLoaded,
+  isNavBarVisible,
+  isPaginationVisible,
+  media,
+  mediaLengthShared,
+  paginationProgress,
+  paginationTranslateY,
+  startIndex,
+}: CarouselPaginationProps) => {
+  const canShowPagination = React.useMemo(() => {
+    return (
+      media.length > 1 &&
+      media.length <= MAX_PAGINATION_ITEMS &&
+      isNavBarVisible &&
+      isPaginationVisible &&
+      (!isPlayableMedia(media[startIndex]) || isInitialAVMediaLoaded)
+    );
+  }, [media, isNavBarVisible, isPaginationVisible, startIndex, isInitialAVMediaLoaded]);
+
+  const paginationContainerStyle = React.useMemo(
+    () => [styles.paginationGradient, { height: PAGINATION_COMPONENT_HEIGHT + bottomInset, paddingBottom: bottomInset }],
+    [bottomInset],
+  );
+
+  const renderPaginationItem = React.useCallback(
+    (item: FileMedia, index: number) => {
+      const thumbnailSrc =
+        item.mime && isImageContent(item) && item.src
+          ? getPosterSource(item.src, UI_SIZES.elements.thumbnailFetchSize.small)
+          : item.mime && isPlayableMedia(item) && item.poster
+            ? getPosterSource(item.poster, UI_SIZES.elements.thumbnailFetchSize.small)
+            : undefined;
+
+      return (
+        <PaginationItem
+          item={item}
+          count={media.length}
+          loop={media.length > 2}
+          thumbnailSrc={thumbnailSrc}
+          index={index}
+          paginationProgress={paginationProgress}
+          testID={`media-pagination-${index}`}
+        />
+      );
+    },
+    [media.length, paginationProgress],
+  );
+
+  const onPressPagination = React.useCallback(
+    (index: number) => {
+      // v5 resolves the shortest path itself when looping, so we only pass the target index.
+      carouselRef.current?.scrollTo({ animated: true, index });
+    },
+    [carouselRef],
+  );
+
+  const paginationContainerAnimatedStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(paginationTranslateY.value, [0, PAGINATION_ANIMATION_OFFSET], [1, 0]),
+      transform: [{ translateY: paginationTranslateY.value }],
+    };
+  });
+
+  const paginationItemsAnimatedStyle = useAnimatedStyle(() => {
+    'worklet';
+    // v5 loop progress is unbounded and continuous: normalise it back into [0, length)
+    const length = mediaLengthShared.value;
+    const raw = paginationProgress.value;
+    const progress = length > 0 ? ((raw % length) + length) % length : raw;
+    const distanceToActiveItem = progress > length - 0.5 ? progress - length : progress;
+
+    const screenCenter = containerWidthShared.value / 2;
+
+    return {
+      transform: [
+        {
+          translateX:
+            screenCenter -
+            INACTIVE_ITEM_WIDTH -
+            ITEM_GAP * 2 -
+            ACTIVE_ITEM_WIDTH / 2 +
+            interpolate(distanceToActiveItem, [1, 0], [0, INACTIVE_ITEM_WIDTH + ITEM_GAP], Extrapolation.EXTEND),
+        },
+      ],
+    };
+  }, [containerWidthShared]);
+
+  if (!canShowPagination) {
+    return null;
+  }
+
+  return (
+    <View style={paginationContainerStyle} pointerEvents="box-none">
+      <Animated.View style={paginationContainerAnimatedStyle}>
+        <PaginationBackground
+          key={Platform.OS === 'ios' ? containerWidth : undefined}
+          width={containerWidth}
+          height={PAGINATION_COMPONENT_HEIGHT + bottomInset}
+        />
+        <Animated.View style={paginationItemsAnimatedStyle}>
+          <CustomPagination
+            containerStyle={styles.paginationContainer}
+            data={media}
+            loop={media.length > 2}
+            onPress={onPressPagination}
+            progress={paginationProgress}
+            renderItem={renderPaginationItem}
+            size={INACTIVE_ITEM_WIDTH}
+            dotStyle={styles.paginationDot}
+            activeDotStyle={styles.paginationActiveDot}
+            customReanimatedStyle={getPaginationItemAnimatedStyle}
+          />
+        </Animated.View>
+      </Animated.View>
+    </View>
+  );
+};
+
+export default React.memo(CarouselPagination);

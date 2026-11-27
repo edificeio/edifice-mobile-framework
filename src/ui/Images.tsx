@@ -6,14 +6,14 @@ import styled from '@emotion/native';
 
 import { navigationRef } from '~/app/navigation';
 import theme from '~/app/theme';
-import { convertLegacyMediaToFileMedia } from '~/framework/components/carousel/utils/adapter';
 import { getScaleImageSize, UI_SIZES } from '~/framework/components/constants';
 import { Svg } from '~/framework/components/picture';
 import { SmallInverseText } from '~/framework/components/text';
 import { IMAGE_MAX_DIMENSION } from '~/framework/util/fileHandler';
-import { FastImage } from '~/framework/util/media-deprecated';
+import { convertToMedia, FastImage } from '~/framework/util/media-deprecated';
 import { sessionURISource } from '~/framework/util/transport';
 import type { AudienceParameter } from '~/modules/audience/model';
+import { isFileMedia } from '~/modules/media/types';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Row } from './Grid';
@@ -133,7 +133,7 @@ class Images extends React.Component<
       ...(img.alt ? { alt: img.alt } : undefined),
       ...(img.linkTo ? { link: img.linkTo } : undefined),
     }));
-    navigationRef.navigate('media/carousel', { media: convertLegacyMediaToFileMedia(data), startIndex });
+    navigationRef.navigate('media/carousel', { media: convertToMedia(data).filter(isFileMedia), startIndex });
   }
 
   public images() {
